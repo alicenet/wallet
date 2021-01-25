@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="description" content="content" />
+  <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+  <link id="theme" rel="stylesheet" href="dark.css">
+  <title>Mad Wallet</title>
+</head>
+
+<body>
+  <script>
+    let link = document.getElementById('theme');
+    window.setDark = function () {
+      link.setAttribute("href", "dark.css");
+    }
+    window.setLight = function () {
+      link.setAttribute("href", "");
+    }
+  </script>
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+  <div id="root"></div>
+</body>
+
+</html>

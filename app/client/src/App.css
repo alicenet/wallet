@@ -1,0 +1,58 @@
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu+Mono&display=swap');
+
+#root {
+  text-align: center;
+  max-height: 100vh !important;
+  min-height: 100vh !important;
+  min-width: 100vw !important;
+  max-width: 100vw !important;
+  overflow-y: scroll !important;
+  overflow-x: hidden !important;
+  padding-right: 17px;
+  box-sizing: content-box;
+}
+
+*:not(i) {
+  font-family: 'Ubuntu Mono', monospace !important;
+}
+.mainView {
+  box-sizing: border-box;
+}
+
+.ui.placeholder.segment {
+  min-height: unset !important;
+}
+
+.switch, .ui.statistics {
+  justify-content: center !important;
+}
+
+.ui.attached.button {
+  box-shadow: unset !important;
+}
+
+.madCard {
+  margin-left: 37px !important;;
+  margin-top: 3px !important;
+}
+
+.ui.segment {
+  word-break: break-all !important;
+}
+
+.ui.attached.tabular.menu {
+  overflow-y: hidden !important;
+  overflow-x: auto !important;
+}
+
+.warningMenu {
+  background: #ff4c4c !important;
+    color: #000000 !important;
+    text-align: center !important;
+    justify-content: center !important;
+    min-height: unset !important;
+}
+
+.warningPad {
+  padding-top: 0px !important;
+}

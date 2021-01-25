@@ -1,0 +1,13 @@
+# Electron
+.env
+node_modules/
+dist/*
+!dist/.gitkeep
+app-build/*
+!app-build/.gitkeep
+
+# React App
+app/client/build
+app/client/node_modules
+app/client/.env
+app/client/.eslintcache
