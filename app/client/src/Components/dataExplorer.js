@@ -142,7 +142,7 @@ function DataExplorer(props) {
                     <Button onClick={() => handlePage(-1)} disabled={Boolean(activePage === 1)} color="blue" icon>
                         <Icon name='angle left' />
                     </Button>
-                    <Button onClick={() => handlePage(1)} disabled={Boolean(DataStores.length % (DataPerPage + 1) !== 0 && activePage === Math.ceil(DataStores.length / DataPerPage))} color="blue" icon>
+                    <Button onClick={() => handlePage(1)} disabled={Boolean(activePage === Math.ceil(DataStores.length / DataPerPage))} color="blue" icon>
                         <Icon name='angle right' />
                     </Button>
                 </>
