@@ -56,3 +56,7 @@
 .warningPad {
   padding-top: 0px !important;
 }
+
+.blocks {
+  cursor: pointer !important;
+}

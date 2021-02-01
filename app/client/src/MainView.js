@@ -9,6 +9,7 @@ import Accounts from "./Components/accounts.js";
 import Settings from "./Components/settings.js";
 import Errors from "./Components/errors.js";
 import Notify from "./Components/notify.js"
+import BlockNotify from "./Components/blockNotify.js";
 
 import Logo from "./Assets/MadNetwork Logo Horizontal GRAYSCALE.png"
 
@@ -30,6 +31,7 @@ function MainView() {
     const [isLoading, setLoading] = useState(false);
     const [isError, setError] = useState(false);
     const [isNotify, setNotify] = useState({});
+    const [isBlockNotify, setBlockNotify] = useState(false);
     const [updateView, setUpdateView] = useState(0);
     const madnetSetup = useRef(false);
 
@@ -76,6 +78,8 @@ function MainView() {
         setError: setError,
         setNotify: setNotify,
         isNotify: isNotify,
+        setBlockNotify: setBlockNotify,
+        isBlockNotify: isBlockNotify,
         updateView: updateView,
         setUpdateView: setUpdateView,
         themeToggle: themeToggle,
@@ -116,6 +120,7 @@ function MainView() {
                 </Dimmer>
                 <Errors states={propStates} />
                 <Notify states={propStates} />
+                <BlockNotify states={propStates} />
                 <Menu className="warningMenu" size="small" color="yellow" fixed="top">
                     <p>Alpha version software for testing only!</p>
                 </Menu>

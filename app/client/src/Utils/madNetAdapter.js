@@ -7,6 +7,11 @@ class MadNetAdapter {
 
         this.pending = [];
         this.pendingLocked = false;
+
+        this.blocks = [];
+        this.blocksStarted = false;
+        this.currentBlock = 0;
+        this.blocksLocked = false;
     }
 
     async init() {
@@ -81,6 +86,53 @@ class MadNetAdapter {
             return;
         }
         catch (ex) {
+            await this.cb.call(this, "error", String(ex));
+        }
+    }
+
+    async monitorBlocks() {
+        try {
+            if (this.blocksLocked) {
+                return;
+            }
+            this.blocksLocked = true;
+            try {
+                let currentBlock = await this.wallet.Rpc.getBlockNumber();
+                if (this.currentBlock != currentBlock) {
+                    let blockDiff = (currentBlock - this.currentBlock);
+                    if (blockDiff > 5) {
+                        blockDiff = 5;
+                    }
+                    for (let i = 0; i < blockDiff; i++) {
+                        let blockHeader = await this.wallet.Rpc.getBlockHeader(currentBlock - ((blockDiff - i) - 1));
+                        this.blocks.unshift(blockHeader);
+                    }
+                    this.currentBlock = currentBlock;
+                }
+                this.blocks = this.blocks.slice(0, 5);
+            }
+            catch (ex) {
+                await this.cb.call(this, "error", String("Could not update latest block"));
+            }
+            await this.cb.call(this, "success")
+            console.log(this.currentBlock)
+            await this.sleep(5000)
+            this.blocksLocked = false;
+            await this.monitorBlocks();
+        }
+        catch (ex) {
+            await this.cb.call(this, "error", String(ex));
+        }
+    }
+
+    async viewBlock(height) {
+        console.log('here')
+        await this.cb.call(this, "wait", "Getting Block");
+        try {
+            let blockHeader = await this.wallet.Rpc.getBlockHeader(height);
+            await this.cb.call(this, "notify", blockHeader);
+        }
+        catch(ex) {
             await this.cb.call(this, "error", String(ex));
         }
     }

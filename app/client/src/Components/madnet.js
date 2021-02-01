@@ -4,6 +4,7 @@ import MadNetAdapter from "../Utils/madNetAdapter.js";
 import { Button, Menu } from 'semantic-ui-react';
 
 import DataExplorer from './dataExplorer.js';
+import BlockExplorer from './blockExplorer.js';
 import Transacton from './transaction.js';
 
 function MadNet(props) {
@@ -64,6 +65,9 @@ function MadNet(props) {
             case 'error':
                 props.states.setError(data);;
                 break;;
+            case 'notify':
+                props.states.setBlockNotify(data);;
+                break;;
             default:
                 console.log(event)
         }
@@ -75,6 +79,8 @@ function MadNet(props) {
         switch (activePanel) {
             case 'transaction':
                 return (<Transacton />);;
+            case 'blockExplorer':
+                return (<BlockExplorer states={props.states} />);;
             case 'dataExplorer':
                 return (<DataExplorer states={props.states} />);;
             default:
@@ -96,6 +102,11 @@ function MadNet(props) {
                         name="Transaction"
                         active={activePanel === 'transaction'}
                         onClick={() => setPanel("transaction")}
+                    />
+                    <Menu.Item
+                        name="blockExplorer"
+                        active={activePanel === 'blockExplorer'}
+                        onClick={() => setPanel("blockExplorer")}
                     />
                     <Menu.Item
                         name="DataExplorer"
