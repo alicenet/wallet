@@ -57,6 +57,34 @@
   padding-top: 0px !important;
 }
 
-.blocks {
+.blocks, .click {
   cursor: pointer !important;
+}
+
+.ui.styled.accordion, .ui.styled.accordion .accordion {
+  border-radius: unset !important;
+  box-shadow: unset !important;
+}
+
+.ui.styled.accordion .accordion .title, .ui.styled.accordion .title {
+  font-weight: unset !important;
+  padding: unset !important;
+  color: unset !important;
+}
+
+.ui.styled.accordion .accordion .content, .ui.styled.accordion .content {
+  padding: unset !important;
+}
+
+.txView {
+  margin: unset !important;
+}
+
+pre {
+  overflow-x: auto;
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-wrap: break-word;
 }

@@ -125,3 +125,14 @@ h1, h2, h3 {
 .ui.statistic>.value, .ui.statistics .statistic>.value, .ui.statistic>.label, .ui.statistics .statistic>.label {
   color: #95D8DE !important;
 }
+
+.ui.styled.accordion, .ui.styled.accordion .accordion {
+  background: #95D8DE !important;
+  background-color: #95D8DE !important;
+  color: #212121 !important;
+}
+
+.txView {
+  margin: unset !important;
+  background: #212121 !important;
+}

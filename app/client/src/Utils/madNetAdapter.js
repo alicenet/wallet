@@ -12,6 +12,10 @@ class MadNetAdapter {
         this.blocksStarted = false;
         this.currentBlock = 0;
         this.blocksLocked = false;
+        this.blocksId = false;
+
+        this.transactionHash = false;
+        this.transaction = false;
     }
 
     async init() {
@@ -90,7 +94,11 @@ class MadNetAdapter {
         }
     }
 
+    // Monitor new blocks, lazy loading
     async monitorBlocks() {
+        if (!this.blocksStarted) {
+            this.blocksStarted = true;
+        }
         try {
             if (this.blocksLocked) {
                 return;
@@ -115,24 +123,51 @@ class MadNetAdapter {
                 await this.cb.call(this, "error", String("Could not update latest block"));
             }
             await this.cb.call(this, "success")
-            console.log(this.currentBlock)
-            await this.sleep(5000)
-            this.blocksLocked = false;
-            await this.monitorBlocks();
+            this.blocksLocked = false
+            this.blocksId = setTimeout(() => { this.monitorBlocks() }, 5000);
         }
         catch (ex) {
             await this.cb.call(this, "error", String(ex));
         }
     }
 
+    // Reset block monitor
+    async blocksReset() {
+        clearTimeout(this.blocksId);
+        this.blocks = [];
+        this.blocksStarted = false;
+        this.currentBlock = 0;
+        this.blocksLocked = false;
+
+    }
+
     async viewBlock(height) {
-        console.log('here')
         await this.cb.call(this, "wait", "Getting Block");
         try {
             let blockHeader = await this.wallet.Rpc.getBlockHeader(height);
             await this.cb.call(this, "notify", blockHeader);
         }
-        catch(ex) {
+        catch (ex) {
+            await this.cb.call(this, "error", String(ex));
+        }
+    }
+
+    async viewTransaction(txHash, changeView) {
+        await this.cb.call(this, "wait", "Getting Transaction");
+        try {
+            this.transactionHash = txHash;
+            let Tx = await this.wallet.Rpc.getMinedTransaction(txHash);
+            this.transaction = Tx["Tx"];
+            if (changeView) {
+                await this.cb.call(this, "view", "txExplorer");
+            }
+            else {
+                await this.cb.call(this, "success"); 
+            }
+        }
+        catch (ex) {
+            this.transactionHash = false;
+            this.transaction = false;
             await this.cb.call(this, "error", String(ex));
         }
     }

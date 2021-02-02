@@ -3,9 +3,11 @@ import { StoreContext } from "../Store/store.js";
 import MadNetAdapter from "../Utils/madNetAdapter.js";
 import { Button, Menu } from 'semantic-ui-react';
 
-import DataExplorer from './dataExplorer.js';
-import BlockExplorer from './blockExplorer.js';
-import Transacton from './transaction.js';
+import DataExplorer from './madnet/dataExplorer.js';
+import BlockExplorer from './madnet/blockExplorer.js';
+import TxExplorer from './madnet/txExplorer.js';
+import Transacton from './madnet/transaction.js';
+import BlockNotify from './madnet/blockNotify';
 
 function MadNet(props) {
     // Store states
@@ -16,6 +18,12 @@ function MadNet(props) {
     const connectAttempt = useRef(false);
     // Update madnet adapter
     const update = useRef(false)
+
+    const [isBlockNotify, setBlockNotify] = useState(false);
+
+    props.states["setPanel"] = setPanel;
+    props.states["isBlockNotify"] = isBlockNotify;
+    props.states["setBlockNotify"] = setBlockNotify;
 
     // Add the madNetAdapter and initialize
     const addAdapter = async (forceConnect) => {
@@ -48,6 +56,7 @@ function MadNet(props) {
             update.current = true;
             addAdapter(true);
         }
+
     }, [props, actions, store.madNetAdapter]) // eslint-disable-line react-hooks/exhaustive-deps
 
     // Callback for the madNetAdapter to update the component
@@ -66,7 +75,10 @@ function MadNet(props) {
                 props.states.setError(data);;
                 break;;
             case 'notify':
-                props.states.setBlockNotify(data);;
+                setBlockNotify(data);;
+                break;;
+            case 'view':
+                setPanel(data);;
                 break;;
             default:
                 console.log(event)
@@ -78,9 +90,11 @@ function MadNet(props) {
     const view = (activePanel) => {
         switch (activePanel) {
             case 'transaction':
-                return (<Transacton />);;
+                return (<Transacton states={props.states} />);;
             case 'blockExplorer':
                 return (<BlockExplorer states={props.states} />);;
+            case 'txExplorer':
+                return (<TxExplorer states={props.states} />);;
             case 'dataExplorer':
                 return (<DataExplorer states={props.states} />);;
             default:
@@ -97,6 +111,7 @@ function MadNet(props) {
     else {
         return (
             <>
+                <BlockNotify states={props.states} />
                 <Menu pointing secondary compact>
                     <Menu.Item
                         name="Transaction"
@@ -107,6 +122,11 @@ function MadNet(props) {
                         name="blockExplorer"
                         active={activePanel === 'blockExplorer'}
                         onClick={() => setPanel("blockExplorer")}
+                    />
+                    <Menu.Item
+                        name="txExplorer"
+                        active={activePanel === 'txExplorer'}
+                        onClick={() => setPanel("txExplorer")}
                     />
                     <Menu.Item
                         name="DataExplorer"

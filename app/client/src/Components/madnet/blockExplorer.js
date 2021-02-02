@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { StoreContext } from "../Store/store.js";
+import { StoreContext } from "../../Store/store.js";
 import { Container, Button, Form, Segment, Grid, Modal, Divider } from 'semantic-ui-react';
 
 function BlockExplorer(props) {
@@ -9,9 +9,9 @@ function BlockExplorer(props) {
 
     useEffect(() => {
         if(store && store.madNetAdapter && !store.madNetAdapter.blocksStarted) {
-            
             store.madNetAdapter.monitorBlocks();
         }
+        return() => { if (store && store.madNetAdapter) { store.madNetAdapter.blocksReset()} }
     }, [store]);
 
     const handleChange = (event) => {
@@ -33,7 +33,8 @@ function BlockExplorer(props) {
                 <a className="blocks" key={i} onClick={() => store.madNetAdapter.viewBlock(e['BClaims']['Height'])}>
                 <Segment.Group compact={true} >
                     <Segment textAlign="left">Height: {e['BClaims']['Height']}</Segment>
-                    <Segment textAlign="left">Root: {e['BClaims']['HeaderRoot']}</Segment>
+                    <Segment className="notifySegments" textAlign="left">Tx Count: {e['BClaims']['TxCount'] ? e['BClaims']['TxCount'] : 0}</Segment>
+                    <Segment textAlign="left">Group Signature: {e['SigGroup'].slice(0,20) + "..." + e['SigGroup'].slice(e['SigGroup'].length - 20)}</Segment>
                 </Segment.Group>
                 <br></br>
                 </a>
@@ -42,11 +43,11 @@ function BlockExplorer(props) {
     }
 
     return (
-        <Grid stretched centered={true}>
+        <Grid stretched centered >
             <Container textAlign="center"></Container>
             <Grid.Row stretched centered>
                 <Segment raised>
-                    <Container fluid centered>
+                    <Container fluid>
                     <h2>Latest Block: {store.madNetAdapter.blocks.length > 0 ? store.madNetAdapter.blocks[0]['BClaims']['Height'] : ""}</h2>
                             <Form.Input onChange={(event) => { handleChange(event) }} label='Block ' placeholder='' />
                         <Button color="blue" onClick={(event) => handleSubmit(event)}>Find</Button>
