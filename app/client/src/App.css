@@ -88,3 +88,8 @@ pre {
   white-space: -o-pre-wrap;
   word-wrap: break-word;
 }
+
+.txSwitch {
+  justify-content: right !important;
+  text-align: right !important;
+}

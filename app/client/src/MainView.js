@@ -22,7 +22,7 @@ function MainView() {
     // Theme style
     const [style, setStyle] = useState("dark");
 
-    /**
+/**
  * Props for childern components to update main view
  * Refresh, Loading, Errors, Update View
  */
@@ -31,8 +31,11 @@ function MainView() {
     const [isError, setError] = useState(false);
     const [isNotify, setNotify] = useState({});
     const [updateView, setUpdateView] = useState(0);
+    const [isBlockModal, setBlockModal] = useState(false);
+    const [activeMadnetPanel, setMadnetPanel] = useState(false);
     const madnetSetup = useRef(false);
 
+    // Mount setup
     useEffect(() => {
         if (!store.settings || !store.wallet) {
             setLoading("Loading Wallet")
@@ -67,6 +70,7 @@ function MainView() {
     }
 
     // Object for the props to be used in childern components
+    // TODO: reduce
     const propStates = {
         refresh: refresh,
         setRefresh: setRefresh,
@@ -80,6 +84,10 @@ function MainView() {
         setUpdateView: setUpdateView,
         themeToggle: themeToggle,
         style: style,
+        isBlockModal: isBlockModal, 
+        setBlockModal: setBlockModal,
+        activeMadnetPanel: activeMadnetPanel,
+        setMadnetPanel: setMadnetPanel
     }
 
     // Returns a child component based on the menus selected option

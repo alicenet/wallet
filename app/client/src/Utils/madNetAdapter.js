@@ -106,7 +106,7 @@ class MadNetAdapter {
             this.blocksLocked = true;
             try {
                 let currentBlock = await this.wallet.Rpc.getBlockNumber();
-                if (this.currentBlock != currentBlock) {
+                if (this.currentBlock !== currentBlock) {
                     let blockDiff = (currentBlock - this.currentBlock);
                     if (blockDiff > 5) {
                         blockDiff = 5;
@@ -141,17 +141,20 @@ class MadNetAdapter {
 
     }
 
+    // Get block for modal
     async viewBlock(height) {
         await this.cb.call(this, "wait", "Getting Block");
         try {
             let blockHeader = await this.wallet.Rpc.getBlockHeader(height);
             await this.cb.call(this, "notify", blockHeader);
+            return blockHeader
         }
         catch (ex) {
             await this.cb.call(this, "error", String(ex));
         }
     }
 
+    // Get transaction for txExplorer
     async viewTransaction(txHash, changeView) {
         await this.cb.call(this, "wait", "Getting Transaction");
         try {
