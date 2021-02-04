@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Modal, Container, Segment, Accordion, Icon, List, Divider } from "semantic-ui-react"
+import { Modal, Segment, Accordion, Icon, List, Divider } from "semantic-ui-react"
 import { StoreContext } from "../../Store/store.js";
 
 // BlockModal display
@@ -10,12 +10,12 @@ function BlockModal(props) {
 
     // Setup data on mount
     useEffect(() => {
-        if (props.isBlockModal) {
-            setBlockInfo(props.isBlockModal)
+        if (props.states.isBlockModal) {
+            setBlockInfo(props.states.isBlockModal)
         }
         setTxDrop(false);
         return () => setBlockInfo(false);
-    }, [props.isBlockModal]);
+    }, [props.states.isBlockModal]);
 
     // Display BlockData
     const txList = () => {
@@ -37,7 +37,7 @@ function BlockModal(props) {
         return (
             <Modal
                 size="large"
-                onClose={() => props.setBlockModal(false)}
+                onClose={() => props.states.setBlockModal(false)}
                 open={Boolean(blockInfo)}
                 centered
                 dimmer='blurring'
@@ -47,11 +47,11 @@ function BlockModal(props) {
                 <Segment.Group compact={true} >
                     <Segment className="notifySegments" textAlign="left">Height: {blockInfo['BClaims']['Height']}</Segment>
                     <Segment className="notifySegments" textAlign="left">Transaction Count: {blockInfo['BClaims']['TxCount'] ? blockInfo['BClaims']['TxCount'] : 0}</Segment>
-                    <Segment className="notifySegments" textAlign="left">Previous Block: {blockInfo['BClaims']['PrevBlock']}</Segment>
-                    <Segment className="notifySegments" textAlign="left">Transaction Root: {blockInfo['BClaims']['TxRoot']}</Segment>
-                    <Segment className="notifySegments" textAlign="left">State Root: {blockInfo['BClaims']['StateRoot']}</Segment>
-                    <Segment className="notifySegments" textAlign="left">Header Root: {blockInfo['BClaims']['HeaderRoot']}</Segment>
-                    <Segment className="notifySegments" textAlign="left">Group Signature: {blockInfo['SigGroup']}</Segment>
+                    <Segment className="notifySegments" textAlign="left">Previous Block: 0x{blockInfo['BClaims']['PrevBlock']}<Icon name="copy outline" className="click" onClick={() => props.states.copyText("0x" + blockInfo['BClaims']['PrevBlock'])} /></Segment>
+                    <Segment className="notifySegments" textAlign="left">Transaction Root: 0x{blockInfo['BClaims']['TxRoot']}<Icon name="copy outline" className="click" onClick={() => props.states.copyText("0x" + blockInfo['BClaims']['TxRoot'])} /></Segment>
+                    <Segment className="notifySegments" textAlign="left">State Root: 0x{blockInfo['BClaims']['StateRoot']}<Icon name="copy outline" className="click" onClick={() => props.states.copyText("0x" + blockInfo['BClaims']['StateRoot'])} /></Segment>
+                    <Segment className="notifySegments" textAlign="left">Header Root: 0x{blockInfo['BClaims']['HeaderRoot']}<Icon name="copy outline" className="click" onClick={() => props.states.copyText("0x" + blockInfo['BClaims']['HeaderRoot'])} /></Segment>
+                    <Segment className="notifySegments" textAlign="left">Group Signature: 0x{blockInfo['SigGroup']}<Icon name="copy outline" className="click" onClick={() => props.states.copyText("0x" + blockInfo['SigGroup'])} /></Segment>
                     <Segment className="notifySegments" textAlign="left">
 
 

@@ -116,7 +116,7 @@ function MadNet(props) {
     else {
         return (
             <>
-                <BlockModal isBlockModal={props.states.isBlockModal} setBlockModal={props.states.setBlockModal} />
+                <BlockModal states={props.states} />
                 <Menu pointing secondary compact>
                     <Menu.Item
                         name="Transaction"

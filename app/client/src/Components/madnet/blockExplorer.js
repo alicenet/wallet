@@ -37,7 +37,7 @@ function BlockExplorer(props) {
                 <Segment.Group compact={true} >
                     <Segment textAlign="left">Height: {e['BClaims']['Height']}</Segment>
                     <Segment className="notifySegments" textAlign="left">Tx Count: {e['BClaims']['TxCount'] ? e['BClaims']['TxCount'] : 0}</Segment>
-                    <Segment textAlign="left">Group Signature: {e['SigGroup'].slice(0,20) + "..." + e['SigGroup'].slice(e['SigGroup'].length - 20)}</Segment>
+                    <Segment textAlign="left">Group Signature: 0x{e['SigGroup'].slice(0,20) + "..." + e['SigGroup'].slice(e['SigGroup'].length - 20)}</Segment>
                 </Segment.Group>
                 <br></br>
                 </a>

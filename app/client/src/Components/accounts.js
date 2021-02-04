@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { StoreContext } from "../Store/store.js";
-import { Container, Grid, Form, Input, Segment, Button, Divider } from "semantic-ui-react"
+import { Container, Grid, Form, Input, Segment, Button, Divider, Icon } from "semantic-ui-react"
 import Switch from "react-switch";
 const Web3 = require('web3');
 
@@ -146,8 +146,8 @@ function Accounts(props) {
         }
         return store.wallet.Account.accounts.map(function (e, i) {
             return (
-                <Segment.Group class="segment-card" compact={true} key={i} raised>
-                    <Segment textAlign="left">Address: 0x{e.address}</Segment>
+                <Segment.Group className="segment-card" compact={true} key={i} raised>
+                    <Segment textAlign="left">Address: 0x{e.address}<Icon name="copy outline" className="click" onClick={() => props.states.copyText("0x" + e.address)} /></Segment>
                     <Segment textAlign="left">Curve: {e.curve === 1 ? "SECP" : "BN"}</Segment>
                 </Segment.Group>
             )

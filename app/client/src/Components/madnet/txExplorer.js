@@ -1,24 +1,15 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { StoreContext } from "../../Store/store.js";
-import { Container, Button, Form, Segment, Grid, Menu } from 'semantic-ui-react';
+import { Container, Button, Form, Segment, Grid, Icon } from 'semantic-ui-react';
 import Switch from "react-switch";
 
-function TransactionExplorer() {
+function TransactionExplorer(props) {
     // Store states
     const { store } = useContext(StoreContext);
     // Search hash
     const [txHash, setTxHash] = useState(false);
     const [rawVin, setRawVin] = useState(false);
     const [rawVout, setRawVout] = useState(false);
-
-    // Reset state on mount
-    useEffect(() => {
-        return () => {
-            setTxHash(false);
-            store.madNetAdapter.transactionHash = false;
-            store.madNetAdapter.transaction = false;
-        }
-    }, []);
 
     // Update search params
     const handleChange = (event, e) => {
@@ -47,6 +38,7 @@ function TransactionExplorer() {
                     <Segment.Group className="txView" key={i}>
                         <Segment textAlign="left">
                             <pre>{JSON.stringify(e, null, 2)}</pre>
+                            <Icon name="copy outline" className="click" onClick={() => props.states.copyText(JSON.stringify(e, null, 2))} />
                         </Segment>
                     </Segment.Group>
                 )
@@ -56,9 +48,9 @@ function TransactionExplorer() {
             return data.map((e, i) => {
                 return (
                     <Segment.Group className="txView" key={i}>
-                        <Segment className="notifySegments" textAlign="left">Consumed Transaction: {e['TXInLinker']['TXInPreImage']['ConsumedTxHash']}</Segment>
+                        <Segment className="notifySegments" textAlign="left">Consumed Transaction: 0x{e['TXInLinker']['TXInPreImage']['ConsumedTxHash']}<Icon name="copy outline" className="click" onClick={() => props.states.copyText("0x" + e['TXInLinker']['TXInPreImage']['ConsumedTxHash'])} /></Segment>
                         <Segment className="notifySegments" textAlign="left">Consumed Transaction Index: {e['TXInLinker']['TXInPreImage']['ConsumedTxIdx'] ? e['TXInLinker']['TXInPreImage']['ConsumedTxIdx'] : 0}</Segment>
-                        <Segment className="notifySegments" textAlign="left">Signature: {e['Signature']}</Segment>
+                        <Segment className="notifySegments" textAlign="left">Signature: 0x{e['Signature']}<Icon name="copy outline" className="click" onClick={() => props.states.copyText("0x" + e['Signature'])} /></Segment>
                     </Segment.Group>
                 )
             });
@@ -73,6 +65,7 @@ function TransactionExplorer() {
                     <Segment.Group className="txView" key={i} >
                         <Segment textAlign="left">
                             <pre>{JSON.stringify(e, null, 2)}</pre>
+                            <Icon name="copy outline" className="click" onClick={() => props.states.copyText(JSON.stringify(e, null, 2))} />
                         </Segment>
                     </Segment.Group>
                 )
@@ -96,20 +89,21 @@ function TransactionExplorer() {
             case "ValueStore":
                 return (
                     <>
-                    <Segment className="notifySegments" textAlign="left">Value: {object['VSPreImage']['Value'] ? object['VSPreImage']['Value'] : 0}</Segment>
-                    <Segment className="notifySegments" textAlign="left">Owner: {object['VSPreImage']['Owner']}</Segment>
+                    <Segment className="notifySegments" textAlign="left">Value: 0x{object['VSPreImage']['Value'] ? object['VSPreImage']['Value'] : 0x0}</Segment>
+                    <Segment className="notifySegments" textAlign="left">Owner: 0x{object['VSPreImage']['Owner']}<Icon name="copy outline" className="click" onClick={() => props.states.copyText("0x" + object['VSPreImage']['Owner'])} /></Segment>
                     <Segment className="notifySegments" textAlign="left">Transaction Index: {object['VSPreImage']['TXOutIdx'] ? object['VSPreImage']['TXOutIdx'] : 0}</Segment>
                     </>
                 );;
             case 'DataStore':
                 return (
                 <>
-                    <Segment className="notifySegments" textAlign="left">Index: {object['DSLinker']['DSPreImage']['Index'] ? object['DSLinker']['DSPreImage']['Index'] : 0}</Segment>
-                    <Segment className="notifySegments" textAlign="left">Raw Data: {object['DSLinker']['DSPreImage']['RawData']}</Segment>
+                    <Segment className="notifySegments" textAlign="left">Index: 0x{object['DSLinker']['DSPreImage']['Index'] ? object['DSLinker']['DSPreImage']['Index'] : 0}<Icon name="copy outline" className="click" onClick={() => props.states.copyText("0x" + object['DSLinker']['DSPreImage']['Index'])} /></Segment>
+                    <Segment className="notifySegments" textAlign="left">Raw Data: 0x{object['DSLinker']['DSPreImage']['RawData']}<Icon name="copy outline" className="click" onClick={() => props.states.copyText("0x" + object['DSLinker']['DSPreImage']['RawData'])} /></Segment>
+                    <Segment className="notifySegments" textAlign="left">Owner: 0x{object['DSLinker']['DSPreImage']['Owner']}<Icon name="copy outline" className="click" onClick={() => props.states.copyText("0x" + object['DSLinker']['DSPreImage']['Owner'])} /></Segment>
                     <Segment className="notifySegments" textAlign="left">Issued At: {object['DSLinker']['DSPreImage']['IssuedAt']}</Segment>
-                    <Segment className="notifySegments" textAlign="left">Deposit: {object['DSLinker']['DSPreImage']['Deposit']}</Segment>
+                    <Segment className="notifySegments" textAlign="left">Deposit: 0x{object['DSLinker']['DSPreImage']['Deposit']}</Segment>
                     <Segment className="notifySegments" textAlign="left">Transaction Index: {object['DSLinker']['DSPreImage']['TXOutIdx'] ? object['DSLinker']['DSPreImage']['TXOutIdx'] : 0}</Segment>
-                    <Segment className="notifySegments" textAlign="left">Signature: {object['Signature']}</Segment>
+                    <Segment className="notifySegments" textAlign="left">Signature: 0x{object['Signature']}<Icon name="copy outline" className="click" onClick={() => props.states.copyText("0x" + object['Signature'])} /></Segment>
                 </>
                 );;
             default:

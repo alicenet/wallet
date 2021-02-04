@@ -5,6 +5,9 @@ class MadNetAdapter {
         this.provider = provider;
         this.connected = false;
 
+        this.txOuts = [];
+        this.changeAddress = {"address": "", "bnCurve": false};
+
         this.pending = [];
         this.pendingLocked = false;
 
@@ -16,6 +19,11 @@ class MadNetAdapter {
 
         this.transactionHash = false;
         this.transaction = false;
+
+        this.dsSearchOpts = { "address": "", "offset": "", "bnCurve": false };
+        this.dsDataStores = [];
+        this.dsActivePage = 1;
+        this.dsView = [];
     }
 
     async init() {
@@ -29,10 +37,82 @@ class MadNetAdapter {
             await this.cb.call(this, "error", String(ex));
         }
     }
+
+    async addTxOut(txOut) {
+        try {
+            this.txOuts.push(txOut)
+            await this.cb.call(this, "success");
+        }
+        catch(ex) {
+            await this.cb.call(this, "error", String(ex));
+        }
+    }
+
+    async setTxOuts(txOuts) {
+        try {
+            this.txOuts = txOuts;
+            await this.cb.call(this, "success");
+        }
+        catch(ex) {
+            await this.cb.call(this, "error", String(ex));
+        }
+    }
+
+    async setChangeAddress(changeAddress) {
+        try {
+            this.changeAddress = changeAddress;
+            await this.cb.call(this, "success");
+        }
+        catch(ex) {
+            await this.cb.call(this, "error", String(ex));
+        }
+    }
+
+    async setDsSearchOpts(searchOpts) {
+        try {
+            this.dsSearchOpts = searchOpts;
+            await this.cb.call(this, "success");
+        }
+        catch(ex) {
+            await this.cb.call(this, "error", String(ex));
+        } 
+    }
+
+    async setDsDataStores(DataStores) {
+        try {
+            this.dsDataStores = DataStores;
+            await this.cb.call(this, "success");
+        }
+        catch(ex) {
+            await this.cb.call(this, "error", String(ex));
+        } 
+    }
+
+    async setDsActivePage(activePage) {
+        try {
+            this.dsActivePage = activePage;
+            await this.cb.call(this, "success");
+        }
+        catch(ex) {
+            await this.cb.call(this, "error", String(ex));
+        } 
+    }
+
+    async setDsView(dsView) {
+        try {
+            this.dsView = dsView;
+            await this.cb.call(this, "success");
+        }
+        catch(ex) {
+            await this.cb.call(this, "error", String(ex));
+        } 
+    }
+
+
     // Create the transaction from user inputed TxOuts
-    async createTx(txOuts, changeAddress) {
+    async createTx() {
         await this.cb.call(this, "wait", "Sending transacton");
-        for await (let txOut of txOuts) {
+        for await (let txOut of this.txOuts) {
             try {
                 switch (txOut.type) {
                     case "VS":
@@ -46,19 +126,23 @@ class MadNetAdapter {
                 }
             }
             catch (ex) {
+                this.txOuts = [];
+                this.changeAddress = {};
                 await this.wallet.Transaction._reset();
                 await this.cb.call(this, "error", String(ex));
                 return
             }
         }
         try {
-            let tx = await this.wallet.Transaction.sendTx(changeAddress["address"], changeAddress["bnCurve"]);
+            let tx = await this.wallet.Transaction.sendTx(this.changeAddress["address"], this.changeAddress["bnCurve"]);
             await this.cb.call(this, "success", { "type": "warning", "msg": "Pending: " + this.trimTxHash(tx) });
             this.pending.push(tx)
             this.monitorPending();
         }
         catch (ex) {
-            await this.wallet.Transaction.reset();
+            this.txOuts = [];
+            this.changeAddress = {};
+            await this.wallet.Transaction._reset();
             await this.cb.call(this, "error", String(ex));
         }
     }
@@ -159,6 +243,9 @@ class MadNetAdapter {
         await this.cb.call(this, "wait", "Getting Transaction");
         try {
             this.transactionHash = txHash;
+            if (txHash.indexOf('0x') >= 0) {
+                txHash = txHash.slice(2);
+            }
             let Tx = await this.wallet.Rpc.getMinedTransaction(txHash);
             this.transaction = Tx["Tx"];
             if (changeView) {
