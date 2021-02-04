@@ -1,65 +1,55 @@
 import React, { useContext, useState } from 'react';
-import { StoreContext } from "../Store/store.js";
+import { StoreContext } from "../../Store/store.js";
 import { Container, Button, Form, Segment, Card, Grid, Icon } from 'semantic-ui-react';
 import Switch from "react-switch";
 
 function DataExplorer(props) {
     // Store states
     const { store } = useContext(StoreContext);
-    // Search params
-    const [searchOpts, setSearchOpts] = useState({ "address": "", "offset": "", "bnCurve": false })
-    // All datastores from current query
-    const [DataStores, setDataStores] = useState([]);
-    // Current page being viewed
-    const [activePage, setPage] = useState(1);
-    // Datastores displayed in the page view
-    const [DSView, setDSView] = useState([]);
+
     // Amount of datastores to display per page
     const DataPerPage = 5;
 
     // Update search params
     const handleChange = (event, e, v) => {
+        let opts = JSON.parse(JSON.stringify(store.madNetAdapter.dsSearchOpts));
         if (e === "bnCurve") {
-            setSearchOpts({
-                ...searchOpts,
-                [e]: event
-            })
+            opts[e] = event;
+            store.madNetAdapter.setDsSearchOpts(opts);
             return;
         }
-        setSearchOpts({
-            ...searchOpts,
-            [e]: event.target.value
-        })
+        opts[e] = event.target.value;
+        store.madNetAdapter.setDsSearchOpts(opts);
     }
 
     // Handle next / previous page clicks
     const handlePage = (e) => {
-        let page = activePage + e
-        if (activePage > page) {
-            setDSView(DataStores.slice(((page - 1) * DataPerPage), ((((page - 1) * DataPerPage) + DataPerPage))))
+        let page = store.madNetAdapter.dsActivePage + e
+        if (store.madNetAdapter.dsActivePage > page) {
+            store.madNetAdapter.setDsView(store.madNetAdapter.dsDataStores.slice(((page - 1) * DataPerPage), ((((page - 1) * DataPerPage) + DataPerPage))))
         }
-        else if (activePage < page &&
+        else if (store.madNetAdapter.dsActivePage < page &&
             (
-                (DataPerPage * page) - DataStores.length === 0 ||
-                DataStores.length % (DataPerPage + 1) !== 0
+                (DataPerPage * page) - store.madNetAdapter.dsDataStores.length === 0 ||
+                store.madNetAdapter.dsDataStores.length % (DataPerPage + 1) !== 0
             )
         ) {
-            setDSView(DataStores.slice((activePage * DataPerPage), (((activePage * DataPerPage) + DataPerPage))))
+            store.madNetAdapter.setDsView(store.madNetAdapter.dsDataStores.slice((store.madNetAdapter.dsActivePage * DataPerPage), (((store.madNetAdapter.dsActivePage * DataPerPage) + DataPerPage))))
         }
         else {
-            getData(DataStores[DataStores.length - 1]["DSLinker"]["DSPreImage"]["Index"], page);
+            getData(store.madNetAdapter.dsDataStores[store.madNetAdapter.dsDataStores.length - 1]["DSLinker"]["DSPreImage"]["Index"], page);
         }
-        setPage(page);
+        store.madNetAdapter.setDsActivePage(page);
     }
 
     // Sumbit initial query params
     const handleSubmit = (event) => {
         event.preventDefault()
-        if (searchOpts["address"] === "") {
+        if (store.madNetAdapter.dsSearchOpts["address"] === "") {
             return;
         }
-        setPage(1)
-        getData(searchOpts["offset"], 1, true);
+        store.madNetAdapter.setDsActivePage(1)
+        getData(store.madNetAdapter.dsSearchOpts["offset"], 1, true);
     }
 
     // Get data from the RPC
@@ -70,11 +60,11 @@ function DataExplorer(props) {
             if (index && index !== "" && submit) {
                 let max = (DataPerPage)
                 for (let i = max; i > 0; i--) {
-                    let attempt = await store.wallet.Rpc.getDataStoreUTXOIDs(searchOpts["address"], (searchOpts["bnCurve"] ? 2 : 1), i, index)
+                    let attempt = await store.wallet.Rpc.getDataStoreUTXOIDs(store.madNetAdapter.dsSearchOpts["address"], (store.madNetAdapter.dsSearchOpts["bnCurve"] ? 2 : 1), i, index)
                     if (attempt && attempt.length > 0) {
                         dataStores = attempt;
                         if (i !== 1) {
-                            let queryObj = await store.wallet.Rpc.getDataStoreUTXOIDs(searchOpts["address"], (searchOpts["bnCurve"] ? 2 : 1), 1, index)
+                            let queryObj = await store.wallet.Rpc.getDataStoreUTXOIDs(store.madNetAdapter.dsSearchOpts["address"], (store.madNetAdapter.dsSearchOpts["bnCurve"] ? 2 : 1), 1, index)
                             dataStores.unshift(queryObj[0]);
                         }
                         break;
@@ -82,7 +72,7 @@ function DataExplorer(props) {
                 }
             }
             else {
-                dataStores = await store.wallet.Rpc.getDataStoreUTXOIDs(searchOpts["address"], (searchOpts["bnCurve"] ? 2 : 1), (DataPerPage + 1), index)
+                dataStores = await store.wallet.Rpc.getDataStoreUTXOIDs(store.madNetAdapter.dsSearchOpts["address"], (store.madNetAdapter.dsSearchOpts["bnCurve"] ? 2 : 1), (DataPerPage + 1), index)
             }
             if (!dataStores) {
                 props.states.setLoading(false);
@@ -94,13 +84,13 @@ function DataExplorer(props) {
             }
             let DStores = await store.wallet.Rpc.getUTXOsByIds(UTXOIDS)
             if (!submit) {
-                let DS = DataStores.concat(DStores[0]);
-                setDSView(DS.slice(((page - 1) * DataPerPage), ((((page - 1) * DataPerPage) + DataPerPage))))
-                setDataStores(ds => [...ds, ...DStores[0]]);
+                let DS = store.madNetAdapter.dsDataStores.concat(DStores[0]);
+                store.madNetAdapter.setDsView(DS.slice(((page - 1) * DataPerPage), ((((page - 1) * DataPerPage) + DataPerPage))))
+                store.madNetAdapter.setDsDataStores(ds => [...ds, ...DStores[0]]);
             }
             else {
-                setDSView(DStores[0].slice(((page - 1) * DataPerPage), ((((page - 1) * DataPerPage) + DataPerPage))))
-                setDataStores(DStores[0]);
+                store.madNetAdapter.setDsView(DStores[0].slice(((page - 1) * DataPerPage), ((((page - 1) * DataPerPage) + DataPerPage))))
+                store.madNetAdapter.setDsDataStores(DStores[0]);
             }
             props.states.setLoading(false);
             props.states.setUpdateView((updateView) => ++updateView);
@@ -114,12 +104,12 @@ function DataExplorer(props) {
 
     // View search results
     const dataView = () => {
-        if (DSView.length > 0) {
-            return DSView.map(function (e, i) {
+        if (store.madNetAdapter.dsView.length > 0) {
+            return store.madNetAdapter.dsView.map(function (e, i) {
                 return (
                     <Segment.Group compact={true} key={i}>
-                        <Segment textAlign="left">Index: {e["DSLinker"]["DSPreImage"]["Index"]}</Segment>
-                        <Segment textAlign="left">Data: {e["DSLinker"]["DSPreImage"]["RawData"]}</Segment>
+                        <Segment textAlign="left">Index: 0x{e["DSLinker"]["DSPreImage"]["Index"]}</Segment>
+                        <Segment textAlign="left">Data: 0x{e["DSLinker"]["DSPreImage"]["RawData"]}</Segment>
                     </Segment.Group>
                 )
             });
@@ -131,7 +121,7 @@ function DataExplorer(props) {
 
     // Pagination buttons
     const paginate = () => {
-        if (DataStores.length < (DataPerPage + 1)) {
+        if (store.madNetAdapter.dsDataStores.length < (DataPerPage + 1)) {
             return (
                 <></>
             )
@@ -139,10 +129,10 @@ function DataExplorer(props) {
         else {
             return (
                 <>
-                    <Button onClick={() => handlePage(-1)} disabled={Boolean(activePage === 1)} color="blue" icon>
+                    <Button onClick={() => handlePage(-1)} disabled={Boolean(store.madNetAdapter.dsActivePage === 1)} color="blue" icon>
                         <Icon name='angle left' />
                     </Button>
-                    <Button onClick={() => handlePage(1)} disabled={Boolean(activePage === Math.ceil(DataStores.length / DataPerPage))} color="blue" icon>
+                    <Button onClick={() => handlePage(1)} disabled={Boolean(store.madNetAdapter.dsActivePage === Math.ceil(store.madNetAdapter.dsDataStores.length / DataPerPage))} color="blue" icon>
                         <Icon name='angle right' />
                     </Button>
                 </>
@@ -158,13 +148,13 @@ function DataExplorer(props) {
                 <Segment raised>
                     <Form fluid="true">
                         <Form.Group>
-                            <Form.Input onChange={(event, data) => { handleChange(event, "address", data) }} label='Address' placeholder='0x...' />
-                            <Form.Input onChange={(event, data) => { handleChange(event, "offset", data) }} label='Offset' placeholder='0x...' />
+                            <Form.Input value={store.madNetAdapter.dsSearchOpts["address"]} onChange={(event, data) => { handleChange(event, "address", data) }} label='Address' placeholder='0x...' />
+                            <Form.Input value={store.madNetAdapter.dsSearchOpts["offset"]} onChange={(event, data) => { handleChange(event, "offset", data) }} label='Offset' placeholder='0x...' />
                         </Form.Group>
                         <Form.Field>
                             <Form.Group className="switch" inline>
                                 <label>BN Address</label>
-                                <Switch onColor="#4aec75" height={22} width={46} offColor="#ff6464" offHandleColor="#212121" onHandleColor="#f0ece2" onChange={(event, data) => { handleChange(event, "bnCurve", data) }} checked={Boolean(searchOpts["bnCurve"])} />
+                                <Switch onColor="#4aec75" height={22} width={46} offColor="#ff6464" offHandleColor="#212121" onHandleColor="#f0ece2" onChange={(event, data) => { handleChange(event, "bnCurve", data) }} checked={Boolean(store.madNetAdapter.dsSearchOpts["bnCurve"])} />
                             </Form.Group>
                         </Form.Field>
                         <Button color="blue" onClick={(event) => handleSubmit(event)}>Browse</Button>
@@ -174,7 +164,7 @@ function DataExplorer(props) {
             <Grid.Row>
                 <Container>
                     <Segment raised>
-                        <p>{DataStores.length === 0 ? "No DataStores to display!" : ""}</p>
+                        <p>{store.madNetAdapter.dsDataStores.length === 0 ? "No DataStores to display!" : ""}</p>
                         <Card.Group centered={true}>
                             {dataView()}
                         </Card.Group>
