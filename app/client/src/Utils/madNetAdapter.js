@@ -6,7 +6,7 @@ class MadNetAdapter {
         this.connected = false;
 
         this.txOuts = [];
-        this.changeAddress = {"address": "", "bnCurve": false};
+        this.changeAddress = { "address": "", "bnCurve": false };
 
         this.pending = [];
         this.pendingLocked = false;
@@ -19,7 +19,9 @@ class MadNetAdapter {
 
         this.transactionHash = false;
         this.transaction = false;
+        this.transactionHeight = false;
 
+        this.dsRedirected = false;
         this.dsSearchOpts = { "address": "", "offset": "", "bnCurve": false };
         this.dsDataStores = [];
         this.dsActivePage = 1;
@@ -43,7 +45,7 @@ class MadNetAdapter {
             this.txOuts.push(txOut)
             await this.cb.call(this, "success");
         }
-        catch(ex) {
+        catch (ex) {
             await this.cb.call(this, "error", String(ex));
         }
     }
@@ -53,7 +55,7 @@ class MadNetAdapter {
             this.txOuts = txOuts;
             await this.cb.call(this, "success");
         }
-        catch(ex) {
+        catch (ex) {
             await this.cb.call(this, "error", String(ex));
         }
     }
@@ -63,7 +65,7 @@ class MadNetAdapter {
             this.changeAddress = changeAddress;
             await this.cb.call(this, "success");
         }
-        catch(ex) {
+        catch (ex) {
             await this.cb.call(this, "error", String(ex));
         }
     }
@@ -73,9 +75,9 @@ class MadNetAdapter {
             this.dsSearchOpts = searchOpts;
             await this.cb.call(this, "success");
         }
-        catch(ex) {
+        catch (ex) {
             await this.cb.call(this, "error", String(ex));
-        } 
+        }
     }
 
     async setDsDataStores(DataStores) {
@@ -83,9 +85,9 @@ class MadNetAdapter {
             this.dsDataStores = DataStores;
             await this.cb.call(this, "success");
         }
-        catch(ex) {
+        catch (ex) {
             await this.cb.call(this, "error", String(ex));
-        } 
+        }
     }
 
     async setDsActivePage(activePage) {
@@ -93,9 +95,9 @@ class MadNetAdapter {
             this.dsActivePage = activePage;
             await this.cb.call(this, "success");
         }
-        catch(ex) {
+        catch (ex) {
             await this.cb.call(this, "error", String(ex));
-        } 
+        }
     }
 
     async setDsView(dsView) {
@@ -103,11 +105,10 @@ class MadNetAdapter {
             this.dsView = dsView;
             await this.cb.call(this, "success");
         }
-        catch(ex) {
+        catch (ex) {
             await this.cb.call(this, "error", String(ex));
-        } 
+        }
     }
-
 
     // Create the transaction from user inputed TxOuts
     async createTx() {
@@ -238,6 +239,21 @@ class MadNetAdapter {
         }
     }
 
+    // Get block for modal
+    async viewBlockFromTx(txHash) {
+        await this.cb.call(this, "wait", "Getting Block");
+        try {
+            // TODO: Add this method in Rpc
+            let txHeight = await this.wallet.Rpc.request('get-tx-block-number', {TxHash: txHash});
+            let blockHeader = await this.wallet.Rpc.getBlockHeader(txHeight);
+            await this.cb.call(this, "notify", blockHeader);
+            return blockHeader
+        }
+        catch (ex) {
+            await this.cb.call(this, "error", String(ex));
+        }
+    }
+
     // Get transaction for txExplorer
     async viewTransaction(txHash, changeView) {
         await this.cb.call(this, "wait", "Getting Transaction");
@@ -248,11 +264,13 @@ class MadNetAdapter {
             }
             let Tx = await this.wallet.Rpc.getMinedTransaction(txHash);
             this.transaction = Tx["Tx"];
+            let txHeight = await this.wallet.Rpc.request('get-tx-block-number', {TxHash: txHash});
+            this.transactionHeight = txHeight['BlockHeight'];
             if (changeView) {
                 await this.cb.call(this, "view", "txExplorer");
             }
             else {
-                await this.cb.call(this, "success"); 
+                await this.cb.call(this, "success");
             }
         }
         catch (ex) {

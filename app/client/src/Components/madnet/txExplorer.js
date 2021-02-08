@@ -99,7 +99,7 @@ function TransactionExplorer(props) {
                 <>
                     <Segment className="notifySegments" textAlign="left">Index: 0x{object['DSLinker']['DSPreImage']['Index'] ? object['DSLinker']['DSPreImage']['Index'] : 0}<Icon name="copy outline" className="click" onClick={() => props.states.copyText("0x" + object['DSLinker']['DSPreImage']['Index'])} /></Segment>
                     <Segment className="notifySegments" textAlign="left">Raw Data: 0x{object['DSLinker']['DSPreImage']['RawData']}<Icon name="copy outline" className="click" onClick={() => props.states.copyText("0x" + object['DSLinker']['DSPreImage']['RawData'])} /></Segment>
-                    <Segment className="notifySegments" textAlign="left">Owner: 0x{object['DSLinker']['DSPreImage']['Owner']}<Icon name="copy outline" className="click" onClick={() => props.states.copyText("0x" + object['DSLinker']['DSPreImage']['Owner'])} /></Segment>
+                    <Segment className="notifySegments" textAlign="left">Owner: 0x{object['DSLinker']['DSPreImage']['Owner']}<Icon name="copy outline" className="click" onClick={() => props.states.copyText("0x" + object['DSLinker']['DSPreImage']['Owner'])} /><Icon className="click" name="external" onClick={() => { store.madNetAdapter.dsRedirected = { "address": object['DSLinker']['DSPreImage']['Owner'].slice(4), "offset": "", "bnCurve": object['DSLinker']['DSPreImage']['Owner'].slice(3,4) == 1 ? false : true } ; props.states.setMadnetPanel('dataExplorer') } }/></Segment>
                     <Segment className="notifySegments" textAlign="left">Issued At: {object['DSLinker']['DSPreImage']['IssuedAt']}</Segment>
                     <Segment className="notifySegments" textAlign="left">Deposit: 0x{object['DSLinker']['DSPreImage']['Deposit']}</Segment>
                     <Segment className="notifySegments" textAlign="left">Transaction Index: {object['DSLinker']['DSPreImage']['TXOutIdx'] ? object['DSLinker']['DSPreImage']['TXOutIdx'] : 0}</Segment>
@@ -171,7 +171,8 @@ function TransactionExplorer(props) {
             </Grid.Row>
             <Grid.Row centered>
                 <Container centered="true">
-                    <h4>{store.madNetAdapter.transactionHash ? "Tx Hash: " + store.madNetAdapter.transactionHash : ""}</h4>
+                    <h3>{store.madNetAdapter.transactionHash ? "Tx Hash: " + store.madNetAdapter.transactionHash : ""} {store.madNetAdapter.transactionHash ? (<Icon name="copy outline" className="click" onClick={() => props.states.copyText("0x" + store.madNetAdapter.transactionHash)} />) : (<></>)}</h3>
+                    <h4>{store.madNetAdapter.transactionHeight ? "Height: " + store.madNetAdapter.transactionHeight : ""} {store.madNetAdapter.transactionHeight ? (<Icon className="click" name="external" onClick={() => store.madNetAdapter.viewBlock(store.madNetAdapter.transactionHeight)} />) : (<></>)} </h4>
                     {getData()}
                 </Container>
             </Grid.Row>

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { StoreContext } from "../../Store/store.js";
 import { Container, Button, Form, Segment, Card, Grid, Icon } from 'semantic-ui-react';
 import Switch from "react-switch";
@@ -9,6 +9,14 @@ function DataExplorer(props) {
 
     // Amount of datastores to display per page
     const DataPerPage = 5;
+
+    useEffect(() => {
+        if (store.madNetAdapter.dsRedirected) {
+            store.madNetAdapter.dsSearchOpts = store.madNetAdapter.dsRedirected;
+            store.madNetAdapter.dsRedirected = false;
+            handleSubmit();
+        }
+    }, [store.madNetAdapter.dsRedirected]);
 
     // Update search params
     const handleChange = (event, e, v) => {
@@ -44,7 +52,9 @@ function DataExplorer(props) {
 
     // Sumbit initial query params
     const handleSubmit = (event) => {
-        event.preventDefault()
+        if (event) {
+            event.preventDefault();
+        }
         if (store.madNetAdapter.dsSearchOpts["address"] === "") {
             return;
         }
@@ -108,8 +118,9 @@ function DataExplorer(props) {
             return store.madNetAdapter.dsView.map(function (e, i) {
                 return (
                     <Segment.Group compact={true} key={i}>
-                        <Segment textAlign="left">Index: 0x{e["DSLinker"]["DSPreImage"]["Index"]}</Segment>
-                        <Segment textAlign="left">Data: 0x{e["DSLinker"]["DSPreImage"]["RawData"]}</Segment>
+                        <Segment className="notifySegments" textAlign="left">Index: 0x{e["DSLinker"]["DSPreImage"]["Index"]} <Icon name="copy outline" className="click" onClick={() => props.states.copyText("0x" + e["DSLinker"]["DSPreImage"]["Index"])} /> </Segment>
+                        <Segment className="notifySegments" textAlign="left">Data: 0x{e["DSLinker"]["DSPreImage"]["RawData"]} <Icon name="copy outline" className="click" onClick={() => props.states.copyText("0x" + e["DSLinker"]["DSPreImage"]["RawData"])} /> </Segment>
+                        <Segment className="notifySegments" textAlign="left">Transaction Hash: 0x{e["DSLinker"]["TxHash"]} <Icon name="copy outline" className="click" onClick={() => props.states.copyText("0x" + e["DSLinker"]["TxHash"])} /> <Icon className="click" name="external" onClick={() => store.madNetAdapter.viewTransaction(e["DSLinker"]["TxHash"], true)}/></Segment>
                     </Segment.Group>
                 )
             });
