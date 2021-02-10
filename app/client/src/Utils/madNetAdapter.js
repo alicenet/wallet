@@ -1,3 +1,5 @@
+const BigInt = require("big-integer");
+
 class MadNetAdapter {
     constructor(cb, wallet, provider) {
         this.cb = cb;
@@ -5,22 +7,25 @@ class MadNetAdapter {
         this.provider = provider;
         this.connected = false;
 
+        // Transaction panel
         this.txOuts = [];
         this.changeAddress = { "address": "", "bnCurve": false };
-
         this.pending = [];
         this.pendingLocked = false;
 
+        // Block explorer panel
         this.blocks = [];
         this.blocksStarted = false;
         this.currentBlock = 0;
         this.blocksLocked = false;
         this.blocksId = false;
 
+        // Tx explorer panel
         this.transactionHash = false;
         this.transaction = false;
         this.transactionHeight = false;
 
+        // DataStore explorer panel
         this.dsRedirected = false;
         this.dsSearchOpts = { "address": "", "offset": "", "bnCurve": false };
         this.dsDataStores = [];
@@ -28,6 +33,7 @@ class MadNetAdapter {
         this.dsView = [];
     }
 
+    // Initialize the adapter
     async init() {
         try {
             await this.cb.call(this, "wait", "Connecting to Mad Network");
@@ -40,75 +46,7 @@ class MadNetAdapter {
         }
     }
 
-    async addTxOut(txOut) {
-        try {
-            this.txOuts.push(txOut)
-            await this.cb.call(this, "success");
-        }
-        catch (ex) {
-            await this.cb.call(this, "error", String(ex));
-        }
-    }
 
-    async setTxOuts(txOuts) {
-        try {
-            this.txOuts = txOuts;
-            await this.cb.call(this, "success");
-        }
-        catch (ex) {
-            await this.cb.call(this, "error", String(ex));
-        }
-    }
-
-    async setChangeAddress(changeAddress) {
-        try {
-            this.changeAddress = changeAddress;
-            await this.cb.call(this, "success");
-        }
-        catch (ex) {
-            await this.cb.call(this, "error", String(ex));
-        }
-    }
-
-    async setDsSearchOpts(searchOpts) {
-        try {
-            this.dsSearchOpts = searchOpts;
-            await this.cb.call(this, "success");
-        }
-        catch (ex) {
-            await this.cb.call(this, "error", String(ex));
-        }
-    }
-
-    async setDsDataStores(DataStores) {
-        try {
-            this.dsDataStores = DataStores;
-            await this.cb.call(this, "success");
-        }
-        catch (ex) {
-            await this.cb.call(this, "error", String(ex));
-        }
-    }
-
-    async setDsActivePage(activePage) {
-        try {
-            this.dsActivePage = activePage;
-            await this.cb.call(this, "success");
-        }
-        catch (ex) {
-            await this.cb.call(this, "error", String(ex));
-        }
-    }
-
-    async setDsView(dsView) {
-        try {
-            this.dsView = dsView;
-            await this.cb.call(this, "success");
-        }
-        catch (ex) {
-            await this.cb.call(this, "error", String(ex));
-        }
-    }
 
     // Create the transaction from user inputed TxOuts
     async createTx() {
@@ -243,8 +181,7 @@ class MadNetAdapter {
     async viewBlockFromTx(txHash) {
         await this.cb.call(this, "wait", "Getting Block");
         try {
-            // TODO: Add this method in Rpc
-            let txHeight = await this.wallet.Rpc.request('get-tx-block-number', {TxHash: txHash});
+            let txHeight = await this.wallet.Rpc.getTxBlockHeight(txHash);
             let blockHeader = await this.wallet.Rpc.getBlockHeader(txHeight);
             await this.cb.call(this, "notify", blockHeader);
             return blockHeader
@@ -264,7 +201,7 @@ class MadNetAdapter {
             }
             let Tx = await this.wallet.Rpc.getMinedTransaction(txHash);
             this.transaction = Tx["Tx"];
-            let txHeight = await this.wallet.Rpc.request('get-tx-block-number', {TxHash: txHash});
+            let txHeight = await this.wallet.Rpc.getTxBlockHeight(txHash);
             this.transactionHeight = txHeight['BlockHeight'];
             if (changeView) {
                 await this.cb.call(this, "view", "txExplorer");
@@ -280,6 +217,76 @@ class MadNetAdapter {
         }
     }
 
+    async addTxOut(txOut) {
+        try {
+            this.txOuts.push(txOut)
+            await this.cb.call(this, "success");
+        }
+        catch (ex) {
+            await this.cb.call(this, "error", String(ex));
+        }
+    }
+
+    async setTxOuts(txOuts) {
+        try {
+            this.txOuts = txOuts;
+            await this.cb.call(this, "success");
+        }
+        catch (ex) {
+            await this.cb.call(this, "error", String(ex));
+        }
+    }
+
+    async setChangeAddress(changeAddress) {
+        try {
+            this.changeAddress = changeAddress;
+            await this.cb.call(this, "success");
+        }
+        catch (ex) {
+            await this.cb.call(this, "error", String(ex));
+        }
+    }
+
+    async setDsSearchOpts(searchOpts) {
+        try {
+            this.dsSearchOpts = searchOpts;
+            await this.cb.call(this, "success");
+        }
+        catch (ex) {
+            await this.cb.call(this, "error", String(ex));
+        }
+    }
+
+    async setDsDataStores(DataStores) {
+        try {
+            this.dsDataStores = DataStores;
+            await this.cb.call(this, "success");
+        }
+        catch (ex) {
+            await this.cb.call(this, "error", String(ex));
+        }
+    }
+
+    async setDsActivePage(activePage) {
+        try {
+            this.dsActivePage = activePage;
+            await this.cb.call(this, "success");
+        }
+        catch (ex) {
+            await this.cb.call(this, "error", String(ex));
+        }
+    }
+
+    async setDsView(dsView) {
+        try {
+            this.dsView = dsView;
+            await this.cb.call(this, "success");
+        }
+        catch (ex) {
+            await this.cb.call(this, "error", String(ex));
+        }
+    }
+
     // Trim txHash for readability
     trimTxHash(txHash) {
         try {
@@ -288,6 +295,17 @@ class MadNetAdapter {
         }
         catch (ex) {
             throw String(ex)
+        }
+    }
+
+    // Hex to integer
+    hexToInt(hex) {
+        try {
+            let bInt = BigInt(hex, 16);
+            return bInt.toString();
+        }
+        catch(ex) {
+
         }
     }
 

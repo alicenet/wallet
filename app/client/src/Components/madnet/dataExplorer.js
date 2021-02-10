@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { StoreContext } from "../../Store/store.js";
 import { Container, Button, Form, Segment, Card, Grid, Icon } from 'semantic-ui-react';
 import Switch from "react-switch";
@@ -16,7 +16,7 @@ function DataExplorer(props) {
             store.madNetAdapter.dsRedirected = false;
             handleSubmit();
         }
-    }, [store.madNetAdapter.dsRedirected]);
+    }, [store.madNetAdapter.dsRedirected]); // eslint-disable-line react-hooks/exhaustive-deps
 
     // Update search params
     const handleChange = (event, e, v) => {
@@ -120,7 +120,7 @@ function DataExplorer(props) {
                     <Segment.Group compact={true} key={i}>
                         <Segment className="notifySegments" textAlign="left">Index: 0x{e["DSLinker"]["DSPreImage"]["Index"]} <Icon name="copy outline" className="click" onClick={() => props.states.copyText("0x" + e["DSLinker"]["DSPreImage"]["Index"])} /> </Segment>
                         <Segment className="notifySegments" textAlign="left">Data: 0x{e["DSLinker"]["DSPreImage"]["RawData"]} <Icon name="copy outline" className="click" onClick={() => props.states.copyText("0x" + e["DSLinker"]["DSPreImage"]["RawData"])} /> </Segment>
-                        <Segment className="notifySegments" textAlign="left">Transaction Hash: 0x{e["DSLinker"]["TxHash"]} <Icon name="copy outline" className="click" onClick={() => props.states.copyText("0x" + e["DSLinker"]["TxHash"])} /> <Icon className="click" name="external" onClick={() => store.madNetAdapter.viewTransaction(e["DSLinker"]["TxHash"], true)}/></Segment>
+                        <Segment className="notifySegments" textAlign="left">Transaction Hash: 0x{e["DSLinker"]["TxHash"]} <Icon name="copy outline" className="click" onClick={() => props.states.copyText("0x" + e["DSLinker"]["TxHash"])} /> <Icon className="click" name="external" onClick={() => store.madNetAdapter.viewTransaction(e["DSLinker"]["TxHash"], true)} /></Segment>
                     </Segment.Group>
                 )
             });

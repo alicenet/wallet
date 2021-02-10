@@ -24,7 +24,7 @@ function BlockModal(props) {
         }
         return blockInfo['TxHshLst'].map((e, i) => {
             return (
-                <List.Item className="click" onClick={() => { store.madNetAdapter.viewTransaction(e, true); setBlockInfo(false) }} key={i}>{e}</List.Item>
+                <List.Item className="click" onClick={() => { store.madNetAdapter.viewTransaction(e, true); setBlockInfo(false) }} key={i}>0x{e}</List.Item>
             )
         })
     }
