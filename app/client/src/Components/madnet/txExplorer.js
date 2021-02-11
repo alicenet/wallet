@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react';
 import { StoreContext } from "../../Store/store.js";
 import { Container, Button, Form, Segment, Grid, Icon } from 'semantic-ui-react';
 import Switch from "react-switch";
+import Help from '../help.js';
 
 function TransactionExplorer(props) {
     // Store states
@@ -48,9 +49,9 @@ function TransactionExplorer(props) {
             return data.map((e, i) => {
                 return (
                     <Segment.Group className="txView" key={i}>
-                        <Segment className="notifySegments" textAlign="left">Consumed Transaction: 0x{e['TXInLinker']['TXInPreImage']['ConsumedTxHash']}<Icon name="copy outline" className="click" onClick={() => props.states.copyText("0x" + e['TXInLinker']['TXInPreImage']['ConsumedTxHash'])} /></Segment>
-                        <Segment className="notifySegments" textAlign="left">Consumed Transaction Index: {e['TXInLinker']['TXInPreImage']['ConsumedTxIdx'] ? e['TXInLinker']['TXInPreImage']['ConsumedTxIdx'] : 0}</Segment>
-                        <Segment className="notifySegments" textAlign="left">Signature: 0x{e['Signature']}<Icon name="copy outline" className="click" onClick={() => props.states.copyText("0x" + e['Signature'])} /></Segment>
+                        <Segment className="notifySegments" textAlign="left">{<Help type='consumedTx' />}Consumed Transaction: 0x{e['TXInLinker']['TXInPreImage']['ConsumedTxHash']}<Icon name="copy outline" className="click" onClick={() => props.states.copyText("0x" + e['TXInLinker']['TXInPreImage']['ConsumedTxHash'])} /></Segment>
+                        <Segment className="notifySegments" textAlign="left">{<Help type='consumedTxIndex' />}Consumed Transaction Index: {e['TXInLinker']['TXInPreImage']['ConsumedTxIdx'] ? e['TXInLinker']['TXInPreImage']['ConsumedTxIdx'] : 0}</Segment>
+                        <Segment className="notifySegments" textAlign="left">{<Help type='signature' />}Signature: 0x{e['Signature']}<Icon name="copy outline" className="click" onClick={() => props.states.copyText("0x" + e['Signature'])} /></Segment>
                     </Segment.Group>
                 )
             });
@@ -75,7 +76,7 @@ function TransactionExplorer(props) {
             return data.map((e, i) => {
                 return (
                     <Segment.Group className="txView" key={i}>
-                        <Segment className="notifySegments" textAlign="left">Type: {Object.keys(e)[0]}</Segment>
+                        <Segment className="notifySegments" textAlign="left">{<Help type={Object.keys(e)[0]} />}{Object.keys(e)[0]}</Segment>
                         {voutFormatter(Object.keys(e)[0], e[Object.keys(e)[0]])}
                     </Segment.Group>
                 )
@@ -89,21 +90,22 @@ function TransactionExplorer(props) {
             case "ValueStore":
                 return (
                     <>
-                        <Segment className="notifySegments" textAlign="left">Value: {object['VSPreImage']['Value'] ? store.madNetAdapter.hexToInt(object['VSPreImage']['Value']) : 0}</Segment>
-                        <Segment className="notifySegments" textAlign="left">Owner: 0x{object['VSPreImage']['Owner'].slice(4)}{isBN(object['VSPreImage']['Owner'])}<Icon name="copy outline" className="click" onClick={() => props.states.copyText("0x" + object['VSPreImage']['Owner'])} /></Segment>
-                        <Segment className="notifySegments" textAlign="left">Transaction Index: {object['VSPreImage']['TXOutIdx'] ? object['VSPreImage']['TXOutIdx'] : 0}</Segment>
+                        <Segment className="notifySegments" textAlign="left">{<Help type='value' />}Value: {object['VSPreImage']['Value'] ? store.madNetAdapter.hexToInt(object['VSPreImage']['Value']) : 0}</Segment>
+                        <Segment className="notifySegments" textAlign="left">{<Help type='owner' />}Owner: 0x{object['VSPreImage']['Owner'].slice(4)}{isBN(object['VSPreImage']['Owner'])}<Icon name="copy outline" className="click" onClick={() => props.states.copyText("0x" + object['VSPreImage']['Owner'])} /></Segment>
+                        <Segment className="notifySegments" textAlign="left">{<Help type='txIndex' />}Transaction Index: {object['VSPreImage']['TXOutIdx'] ? object['VSPreImage']['TXOutIdx'] : 0}</Segment>
                     </>
                 );;
             case 'DataStore':
                 return (
                     <>
-                        <Segment className="notifySegments" textAlign="left">Index: 0x{object['DSLinker']['DSPreImage']['Index'] ? object['DSLinker']['DSPreImage']['Index'] : 0}<Icon name="copy outline" className="click" onClick={() => props.states.copyText("0x" + object['DSLinker']['DSPreImage']['Index'])} /></Segment>
-                        <Segment className="notifySegments" textAlign="left">Raw Data: 0x{object['DSLinker']['DSPreImage']['RawData']}<Icon name="copy outline" className="click" onClick={() => props.states.copyText("0x" + object['DSLinker']['DSPreImage']['RawData'])} /></Segment>
-                        <Segment className="notifySegments" textAlign="left">Owner: 0x{object['DSLinker']['DSPreImage']['Owner'].slice(4)}{isBN(object['DSLinker']['DSPreImage']['Owner'])}<Icon name="copy outline" className="click" onClick={() => props.states.copyText("0x" + object['DSLinker']['DSPreImage']['Owner'])} /><Icon className="click" name="external" onClick={() => { store.madNetAdapter.dsRedirected = { "address": object['DSLinker']['DSPreImage']['Owner'].slice(4), "offset": "", "bnCurve": object['DSLinker']['DSPreImage']['Owner'].slice(3, 4) === "1" ? false : true }; props.states.setMadnetPanel('dataExplorer') }} /></Segment>
-                        <Segment className="notifySegments" textAlign="left">Issued At: {object['DSLinker']['DSPreImage']['IssuedAt']}</Segment>
-                        <Segment className="notifySegments" textAlign="left">Deposit: {store.madNetAdapter.hexToInt(object['DSLinker']['DSPreImage']['Deposit'])}</Segment>
-                        <Segment className="notifySegments" textAlign="left">Transaction Index: {object['DSLinker']['DSPreImage']['TXOutIdx'] ? object['DSLinker']['DSPreImage']['TXOutIdx'] : 0}</Segment>
-                        <Segment className="notifySegments" textAlign="left">Signature: 0x{object['Signature']}<Icon name="copy outline" className="click" onClick={() => props.states.copyText("0x" + object['Signature'])} /></Segment>
+                        <Segment className="notifySegments" textAlign="left">{<Help type='index' />}Index: 0x{object['DSLinker']['DSPreImage']['Index'] ? object['DSLinker']['DSPreImage']['Index'] : 0}<Icon name="copy outline" className="click" onClick={() => props.states.copyText("0x" + object['DSLinker']['DSPreImage']['Index'])} /></Segment>
+                        <Segment className="notifySegments" textAlign="left">{<Help type='rawData' />}Raw Data: 0x{object['DSLinker']['DSPreImage']['RawData']}<Icon name="copy outline" className="click" onClick={() => props.states.copyText("0x" + object['DSLinker']['DSPreImage']['RawData'])} /></Segment>
+                        <Segment className="notifySegments" textAlign="left">{<Help type='owner' />}Owner: 0x{object['DSLinker']['DSPreImage']['Owner'].slice(4)}{isBN(object['DSLinker']['DSPreImage']['Owner'])}<Icon name="copy outline" className="click" onClick={() => props.states.copyText("0x" + object['DSLinker']['DSPreImage']['Owner'])} /><Icon className="click" name="external" onClick={() => { store.madNetAdapter.dsRedirected = { "address": object['DSLinker']['DSPreImage']['Owner'].slice(4), "offset": "", "bnCurve": object['DSLinker']['DSPreImage']['Owner'].slice(3, 4) === "1" ? false : true }; props.states.setMadnetPanel('dataExplorer') }} /></Segment>
+                        <Segment className="notifySegments" textAlign="left">{<Help type='epoch' />}Issued At: {object['DSLinker']['DSPreImage']['IssuedAt']}</Segment>
+                        <Segment className="notifySegments" textAlign="left">{<Help type='expires' />}Expires: {store.madNetAdapter.getDSExp(object['DSLinker']['DSPreImage']['RawData'], object['DSLinker']['DSPreImage']['Deposit'], object['DSLinker']['DSPreImage']['IssuedAt'])}</Segment>
+                        <Segment className="notifySegments" textAlign="left">{<Help type='deposit' />}Deposit: {store.madNetAdapter.hexToInt(object['DSLinker']['DSPreImage']['Deposit'])}</Segment>
+                        <Segment className="notifySegments" textAlign="left">{<Help type='txIndex' />}Transaction Index: {object['DSLinker']['DSPreImage']['TXOutIdx'] ? object['DSLinker']['DSPreImage']['TXOutIdx'] : 0}</Segment>
+                        <Segment className="notifySegments" textAlign="left">{<Help type='signature' />}Signature: 0x{object['Signature']}<Icon name="copy outline" className="click" onClick={() => props.states.copyText("0x" + object['Signature'])} /></Segment>
                     </>
                 );;
             default:

@@ -2,6 +2,7 @@ import React, { useContext, useEffect } from 'react';
 import { StoreContext } from "../../Store/store.js";
 import { Container, Button, Form, Segment, Card, Grid, Icon } from 'semantic-ui-react';
 import Switch from "react-switch";
+import Help from '../help.js';
 
 function DataExplorer(props) {
     // Store states
@@ -118,9 +119,10 @@ function DataExplorer(props) {
             return store.madNetAdapter.dsView.map(function (e, i) {
                 return (
                     <Segment.Group compact={true} key={i}>
-                        <Segment className="notifySegments" textAlign="left">Index: 0x{e["DSLinker"]["DSPreImage"]["Index"]} <Icon name="copy outline" className="click" onClick={() => props.states.copyText("0x" + e["DSLinker"]["DSPreImage"]["Index"])} /> </Segment>
-                        <Segment className="notifySegments" textAlign="left">Data: 0x{e["DSLinker"]["DSPreImage"]["RawData"]} <Icon name="copy outline" className="click" onClick={() => props.states.copyText("0x" + e["DSLinker"]["DSPreImage"]["RawData"])} /> </Segment>
-                        <Segment className="notifySegments" textAlign="left">Transaction Hash: 0x{e["DSLinker"]["TxHash"]} <Icon name="copy outline" className="click" onClick={() => props.states.copyText("0x" + e["DSLinker"]["TxHash"])} /> <Icon className="click" name="external" onClick={() => store.madNetAdapter.viewTransaction(e["DSLinker"]["TxHash"], true)} /></Segment>
+                        <Segment className="notifySegments" textAlign="left">{<Help type='index' />}Index: 0x{e["DSLinker"]["DSPreImage"]["Index"]} <Icon name="copy outline" className="click" onClick={() => props.states.copyText("0x" + e["DSLinker"]["DSPreImage"]["Index"])} /> </Segment>
+                        <Segment className="notifySegments" textAlign="left">{<Help type='rawData' />}Data: 0x{e["DSLinker"]["DSPreImage"]["RawData"]} <Icon name="copy outline" className="click" onClick={() => props.states.copyText("0x" + e["DSLinker"]["DSPreImage"]["RawData"])} /> </Segment>
+                        <Segment className="notifySegments" textAlign="left">{<Help type='expires' />}Expires: {store.madNetAdapter.getDSExp(e['DSLinker']['DSPreImage']['RawData'], e['DSLinker']['DSPreImage']['Deposit'], e['DSLinker']['DSPreImage']['IssuedAt'])}</Segment>
+                        <Segment className="notifySegments" textAlign="left">{<Help type='txHash' />}Transaction Hash: 0x{e["DSLinker"]["TxHash"]} <Icon name="copy outline" className="click" onClick={() => props.states.copyText("0x" + e["DSLinker"]["TxHash"])} /> <Icon className="click" name="external" onClick={() => store.madNetAdapter.viewTransaction(e["DSLinker"]["TxHash"], true)} /></Segment>
                     </Segment.Group>
                 )
             });
@@ -164,7 +166,7 @@ function DataExplorer(props) {
                         </Form.Group>
                         <Form.Field>
                             <Form.Group className="switch" inline>
-                                <label>BN Address</label>
+                                <label>BN Address{<Help type='bn' />}</label>
                                 <Switch onColor="#4aec75" height={22} width={46} offColor="#ff6464" offHandleColor="#212121" onHandleColor="#f0ece2" onChange={(event, data) => { handleChange(event, "bnCurve", data) }} checked={Boolean(store.madNetAdapter.dsSearchOpts["bnCurve"])} />
                             </Form.Group>
                         </Form.Field>

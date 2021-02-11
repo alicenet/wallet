@@ -93,3 +93,18 @@ pre {
   justify-content: right !important;
   text-align: right !important;
 }
+
+i.circular.icon {
+  border-radius: 500em!important;
+  line-height: 1!important;
+  padding: .5em 0!important;
+  box-shadow: unset !important;
+  width: 1.5em!important;
+  height: 2em!important;
+  margin: unset !important;
+  font-weight: 250 !important;
+}
+
+.blurring.dimmed.dimmable>:not(.dimmer):not(.ui.popup) {
+  filter: blur(5px) grayscale(.7);
+}

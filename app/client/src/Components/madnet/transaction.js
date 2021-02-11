@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { StoreContext } from "../../Store/store.js";
 import { Container, Button, Form, Icon, Card, Grid, Segment } from 'semantic-ui-react';
 import Switch from "react-switch";
+import Help from '../help.js';
 
 function Transaction(props) {
     // Store states
@@ -108,17 +109,25 @@ function Transaction(props) {
     const valueStore = (i) => {
         return (
             <>
-                <Form.Select
-                    value={store.madNetAdapter.txOuts[i]["fromAddress"]}
-                    fluid
-                    label='From Address'
-                    options={availAddr()}
-                    onChange={(event, v) => { handleChange(event, i, "fromAddress", v) }}
-                />
-                <Form.Input value={store.madNetAdapter.txOuts[i]["value"]} onChange={(event) => { handleChange(event, i, "value") }} label="Value" placeholder="1"></Form.Input>
-                <Form.Input value={store.madNetAdapter.txOuts[i]["toAddress"]} onChange={(event) => { handleChange(event, i, "toAddress") }} label="To Address" placeholder="0x..."></Form.Input>
+                <Form.Field>
+                    <label>From Address{<Help type='sender' />}</label>
+                    <Form.Select
+                        value={store.madNetAdapter.txOuts[i]["fromAddress"]}
+                        fluid
+                        options={availAddr()}
+                        onChange={(event, v) => { handleChange(event, i, "fromAddress", v) }}
+                    />
+                </Form.Field>
+                <Form.Field>
+                    <label>Value{<Help type='value' />}</label>
+                    <Form.Input value={store.madNetAdapter.txOuts[i]["value"]} onChange={(event) => { handleChange(event, i, "value") }} placeholder="1"></Form.Input>
+                </Form.Field>
+                <Form.Field>
+                    <label>To Address{<Help type='reciever' />}</label>
+                    <Form.Input value={store.madNetAdapter.txOuts[i]["toAddress"]} onChange={(event) => { handleChange(event, i, "toAddress") }} placeholder="0x..."></Form.Input>
+                </Form.Field>
                 <Form.Group className="switch" inline>
-                    <label>BN Address</label>
+                    <label>BN Address{<Help type='bn' />}</label>
                     <Switch onColor="#4aec75" height={22} width={46} offColor="#ff6464" offHandleColor="#212121" onHandleColor="#f0ece2" onChange={(event, data) => { handleChange(event, i, "bnCurve", data) }} checked={Boolean(store.madNetAdapter.txOuts[i]["bnCurve"])} />
                 </Form.Group>
             </>
@@ -129,16 +138,27 @@ function Transaction(props) {
     const dataStore = (i) => {
         return (
             <>
-                <Form.Select
-                    value={store.madNetAdapter.txOuts[i]["fromAddress"]}
-                    fluid
-                    label='From Address'
-                    options={availAddr()}
-                    onChange={(event, v) => { handleChange(event, i, "fromAddress", v) }}
-                />
-                <Form.Input value={store.madNetAdapter.txOuts[i]["index"]} onChange={(event) => { handleChange(event, i, "index") }} label="Index" placeholder="0x OR string"></Form.Input>
-                <Form.Input value={store.madNetAdapter.txOuts[i]["rawData"]} onChange={(event) => { handleChange(event, i, "rawData") }} label="Data" placeholder="0x OR string"></Form.Input>
-                <Form.Input value={store.madNetAdapter.txOuts[i]["duration"]} onChange={(event) => { handleChange(event, i, "duration") }} label="Duration" placeholder="1"></Form.Input>
+                <Form.Field>
+                    <label>From Address{<Help type='sender' />}</label>
+                    <Form.Select
+                        value={store.madNetAdapter.txOuts[i]["fromAddress"]}
+                        fluid
+                        options={availAddr()}
+                        onChange={(event, v) => { handleChange(event, i, "fromAddress", v) }}
+                    />
+                </Form.Field>
+                <Form.Field>
+                    <label>Index{<Help type='index' />}</label>
+                    <Form.Input value={store.madNetAdapter.txOuts[i]["index"]} onChange={(event) => { handleChange(event, i, "index") }} placeholder="0x OR string" />
+                </Form.Field>
+                <Form.Field>
+                    <label>Data{<Help type='rawData' />}</label>
+                    <Form.Input value={store.madNetAdapter.txOuts[i]["rawData"]} onChange={(event) => { handleChange(event, i, "rawData") }} placeholder="0x OR string" />
+                </Form.Field>
+                <Form.Field>
+                    <label>Duration{<Help type='duration' />}</label>
+                    <Form.Input value={store.madNetAdapter.txOuts[i]["duration"]} onChange={(event) => { handleChange(event, i, "duration") }} placeholder="1" />
+                </Form.Field>
             </>
         )
     }
@@ -184,10 +204,15 @@ function Transaction(props) {
                                 <Button.Content onClick={() => addTxOuts("AS")}>Atomic Swap <Icon name="plus" /></Button.Content>
                             </Button>
                         </Form.Group>
-                        <Form.Input value={store.madNetAdapter.changeAddress['address']} onChange={(event) => { handleChangeAddress(event, "address") }} label="Change Address" placeholder="0x..."></Form.Input>
+                        <Form.Field>
+                            <label>Change Address{<Help type='changeAddress' />}</label>
+                            <Form.Input value={store.madNetAdapter.changeAddress['address']} onChange={(event) => { handleChangeAddress(event, "address") }} placeholder="0x..."></Form.Input>
+                        </Form.Field>
+
                         <Form.Group className="switch" inline>
-                            <label>BN Address</label>
+                            <label>BN Address{<Help type='bn' />}</label>
                             <Switch onColor="#4aec75" height={22} width={46} offColor="#ff6464" offHandleColor="#212121" onHandleColor="#f0ece2" onChange={(event, data) => { handleChangeAddress(event, "bnCurve", data) }} checked={Boolean(store.madNetAdapter.changeAddress["bnCurve"])} />
+
                         </Form.Group>
                         <Button type='submit' disabled={!Boolean(store.madNetAdapter.txOuts.length > 0)} onClick={(event) => handleSubmit(event)} color="green">Send</Button>
                     </Form>

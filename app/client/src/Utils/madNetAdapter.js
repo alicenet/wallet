@@ -6,6 +6,8 @@ class MadNetAdapter {
         this.wallet = wallet;
         this.provider = provider;
         this.connected = false;
+        this.MaxDataStoreSize = 2097152;
+        this.BaseDatasizeConst = 376;
 
         // Transaction panel
         this.txOuts = [];
@@ -182,6 +184,7 @@ class MadNetAdapter {
         await this.cb.call(this, "wait", "Getting Block");
         try {
             let txHeight = await this.wallet.Rpc.getTxBlockHeight(txHash);
+            this.transactionHeight = txHeight;
             let blockHeader = await this.wallet.Rpc.getBlockHeader(txHeight);
             await this.cb.call(this, "notify", blockHeader);
             return blockHeader
@@ -202,7 +205,7 @@ class MadNetAdapter {
             let Tx = await this.wallet.Rpc.getMinedTransaction(txHash);
             this.transaction = Tx["Tx"];
             let txHeight = await this.wallet.Rpc.getTxBlockHeight(txHash);
-            this.transactionHeight = txHeight['BlockHeight'];
+            this.transactionHeight = txHeight;
             if (changeView) {
                 await this.cb.call(this, "view", "txExplorer");
             }
@@ -212,8 +215,28 @@ class MadNetAdapter {
         }
         catch (ex) {
             this.transactionHash = false;
+            this.transactionHeight = false;
             this.transaction = false;
             await this.cb.call(this, "error", String(ex));
+        }
+    }
+
+    getDSExp(data, deposit, issuedAt) {
+        try {
+            let dataSize = Buffer.from(data, "hex").length;
+            if (BigInt(dataSize) > BigInt(this.MaxDataStoreSize)) {
+                throw "Data size is too large"
+            }
+            let epoch = BigInt("0x" + deposit) / BigInt((BigInt(dataSize) + BigInt(this.BaseDatasizeConst)))
+            if (BigInt(epoch) < BigInt(2)) {
+                throw "invalid dataSize and deposit causing integer overflow"
+            }
+            let numEpochs = BigInt(BigInt(epoch) - BigInt(2));
+            let expEpoch = (BigInt(issuedAt) + BigInt(numEpochs));
+            return expEpoch;
+        }
+        catch(ex) {
+            return false;
         }
     }
 
