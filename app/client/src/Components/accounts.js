@@ -1,31 +1,21 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { StoreContext } from "../Store/store.js";
-import { Container, Grid, Form, Input, Segment, Button, Divider, Icon } from "semantic-ui-react"
+import { Container, Grid, Form, Input, Segment, Button, Divider, Icon, Dimmer, Loader } from "semantic-ui-react"
 import Switch from "react-switch";
-const Web3 = require('web3');
 
+const Accts = require('../Utils/accounts.js');
 function Accounts(props) {
     // Store states and actions to update state
-    const { store, actions } = useContext(StoreContext);
+    const { store } = useContext(StoreContext);
     // Keystore json and password
     const [keystoreData, addKeystoreData] = useState({ "keystore": false, "password": "", "fileName": false });
     // private key and curve
     const [privKData, addPrivKData] = useState({ "privK": "", "curve": false })
 
-    // Updates for when component mounts or updates
-    useEffect(() => {
-        // Reset this component to orginal state
-        if (props.states.refresh) {
-            actions.addWallet(false);
-            addKeystoreData({ "keystore": false, "password": "" });
-            props.states.setRefresh(false);
-        }
-    }, [props, actions]);
-
+    useEffect(() => {},[])
     // Keystore file selected, send to handleFile() and update "keystoreData"
     const fileChange = async (e) => {
         e.preventDefault();
-        props.states.setLoading("Loading Keystore")
         try {
             let keystore = await handleFile(e);
             let newData = keystoreData;
@@ -56,7 +46,6 @@ function Accounts(props) {
     // Check for the keystore and password in "keystoreData", continue to addAccount()
     const handleSubmitKS = (event) => {
         event.preventDefault();
-        props.states.setLoading("Loading Wallet")
         if (!keystoreData.keystore) {
             props.states.setLoading(false);
             props.states.setError("No Keystore provided");
@@ -69,14 +58,13 @@ function Accounts(props) {
         }
         let keystore = keystoreData.keystore
         let password = keystoreData.password
-        addKeystoreData({ "keystore": false, "password": "" });
-        setTimeout(function () { addAccount(keystore, password); }, 500);
+        let accounts = new Accts(adapter, store.wallet);
+        accounts.addAccount(keystore, password)
     }
 
     // Check for the privateKey and curve in "privKData, continue to addAccount()
     const handleSubmitPK = (event) => {
         event.preventDefault();
-        props.states.setLoading("Loading Wallet")
         if (!privKData.privK || privKData.privK === "") {
             props.states.setLoading(false);
             props.states.setError("No Private Key provided");
@@ -84,8 +72,8 @@ function Accounts(props) {
         }
         let privK = privKData.privK
         let curve = privKData.curve
-        addPrivKData({ "privK": "", "curve": "" });
-        setTimeout(function () { addAccount(false, privK, curve); }, 500);
+        let accounts = new Accts(adapter, store.wallet);
+        accounts.addAccount(false, privK, curve)
     }
 
     // update "keystoreData"[password] when password field updates
@@ -102,7 +90,6 @@ function Accounts(props) {
                 ...privKData,
                 [e]: event
             })
-            console.log(privKData["curve"])
             return;
         }
         addPrivKData({
@@ -110,38 +97,24 @@ function Accounts(props) {
             [e]: event.target.value
         })
     }
-    // Decrypt keystore file with password or use PrivK and curve and attempt to add to MadWalletJS
-    const addAccount = async (keystore, passwordOrPrivateKey, curve) => {
-        try {
-            if (keystore) {
-                let curve = JSON.parse(keystore)["curve"]
-                if (!curve) {
-                    curve = 1;
-                }
-                delete keystore["curve"];
-                let web3 = new Web3();
-                let account = web3.eth.accounts.decrypt(keystore, passwordOrPrivateKey);
-                await store.wallet.Account.addAccount(account.privateKey, curve);
-            }
-            else {
-                if (!curve) {
-                    curve = 1;
-                }
-                else {
-                    curve = 2;
-                }
-                await store.wallet.Account.addAccount(passwordOrPrivateKey, curve);
-            }
+
+    const adapter = (e, event, data) => {
+        props.states.setUpdateView((updateView) => ++updateView);
+        switch (event) {
+            case 'wait':
+                props.states.setLoading(data);;
+                return;;
+            case 'err':
+                props.states.setError(String(data));;
         }
-        catch (ex) {
-            props.states.setError(String(ex));
-        }
-        props.states.setLoading(false)
+        addPrivKData({ "privK": "", "curve": "" });
+        addKeystoreData({ "keystore": false, "password": "" });
+        props.states.setLoading(false);
     }
 
     // List all accounts inside of MadWalletJS
     const accountsList = () => {
-        if (!store.wallet) {
+        if (store.wallet.Account.accounts.length === 0) {
             return (<></>);
         }
         return store.wallet.Account.accounts.map(function (e, i) {
@@ -156,6 +129,7 @@ function Accounts(props) {
     }
 
     return (
+
         <Grid stretched centered={true}>
             <Container textAlign="center">
                 <h3>Add Wallets</h3>
@@ -208,7 +182,7 @@ function Accounts(props) {
             <Grid.Row>
                 <Container>
                     <Segment raised>
-                        <p>{store && store.wallet && store.wallet.Account.accounts.length === 0 ? "No wallets added!" : ""}</p>
+                        <p>{store.wallet.Account.accounts.length === 0 ? "No wallets added!" : ""}</p>
                         {accountsList()}
                     </Segment>
                 </Container>

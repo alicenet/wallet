@@ -59,7 +59,7 @@ function MadNet(props) {
                 props.states.setBlockModal(false) 
             } 
         }
-    }, [])
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     // Callback for the madNetAdapter to update the component
     const adapterCb = (event, data) => {

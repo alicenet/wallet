@@ -76,6 +76,22 @@ h1, h2, h3 {
   color: #212121 !important;
 }
 
+.red {
+  color: #ff6464 !important;
+}
+
+.blue {
+  color: #95D8DE !important;
+}
+
+.green {
+  color: #4aec75 !important;
+}
+
+.purple {
+  color:#FF6FFD !important;
+}
+
 .ui.segments:not(.horizontal)>.segment:first-child, .ui.segments:not(.horizontal)>.segment:last-child, .notifySegments {
   background: #95D8DE !important;
   background-color: #95D8DE !important;

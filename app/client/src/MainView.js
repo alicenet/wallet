@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, useRef } from "react";
+import React, { useContext, useEffect } from "react";
 import { StoreContext } from "./Store/store.js";
 
 import { Dimmer, Loader, Container, Icon, Grid, Menu, Image } from "semantic-ui-react";
@@ -30,16 +30,19 @@ function MainView(props) {
             }
             if (!store.wallet && store.settings && !props.states.madnetSetup.current) {
                 props.states.madnetSetup.current = true;
-                let wallet = new MadWallet()
+                let wallet = new MadWallet();
                 actions.addWallet(wallet);
             }
         }
         if (store.wallet && store.settings) {
             props.states.setStyle(store.settings.theme)
             props.states.themeToggle(store.settings.theme)
-            props.states.setLoading(false);
+            if (store.wallet.Account && store.wallet.Account.accounts.length === 0) {
+               props.states.setLoading(false); 
+            }
+            
         }
-    }, [store, actions, props.states.setStyle])
+    }, [store.wallet, actions, props.states.setStyle, props.states, props.states.isLoading])
 
     // Returns a child component based on the menus selected option
     const mainView = (activePanel) => {
