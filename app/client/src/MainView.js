@@ -37,9 +37,12 @@ function MainView(props) {
         if (store.wallet && store.settings) {
             props.states.setStyle(store.settings.theme)
             props.states.themeToggle(store.settings.theme)
-            props.states.setLoading(false);
+            if (store.wallet.Account && store.wallet.Account.accounts.length === 0) {
+               props.states.setLoading(false); 
+            }
+            
         }
-    }, [store, actions, props.states.setStyle, props.states])
+    }, [store.wallet, actions, props.states.setStyle, props.states, props.states.isLoading])
 
     // Returns a child component based on the menus selected option
     const mainView = (activePanel) => {

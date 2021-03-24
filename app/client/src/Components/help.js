@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { Popup, Icon } from "semantic-ui-react";
 
 const content = {
