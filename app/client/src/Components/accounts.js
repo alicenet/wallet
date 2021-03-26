@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { StoreContext } from "../Store/store.js";
-import { Container, Grid, Form, Input, Segment, Button, Divider, Icon, Dimmer, Loader } from "semantic-ui-react"
+import { Container, Grid, Form, Input, Segment, Button, Divider, Icon } from "semantic-ui-react"
 import Switch from "react-switch";
 
 const Accts = require('../Utils/accounts.js');
@@ -12,35 +12,17 @@ function Accounts(props) {
     // private key and curve
     const [privKData, addPrivKData] = useState({ "privK": "", "curve": false })
 
-    useEffect(() => {},[])
-    // Keystore file selected, send to handleFile() and update "keystoreData"
-    const fileChange = async (e) => {
+    useEffect(() => { }, [])
+    // Keystore file selected, send to adapter.handleFile() and update "keystoreData"
+    const fileChange = (e) => {
         e.preventDefault();
-        try {
-            let keystore = await handleFile(e);
-            let newData = keystoreData;
-            newData["keystore"] = keystore;
-            addKeystoreData(newData)
-        }
-        catch (ex) {
-            props.state.setError(String(ex));
-        }
-        props.states.setLoading(false)
+        let accounts = new Accts(adapter, store.wallet);
+        accounts.handleFile(e);
     };
 
-    // Load the keystore contents as a text file, return to fileChange();
-    const handleFile = (event) => {
-        return new Promise((resolve, reject) => {
-            let file = event.target.files[0];
-            let newData = keystoreData;
-            newData["filename"] = file.name.substring(0, 16);
-            addKeystoreData(newData);
-            let reader = new FileReader();
-            reader.readAsText(file);
-            reader.onabort = () => { reject(new Error({ "keystore": "Aborted loading keystore file" })) }
-            reader.onerror = () => { reject(new Error({ "keystore": "Error loading keystore file" })) }
-            reader.onload = () => { resolve(reader.result) };
-        });
+    // add keystore file to state from adapter
+    const handleKeystoreFile = (newData) => {
+        addKeystoreData(newData);
     }
 
     // Check for the keystore and password in "keystoreData", continue to addAccount()
@@ -104,8 +86,12 @@ function Accounts(props) {
             case 'wait':
                 props.states.setLoading(data);;
                 return;;
+            case 'keystore':
+                handleKeystoreFile(data);;
+                return;;
             case 'err':
                 props.states.setError(String(data));;
+                return;;
         }
         addPrivKData({ "privK": "", "curve": "" });
         addKeystoreData({ "keystore": false, "password": "" });

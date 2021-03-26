@@ -5,8 +5,8 @@ class Accounts {
         this.cb = cb;
         this.wallet = wallet;
     }
-       // Decrypt keystore file with password or use PrivK and curve and attempt to add to MadWalletJS
-       async addAccount(keystore, passwordOrPrivateKey, curve) {
+    // Decrypt keystore file with password or use PrivK and curve and attempt to add to MadWalletJS
+    async addAccount(keystore, passwordOrPrivateKey, curve) {
         this.cb(this, 'wait', 'Loading Wallet...')
         try {
             if (keystore) {
@@ -30,9 +30,33 @@ class Accounts {
             }
         }
         catch (ex) {
-            this.cb(this, 'err', String(ex))
         }
         this.cb(this, false, false);
+    }
+    async handleFile(event) {
+        try {
+            let newData = await this.uploadFile(event);
+            this.cb(this, 'keystore', newData)
+            return newData;
+        }
+        catch (ex) {
+            this.cb(this, 'err', String(ex))
+        }
+    }
+    uploadFile(event) {
+        return new Promise((resolve, reject) => {
+            let file = event.target.files[0];
+            let newData = { 'filename': false, 'keystore': false };
+            newData["filename"] = file.name.substring(0, 16);
+            let reader = new FileReader();
+            reader.readAsText(file);
+            reader.onabort = () => { reject(new Error({ "keystore": "Aborted loading keystore file" })) }
+            reader.onerror = () => { reject(new Error({ "keystore": "Error loading keystore file" })) }
+            reader.onload = () => {
+                newData["keystore"] = reader.result
+                resolve(newData)
+            };
+        });
     }
 }
 
