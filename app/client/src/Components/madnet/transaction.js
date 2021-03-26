@@ -194,14 +194,14 @@ function Transaction(props) {
                 <Segment raised>
                     <Form key="Tx">
                         <Form.Group widths="equal">
-                            <Button color="blue" >
-                                <Button.Content onClick={() => addTxOuts("VS")}>Value Store <Icon name="plus" /></Button.Content>
+                            <Button color="blue" onClick={() => addTxOuts("VS")}>
+                                <Button.Content >Value Store <Icon name="plus" /></Button.Content>
                             </Button>
-                            <Button color="blue" >
-                                <Button.Content onClick={() => addTxOuts("DS")}>Data Store <Icon name="plus" /></Button.Content>
+                            <Button color="blue" onClick={() => addTxOuts("DS")}>
+                                <Button.Content >Data Store <Icon name="plus" /></Button.Content>
                             </Button>
-                            <Button color="grey" disabled >
-                                <Button.Content onClick={() => addTxOuts("AS")}>Atomic Swap <Icon name="plus" /></Button.Content>
+                            <Button color="grey" disabled onClick={() => addTxOuts("AS")}>
+                                <Button.Content >Atomic Swap <Icon name="plus" /></Button.Content>
                             </Button>
                         </Form.Group>
                         <Form.Field>
