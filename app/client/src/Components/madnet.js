@@ -1,16 +1,18 @@
-import React, { useContext, useState, useEffect, useRef } from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
 import { StoreContext } from "../Store/store.js";
 import MadNetAdapter from "../Utils/madNetAdapter.js";
 import { Button, Menu } from 'semantic-ui-react';
 
-import DataExplorer from './dataExplorer.js';
-import Transacton from './transaction.js';
+import DataExplorer from './madnet/dataExplorer.js';
+import BlockExplorer from './madnet/blockExplorer.js';
+import TxExplorer from './madnet/txExplorer.js';
+import Transacton from './madnet/transaction.js';
+import BlockModal from './madnet/blockModal.js';
+
 
 function MadNet(props) {
     // Store states
     const { store, actions } = useContext(StoreContext);
-    // Sub menu selection
-    const [activePanel, setPanel] = useState("transaction");
     // Check if madnet adapter connected
     const connectAttempt = useRef(false);
     // Update madnet adapter
@@ -47,10 +49,20 @@ function MadNet(props) {
             update.current = true;
             addAdapter(true);
         }
+
     }, [props, actions, store.madNetAdapter]) // eslint-disable-line react-hooks/exhaustive-deps
 
+    // Unmount
+    useEffect(() => {
+        return () => { 
+            if (store && store.madNetAdapter) {
+                props.states.setBlockModal(false) 
+            } 
+        }
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
     // Callback for the madNetAdapter to update the component
-    const adapterCb = async (event, data) => {
+    const adapterCb = (event, data) => {
         props.states.setUpdateView((updateView) => ++updateView);
         switch (event) {
             case 'success':
@@ -64,6 +76,12 @@ function MadNet(props) {
             case 'error':
                 props.states.setError(data);;
                 break;;
+            case 'notify':
+                props.states.setBlockModal(data);;
+                break;;
+            case 'view':
+                props.states.setMadnetPanel(data);;
+                break;;
             default:
                 console.log(event)
         }
@@ -71,10 +89,17 @@ function MadNet(props) {
     }
 
     // Render sub menu view
-    const view = (activePanel) => {
-        switch (activePanel) {
+    const view = (activeMadnetPanel) => {
+        if (!activeMadnetPanel) {
+            activeMadnetPanel = 'transaction'
+        }
+        switch (activeMadnetPanel) {
             case 'transaction':
-                return (<Transacton />);;
+                return (<Transacton states={props.states} />);;
+            case 'blockExplorer':
+                return (<BlockExplorer states={props.states} />);;
+            case 'txExplorer':
+                return (<TxExplorer states={props.states} />);;
             case 'dataExplorer':
                 return (<DataExplorer states={props.states} />);;
             default:
@@ -91,19 +116,30 @@ function MadNet(props) {
     else {
         return (
             <>
+                <BlockModal states={props.states} />
                 <Menu pointing secondary compact>
                     <Menu.Item
                         name="Transaction"
-                        active={activePanel === 'transaction'}
-                        onClick={() => setPanel("transaction")}
+                        active={props.states.activeMadnetPanel === 'transaction' || !props.states.activeMadnetPanel}
+                        onClick={() => props.states.setMadnetPanel("transaction")}
+                    />
+                    <Menu.Item
+                        name="blockExplorer"
+                        active={props.states.activeMadnetPanel === 'blockExplorer'}
+                        onClick={() => props.states.setMadnetPanel("blockExplorer")}
+                    />
+                    <Menu.Item
+                        name="txExplorer"
+                        active={props.states.activeMadnetPanel === 'txExplorer'}
+                        onClick={() => props.states.setMadnetPanel("txExplorer")}
                     />
                     <Menu.Item
                         name="DataExplorer"
-                        active={activePanel === 'dataExplorer'}
-                        onClick={() => setPanel("dataExplorer")}
+                        active={props.states.activeMadnetPanel === 'dataExplorer'}
+                        onClick={() => props.states.setMadnetPanel("dataExplorer")}
                     />
                 </Menu>
-                {view(activePanel)}
+                {view(props.states.activeMadnetPanel)}
             </>
         )
     }

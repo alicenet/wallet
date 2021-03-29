@@ -28,7 +28,8 @@
   border-color: #95D8DE !important;
 }
 
-.ui.segment, .ui.placeholder.segment {
+.ui.segment:not(.notifySegments), .ui.placeholder.segment {
+  background: #383838 !important;
   background-color: #383838 !important;
   color: #f0ece2 !important;
 }
@@ -75,7 +76,24 @@ h1, h2, h3 {
   color: #212121 !important;
 }
 
-.ui.segments:not(.horizontal)>.segment:first-child, .ui.segments:not(.horizontal)>.segment:last-child {
+.red {
+  color: #ff6464 !important;
+}
+
+.blue {
+  color: #95D8DE !important;
+}
+
+.green {
+  color: #4aec75 !important;
+}
+
+.purple {
+  color:#FF6FFD !important;
+}
+
+.ui.segments:not(.horizontal)>.segment:first-child, .ui.segments:not(.horizontal)>.segment:last-child, .notifySegments {
+  background: #95D8DE !important;
   background-color: #95D8DE !important;
   color: #212121 !important;
 }
@@ -94,6 +112,11 @@ h1, h2, h3 {
 
 .ui.modal > *, .ui.tiny.modal > * {
   background: #ff6464 !important;
+  color: #212121 !important;
+}
+
+.blocksModal > *, .ui.modal > * {
+  background: #212121  !important;
   color: #212121 !important;
 }
 
@@ -117,4 +140,15 @@ h1, h2, h3 {
 
 .ui.statistic>.value, .ui.statistics .statistic>.value, .ui.statistic>.label, .ui.statistics .statistic>.label {
   color: #95D8DE !important;
+}
+
+.ui.styled.accordion, .ui.styled.accordion .accordion {
+  background: #95D8DE !important;
+  background-color: #95D8DE !important;
+  color: #212121 !important;
+}
+
+.txView {
+  margin: unset !important;
+  background: #212121 !important;
 }

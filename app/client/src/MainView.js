@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, useRef } from "react";
+import React, { useContext, useEffect } from "react";
 import { StoreContext } from "./Store/store.js";
 
 import { Dimmer, Loader, Container, Icon, Grid, Menu, Image } from "semantic-ui-react";
@@ -14,85 +14,46 @@ import Logo from "./Assets/MadNetwork Logo Horizontal GRAYSCALE.png"
 
 const MadWallet = require("madwalletjs");
 
-function MainView() {
+function MainView(props) {
     // Store component to access states
     const { store, actions } = useContext(StoreContext);
-    // Add child component to the view
-    const [activePanel, setPanel] = useState("accounts");
-    // Theme style
-    const [style, setStyle] = useState("dark");
 
-    /**
- * Props for childern components to update main view
- * Refresh, Loading, Errors, Update View
- */
-    const [refresh, setRefresh] = useState(false);
-    const [isLoading, setLoading] = useState(false);
-    const [isError, setError] = useState(false);
-    const [isNotify, setNotify] = useState({});
-    const [updateView, setUpdateView] = useState(0);
-    const madnetSetup = useRef(false);
-
+    // Mount setup
     useEffect(() => {
         if (!store.settings || !store.wallet) {
-            setLoading("Loading Wallet")
+            props.states.setLoading("Loading Wallet")
             if (!store.settings) {
                 if (window && window.api && window.api.store) {
                     window.api.store.clearRendererBindings();
                 }
                 actions.loadSettings();
             }
-            if (!store.wallet && store.settings && !madnetSetup.current) {
-                madnetSetup.current = true;
-                let wallet = new MadWallet()
+            if (!store.wallet && store.settings && !props.states.madnetSetup.current) {
+                props.states.madnetSetup.current = true;
+                let wallet = new MadWallet();
                 actions.addWallet(wallet);
             }
+            props.states.setStyle(store.settings.theme)
+            props.states.themeToggle(store.settings.theme)
         }
         if (store.wallet && store.settings) {
-            setStyle(store.settings.theme)
-            themeToggle(store.settings.theme)
-            setLoading(false);
+            if (store.wallet.Account && store.wallet.Account.accounts.length === 0) {
+                props.states.setLoading(false);
+            }
         }
-    }, [store, actions, setStyle])
-
-    // Toggle "dark" & "light" themes
-    const themeToggle = (theme) => {
-        if (theme === "dark") {
-            window.setDark()
-            setStyle(theme)
-            return;
-        }
-        window.setLight()
-        setStyle(theme)
-    }
-
-    // Object for the props to be used in childern components
-    const propStates = {
-        refresh: refresh,
-        setRefresh: setRefresh,
-        isLoading: isLoading,
-        setLoading: setLoading,
-        isError: isError,
-        setError: setError,
-        setNotify: setNotify,
-        isNotify: isNotify,
-        updateView: updateView,
-        setUpdateView: setUpdateView,
-        themeToggle: themeToggle,
-        style: style,
-    }
+    }, [store.wallet, actions, props.states, props.states.isLoading])
 
     // Returns a child component based on the menus selected option
     const mainView = (activePanel) => {
         switch (activePanel) {
             case 'accounts':
-                return (<Accounts states={propStates} />);;
+                return (<Accounts states={props.states} />);;
             case 'madnet':
-                return (<MadNet states={propStates} />);;
+                return (<MadNet states={props.states} />);;
             case 'ethereum':
-                return (<Ethereum states={propStates} />);;
+                return (<Ethereum states={props.states} />);;
             case 'settings':
-                return (<Settings states={propStates} />);;
+                return (<Settings states={props.states} />);;
             default:
                 return (<></>);;
         }
@@ -101,8 +62,8 @@ function MainView() {
     if (!store || !store.wallet || !store.settings) {
         return (
             <>
-                <Dimmer page active={Boolean(isLoading)}>
-                    <Loader>{String(isLoading)}</Loader>
+                <Dimmer page active={Boolean(props.states.isLoading)}>
+                    <Loader>{String(props.states.isLoading)}</Loader>
                 </Dimmer>
             </>
         )
@@ -111,11 +72,11 @@ function MainView() {
     else {
         return (
             <>
-                <Dimmer page active={Boolean(isLoading)}>
-                    <Loader>{String(isLoading)}</Loader>
+                <Dimmer page active={Boolean(props.states.isLoading)}>
+                    <Loader>{String(props.states.isLoading)}</Loader>
                 </Dimmer>
-                <Errors states={propStates} />
-                <Notify states={propStates} />
+                <Errors states={props.states} />
+                <Notify states={props.states} />
                 <Menu className="warningMenu" size="small" color="yellow" fixed="top">
                     <p>Alpha version software for testing only!</p>
                 </Menu>
@@ -127,35 +88,35 @@ function MainView() {
                             </Menu.Item>
                             <Menu.Item
                                 name="accounts"
-                                active={activePanel === 'accounts'}
-                                onClick={() => setPanel("accounts")}
+                                active={props.states.activePanel === 'accounts'}
+                                onClick={() => props.states.setPanel("accounts")}
                             />
                             <Menu.Item
                                 name="MadNet"
-                                active={activePanel === 'madnet'}
-                                onClick={() => setPanel("madnet")}
+                                active={props.states.activePanel === 'madnet'}
+                                onClick={() => props.states.setPanel("madnet")}
                             />
                             <Menu.Item
                                 name="Ethereum"
-                                active={activePanel === 'ethereum'}
-                                onClick={() => setPanel("ethereum")}
+                                active={props.states.activePanel === 'ethereum'}
+                                onClick={() => props.states.setPanel("ethereum")}
                             />
                             <Menu.Item
                                 name="Settings"
-                                active={activePanel === 'settings'}
-                                onClick={() => setPanel("settings")}
+                                active={props.states.activePanel === 'settings'}
+                                onClick={() => props.states.setPanel("settings")}
                             />
                             <Menu.Menu position="right">
                                 <Menu.Item>
-                                    <Icon onClick={() => setRefresh(true)} name="refresh" />
+                                    <Icon onClick={() => props.states.setRefresh(true)} name="refresh" />
                                 </Menu.Item>
                             </Menu.Menu>
                         </Menu>
                     </Grid.Row>
                     <Grid.Row>
                         <Container>
-                            <React.Fragment key={activePanel}>
-                                {mainView(activePanel)}
+                            <React.Fragment key={props.states.activePanel}>
+                                {mainView(props.states.activePanel)}
                             </React.Fragment>
                         </Container>
                     </Grid.Row>

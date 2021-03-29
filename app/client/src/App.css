@@ -56,3 +56,55 @@
 .warningPad {
   padding-top: 0px !important;
 }
+
+.blocks, .click {
+  cursor: pointer !important;
+}
+
+.ui.styled.accordion, .ui.styled.accordion .accordion {
+  border-radius: unset !important;
+  box-shadow: unset !important;
+}
+
+.ui.styled.accordion .accordion .title, .ui.styled.accordion .title {
+  font-weight: unset !important;
+  padding: unset !important;
+  color: unset !important;
+}
+
+.ui.styled.accordion .accordion .content, .ui.styled.accordion .content {
+  padding: unset !important;
+}
+
+.txView {
+  margin: unset !important;
+}
+
+pre {
+  overflow-x: auto;
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-wrap: break-word;
+}
+
+.txSwitch {
+  justify-content: right !important;
+  text-align: right !important;
+}
+
+i.circular.icon {
+  border-radius: 500em!important;
+  line-height: 1!important;
+  padding: .5em 0!important;
+  box-shadow: unset !important;
+  width: 1.5em!important;
+  height: 2em!important;
+  margin: unset !important;
+  font-weight: 250 !important;
+}
+
+.blurring.dimmed.dimmable>:not(.dimmer):not(.ui.popup) {
+  filter: blur(5px) grayscale(.7);
+}
