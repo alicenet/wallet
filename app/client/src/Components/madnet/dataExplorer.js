@@ -3,7 +3,7 @@ import { StoreContext } from "../../Store/store.js";
 import { Container, Button, Form, Segment, Card, Grid, Icon } from 'semantic-ui-react';
 import Switch from "react-switch";
 import Help from '../help.js';
-
+ 
 function DataExplorer(props) {
     // Store states
     const { store } = useContext(StoreContext);
@@ -36,14 +36,6 @@ function DataExplorer(props) {
         let page = store.madNetAdapter.dsActivePage + e
         if (store.madNetAdapter.dsActivePage > page) {
             store.madNetAdapter.setDsView(store.madNetAdapter.dsDataStores.slice(((page - 1) * DataPerPage), ((((page - 1) * DataPerPage) + DataPerPage))))
-        }
-        else if (store.madNetAdapter.dsActivePage < page &&
-            (
-                (DataPerPage * page) - store.madNetAdapter.dsDataStores.length === 0 ||
-                store.madNetAdapter.dsDataStores.length % (DataPerPage + 1) !== 0
-            )
-        ) {
-            store.madNetAdapter.setDsView(store.madNetAdapter.dsDataStores.slice((store.madNetAdapter.dsActivePage * DataPerPage), (((store.madNetAdapter.dsActivePage * DataPerPage) + DataPerPage))))
         }
         else {
             getData(store.madNetAdapter.dsDataStores[store.madNetAdapter.dsDataStores.length - 1]["DSLinker"]["DSPreImage"]["Index"], page);
@@ -97,11 +89,11 @@ function DataExplorer(props) {
             if (!submit) {
                 let DS = store.madNetAdapter.dsDataStores.concat(DStores[0]);
                 store.madNetAdapter.setDsView(DS.slice(((page - 1) * DataPerPage), ((((page - 1) * DataPerPage) + DataPerPage))))
-                store.madNetAdapter.setDsDataStores(ds => [...ds, ...DStores[0]]);
+                store.madNetAdapter.setDsDataStores(DStores[0]);
             }
             else {
                 store.madNetAdapter.setDsView(DStores[0].slice(((page - 1) * DataPerPage), ((((page - 1) * DataPerPage) + DataPerPage))))
-                store.madNetAdapter.setDsDataStores(DStores[0]);
+                store.madNetAdapter.dsDataStores = DStores[0];
             }
             props.states.setLoading(false);
             props.states.setUpdateView((updateView) => ++updateView);
@@ -145,7 +137,7 @@ function DataExplorer(props) {
                     <Button onClick={() => handlePage(-1)} disabled={Boolean(store.madNetAdapter.dsActivePage === 1)} color="blue" icon>
                         <Icon name='angle left' />
                     </Button>
-                    <Button onClick={() => handlePage(1)} disabled={Boolean(store.madNetAdapter.dsActivePage === Math.ceil(store.madNetAdapter.dsDataStores.length / DataPerPage))} color="blue" icon>
+                    <Button onClick={() => handlePage(1)} disabled={Boolean((store.madNetAdapter.dsActivePage * DataPerPage) > store.madNetAdapter.dsDataStores.length)} color="blue" icon>
                         <Icon name='angle right' />
                     </Button>
                 </>

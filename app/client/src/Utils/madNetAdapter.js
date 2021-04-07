@@ -282,10 +282,11 @@ class MadNetAdapter {
 
     async setDsDataStores(DataStores) {
         try {
-            this.dsDataStores = DataStores;
+            this.dsDataStores = this.dsDataStores.concat(DataStores)
             await this.cb.call(this, "success");
         }
         catch (ex) {
+            console.trace(ex)
             await this.cb.call(this, "error", String(ex));
         }
     }
