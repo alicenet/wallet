@@ -33,6 +33,34 @@ class Accounts {
         }
         this.cb(this, false, false);
     }
+
+    async createAccount(password, curve) {
+        this.cb(this, 'wait', 'Creating Wallet...')
+        try {
+            let web3 = new Web3();
+            let wallet = web3.eth.accounts.wallet.create(1)
+            let acct = await web3.eth.accounts.wallet.add(wallet[0])
+            let ks = await web3.eth.accounts.wallet.encrypt(password)
+            ks = ks[0]
+            if (curve) {
+                ks["curve"] = 2
+            }
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(new Blob([JSON.stringify(ks, null, 2)], {
+                type: "application/json"
+            }));
+            a.setAttribute("download", "MadNet-keystore-" + Date.now() + ".json");
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            this.cb(this, 'wait', 'Adding Wallet...')
+            await this.wallet.Account.addAccount(acct["privateKey"], ks["curve"]);
+        }
+        catch (ex) {
+            console.log(ex)
+        }
+        this.cb(this, 'closeModal', false)
+    }
     async handleFile(event) {
         try {
             let newData = await this.uploadFile(event);
@@ -60,4 +88,4 @@ class Accounts {
     }
 }
 
-module.exports = Accounts;
+export default Accounts;

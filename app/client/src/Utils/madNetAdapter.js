@@ -6,6 +6,7 @@ class MadNetAdapter {
         this.wallet = wallet;
         this.provider = provider;
         this.connected = false;
+        this.failed = false;
         this.MaxDataStoreSize = 2097152;
         this.BaseDatasizeConst = 376;
 
@@ -41,9 +42,11 @@ class MadNetAdapter {
             await this.cb.call(this, "wait", "Connecting to Mad Network");
             await this.wallet.Rpc.setProvider(this.provider)
             this.connected = true;
+            this.failed = false;
             await this.cb.call(this, "success")
         }
         catch (ex) {
+            this.failed = true;
             await this.cb.call(this, "error", String(ex));
         }
     }

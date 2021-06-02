@@ -20,6 +20,7 @@ class Web3Adapter {
         this.web3 = false;
         // Connection status of the provider
         this.connected = false;
+        this.failed = false;
         // Registry contract Web3 instance
         this.registry = false;
         // Array of web3 contract instances (Staking, Validators, UtilityToken, StakingToken, Deposit)
@@ -65,8 +66,10 @@ class Web3Adapter {
                 this.contracts.push(info);
             }
             await this.getInfo()
+            this.failed = false
             this.connected = true;
         } catch (ex) {
+            this.failed = true
             this.cb.call(this, "error", String("Could not connect. Check your Registry Address or RPC provider in the settings."))
         }
         this.cb.call(this, "success");

@@ -19,11 +19,7 @@ function Ethereum(props) {
     // Add the web3Adapter and initialize
     const addAdapter = async (forceConnect) => {
         if (!store.web3Adapter || forceConnect) {
-            if (!forceConnect) {
-                props.states.setLoading("Adding Ethereum Adapter")
-            } else {
-                props.states.setLoading("Updating Ethereum Adapter")
-            }
+            props.states.setLoading("Connecting to Ethereum...");
             if (store.web3Adapter && !store.web3Adapter.connected && !forceConnect) {
                 return;
             }
@@ -119,7 +115,10 @@ function Ethereum(props) {
 
     // Select address or if initialization failed, try to reconnect to web3 provider and contracts
     const options = () => {
-        if (!store.web3Adapter.connected) {
+        if (!store.web3Adapter.failed && !store.web3Adapter.connected) {
+            return (<h3>Connecting...</h3>)
+        }
+        if (store.web3Adapter.failed) {
             return (
                 <Button onClick={() => addAdapter(true)}>Reconnect</Button>
             )
@@ -197,9 +196,9 @@ function Ethereum(props) {
         if (!store.web3Adapter || !store.web3Adapter.account["balances"]["eth"]) { return (<></>) }
         return (
             <Segment.Group>
-                <Segment textAlign="left">ETH: {store.web3Adapter.account["balances"]["eth"] ? String(store.web3Adapter.account["balances"]["eth"]) : ""}</Segment>
-                <Segment textAlign="left">STAKE: {store.web3Adapter.account["balances"]["stakingToken"]["balance"] ? String(store.web3Adapter.account["balances"]["stakingToken"]["balance"]) : ""}</Segment>
-                <Segment textAlign="left">UTIL: {store.web3Adapter.account["balances"]["utilityToken"]["balance"] ? String(store.web3Adapter.account["balances"]["utilityToken"]["balance"]) : ""}</Segment>
+                <Segment className="notifySegments" textAlign="left">ETH: {store.web3Adapter.account["balances"]["eth"] ? String(store.web3Adapter.account["balances"]["eth"]) : ""}</Segment>
+                <Segment className="notifySegments" textAlign="left">STAKE: {store.web3Adapter.account["balances"]["stakingToken"]["balance"] ? String(store.web3Adapter.account["balances"]["stakingToken"]["balance"]) : ""}</Segment>
+                <Segment className="notifySegments" textAlign="left">UTIL: {store.web3Adapter.account["balances"]["utilityToken"]["balance"] ? String(store.web3Adapter.account["balances"]["utilityToken"]["balance"]) : ""}</Segment>
             </Segment.Group>
         )
     }
@@ -208,8 +207,8 @@ function Ethereum(props) {
         if (!store.web3Adapter || !store.web3Adapter.account["balances"]["eth"]) { return (<></>) }
         return (
             <Segment.Group>
-                <Segment textAlign="left">STAKE: {store.web3Adapter.account["balances"]["stakingToken"]["allowance"] ? String(store.web3Adapter.account["balances"]["stakingToken"]["allowance"]) : ""}</Segment>
-                <Segment textAlign="left">UTIL: {store.web3Adapter.account["balances"]["utilityToken"]["allowance"] ? String(store.web3Adapter.account["balances"]["utilityToken"]["allowance"]) : ""}</Segment>
+                <Segment className="notifySegments" textAlign="left">STAKE: {store.web3Adapter.account["balances"]["stakingToken"]["allowance"] ? String(store.web3Adapter.account["balances"]["stakingToken"]["allowance"]) : ""}</Segment>
+                <Segment className="notifySegments" textAlign="left">UTIL: {store.web3Adapter.account["balances"]["utilityToken"]["allowance"] ? String(store.web3Adapter.account["balances"]["utilityToken"]["allowance"]) : ""}</Segment>
             </Segment.Group>
         )
     }
@@ -220,9 +219,9 @@ function Ethereum(props) {
         return (
             <>
                 <Segment.Group>
-                    <Segment textAlign="left">Reward: {store.web3Adapter.account["validatorInfo"]["rewardBalance"] ? store.web3Adapter.account["validatorInfo"]["rewardBalance"] : "0"} </Segment>
-                    <Segment textAlign="left">Locked: {store.web3Adapter.account["validatorInfo"]["stakingBalance"] ? store.web3Adapter.account["validatorInfo"]["stakingBalance"] : "0"} </Segment>
-                    <Segment textAlign="left">Unlocked: {store.web3Adapter.account["validatorInfo"]["unlockedBalance"] ? store.web3Adapter.account["validatorInfo"]["unlockedBalance"] : "0"} </Segment>
+                    <Segment className="notifySegments" textAlign="left">Reward: {store.web3Adapter.account["validatorInfo"]["rewardBalance"] ? store.web3Adapter.account["validatorInfo"]["rewardBalance"] : "0"} </Segment>
+                    <Segment className="notifySegments" textAlign="left">Locked: {store.web3Adapter.account["validatorInfo"]["stakingBalance"] ? store.web3Adapter.account["validatorInfo"]["stakingBalance"] : "0"} </Segment>
+                    <Segment className="notifySegments" textAlign="left">Unlocked: {store.web3Adapter.account["validatorInfo"]["unlockedBalance"] ? store.web3Adapter.account["validatorInfo"]["unlockedBalance"] : "0"} </Segment>
                 </Segment.Group>
             </>
         )
@@ -369,6 +368,9 @@ function Ethereum(props) {
     }
 
     const fnMenu = () => {
+        // TODO: Use updated ABI and test methods
+        return (<></>)
+
         if (!store.web3Adapter || !store.web3Adapter.selectedAddress) {
             return (<></>)
         }

@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { StoreContext } from "../Store/store.js";
-import { Container, Grid, Form, Input, Segment, Button, Divider, Icon } from "semantic-ui-react"
+import { Container, Grid, Form, Input, Segment, Button, Divider, Icon, Rail, Modal } from "semantic-ui-react"
 import Switch from "react-switch";
 
 const Accts = require('../Utils/accounts.js');
@@ -11,6 +11,11 @@ function Accounts(props) {
     const [keystoreData, addKeystoreData] = useState({ "keystore": false, "password": "", "fileName": false });
     // private key and curve
     const [privKData, addPrivKData] = useState({ "privK": "", "curve": false })
+    // create keystore
+    const [changeKSData, addChangeKSData] = useState({ "password": "", "curve": false, "keystore": false })
+
+    // create new keystore modal
+    const [open, setOpen] = React.useState(false)
 
     useEffect(() => { }, [])
     // Keystore file selected, send to adapter.handleFile() and update "keystoreData"
@@ -80,6 +85,33 @@ function Accounts(props) {
         })
     }
 
+    const handleChangeCreateKS = (event, e, v) => {
+        if (e === "curve") {
+            addChangeKSData({
+                ...changeKSData,
+                [e]: event
+            })
+            return;
+        }
+        addChangeKSData({
+            ...changeKSData,
+            [e]: event.target.value
+        })
+    }
+
+    const handleSubmitCreateKS = (event) => {
+        event.preventDefault();
+        if (!changeKSData.password || changeKSData.password === "") {
+            props.states.setLoading(false);
+            props.states.setError("No password provided");
+            return;
+        }
+        let password = changeKSData.password
+        let curve = changeKSData.curve
+        let accounts = new Accts(adapter, store.wallet);
+        accounts.createAccount(password, curve)
+    }
+
     const adapter = (e, event, data) => {
         props.states.setUpdateView((updateView) => ++updateView);
         switch (event) {
@@ -89,12 +121,16 @@ function Accounts(props) {
             case 'keystore':
                 handleKeystoreFile(data);;
                 return;;
+            case 'closeModal':
+                setOpen(false);;
+                return;;
             case 'err':
                 props.states.setError(String(data));;
                 return;;
         }
         addPrivKData({ "privK": "", "curve": "" });
         addKeystoreData({ "keystore": false, "password": "" });
+        addChangeKSData({"password": "", "curve": false, "keystore": false });;
         props.states.setLoading(false);
     }
 
@@ -114,66 +150,100 @@ function Accounts(props) {
         })
     }
 
-    return (
+    // modal to create a new keystore
+    const createKeystore = () => {
+        return (
+            <>
+                <Modal
+                    onClose={() => setOpen(false)}
+                    onOpen={() => setOpen(true)}
+                    open={open}
+                >
+                    <Modal.Content>
+                        <Container>
+                            <Grid centered>
+                                <Form>
+                                    <Input type="password" onChange={(event) => { handleChangeCreateKS(event, "password") }} value={changeKSData["password"] || ""} placeholder="Password"></Input>
+                                    <Form.Group className="switch" inline>
+                                        <label>BN Address</label>
+                                        <Switch onColor="#4aec75" height={22} width={46} offColor="#ff6464" offHandleColor="#212121" onHandleColor="#f0ece2" onChange={(event, data) => { handleChangeCreateKS(event, "curve", data) }} checked={Boolean(changeKSData["curve"])} />
+                                    </Form.Group>
+                                    <Form.Field>
+                                        <Button color="blue" type='submit' onClick={(event) => { handleSubmitCreateKS(event) }}>Create Keystore</Button>
+                                    </Form.Field>
+                                </Form>
+                            </Grid>
+                        </Container>
+                    </Modal.Content>
+                </Modal>
+            </>)
+    }
 
-        <Grid stretched centered={true}>
-            <Container textAlign="center">
-                <h3>Add Wallets</h3>
-            </Container>
-            <Grid.Row centered>
-                <Segment raised placeholder textAlign="center">
-                    <Grid columns={2} relaxed='very' stackable>
-                        <Grid.Column>
-                            <Form>
-                                <Button
-                                    color={keystoreData["keystore"] ? "green" : "grey"}
-                                    as="label"
-                                    htmlFor="file"
-                                    type="button"
-                                    content={keystoreData["filename"] ? keystoreData["filename"] : "Keystore"}
-                                    labelPosition="left"
-                                    icon={keystoreData["keystore"] ? "check circle" : "file"}
-                                />
-                                <input
-                                    type="file"
-                                    hidden
-                                    id="file"
-                                    onChange={(e) => fileChange(e)}
-                                    onClick={e => (e.target.value = null)}
-                                />
-                                <Form.Field>
-                                    <Input type="password" onChange={(event) => { handleChangeKS(event, "password") }} value={keystoreData["password"] || ""} placeholder="Password"></Input>
-                                </Form.Field>
-                                <Form.Field>
-                                    <Button color="blue" type='submit' onClick={(event) => { handleSubmitKS(event) }}>Load Keystore</Button>
-                                </Form.Field>
-                            </Form>
-                        </Grid.Column>
-                        <Grid.Column textAlign="center" verticalAlign='middle'>
-                            <Form>
-                                <Input type="password" onChange={(event) => { handleChangePK(event, "privK") }} value={privKData["privK"] || ""} placeholder="PrivateKey"></Input>
-                                <Form.Group className="switch" inline>
-                                    <label>BN Address</label>
-                                    <Switch onColor="#4aec75" height={22} width={46} offColor="#ff6464" offHandleColor="#212121" onHandleColor="#f0ece2" onChange={(event, data) => { handleChangePK(event, "curve", data) }} checked={Boolean(privKData["curve"])} />
-                                </Form.Group>
-                                <Form.Field>
-                                    <Button color="blue" type='submit' onClick={(event) => { handleSubmitPK(event) }}>Load Private Key</Button>
-                                </Form.Field>
-                            </Form>
-                        </Grid.Column>
-                    </Grid>
-                    <Divider hidden fitted vertical>Or</Divider>
-                </Segment>
-            </Grid.Row>
-            <Grid.Row>
-                <Container>
-                    <Segment raised>
-                        <p>{store.wallet.Account.accounts.length === 0 ? "No wallets added!" : ""}</p>
-                        {accountsList()}
-                    </Segment>
+    return (
+        <>
+            {createKeystore()}
+            <Grid stretched centered={true}>
+                <Container textAlign="center">
+                    <h3>Add Wallets</h3>
                 </Container>
-            </Grid.Row>
-        </Grid >
+
+                <Grid.Row centered>
+                    <Segment raised placeholder textAlign="center">
+                    <Button floated="right" onClick={() => setOpen(true)} className="green">Create Keystore</Button>
+                    <Divider/>
+                        <Grid columns={2} relaxed='very' stackable>
+                            <Grid.Column>
+                                <Form>
+                                    <Button
+                                        color={keystoreData["keystore"] ? "green" : "grey"}
+                                        as="label"
+                                        htmlFor="file"
+                                        type="button"
+                                        content={keystoreData["filename"] ? keystoreData["filename"] : "Keystore File"}
+                                        labelPosition="left"
+                                        icon={keystoreData["keystore"] ? "check circle" : "file"}
+                                    />
+                                    <input
+                                        type="file"
+                                        hidden
+                                        id="file"
+                                        onChange={(e) => fileChange(e)}
+                                        onClick={e => (e.target.value = null)}
+                                    />
+                                    <Form.Field>
+                                        <Input type="password" onChange={(event) => { handleChangeKS(event, "password") }} value={keystoreData["password"] || ""} placeholder="Password"></Input>
+                                    </Form.Field>
+                                    <Form.Field>
+                                        <Button color="blue" type='submit' onClick={(event) => { handleSubmitKS(event) }}>Load Keystore</Button>
+                                    </Form.Field>
+                                </Form>
+                            </Grid.Column>
+                            <Grid.Column textAlign="center" verticalAlign='middle'>
+                                <Form>
+                                    <Input type="password" onChange={(event) => { handleChangePK(event, "privK") }} value={privKData["privK"] || ""} placeholder="PrivateKey"></Input>
+                                    <Form.Group className="switch" inline>
+                                        <label>BN Address</label>
+                                        <Switch onColor="#4aec75" height={22} width={46} offColor="#ff6464" offHandleColor="#212121" onHandleColor="#f0ece2" onChange={(event, data) => { handleChangePK(event, "curve", data) }} checked={Boolean(privKData["curve"])} />
+                                    </Form.Group>
+                                    <Form.Field>
+                                        <Button color="blue" type='submit' onClick={(event) => { handleSubmitPK(event) }}>Load Private Key</Button>
+                                    </Form.Field>
+                                </Form>
+                            </Grid.Column>
+                        </Grid>
+                        <Divider hidden fitted vertical>Or</Divider>
+                    </Segment>
+                </Grid.Row>
+                <Grid.Row>
+                    <Container>
+                        <Segment raised>
+                            <p>{store.wallet.Account.accounts.length === 0 ? "No wallets added!" : ""}</p>
+                            {accountsList()}
+                        </Segment>
+                    </Container>
+                </Grid.Row>
+            </Grid >
+        </>
     )
 }
 export default Accounts;

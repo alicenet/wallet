@@ -46,6 +46,7 @@ function MadNet(props) {
             store.settings.madnetProvider !== store.madNetAdapter.provider &&
             !update.current
         ) {
+            props.states.setLoading("Connecting to MadNetwork...");
             update.current = true;
             addAdapter(true);
         }
@@ -108,7 +109,10 @@ function MadNet(props) {
     }
 
     // Try to reconnect 
-    if (!store.madNetAdapter.connected) {
+    if (!store.madNetAdapter.failed && !store.madNetAdapter.connected) {
+        return (<h3>Connecting...</h3>)
+    }
+    if (store.madNetAdapter.failed) {
         return (
             <Button onClick={() => addAdapter(true)}>Reconnect</Button>
         )

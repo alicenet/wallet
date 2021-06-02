@@ -1,7 +1,7 @@
 const {
   app,
   BrowserWindow,
-  ipcMain
+  ipcMain,
 } = require("electron");
 
 const isDev = require('electron-is-dev');
@@ -34,7 +34,7 @@ async function createWindow() {
     icon: icon,
     autoHideMenuBar: true,
     webPreferences: {
-      devTools: isDev,
+      devTools: true, //isDev,
       nodeIntegration: false,
       nodeIntegrationInWorker: false,
       nodeIntegrationInSubFrames: false,
@@ -61,7 +61,9 @@ async function createWindow() {
 
 }
 
-app.on("ready", createWindow);
+app.on("ready", () => {
+  createWindow()
+});
 
 app.on("activate", () => {
   if (win === null) {
