@@ -53,8 +53,6 @@ class Accounts {
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
-            this.cb(this, 'wait', 'Adding Wallet...')
-            await this.wallet.Account.addAccount(acct["privateKey"], ks["curve"]);
         }
         catch (ex) {
             console.log(ex)

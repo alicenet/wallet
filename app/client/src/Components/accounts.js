@@ -12,7 +12,7 @@ function Accounts(props) {
     // private key and curve
     const [privKData, addPrivKData] = useState({ "privK": "", "curve": false })
     // create keystore
-    const [changeKSData, addChangeKSData] = useState({ "password": "", "curve": false, "keystore": false })
+    const [changeKSData, addChangeKSData] = useState({ "passwordConfirm": "", "password": "", "curve": false, "keystore": false })
 
     // create new keystore modal
     const [open, setOpen] = React.useState(false)
@@ -106,6 +106,16 @@ function Accounts(props) {
             props.states.setError("No password provided");
             return;
         }
+        if (!changeKSData.passwordConfirm || changeKSData.passwordConfirm === "") {
+            props.states.setLoading(false);
+            props.states.setError("Must confirm password");
+            return;
+        }
+        if (changeKSData.passwordConfirm !== changeKSData.password) {
+            props.states.setLoading(false);
+            props.states.setError("Passwords do not match");
+            return;
+        }
         let password = changeKSData.password
         let curve = changeKSData.curve
         let accounts = new Accts(adapter, store.wallet);
@@ -163,7 +173,12 @@ function Accounts(props) {
                         <Container>
                             <Grid centered>
                                 <Form>
+                                    <Form.Field>
                                     <Input type="password" onChange={(event) => { handleChangeCreateKS(event, "password") }} value={changeKSData["password"] || ""} placeholder="Password"></Input>
+                                    </Form.Field>
+                                    <Form.Field>
+                                    <Input type="password" onChange={(event) => { handleChangeCreateKS(event, "passwordConfirm") }} value={changeKSData["passwordConfirm"] || ""} placeholder="Confirm Password"></Input>
+                                    </Form.Field>
                                     <Form.Group className="switch" inline>
                                         <label>BN Address</label>
                                         <Switch onColor="#4aec75" height={22} width={46} offColor="#ff6464" offHandleColor="#212121" onHandleColor="#f0ece2" onChange={(event, data) => { handleChangeCreateKS(event, "curve", data) }} checked={Boolean(changeKSData["curve"])} />
