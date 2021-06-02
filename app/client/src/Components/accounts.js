@@ -2,8 +2,8 @@ import React, { useContext, useState, useEffect } from 'react';
 import { StoreContext } from "../Store/store.js";
 import { Container, Grid, Form, Input, Segment, Button, Divider, Icon, Rail, Modal } from "semantic-ui-react"
 import Switch from "react-switch";
+import Accts from '../Utils/accounts.js';
 
-const Accts = require('../Utils/accounts.js');
 function Accounts(props) {
     // Store states and actions to update state
     const { store } = useContext(StoreContext);
