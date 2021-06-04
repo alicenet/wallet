@@ -165,6 +165,7 @@ class MadNetAdapter {
                 await this.backOffRetry("monitorBlocks")
                 if (this["monitorBlocks-attempts"] > 10) {
                     await this.cb.call(this, "error", String("Could not update latest block"));
+                    return
                 }
             }
             await this.cb.call(this, "success")
