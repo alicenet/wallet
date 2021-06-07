@@ -3,11 +3,13 @@
   "version": "0.2.0",
   "description": "",
   "homepage": "./",
-  "main": "./app-build/electron/index.js'=",
+  "main": "./app-build/electron/index.js",
   "scripts": {
     "setup": "chmod +x ./helpers/* && ./helpers/setup.sh",
     "build-linux": "./helpers/build-helper.sh && electron-builder build -c.extraMetadata.main=./app-build/electron/index.js --linux --publish never",
     "build-windows": "./helpers/build-helper.sh && electron-builder build -c.extraMetadata.main=./app-build/electron/index.js --windows --publish never",
+    "build-mac": "./helpers/build-helper.sh && electron-builder build -c.extraMetadata.main=./app-build/electron/index.js --mac --publish never",
+    "build-all": "./helpers/build-helper.sh && electron-builder build -c.extraMetadata.main=./app-build/electron/index.js --mac --windows --linux --publish never",
     "dev": "concurrently \"cd app/client && npm start\" \"electron ./app/electron\""
   },
   "author": "",
@@ -25,18 +27,35 @@
     "electron-builder": "^22.8.0"
   },
   "build": {
+    "appId":"MadWallet",
     "files": [
       "app-build/**/*",
+      "app-build/electron/icon.png",
       "node_modules/**/*",
       "static/**/*"
     ],
     "productName": "MadWallet",
     "directories": {
-      "buildResources": "assets"
+      "buildResources": "app/electron"
     },
     "linux": {
       "target": [
         "zip"
+      ]
+    },
+    "dmg": {
+      "icon": "icon.png",
+      "contents": [
+        {
+          "x": 130,
+          "y": 220
+        },
+        {
+          "x": 410,
+          "y": 220,
+          "type": "link",
+          "path": "/Applications"
+        }
       ]
     },
     "win": {

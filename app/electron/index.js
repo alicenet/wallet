@@ -14,7 +14,7 @@ const url = require('url');
 
 const port = '3000';
 const selfHost = `http://localhost:${port}`;
-const icon = path.join(__dirname, 'logo.png');
+const icon = path.join(__dirname, '/app-build/electron/icon.png');
 
 let win;
 
@@ -34,7 +34,7 @@ async function createWindow() {
     icon: icon,
     autoHideMenuBar: true,
     webPreferences: {
-      devTools: true, //isDev,
+      devTools: isDev,
       nodeIntegration: false,
       nodeIntegrationInWorker: false,
       nodeIntegrationInSubFrames: false,
@@ -146,12 +146,15 @@ app.on("remote-get-current-web-contents", (event, webContents) => {
 });
 
 app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") {
+  //if (process.platform !== "darwin") {
+    //store.clearMainBindings(ipcMain);
     app.quit();
-  } else {
-    store.clearMainBindings(ipcMain);
-  }
+  //}
 });
+
+app.on('quit', () => {
+  app.exit(0);
+})
 
 // Not used in new chrome
 if (isDev) {
