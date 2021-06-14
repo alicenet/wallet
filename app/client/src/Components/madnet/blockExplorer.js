@@ -28,7 +28,7 @@ function BlockExplorer(props) {
 
     // Load blocks from madnet adapter
     const latestBlocks = () => {
-        if (store.madNetAdapter.blocks.length <= 0) {
+        if (!store.madNetAdapter || store.madNetAdapter.blocks.length <= 0) {
             return (<></>)
         }
         return store.madNetAdapter.blocks.map((e, i) => {
@@ -60,9 +60,7 @@ function BlockExplorer(props) {
                     </Segment>
                 </Grid.Row>
                 <Grid.Row centered>
-                    <Segment raised>
                         {latestBlocks()}
-                    </Segment>
                 </Grid.Row>
             </Grid>
         </>

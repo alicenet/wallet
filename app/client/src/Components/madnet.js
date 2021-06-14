@@ -55,10 +55,10 @@ function MadNet(props) {
 
     // Unmount
     useEffect(() => {
-        return () => { 
+        return () => {
             if (store && store.madNetAdapter) {
-                props.states.setBlockModal(false) 
-            } 
+                props.states.setBlockModal(false)
+            }
         }
     }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -68,7 +68,8 @@ function MadNet(props) {
         switch (event) {
             case 'success':
                 if (data) {
-                    props.states.setNotify(data)
+                    props.states.setNotify(data);;
+                    return;;
                 }
                 break;;
             case 'wait':

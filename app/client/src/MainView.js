@@ -35,11 +35,7 @@ function MainView(props) {
             }
             props.states.setStyle(store.settings.theme)
             props.states.themeToggle(store.settings.theme)
-        }
-        if (store.wallet && store.settings) {
-            if (store.wallet.Account && store.wallet.Account.accounts.length === 0) {
-                props.states.setLoading(false);
-            }
+            props.states.setLoading(false);
         }
     }, [store.wallet, actions, props.states, props.states.isLoading])
 

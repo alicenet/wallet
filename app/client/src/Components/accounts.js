@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState } from 'react';
 import { StoreContext } from "../Store/store.js";
 import { Container, Grid, Form, Input, Segment, Button, Divider, Icon, Rail, Modal } from "semantic-ui-react"
 import Switch from "react-switch";
@@ -17,7 +17,6 @@ function Accounts(props) {
     // create new keystore modal
     const [open, setOpen] = React.useState(false)
 
-    useEffect(() => { }, [])
     // Keystore file selected, send to adapter.handleFile() and update "keystoreData"
     const fileChange = (e) => {
         e.preventDefault();
@@ -133,7 +132,7 @@ function Accounts(props) {
                 return;;
             case 'closeModal':
                 setOpen(false);;
-                return;;
+                break;;
             case 'err':
                 props.states.setError(String(data));;
                 return;;
@@ -252,7 +251,7 @@ function Accounts(props) {
                 <Grid.Row>
                     <Container>
                         <Segment raised>
-                            <p>{store.wallet.Account.accounts.length === 0 ? "No wallets added!" : ""}</p>
+                            <p>{store.wallet.Account.accounts.length === 0 ? "No accounts added!" : ""}</p>
                             {accountsList()}
                         </Segment>
                     </Container>

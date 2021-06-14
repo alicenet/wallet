@@ -200,9 +200,11 @@ function Transaction(props) {
                             <Button color="blue" onClick={() => addTxOuts("DS")}>
                                 <Button.Content >Data Store <Icon name="plus" /></Button.Content>
                             </Button>
+                            {/*
                             <Button color="grey" disabled onClick={() => addTxOuts("AS")}>
                                 <Button.Content >Atomic Swap <Icon name="plus" /></Button.Content>
                             </Button>
+                            */}
                         </Form.Group>
                         <Form.Field>
                             <label>Change Address{<Help type='changeAddress' />}</label>
