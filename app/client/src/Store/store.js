@@ -2,7 +2,7 @@ import React, { createContext, Component } from 'react';
 
 import { writeConfigRequest } from "secure-electron-store";
 
-const defaultSettings = { "madnetChainID": 66, "madnetProvider": "http://127.0.0.1:8888/v1/", "ethereumProvider": "http://127.0.0.1:8545", "registryContract": "0x0", "theme": "dark" }
+const defaultSettings = { "madnetChainID": 66, "madnetProvider": "https://testnet.edge.mnexplore.com/v1/", "ethereumProvider": "https://testnet.eth.mnexplore.com/", "registryContract": "0x70c43ed0989fc0f50772d6a949cb0470753ae486", "theme": "dark" }
 
 export const StoreContext = createContext();
 
@@ -16,6 +16,7 @@ export class Store extends Component {
                 web3Adapter: false,
                 madNetAdapter: false,
                 settings: false,
+                defaultSettings: defaultSettings
             },
             actions: {
                 addWallet: wallet => this.setState({ store: { ...this.state.store, wallet: wallet } }),

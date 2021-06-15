@@ -17,7 +17,7 @@ function Settings(props) {
             updateSettings(store.settings)
             props.states.setRefresh(false);
         }
-    }, [props, actions, store])
+    }, [props, actions, store.settings])
 
     // Update settings state from user input
     const handleChange = (opt, event) => {
@@ -39,6 +39,14 @@ function Settings(props) {
     const handleSubmit = (e) => {
         e.preventDefault();
         actions.updateSettings(settings);
+    }
+
+    const handleDefault = () => {
+        actions.resetSettings(store.defaultSettings)
+        actions.updateSettings(store.defaultSettings);
+        updateSettings(
+            store.defaultSettings
+        )
     }
 
     // Reset input fields to previous saved state
@@ -65,6 +73,7 @@ function Settings(props) {
                     </Form.Field>
                     <Button onClick={(e) => handleSubmit(e)} color="green">Save</Button>
                     <Button onClick={(e) => reset(e)} color="red">Cancel</Button>
+                    <Button onClick={() => handleDefault()} color="grey">Default</Button>
                 </Form>
             </Segment>
         </Container>

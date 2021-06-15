@@ -6,21 +6,24 @@ class MadNetAdapter {
         this.wallet = wallet;
         this.provider = provider;
         this.connected = false;
+        this.failed = false;
         this.MaxDataStoreSize = 2097152;
         this.BaseDatasizeConst = 376;
 
         // Transaction panel
         this.txOuts = [];
         this.changeAddress = { "address": "", "bnCurve": false };
-        this.pending = [];
+        this.pendingTx = false;
         this.pendingLocked = false;
 
         // Block explorer panel
         this.blocks = [];
+        this.blocksMaxLen = 10
         this.blocksStarted = false;
         this.currentBlock = 0;
         this.blocksLocked = false;
         this.blocksId = false;
+        this.mbAttempts = 0;
 
         // Tx explorer panel
         this.transactionHash = false;
@@ -33,6 +36,7 @@ class MadNetAdapter {
         this.dsDataStores = [];
         this.dsActivePage = 1;
         this.dsView = [];
+
     }
 
     // Initialize the adapter
@@ -41,9 +45,11 @@ class MadNetAdapter {
             await this.cb.call(this, "wait", "Connecting to Mad Network");
             await this.wallet.Rpc.setProvider(this.provider)
             this.connected = true;
+            this.failed = false;
             await this.cb.call(this, "success")
         }
         catch (ex) {
+            this.failed = true;
             await this.cb.call(this, "error", String(ex));
         }
     }
@@ -52,6 +58,10 @@ class MadNetAdapter {
 
     // Create the transaction from user inputed TxOuts
     async createTx() {
+        if (this.pendingTx) {
+            await this.cb.call(this, "error", String("Waiting for pending transaction to be mined"));
+            return
+        }
         await this.cb.call(this, "wait", "Sending transacton");
         for await (let txOut of this.txOuts) {
             try {
@@ -74,48 +84,55 @@ class MadNetAdapter {
                 return
             }
         }
+        await this.sendTx();
+    }
+
+    async sendTx() {
         try {
-            let tx = await this.wallet.Transaction.sendTx(this.changeAddress["address"], this.changeAddress["bnCurve"]);
+            await this.wallet.Transaction._createTxIns(this.changeAddress["address"], this.changeAddress["bnCurve"])
+            await this.wallet.Transaction.Tx._createTx();
+            let tx = await this.wallet.Rpc.sendTransaction(this.wallet.Transaction.Tx.getTx())
+            await this.backOffRetry('sendTx', true)
+            await this.cb.call(this, "success")
+            this.pendingTx = tx;
             await this.cb.call(this, "success", { "type": "warning", "msg": "Pending: " + this.trimTxHash(tx) });
-            this.pending.push(tx)
+            await this.wallet.Transaction._reset();
             this.monitorPending();
         }
         catch (ex) {
-            this.txOuts = [];
-            this.changeAddress = {};
-            await this.wallet.Transaction._reset();
-            await this.cb.call(this, "error", String(ex));
+            await this.backOffRetry('sendTx')
+            if (this['sendTx-attempts'] > 5) {
+                this.txOuts = [];
+                this.changeAddress = {};
+                await this.wallet.Transaction._reset();
+                await this.backOffRetry('sendTx', true)
+                await this.cb.call(this, "error", String(ex));
+                return
+            }
+            await this.sleep(this['sendTx-timeout']);
+            this.sendTx();
         }
     }
 
     // Monitor the pending transaction the was sent
     async monitorPending() {
+        let tx = this.pendingTx;
         try {
-            if (this.pendingLocked || this.pending.length < 1) {
-                return;
-            }
-            this.pendingLocked = true;
-            let pending = this.pending.slice(0)
-            for (let i = 0; i < pending.length; i++) {
-                try {
-                    await this.wallet.Rpc.getMinedTransaction(pending[i]);
-                    await this.cb.call(this, "success", { "type": "success", "msg": "Mined: " + this.trimTxHash(pending[i]) });
-                    this.pending.splice(i, 1);
-                }
-                catch (ex) {
-                    continue;
-                }
-            }
-            if (this.pending.length > 0) {
-                await this.sleep(5000)
-                this.pendingLocked = false;
-                await this.monitorPending();
-            }
-            this.pendingLocked = false;
-            return;
+            await this.wallet.Rpc.getMinedTransaction(tx);
+            await this.backOffRetry('pending-' + JSON.stringify(tx), true)
+            this.pendingTx = false;
+            await this.cb.call(this, "success", { "type": "success", "txHash": tx, "msg": "Mined: " + this.trimTxHash(tx) });
         }
         catch (ex) {
-            await this.cb.call(this, "error", String(ex));
+            await this.backOffRetry('pending-' + JSON.stringify(tx))
+            if (this['pending-' + JSON.stringify(tx) + "-attempts"] > 30) {
+                this.pendingTx = false;
+                await this.backOffRetry('pending-' + JSON.stringify(tx), true)
+                await this.cb.call(this, "error", String(ex));
+                return
+            }
+            await this.sleep(this["pending-" + JSON.stringify(tx) + "-timeout"])
+            await this.monitorPending(tx)
         }
     }
 
@@ -130,28 +147,37 @@ class MadNetAdapter {
             }
             this.blocksLocked = true;
             try {
+                let tmpBlocks = this.blocks ? this.blocks.slice(0) : []
                 let currentBlock = await this.wallet.Rpc.getBlockNumber();
                 if (this.currentBlock !== currentBlock) {
                     let blockDiff = (currentBlock - this.currentBlock);
-                    if (blockDiff > 5) {
-                        blockDiff = 5;
+                    if (blockDiff > this.blocksMaxLen) {
+                        blockDiff = this.blocksMaxLen;
                     }
                     for (let i = 0; i < blockDiff; i++) {
                         let blockHeader = await this.wallet.Rpc.getBlockHeader(currentBlock - ((blockDiff - i) - 1));
-                        this.blocks.unshift(blockHeader);
+                        tmpBlocks.unshift(blockHeader);
                     }
                     this.currentBlock = currentBlock;
+                    this.blocks = tmpBlocks;
                 }
-                this.blocks = this.blocks.slice(0, 5);
+                tmpBlocks = tmpBlocks.slice(0, this.blocksMaxLen);
+                this.blocks = tmpBlocks;
+                await this.backOffRetry("monitorBlocks", true)
             }
             catch (ex) {
-                await this.cb.call(this, "error", String("Could not update latest block"));
+                await this.backOffRetry("monitorBlocks")
+                if (this["monitorBlocks-attempts"] > 10) {
+                    await this.cb.call(this, "error", String("Could not update latest block"));
+                    return
+                }
             }
             await this.cb.call(this, "success")
             this.blocksLocked = false
-            this.blocksId = setTimeout(() => { this.monitorBlocks() }, 5000);
+            this.blocksId = setTimeout(() => { try { this.monitorBlocks() } catch (ex) { console.log(ex) } }, this["monitorBlocks-attempts"] == 1 ? 5000 : this["monitorBlocks-timeout"]);
         }
         catch (ex) {
+            console.log(ex)
             await this.cb.call(this, "error", String(ex));
         }
     }
@@ -172,10 +198,17 @@ class MadNetAdapter {
         try {
             let blockHeader = await this.wallet.Rpc.getBlockHeader(height);
             await this.cb.call(this, "notify", blockHeader);
+            await this.backOffRetry("vB", true);
             return blockHeader
         }
         catch (ex) {
-            await this.cb.call(this, "error", String(ex));
+            await this.backOffRetry("vB");
+            if (this['vB-attempts'] > 10) {
+                await this.cb.call(this, "error", String(ex));
+                return
+            }
+            await this.sleep(this["vB-timeout"])
+            this.viewBlock(height)
         }
     }
 
@@ -187,10 +220,17 @@ class MadNetAdapter {
             this.transactionHeight = txHeight;
             let blockHeader = await this.wallet.Rpc.getBlockHeader(txHeight);
             await this.cb.call(this, "notify", blockHeader);
+            await this.backOffRetry("viewBlock", true)
             return blockHeader
         }
         catch (ex) {
-            await this.cb.call(this, "error", String(ex));
+            await this.backOffRetry("viewBlock")
+            if (this["viewBlock-attempts"] > 10) {
+                await this.cb.call(this, "error", String(ex));
+                return
+            }
+            await this.sleep(this["viewBlock-timeout"])
+            this.viewBlockFromTx(txHash);
         }
     }
 
@@ -206,6 +246,7 @@ class MadNetAdapter {
             this.transaction = Tx["Tx"];
             let txHeight = await this.wallet.Rpc.getTxBlockHeight(txHash);
             this.transactionHeight = txHeight;
+            await this.backOffRetry("viewTx", true);
             if (changeView) {
                 await this.cb.call(this, "view", "txExplorer");
             }
@@ -214,10 +255,37 @@ class MadNetAdapter {
             }
         }
         catch (ex) {
-            this.transactionHash = false;
-            this.transactionHeight = false;
-            this.transaction = false;
-            await this.cb.call(this, "error", String(ex));
+            console.log(ex)
+            await this.backOffRetry("viewTx");
+            if (this["viewTx-attempts"] > 10) {
+                this.transactionHash = false;
+                this.transactionHeight = false;
+                this.transaction = false;
+                await this.cb.call(this, "error", String(ex));
+                return
+            }
+            await this.sleep(this["viewTx-timeout"])
+            this.viewTransaction(txHash, changeView);
+        }
+    }
+
+    async backOffRetry(fn, reset) {
+        if (reset) {
+            this[String(fn) + "-timeout"] = 1000;
+            this[String(fn) + "-attempts"] = 1
+            return
+        }
+        if (!this[String(fn) + "-timeout"]) {
+            this[String(fn) + "-timeout"] = 1000;
+        }
+        else {
+            this[String(fn) + "-timeout"] = Math.floor(this[String(fn) + "-timeout"] * 1.25);
+        }
+        if (!this[String(fn) + "-attempts"]) {
+            this[String(fn) + "-attempts"] = 1
+        }
+        else {
+            this[String(fn) + "-attempts"] += 1;;
         }
     }
 
@@ -235,7 +303,7 @@ class MadNetAdapter {
             let expEpoch = (BigInt(issuedAt) + BigInt(numEpochs));
             return expEpoch;
         }
-        catch(ex) {
+        catch (ex) {
             return false;
         }
     }
@@ -328,7 +396,7 @@ class MadNetAdapter {
             let bInt = BigInt(hex, 16);
             return bInt.toString();
         }
-        catch(ex) {
+        catch (ex) {
 
         }
     }

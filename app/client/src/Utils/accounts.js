@@ -7,7 +7,8 @@ class Accounts {
     }
     // Decrypt keystore file with password or use PrivK and curve and attempt to add to MadWalletJS
     async addAccount(keystore, passwordOrPrivateKey, curve) {
-        this.cb(this, 'wait', 'Loading Wallet...')
+        this.cb(this, 'wait', 'Loading Account...')
+        await this.sleep(500)
         try {
             if (keystore) {
                 let curve = JSON.parse(keystore)["curve"]
@@ -30,8 +31,35 @@ class Accounts {
             }
         }
         catch (ex) {
+            this.cb(this, 'err', "Could not load account");
         }
         this.cb(this, false, false);
+    }
+
+    async createAccount(password, curve) {
+        this.cb(this, 'wait', 'Creating Account...')
+        try {
+            let web3 = new Web3();
+            let wallet = web3.eth.accounts.wallet.create(1)
+            let acct = await web3.eth.accounts.wallet.add(wallet[0])
+            let ks = await web3.eth.accounts.wallet.encrypt(password)
+            ks = ks[0]
+            if (curve) {
+                ks["curve"] = 2
+            }
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(new Blob([JSON.stringify(ks, null, 2)], {
+                type: "application/json"
+            }));
+            a.setAttribute("download", "MadNet-keystore-" + Date.now() + ".json");
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+        catch (ex) {
+            console.log(ex)
+        }
+        this.cb(this, 'closeModal', false)
     }
     async handleFile(event) {
         try {
@@ -58,6 +86,11 @@ class Accounts {
             };
         });
     }
+
+    // Delay for the loader
+    async sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
 }
 
-module.exports = Accounts;
+export default Accounts;

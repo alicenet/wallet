@@ -35,11 +35,7 @@ function MainView(props) {
             }
             props.states.setStyle(store.settings.theme)
             props.states.themeToggle(store.settings.theme)
-        }
-        if (store.wallet && store.settings) {
-            if (store.wallet.Account && store.wallet.Account.accounts.length === 0) {
-                props.states.setLoading(false);
-            }
+            props.states.setLoading(false);
         }
     }, [store.wallet, actions, props.states, props.states.isLoading])
 
@@ -78,7 +74,7 @@ function MainView(props) {
                 <Errors states={props.states} />
                 <Notify states={props.states} />
                 <Menu className="warningMenu" size="small" color="yellow" fixed="top">
-                    <p>Alpha version software for testing only!</p>
+                    <p>Testnet Version!</p>
                 </Menu>
                 <Grid centered className="mainView">
                     <Grid.Row className="warningPad">
@@ -106,11 +102,13 @@ function MainView(props) {
                                 active={props.states.activePanel === 'settings'}
                                 onClick={() => props.states.setPanel("settings")}
                             />
+                            {/*
                             <Menu.Menu position="right">
                                 <Menu.Item>
                                     <Icon onClick={() => props.states.setRefresh(true)} name="refresh" />
                                 </Menu.Item>
                             </Menu.Menu>
+                            */}
                         </Menu>
                     </Grid.Row>
                     <Grid.Row>
