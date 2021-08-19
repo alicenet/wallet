@@ -1,0 +1,2 @@
+# Build legacy application? "" for default or "legacy" for legacy version
+REACT_APP_RUN_TYPE=""
