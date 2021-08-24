@@ -12,11 +12,11 @@ function MainHub(props) {
 
     return (
 
-        <Grid>
-            <Grid.Column>
+        <Grid padded>
+            <Grid.Column width={16}>
                 <ReduxStateViewer/>
             </Grid.Column>
-]        </Grid>
+        </Grid>
 
     )
 

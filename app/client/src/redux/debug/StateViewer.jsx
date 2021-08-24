@@ -35,14 +35,11 @@ function StateViewer({ redux }) {
 
     return (
 
-        <Grid padded relaxed>
+        <Grid padded>
 
             <Grid.Column width={16}>
-
                 <Header as="h1"> Redux State Debug View </Header>
-
                 {mapReduxStateToTable()}
-
             </Grid.Column>
 
             <Grid.Column width={16}>
