@@ -1,7 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
-import { Container } from 'semantic-ui-react';
 import MainHub from 'pages/MainHub/MainHub';
+import { ThemeProvider } from '@material-ui/core';
+
+import ThemeDefault from 'Theme';
 
 /**
  * Main App Entrypoint
@@ -9,13 +11,14 @@ import MainHub from 'pages/MainHub/MainHub';
 function App() {
 
     return (
-        <Container fluid>
-            <Router>
+    <ThemeProvider theme={ThemeDefault}>
+    <Router>
+        <Route path="/" component={MainHub} />
+        </Router>
 
-                <Route path="/" component={MainHub} />
+    </ThemeProvider>
 
-            </Router>
-        </Container>
+
     );
 }
 
