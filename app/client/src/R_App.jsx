@@ -1,9 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import MainHub from 'pages/MainHub/MainHub';
-import { ThemeProvider } from '@material-ui/core';
+import { ThemeProvider, Box } from '@material-ui/core';
 
-import ThemeDefault from 'Theme';
+import MadTheme from 'theme/MadTheme';
 
 /**
  * Main App Entrypoint
@@ -11,13 +11,16 @@ import ThemeDefault from 'Theme';
 function App() {
 
     return (
-    <ThemeProvider theme={ThemeDefault}>
-    <Router>
-        <Route path="/" component={MainHub} />
-        </Router>
 
-    </ThemeProvider>
+        <ThemeProvider theme={MadTheme}>
 
+            <Box p={4}>
+                <Router>
+                    <Route path="/" component={MainHub} />
+                </Router>
+            </Box>
+
+        </ThemeProvider>
 
     );
 }

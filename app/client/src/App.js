@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import { Container } from 'semantic-ui-react';
 import copy from 'copy-to-clipboard';
 
-import './App.css';
+// import './App.css'; -- Uncomment for legacy load
 import MainView from './MainView.js';
 import { Store } from './Store/store.js';
 
