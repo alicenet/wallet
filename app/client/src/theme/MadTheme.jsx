@@ -7,21 +7,23 @@ const theme = createTheme({
   colors: COLORS,
   palette: {
     primary: {
-      main: COLORS.black,
-      contrastText: COLORS.white,
+      main: COLORS.blue,
     },
     secondary: {
-      main: COLORS.black,
+      main: COLORS.magenta,
+    },
+    info: {
+      main: COLORS.cyan,
+    },
+    warning: {
+      main: COLORS.warning,
     },
     error: {
       main: COLORS.red,
     },
-    background: {
-      default: COLORS.white,
+    success: {
+      main: COLORS.success,
     },
-    orange: {
-      default: COLORS.yellow,
-    }
   },
   anchor: {},
   typography: {

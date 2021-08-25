@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import MainHub from 'pages/MainHub/MainHub';
-import { ThemeProvider, Box } from '@material-ui/core';
+import { Container, Grid } from 'semantic-ui-react';
 
 import MadTheme from 'theme/MadTheme';
 
@@ -12,15 +12,11 @@ function App() {
 
     return (
 
-        <ThemeProvider theme={MadTheme}>
-
-            <Box p={4}>
-                <Router>
-                    <Route path="/" component={MainHub} />
-                </Router>
-            </Box>
-
-        </ThemeProvider>
+        <Container fluid>
+            <Router>
+                <Route path="/" component={MainHub} />
+            </Router>
+        </Container>
 
     );
 }
