@@ -27,3 +27,7 @@ All: `npm run build-all`
 1. `npm run dev`
 2. Wait for React to start the development server...
 3. Reload the application `CTRL+R`
+
+##
+#### Refactoring Dev Notes
+Refactored files have been made with R_ prefixes to leave existing code with /app for reference during the initial overhaul.

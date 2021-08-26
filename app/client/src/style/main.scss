@@ -1,0 +1,10 @@
+/* Global Styles Should Go Here */
+html, body, #root {
+    display: flex;
+    width: 100%;
+    align-items: center;
+}
+
+.ui.grid {
+    display: flex !important;
+}
