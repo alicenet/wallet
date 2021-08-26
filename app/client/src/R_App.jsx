@@ -1,9 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import MainHub from 'pages/MainHub/MainHub';
-import { Container, Grid } from 'semantic-ui-react';
-
-import MadTheme from 'theme/MadTheme';
+import { Container } from 'semantic-ui-react';
 
 /**
  * Main App Entrypoint
