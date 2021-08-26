@@ -5,11 +5,11 @@ export default function CreateVault() {
 
     return (
 
-        <Grid textAlign="center" verticalAlign="middle" className="mt-14">
+        <Grid textAlign="center" verticalAlign="middle">
 
             <Grid.Column width={16}>
 
-                <Header content="Welcome To" as="h3" className="mb-0" />
+                <Header content="Welcome to" as="h3" className="mb-0" />
 
                 <Image src={MadIcon} size="tiny" centered />
 
