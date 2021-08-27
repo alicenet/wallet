@@ -25,6 +25,7 @@ export default function MainHub() {
             <Grid.Column width={16} className="mt-2 mb-2">
 
                 <p>It looks like it's your first time.</p>
+
                 <p>Lets create your main vault.</p>
 
             </Grid.Column>
@@ -73,12 +74,11 @@ export default function MainHub() {
 
             <Grid.Column width={16} className="flex flex-auto flex-col items-center gap-5">
 
-                <Container fluid className="flex flex-auto flex-col items-center gap-3 w-96">
+                <Container fluid className="flex flex-auto flex-col items-center gap-3 w-72">
 
                     <Button color="purple" basic content="Create a Vault*" fluid/>
 
                     <Button color="orange" basic content="I have a vault seed" fluid/>
-
 
                 </Container>
 
