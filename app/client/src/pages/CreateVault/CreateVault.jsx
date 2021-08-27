@@ -1,18 +1,19 @@
 import React from 'react';
 
-import {Button, Container, Grid, Header, Image} from "semantic-ui-react";
+import {Button, Container, Grid, Header, Image, Modal} from "semantic-ui-react";
 
 import MadIcon from "../../Assets/icon.png";
 import {withRouter} from "react-router-dom";
 
 function CreateVault({history}) {
 
+    const [openModal, setOpenModal] = React.useState(false)
+
     return (
+
         <Grid textAlign="center" verticalAlign="middle">
 
             <Grid.Column width={16}>
-
-                <Header content="Welcome to" as="h3" className="my-0"/>
 
                 <Image src={MadIcon} size="tiny" centered/>
 
@@ -28,6 +29,15 @@ function CreateVault({history}) {
 
             </Grid.Column>
 
+            <Grid.Column width={16} className="mt-2 mb-2">
+
+                <p>Please note that if you import additional wallets by private key they will be considered external
+                    wallets.</p>
+
+                <p>Please keep those keys safe, as the seed phrase will not cover any imported wallets!</p>
+
+            </Grid.Column>
+
             <Grid.Column width={16} className="flex flex-auto flex-col items-center gap-5">
 
                 <Container fluid className="flex flex-auto flex-col items-center gap-3 w-72">
@@ -38,11 +48,44 @@ function CreateVault({history}) {
 
                 </Container>
 
-                <p className="text-purple-500">More Info On How Wallets Are Generated</p>
+                <Modal
+                    onClose={() => setOpenModal(false)}
+                    onOpen={() => setOpenModal(true)}
+                    open={openModal}
+                    trigger={<p style={{cursor: 'pointer'}} className="text-purple-800"><strong>More Info On How Wallets
+                        Are Generated</strong></p>}
+                >
+
+                    <Modal.Content>
+
+                        <Modal.Description className="flex flex-col items-center gap-10">
+
+                            <Header content="Deterministic Wallet Generation" as="h3" className="my-0"/>
+
+                            <Container className="flex flex-auto flex-col gap-3 p-5 text-center">
+
+                                <p>Mad wallet uses the BIP44 standard to implement Seed Phrases and Deterministic
+                                    Wallets.</p>
+
+                                <p>ASimilar to other wallet software, only the wallets generated inside the Mad Wallet
+                                    application are covered by the seed recovery phrase. If additional imported wallets
+                                    are used you must retain the private keys for those respective wallets or risk
+                                    losing access to them.</p>
+
+                            </Container>
+
+                            <Button color='blue' onClick={() => setOpenModal(false)} content="Got it!"/>
+
+                        </Modal.Description>
+
+                    </Modal.Content>
+
+                </Modal>
 
             </Grid.Column>
 
         </Grid>
+
     )
 
 }

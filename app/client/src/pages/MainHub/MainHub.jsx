@@ -2,7 +2,7 @@ import React from 'react';
 
 import {Button, Container, Grid, Header, Image, Modal} from "semantic-ui-react";
 
-import { withRouter } from 'react-router-dom';
+import {withRouter} from 'react-router-dom';
 
 import MadIcon from "../../Assets/icon.png";
 
@@ -91,6 +91,7 @@ function MainHub({history}) {
             </Grid.Column>
 
         </Grid>
+
     )
 
 }
