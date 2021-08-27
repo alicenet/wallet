@@ -2,9 +2,11 @@ import React from 'react';
 
 import {Button, Container, Grid, Header, Image, Modal} from "semantic-ui-react";
 
+import { withRouter } from 'react-router-dom';
+
 import MadIcon from "../../Assets/icon.png";
 
-export default function MainHub() {
+function MainHub({history}) {
 
     const [openModal, setOpenModal] = React.useState(false)
 
@@ -76,13 +78,15 @@ export default function MainHub() {
 
                 <Container fluid className="flex flex-auto flex-col items-center gap-3 w-72">
 
-                    <Button color="purple" basic content="Create a Vault*" fluid/>
+                    <Button color="purple" basic content="Create a Vault*" fluid
+                            onClick={() => history.push('/createVault')}/>
 
                     <Button color="orange" basic content="I have a vault seed" fluid/>
 
                 </Container>
 
-            <p className="text-green-500">*Don&apos;t worry you&apos;ll be able to import additional wallets later</p>
+                <p className="text-green-500">*Don&apos;t worry you&apos;ll be able to import additional wallets
+                    later</p>
 
             </Grid.Column>
 
@@ -90,3 +94,5 @@ export default function MainHub() {
     )
 
 }
+
+export default withRouter(MainHub);
