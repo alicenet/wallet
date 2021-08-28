@@ -12,6 +12,7 @@ module.exports = {
     corePlugins: [
         'alignContent',
         'alignItems',
+        'alignSelf',
         'backgroundColor',
         'display',
         'flex',
