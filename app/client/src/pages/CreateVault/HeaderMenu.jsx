@@ -15,9 +15,7 @@ function CreateVault({history}) {
 
                 <Menu.Item as='a' header className='p-0' onClick={() => history.push('/')}>
 
-                    <Container fluid
-                               className="flex flex-row content-center items-center justify-center self-center justify-items-center"
-                    >
+                    <Container fluid className="flex flex-row content-center items-center justify-center self-center justify-items-center">
 
                         <Image src={MadIcon} size="mini" className="mx-1"/>
 

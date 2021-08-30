@@ -25,23 +25,17 @@ function CreateVault() {
 
                     <Grid.Column width={16} className="mt-2 mb-2">
 
-                        <p>Internal wallets will be generated through a seed phrase that will be shown on the next
-                            step.</p>
+                        <p>Internal wallets will be generated through a seed phrase that will be shown on the next step.</p>
 
-                        <p>Your seed phrase is the key to your internal wallets, please keep it in a secure
-                            location.</p>
+                        <p>Your seed phrase is the key to your internal wallets, please keep it in a secure location.</p>
 
                     </Grid.Column>
 
                     <Grid.Column width={16} className="mt-2 mb-2">
 
-                        <p className="m-0">Please note that if you import additional wallets by private key they will be
-                            considered
-                            external
-                            wallets.</p>
+                        <p className="m-0">Please note that if you import additional wallets by private key they will be considered external wallets.</p>
 
-                        <p className="m-0">Please keep those keys safe, as the seed phrase will not cover any imported
-                            wallets!</p>
+                        <p className="m-0">Please keep those keys safe, as the seed phrase will not cover any imported wallets!</p>
 
                     </Grid.Column>
 
@@ -60,10 +54,7 @@ function CreateVault() {
                             onOpen={() => setOpenModal(true)}
                             open={openModal}
                             dimmer="inverted"
-                            trigger={<p style={{cursor: 'pointer'}} className="text-purple-400 text-sm"><strong>More
-                                Info On How
-                                Wallets
-                                Are Generated</strong></p>}
+                            trigger={<p style={{cursor: 'pointer'}} className="text-purple-400 text-sm"><strong>More Info On How Wallets Are Generated</strong></p>}
                         >
 
                             <Modal.Content>
@@ -75,16 +66,12 @@ function CreateVault() {
                                     <Container className="flex flex-auto flex-col gap-3 p-5 text-center">
 
                                         <p>Mad wallet uses the BIP44 standard to implement Seed Phrases and
-                                            Deterministic
-                                            Wallets.</p>
+                                            Deterministic Wallets.</p>
 
                                         <p>Similar to other wallet software, only the wallets generated inside the Mad
-                                            Wallet
-                                            application are covered by the seed recovery phrase. If additional imported
-                                            wallets
-                                            are used you must retain the private keys for those respective wallets or
-                                            risk
-                                            losing access to them.</p>
+                                            Wallet application are covered by the seed recovery phrase. If additional
+                                            imported wallets are used you must retain the private keys for those
+                                            respective wallets or risk losing access to them.</p>
 
                                     </Container>
 
@@ -99,7 +86,9 @@ function CreateVault() {
                     </Grid.Column>
 
                 </Grid>
+
             </Container>
+
         </div>
     )
 
