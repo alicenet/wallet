@@ -59,7 +59,9 @@ function CreateVault() {
                             onClose={() => setOpenModal(false)}
                             onOpen={() => setOpenModal(true)}
                             open={openModal}
-                            trigger={<p style={{cursor: 'pointer'}} className="text-purple-600"><strong>More Info On How
+                            dimmer="inverted"
+                            trigger={<p style={{cursor: 'pointer'}} className="text-purple-400 text-sm"><strong>More
+                                Info On How
                                 Wallets
                                 Are Generated</strong></p>}
                         >
@@ -86,7 +88,7 @@ function CreateVault() {
 
                                     </Container>
 
-                                    <Button color='blue' onClick={() => setOpenModal(false)} content="Got it!"/>
+                                    <Button color="purple" onClick={() => setOpenModal(false)} content="Got it!"/>
 
                                 </Modal.Description>
 

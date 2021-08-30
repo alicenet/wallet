@@ -37,7 +37,8 @@ function MainHub({history}) {
                     onClose={() => setOpenModal(false)}
                     onOpen={() => setOpenModal(true)}
                     open={openModal}
-                    trigger={<a style={{cursor: 'pointer'}}>What is a vault?</a>}
+                    dimmer="inverted"
+                    trigger={<a style={{cursor: 'pointer'}} className="text-purple-700 text-sm">What is a vault?</a>}
                 >
 
                     <Modal.Content>
@@ -63,7 +64,7 @@ function MainHub({history}) {
 
                             </Container>
 
-                            <Button color='blue' onClick={() => setOpenModal(false)} content="Got it!"/>
+                            <Button color="purple" onClick={() => setOpenModal(false)} content="Got it!"/>
 
                         </Modal.Description>
 
@@ -84,7 +85,7 @@ function MainHub({history}) {
 
                 </Container>
 
-                <p className="text-green-500">*Don&apos;t worry you&apos;ll be able to import additional wallets
+                <p className="text-green-500 text-sm">*Don&apos;t worry you&apos;ll be able to import additional wallets
                     later</p>
 
             </Grid.Column>

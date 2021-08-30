@@ -20,6 +20,7 @@ module.exports = {
         'flexGrow',
         'flexShrink',
         'flexWrap',
+        'fontSize',
         'gap',
         'justifyContent',
         'justifyItems',
