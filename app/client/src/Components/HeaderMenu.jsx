@@ -4,7 +4,7 @@ import {Container, Header, Image, Menu} from "semantic-ui-react";
 
 import {withRouter} from "react-router-dom";
 
-import MadIcon from "../../Assets/icon.png";
+import MadIcon from "../Assets/icon.png";
 
 function CreateVault({history}) {
 

@@ -2,7 +2,7 @@ import React from 'react';
 
 import {Button, Container, Grid, Header, Modal} from "semantic-ui-react";
 
-import HeaderMenu from "./HeaderMenu";
+import HeaderMenu from "../../Components/HeaderMenu";
 
 function CreateVault() {
 

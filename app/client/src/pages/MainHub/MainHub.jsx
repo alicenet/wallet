@@ -78,10 +78,9 @@ function MainHub({history}) {
 
                 <Container fluid className="flex flex-auto flex-col items-center gap-3 w-72">
 
-                    <Button color="purple" basic content="Create a Vault*" fluid
-                            onClick={() => history.push('/createVault')}/>
+                    <Button color="purple" basic content="Create a Vault*" fluid onClick={() => history.push('/createVault')}/>
 
-                    <Button color="orange" basic content="I have a vault seed" fluid/>
+                    <Button color="orange" basic content="I have a vault seed" fluid onClick={() => history.push('/vaultOptOut')}/>
 
                 </Container>
 
