@@ -78,7 +78,7 @@ function CreateVault() {
                                             Deterministic
                                             Wallets.</p>
 
-                                        <p>ASimilar to other wallet software, only the wallets generated inside the Mad
+                                        <p>Similar to other wallet software, only the wallets generated inside the Mad
                                             Wallet
                                             application are covered by the seed recovery phrase. If additional imported
                                             wallets
