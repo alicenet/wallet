@@ -11,7 +11,6 @@ function MainHub({history}) {
     const [openModal, setOpenModal] = React.useState(false)
 
     return (
-
         <Grid textAlign="center" verticalAlign="middle">
 
             <Grid.Column width={16}>
@@ -91,7 +90,6 @@ function MainHub({history}) {
             </Grid.Column>
 
         </Grid>
-
     )
 
 }

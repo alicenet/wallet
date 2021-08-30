@@ -1,46 +1,27 @@
 import React from 'react';
 
-import {Button, Container, Grid, Header, Image, Menu, Modal} from "semantic-ui-react";
+import {Button, Container, Grid, Header, Modal} from "semantic-ui-react";
 
-import MadIcon from "../../Assets/icon.png";
-import {withRouter} from "react-router-dom";
+import HeaderMenu from "./HeaderMenu";
 
-function CreateVault({history}) {
+function CreateVault() {
 
     const [openModal, setOpenModal] = React.useState(false)
 
     return (
         <div>
 
-            <Menu fixed='top' secondary>
+            <HeaderMenu/>
 
-                <Container fluid>
-
-                    <Menu.Item as='a' header className='p-0' onClick={() => history.push('/')}>
-
-                        <Container fluid
-                                   className="flex flex-row content-center items-center justify-center self-center justify-items-center"
-                        >
-
-                            <Image src={MadIcon} size="mini" className="mx-1"/>
-
-                            <Container fluid>
-
-                                <Header content="MadWallet" as="h4" className="mx-2"/>
-
-                            </Container>
-
-                        </Container>
-
-                    </Menu.Item>
-
-                </Container>
-
-            </Menu>
-
-            <Container>
+            <Container fluid>
 
                 <Grid textAlign="center" verticalAlign="middle">
+
+                    <Grid.Column width={16}>
+
+                        <Header content="Lets setup your vault" as="h3" className="my-0"/>
+
+                    </Grid.Column>
 
                     <Grid.Column width={16} className="mt-2 mb-2">
 
@@ -54,17 +35,19 @@ function CreateVault({history}) {
 
                     <Grid.Column width={16} className="mt-2 mb-2">
 
-                        <p>Please note that if you import additional wallets by private key they will be considered
+                        <p className="m-0">Please note that if you import additional wallets by private key they will be
+                            considered
                             external
                             wallets.</p>
 
-                        <p>Please keep those keys safe, as the seed phrase will not cover any imported wallets!</p>
+                        <p className="m-0">Please keep those keys safe, as the seed phrase will not cover any imported
+                            wallets!</p>
 
                     </Grid.Column>
 
                     <Grid.Column width={16} className="flex flex-auto flex-col items-center gap-5">
 
-                        <Container fluid className="flex flex-auto flex-col items-center gap-3 w-72">
+                        <Container fluid className="flex flex-auto flex-col items-center gap-5 w-72">
 
                             <Button color="purple" basic content="Get Seed Phrase" fluid/>
 
@@ -76,7 +59,7 @@ function CreateVault({history}) {
                             onClose={() => setOpenModal(false)}
                             onOpen={() => setOpenModal(true)}
                             open={openModal}
-                            trigger={<p style={{cursor: 'pointer'}} className="text-purple-800"><strong>More Info On How
+                            trigger={<p style={{cursor: 'pointer'}} className="text-purple-600"><strong>More Info On How
                                 Wallets
                                 Are Generated</strong></p>}
                         >
@@ -120,4 +103,4 @@ function CreateVault({history}) {
 
 }
 
-export default withRouter(CreateVault);
+export default CreateVault;
