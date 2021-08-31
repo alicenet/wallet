@@ -1,10 +1,12 @@
 import React from 'react';
 
+import {withRouter} from "react-router-dom";
+
 import {Button, Container, Grid, Header, Modal} from "semantic-ui-react";
 
 import HeaderMenu from "../../Components/HeaderMenu";
 
-function CreateVault() {
+function CreateVault({history}) {
 
     const [openModal, setOpenModal] = React.useState(false)
 
@@ -45,7 +47,7 @@ function CreateVault() {
 
                             <Button color="purple" basic content="Get Seed Phrase" fluid/>
 
-                            <Button color="orange" basic content="Just Generate A Keystore" fluid/>
+                            <Button color="orange" basic content="Just Generate A Keystore" fluid  onClick={() => history.push('/vaultOptOut')}/>
 
                         </Container>
 
@@ -94,4 +96,4 @@ function CreateVault() {
 
 }
 
-export default CreateVault;
+export default withRouter(CreateVault);

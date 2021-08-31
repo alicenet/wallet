@@ -1,8 +1,8 @@
 import React from 'react';
 
-import {Button, Container, Grid, Header, Image, Modal} from "semantic-ui-react";
-
 import {withRouter} from 'react-router-dom';
+
+import {Button, Container, Grid, Header, Image, Modal} from "semantic-ui-react";
 
 import MadIcon from "../../Assets/icon.png";
 
@@ -80,7 +80,7 @@ function MainHub({history}) {
 
                     <Button color="purple" basic content="Create a Vault*" fluid onClick={() => history.push('/createVault')}/>
 
-                    <Button color="orange" basic content="I have a vault seed" fluid onClick={() => history.push('/vaultOptOut')}/>
+                    <Button color="orange" basic content="I have a vault seed" fluid/>
 
                 </Container>
 

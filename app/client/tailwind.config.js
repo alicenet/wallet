@@ -31,6 +31,7 @@ module.exports = {
         'padding',
         'textAlign',
         'textColor',
+        'textTransform',
         'width',
     ]
 }
