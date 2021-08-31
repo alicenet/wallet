@@ -44,6 +44,7 @@ function YourSeedPhrase({history, seedPhrase}) {
                             {chunk(seedPhrase, Math.floor(seedPhrase.length / 2)).map(someSeeds =>
 
                                 <GridRow>
+
                                     {someSeeds.map(word => <Grid.Column key={word}>{word}</Grid.Column>)}
 
                                 </GridRow>
