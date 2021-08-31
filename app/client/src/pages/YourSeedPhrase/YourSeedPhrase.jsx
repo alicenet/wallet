@@ -10,7 +10,6 @@ import {withRouter} from "react-router-dom";
 
 import HeaderMenu from "../../Components/HeaderMenu";
 
-
 function YourSeedPhrase({history, seedPhrase}) {
 
     const [isChecked, setIsChecked] = React.useState(false);

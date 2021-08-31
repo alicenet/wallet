@@ -6,7 +6,6 @@ import {withRouter} from "react-router-dom";
 
 import HeaderMenu from "../../Components/HeaderMenu";
 
-
 function VaultOptOut({history}) {
 
     const [isChecked, setIsChecked] = React.useState(false);
