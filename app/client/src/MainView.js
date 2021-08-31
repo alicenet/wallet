@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from "react";
 import { StoreContext } from "./Store/store.js";
 
-import { Dimmer, Loader, Container, Icon, Grid, Menu, Image } from "semantic-ui-react";
+import { Dimmer, Loader, Container, Grid, Menu, Image } from "semantic-ui-react";
 
 import MadNet from "./Components/madnet.js";
 import Ethereum from "./Components/ethereum.js";
@@ -37,7 +37,8 @@ function MainView(props) {
             props.states.themeToggle(store.settings.theme)
             props.states.setLoading(false);
         }
-    }, [store.wallet, actions, props.states, props.states.isLoading])
+        // Below will be fixed on new UI, ignoring for now
+    }, [store.wallet, actions, props.states, props.states.isLoading]) //eslint-disable-line
 
     // Returns a child component based on the menus selected option
     const mainView = (activePanel) => {

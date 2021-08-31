@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { StoreContext } from "../Store/store.js";
-import { Container, Grid, Form, Input, Segment, Button, Divider, Icon, Rail, Modal } from "semantic-ui-react"
+import { Container, Grid, Form, Input, Segment, Button, Divider, Icon, Modal } from "semantic-ui-react"
 import Switch from "react-switch";
 import Accts from '../Utils/accounts.js';
 
@@ -136,6 +136,10 @@ function Accounts(props) {
             case 'err':
                 props.states.setError(String(data));;
                 return;;
+            default: 
+                console.log("Adapter called with unknown event, returning null"); 
+                return;
+            
         }
         addPrivKData({ "privK": "", "curve": "" });
         addKeystoreData({ "keystore": false, "password": "" });

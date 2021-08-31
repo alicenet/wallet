@@ -12,13 +12,13 @@ export default function modalReducer(state = initialModalState, action) {
     switch (action.type) {
 
         case MODAL_ACTION_TYPES.SET_GLOBAL_ERROR:
-            return Object.assign({}, {
+            return Object.assign({}, state, {
                 globalErrorModal: true,
                 globalErrorText: action.payload,
             });
 
         case MODAL_ACTION_TYPES.CLEAR_GLOBAL_ERROR:
-            return Object.assign({}, {
+            return Object.assign({}, state, {
                 globalErrorModal: false,
                 globalErrorText: "",
             });

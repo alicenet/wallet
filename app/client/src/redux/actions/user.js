@@ -1,6 +1,7 @@
 import { USER_ACTION_TYPES } from '../constants/_constants';
 import utils from 'util/_util';
 
+///////////////////////////
 /* Internal Action Calls */
 ///////////////////////////
 
@@ -14,7 +15,9 @@ function _unlockAccount() {
     return { type: USER_ACTION_TYPES.MARK_ACCOUNT_UNLOCKED };
 }
 
+////////////////////////////////////////////////////////////////////////////////////////
 /* External Async Action Calls -- Require forwarded dispatch from connected component */
+////////////////////////////////////////////////////////////////////////////////////////
 
 /* Check for existing user account files and set state accordingly */
 export function checkForUserAccount() {

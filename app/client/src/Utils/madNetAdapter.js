@@ -174,6 +174,7 @@ class MadNetAdapter {
             }
             await this.cb.call(this, "success")
             this.blocksLocked = false
+            //eslint-disable-next-line
             this.blocksId = setTimeout(() => { try { this.monitorBlocks() } catch (ex) { console.log(ex) } }, this["monitorBlocks-attempts"] == 1 ? 5000 : this["monitorBlocks-timeout"]);
         }
         catch (ex) {
@@ -293,11 +294,11 @@ class MadNetAdapter {
         try {
             let dataSize = Buffer.from(data, "hex").length;
             if (BigInt(dataSize) > BigInt(this.MaxDataStoreSize)) {
-                throw "Data size is too large"
+                throw Error("Data size is too large")
             }
             let epoch = BigInt("0x" + deposit) / BigInt((BigInt(dataSize) + BigInt(this.BaseDatasizeConst)))
             if (BigInt(epoch) < BigInt(2)) {
-                throw "invalid dataSize and deposit causing integer overflow"
+                throw Error("invalid dataSize and deposit causing integer overflow")
             }
             let numEpochs = BigInt(BigInt(epoch) - BigInt(2));
             let expEpoch = (BigInt(issuedAt) + BigInt(numEpochs));
