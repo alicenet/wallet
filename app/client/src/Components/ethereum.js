@@ -371,7 +371,7 @@ function Ethereum(props) {
         // TODO: Use updated ABI and test methods
         return (<></>)
 
-        if (!store.web3Adapter || !store.web3Adapter.selectedAddress) {
+        if (!store.web3Adapter || !store.web3Adapter.selectedAddress) { //eslint-disable-line
             return (<></>)
         }
         return (
