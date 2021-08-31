@@ -19,6 +19,7 @@ module.exports = {
     'flexGrow',
     'flexShrink',
     'flexWrap',
+    'fontSize',
     'justifyContent',
     'justifyItems',
     'justifySelf',

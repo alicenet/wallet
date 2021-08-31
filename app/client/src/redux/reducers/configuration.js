@@ -15,27 +15,27 @@ export default function conifigurationReducer(state = initialConfigurationState,
     switch (action.type) {
 
         case CONFIG_ACTION_TYPES.TOGGLE_DEFAULT_CURVE:
-            return Object.assign({}, {
-                defaultCurve: state.defaultCurve === "secp256k1" ? "barreto-naehrig" : "secp256k1",
+            return Object.assign({}, state, {
+                default_curve: state.default_curve === "secp256k1" ? "barreto-naehrig" : "secp256k1",
             });
 
         case CONFIG_ACTION_TYPES.UPDATE_ETHEREUM_PROVIDER:
-            return Object.assign({}, {
+            return Object.assign({}, state, {
                 ethereum_provider: action.payload
             });
 
         case CONFIG_ACTION_TYPES.UPDATE_MAD_NET_CHAIN_ID:
-            return Object.assign({}, {
+            return Object.assign({}, state, {
                 mad_net_chainID: action.payload
             });
 
         case CONFIG_ACTION_TYPES.UPDATE_MAD_NET_PROVIDER:
-            return Object.assign({}, {
+            return Object.assign({}, state, {
                 mad_net_provider: action.payload
             });
 
         case CONFIG_ACTION_TYPES.UPDATE_REGISTRY_CONTRACT_ADDR:
-            return Object.assign({}, {
+            return Object.assign({}, state, {
                 registry_contract_address: action.payload
             });
 
