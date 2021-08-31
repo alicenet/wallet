@@ -6,13 +6,15 @@ import {Button, Checkbox, Container, Grid, GridRow, Header} from "semantic-ui-re
 
 import chunk from "lodash/chunk";
 
-import {withRouter} from "react-router-dom";
+import {useHistory} from "react-router-dom";
 
 import HeaderMenu from "../../Components/HeaderMenu";
 
-function YourSeedPhrase({history, seedPhrase}) {
+function YourSeedPhrase({seedPhrase}) {
 
     const [isChecked, setIsChecked] = React.useState(false);
+
+    const history = useHistory();
 
     return (
         <div>
@@ -88,13 +90,12 @@ function YourSeedPhrase({history, seedPhrase}) {
 
 }
 
-export default withRouter(YourSeedPhrase);
+export default YourSeedPhrase;
 
 YourSeedPhrase.defaultProps = {
     seedPhrase: ['science', 'crack', 'knee', 'whisper', 'gown', 'gas', 'hint', 'car', 'stumble', 'derive', 'tank', 'apart'],
 };
 
 YourSeedPhrase.propTypes = {
-    history: PropTypes.object.isRequired,
     seedPhrase: PropTypes.arrayOf(PropTypes.string),
 };

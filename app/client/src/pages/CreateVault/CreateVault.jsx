@@ -1,14 +1,16 @@
 import React from 'react';
 
-import {withRouter} from "react-router-dom";
+import {useHistory} from "react-router-dom";
 
 import {Button, Container, Grid, Header, Modal} from "semantic-ui-react";
 
 import HeaderMenu from "../../Components/HeaderMenu";
 
-function CreateVault({history}) {
+function CreateVault() {
 
     const [openModal, setOpenModal] = React.useState(false)
+
+    const history = useHistory();
 
     return (
         <div>
@@ -56,7 +58,11 @@ function CreateVault({history}) {
                             onOpen={() => setOpenModal(true)}
                             open={openModal}
                             dimmer="inverted"
-                            trigger={<p style={{cursor: 'pointer'}} className="text-purple-400 text-sm"><strong>More Info On How Wallets Are Generated</strong></p>}
+                            trigger={
+                                <p style={{cursor: 'pointer'}} className="text-purple-400 text-sm">
+                                    <strong>More Info On How Wallets Are Generated</strong>
+                                </p>
+                            }
                         >
 
                             <Modal.Content>
@@ -96,4 +102,4 @@ function CreateVault({history}) {
 
 }
 
-export default withRouter(CreateVault);
+export default CreateVault;

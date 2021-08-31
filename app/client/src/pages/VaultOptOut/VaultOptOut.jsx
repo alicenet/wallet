@@ -2,13 +2,15 @@ import React from 'react';
 
 import {Button, Checkbox, Container, Grid, Header} from "semantic-ui-react";
 
-import {withRouter} from "react-router-dom";
+import {useHistory} from "react-router-dom";
 
 import HeaderMenu from "../../Components/HeaderMenu";
 
-function VaultOptOut({history}) {
+function VaultOptOut() {
 
     const [isChecked, setIsChecked] = React.useState(false);
+
+    const history = useHistory();
 
     return (
         <div>
@@ -57,7 +59,8 @@ function VaultOptOut({history}) {
 
                         <Container fluid className="flex flex-auto flex-col items-center gap-5 w-96">
 
-                            <Button color="purple" basic disabled={!isChecked} content="Generate Seed" fluid onClick={() => history.push('/')}/>
+                            <Button color="purple" basic disabled={!isChecked} content="Generate Seed" fluid
+                                    onClick={() => history.push('/')}/>
 
                             <Checkbox onChange={() => setIsChecked(prevState => !prevState)} checked={isChecked}
                                       label={<label>I Understand and wish to opt out of vault storage</label>}/>
@@ -75,4 +78,4 @@ function VaultOptOut({history}) {
 
 }
 
-export default withRouter(VaultOptOut);
+export default VaultOptOut;

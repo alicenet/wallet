@@ -1,14 +1,16 @@
 import React from 'react';
 
-import {withRouter} from 'react-router-dom';
+import {useHistory} from 'react-router-dom';
 
 import {Button, Container, Grid, Header, Image, Modal} from "semantic-ui-react";
 
 import MadIcon from "../../Assets/icon.png";
 
-function MainHub({history}) {
+function MainHub() {
 
     const [openModal, setOpenModal] = React.useState(false)
+
+    const history = useHistory();
 
     return (
         <Grid textAlign="center" verticalAlign="middle">
@@ -94,4 +96,4 @@ function MainHub({history}) {
 
 }
 
-export default withRouter(MainHub);
+export default MainHub;
