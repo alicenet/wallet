@@ -5,6 +5,7 @@ import {Container} from 'semantic-ui-react';
 import MainHub from "./pages/MainHub/MainHub";
 import CreateVault from "./pages/CreateVault/CreateVault";
 import VaultOptOut from "./pages/VaultOptOut/VaultOptOut";
+import YourSeedPhrase from "./pages/YourSeedPhrase/YourSeedPhrase";
 
 /**
  * Main App Entrypoint
@@ -24,6 +25,8 @@ function App() {
                     <Route exact path="/createVault" component={CreateVault}/>
 
                     <Route exact path="/vaultOptOut" component={VaultOptOut}/>
+
+                    <Route exact path="/yourSeedPhrase" component={YourSeedPhrase}/>
 
                 </Switch>
 

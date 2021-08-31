@@ -8,6 +8,7 @@
     "copy-to-clipboard": "^3.3.1",
     "cross-env": "^7.0.3",
     "electron-settings": "^4.0.2",
+    "lodash": "^4.17.21",
     "loglevel": "^1.7.1",
     "madwalletjs": "git+ssh://git@github.com/MadBase/MadNetWallet-JS.git",
     "node-sass": "^6.0.1",
