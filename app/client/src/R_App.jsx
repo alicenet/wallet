@@ -1,8 +1,11 @@
 import React from 'react';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import {Container} from 'semantic-ui-react';
+import CreateVault from "./pages/CreateVault/CreateVault";
+import VaultOptOut from "./pages/VaultOptOut/VaultOptOut";
+import YourSeedPhrase from "./pages/YourSeedPhrase/YourSeedPhrase";
+import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 import MainHub from 'pages/MainHub/MainHub';
-import { Container } from 'semantic-ui-react';
-import ReduxStateViewer, { handleDebugListener } from 'redux/debug/StateViewer';
+import ReduxStateViewer, {handleDebugListener} from 'redux/debug/StateViewer';
 import util from 'util/_util';
 
 /**
@@ -17,9 +20,13 @@ function App() {
     }, [])
 
     const DefaultRoutes = () => {
-        return (<>
-            <Route path="/" component={MainHub} />
-        </>
+        return (
+            <>
+                <Route exact path="/" component={MainHub}/>
+                <Route exact path="/createVault" component={CreateVault}/>
+                <Route exact path="/vaultOptOut" component={VaultOptOut}/>
+                <Route exact path="/yourSeedPhrase" component={YourSeedPhrase}/>
+            </>
         )
     }
 
@@ -30,16 +37,15 @@ function App() {
     }
 
     return (
-
         <Container fluid>
             <Router>
-                <DefaultRoutes />
-                <DebugTools/>
+                <Switch>
+                    <DefaultRoutes/>
+                    <DebugTools/>
+                </Switch>
             </Router>
         </Container>
-
     );
 }
-
 
 export default App;
