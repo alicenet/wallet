@@ -13,7 +13,7 @@ function VaultOptOut() {
     const history = useHistory();
 
     return (
-        <Container className="h-full" fluid>
+        <Container className="h-full flex items-center justify-center" fluid>
 
             <HeaderMenu/>
 

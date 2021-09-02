@@ -13,7 +13,7 @@ function CreateVault() {
     const history = useHistory();
 
     return (
-        <Container className="h-full" fluid>
+        <Container className="h-full flex flex-col items-center justify-center" fluid>
 
             <HeaderMenu/>
 
