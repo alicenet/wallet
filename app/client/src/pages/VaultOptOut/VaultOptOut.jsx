@@ -13,21 +13,21 @@ function VaultOptOut() {
     const history = useHistory();
 
     return (
-        <div>
+        <Container className="h-full" fluid>
 
             <HeaderMenu/>
 
             <Container>
 
-                <Grid textAlign="center" verticalAlign="middle">
+                <Grid textAlign="center">
 
-                    <Grid.Column width={16}>
+                    <Grid.Column width={16} className="my-5">
 
                         <Header content="Vault Opt Out" as="h3" className="my-0"/>
 
                     </Grid.Column>
 
-                    <Grid.Column width={16} className="m-2">
+                    <Grid.Column width={15}>
 
                         <p>When opting out of vault storage you will be sacrificing user experience for security.</p>
 
@@ -43,7 +43,7 @@ function VaultOptOut() {
 
                     </Grid.Column>
 
-                    <Grid.Column width={16} className="m-2">
+                    <Grid.Column width={16} className="my-5">
 
                         <p className="text-red-600 uppercase text-sm">
 
@@ -55,7 +55,7 @@ function VaultOptOut() {
 
                     </Grid.Column>
 
-                    <Grid.Column width={16} className="flex flex-auto flex-col items-center gap-5">
+                    <Grid.Column width={16} className="flex-col">
 
                         <Container fluid className="flex flex-auto flex-col items-center gap-5 w-96">
 
@@ -73,7 +73,7 @@ function VaultOptOut() {
 
             </Container>
 
-        </div>
+        </Container>
     )
 
 }

@@ -9,7 +9,7 @@ import MadIcon from "../Assets/icon.png";
 function CreateVault({history}) {
 
     return (
-        <Menu fixed='top' secondary>
+        <Menu secondary className="m-0">
 
             <Container fluid>
 

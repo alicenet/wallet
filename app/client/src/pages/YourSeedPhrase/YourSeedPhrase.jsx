@@ -17,21 +17,21 @@ function YourSeedPhrase({seedPhrase}) {
     const history = useHistory();
 
     return (
-        <div>
+        <Container className="h-full" fluid>
 
             <HeaderMenu/>
 
             <Container>
 
-                <Grid textAlign="center" verticalAlign="middle">
+                <Grid textAlign="center">
 
-                    <Grid.Column width={16}>
+                    <Grid.Column width={16} className="my-5">
 
                         <Header content="Your Seed Phrase" as="h3" className="my-0"/>
 
                     </Grid.Column>
 
-                    <Grid.Column width={16} className="m-2">
+                    <Grid.Column width={16}>
 
                         <p>Below is your seed phrase, please store it in a secure place.</p>
 
@@ -39,7 +39,7 @@ function YourSeedPhrase({seedPhrase}) {
 
                     </Grid.Column>
 
-                    <Grid.Column width={16} className="m-2">
+                    <Grid.Column width={16}>
 
                         <Grid celled columns={6}>
 
@@ -56,7 +56,7 @@ function YourSeedPhrase({seedPhrase}) {
 
                     </Grid.Column>
 
-                    <Grid.Column width={16} className="m-2">
+                    <Grid.Column width={16}>
 
                         <p className="text-red-600 uppercase text-sm">
 
@@ -66,13 +66,13 @@ function YourSeedPhrase({seedPhrase}) {
 
                     </Grid.Column>
 
-                    <Grid.Column width={16} className="flex flex-auto flex-col items-center gap-5">
+                    <Grid.Column width={16} className="flex-col">
 
                         <Container fluid className="flex flex-auto flex-col items-center gap-5 w-96">
 
                             <Button color="purple" basic disabled={!isChecked}
                                     content="I'm Ready To Verify The Seed Phrase" fluid
-                                    onClick={() => history.push('/')}/>
+                                    onClick={() => history.push('/verifyYourSeedPhrase')}/>
 
                             <Checkbox onChange={() => setIsChecked(prevState => !prevState)} checked={isChecked}
                                       label={<label>I Have Stores This Seed Securely</label>}/>
@@ -85,7 +85,7 @@ function YourSeedPhrase({seedPhrase}) {
 
             </Container>
 
-        </div>
+        </Container>
     )
 
 }

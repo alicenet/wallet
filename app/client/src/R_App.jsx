@@ -1,12 +1,14 @@
 import React from 'react';
 import {Container} from 'semantic-ui-react';
-import CreateVault from "./pages/CreateVault/CreateVault";
-import VaultOptOut from "./pages/VaultOptOut/VaultOptOut";
-import YourSeedPhrase from "./pages/YourSeedPhrase/YourSeedPhrase";
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
-import MainHub from 'pages/MainHub/MainHub';
 import ReduxStateViewer, {handleDebugListener} from 'redux/debug/StateViewer';
 import util from 'util/_util';
+
+import MainHub from 'pages/MainHub/MainHub';
+import CreateVault from './pages/CreateVault/CreateVault';
+import VaultOptOut from './pages/VaultOptOut/VaultOptOut';
+import YourSeedPhrase from './pages/YourSeedPhrase/YourSeedPhrase';
+import VerifyYourSeedPhrase from './pages/VerifyYourSeedPhrase/VerifyYourSeedPhrase';
 
 /**
  * Main App Entrypoint
@@ -26,6 +28,7 @@ function App() {
                 <Route exact path="/createVault" component={CreateVault}/>
                 <Route exact path="/vaultOptOut" component={VaultOptOut}/>
                 <Route exact path="/yourSeedPhrase" component={YourSeedPhrase}/>
+                <Route exact path="/verifyYourSeedPhrase" component={VerifyYourSeedPhrase}/>
             </>
         )
     }
@@ -37,7 +40,7 @@ function App() {
     }
 
     return (
-        <Container fluid>
+        <Container className="h-screen" fluid>
             <Router>
                 <Switch>
                     <DefaultRoutes/>
