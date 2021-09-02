@@ -1,13 +1,9 @@
-const {
-  app,
-  BrowserWindow,
-  ipcMain,
-} = require("electron");
+const { app, BrowserWindow, ipcMain } = require('electron');
 
 const isDev = require('electron-is-dev');
 
-const Store = require("secure-electron-store").default;
-const fs = require("fs");
+const Store = require('secure-electron-store').default;
+const fs = require('fs');
 
 const path = require('path');
 const url = require('url');
@@ -19,19 +15,18 @@ const icon = path.join(__dirname, '/app-build/electron/icon.png');
 let win;
 
 async function createWindow() {
-  
   const store = new Store({
-    path: app.getPath("userData"),
-    unprotectedPath: app.getPath("userData"),
-    filename: "MadWalletEnc",
-    unprotectedFilename: "MadWalletCfg",
+    path: app.getPath('userData'),
+    unprotectedPath: app.getPath('userData'),
+    filename: 'MadWalletEnc',
+    unprotectedFilename: 'MadWalletCfg',
   });
 
   win = new BrowserWindow({
     width: 800,
     height: 600,
-    title: "",
-    icon: icon,
+    title: '',
+    icon,
     autoHideMenuBar: true,
     webPreferences: {
       devTools: isDev,
@@ -40,40 +35,41 @@ async function createWindow() {
       nodeIntegrationInSubFrames: false,
       contextIsolation: true,
       worldSafeExecuteJavaScript: true,
-      webSecurity : false,
+      webSecurity: false,
       enableRemoteModule: false,
-      additionalArguments: [`storePath:${app.getPath("userData")}`],
-      preload: path.join(__dirname, "./preload.js")
-    }
+      additionalArguments: [`storePath:${app.getPath('userData')}`],
+      preload: path.join(__dirname, './preload.js'),
+    },
   });
 
   store.mainBindings(ipcMain, win, fs);
 
   if (isDev) {
-    win.loadURL(selfHost)
+    win.loadURL(selfHost);
   } else {
-    win.loadURL(url.format({
-      pathname: path.join(__dirname, '../index.html'),
-      protocol: 'file:',
-      slashes: true
-    }));
+    win.loadURL(
+      url.format({
+        pathname: path.join(__dirname, '../index.html'),
+        protocol: 'file:',
+        slashes: true,
+      })
+    );
   }
-
 }
 
-app.on("ready", () => {
-  createWindow()
+app.on('ready', () => {
+  createWindow();
 });
 
-app.on("activate", () => {
+app.on('activate', () => {
   if (win === null) {
     createWindow();
   }
 });
 
 // https://electronjs.org/docs/tutorial/security#12-disable-or-limit-navigation
-app.on("web-contents-created", (event, contents) => {
-  contents.on("will-navigate", (event, navigationUrl) => {
+app.on('web-contents-created', (event, contents) => {
+  contents.on('will-navigate', (event, navigationUrl) => {
     const parsedUrl = new URL(navigationUrl);
     const validOrigins = [selfHost];
 
@@ -84,27 +80,23 @@ app.on("web-contents-created", (event, contents) => {
       );
 
       event.preventDefault();
-      return;
     }
   });
 
-  contents.on("will-redirect", (event, navigationUrl) => {
+  contents.on('will-redirect', (event, navigationUrl) => {
     const parsedUrl = new URL(navigationUrl);
     const validOrigins = [];
 
     // Log and prevent the app from redirecting to a new page
     if (!validOrigins.includes(parsedUrl.origin)) {
-      console.error(
-        `The application tried to redirect to the following address: '${navigationUrl}'. This attempt was blocked.`
-      );
+      console.error(`The application tried to redirect to the following address: '${navigationUrl}'. This attempt was blocked.`);
 
       event.preventDefault();
-      return;
     }
   });
 
   // https://electronjs.org/docs/tutorial/security#11-verify-webview-options-before-creation
-  contents.on("will-attach-webview", (event, webPreferences, params) => {
+  contents.on('will-attach-webview', (event, webPreferences, params) => {
     // Strip away preload scripts if unused or verify their location is legitimate
     delete webPreferences.preload;
     delete webPreferences.preloadURL;
@@ -114,47 +106,45 @@ app.on("web-contents-created", (event, contents) => {
   });
 
   // https://electronjs.org/docs/tutorial/security#13-disable-or-limit-creation-of-new-windows
-  contents.on("new-window", async (event, navigationUrl) => {
+  contents.on('new-window', async (event, navigationUrl) => {
     // Log and prevent opening up a new window
-    console.error(
-      `The application tried to open a new window at the following address: '${navigationUrl}'. This attempt was blocked.`
-    );
+    console.error(`The application tried to open a new window at the following address: '${navigationUrl}'. This attempt was blocked.`);
 
     event.preventDefault();
   });
 });
 
-app.on("remote-require", (event, webContents, moduleName) => {
+app.on('remote-require', (event, webContents, moduleName) => {
   event.preventDefault();
 });
 
 // built-ins are modules such as "app"
-app.on("remote-get-builtin", (event, webContents, moduleName) => {
+app.on('remote-get-builtin', (event, webContents, moduleName) => {
   event.preventDefault();
 });
 
-app.on("remote-get-global", (event, webContents, globalName) => {
+app.on('remote-get-global', (event, webContents, globalName) => {
   event.preventDefault();
 });
 
-app.on("remote-get-current-window", (event, webContents) => {
+app.on('remote-get-current-window', (event, webContents) => {
   event.preventDefault();
 });
 
-app.on("remote-get-current-web-contents", (event, webContents) => {
+app.on('remote-get-current-web-contents', (event, webContents) => {
   event.preventDefault();
 });
 
-app.on("window-all-closed", () => {
-  //if (process.platform !== "darwin") {
-    //store.clearMainBindings(ipcMain);
-    app.quit();
-  //}
+app.on('window-all-closed', () => {
+  // if (process.platform !== "darwin") {
+  // store.clearMainBindings(ipcMain);
+  app.quit();
+  // }
 });
 
 app.on('quit', () => {
   app.exit(0);
-})
+});
 
 // Not used in new chrome
 if (isDev) {
