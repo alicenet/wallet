@@ -30,15 +30,15 @@ function VerifyYourSeedPhrase({seedPhrase}) {
         setSeedPhraseIsCorrect(chosenPhrase.length === 12);
     }, [chosenPhrase]);
 
-    const handlePhraseClick = seed => {
-        if (chosenPhrase.includes(seed)) {
-            setChosenPhrase(chosenPhrase.filter(phrase => phrase !== seed));
+    const handlePhraseClick = word => {
+        if (chosenPhrase.includes(word)) {
+            setChosenPhrase(chosenPhrase.filter(phrase => phrase !== word));
         } else {
-            setChosenPhrase(chosenPhrase.concat([seed]));
+            setChosenPhrase(chosenPhrase.concat([word]));
         }
     };
 
-    const isButtonDisabled = seed => chosenPhrase.includes(seed);
+    const isButtonDisabled = word => chosenPhrase.includes(word);
 
     return (
         <Container className="h-full" fluid>
@@ -65,13 +65,15 @@ function VerifyYourSeedPhrase({seedPhrase}) {
 
                         <Container fluid className="flex-wrap text-left	px-20">
 
-                            {seedPhrase.map(seed =>
+                            {seedPhrase.map(word =>
                                 <Button
                                     className="mx-2 my-1"
-                                    color="blue" toggle
-                                    basic={isButtonDisabled(seed)}
-                                    active={isButtonDisabled(seed)} content={seed}
-                                    onClick={() => handlePhraseClick(seed)}
+                                    color="blue"
+                                    toggle
+                                    content={word}
+                                    basic={isButtonDisabled(word)}
+                                    active={isButtonDisabled(word)}
+                                    onClick={() => handlePhraseClick(word)}
                                 />)}
 
                         </Container>
@@ -90,7 +92,8 @@ function VerifyYourSeedPhrase({seedPhrase}) {
                                 <Button color="purple" basic content="Get New Seed Phrase"
                                         onClick={() => history.push('/yourSeedPhrase')}/>
 
-                                <Button color={seedPhraseIsCorrect ? 'teal' : 'red'} disabled={!seedPhraseIsCorrect} basic
+                                <Button color={seedPhraseIsCorrect ? 'teal' : 'red'} disabled={!seedPhraseIsCorrect}
+                                        basic
                                         content={verifyPhraseButtonText}
                                         onClick={() => history.push('/')}/>
 
