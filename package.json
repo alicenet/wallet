@@ -12,7 +12,7 @@
     "build-all": "./helpers/build-helper.sh && electron-builder build -c.extraMetadata.main=./app-build/electron/index.js --mac --windows --linux --publish never",
     "dev": "concurrently \"cd app/client && npm start\" \"electron ./app/electron\"",
     "lint": "eslint .",
-    "lint:fix": "eslint --fix ."
+    "lint-fix": "eslint --fix ."
   },
   "author": "",
   "license": "ISC",
