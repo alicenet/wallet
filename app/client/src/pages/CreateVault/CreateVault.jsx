@@ -13,21 +13,21 @@ function CreateVault() {
     const history = useHistory();
 
     return (
-        <div>
+        <Container className="h-full" fluid>
 
             <HeaderMenu/>
 
             <Container fluid>
 
-                <Grid textAlign="center" verticalAlign="middle">
+                <Grid textAlign="center">
 
-                    <Grid.Column width={16}>
+                    <Grid.Column width={16} className="my-5">
 
-                        <Header content="Lets setup your vault" as="h3" className="my-0"/>
+                        <Header content="Lets setup your vault" as="h3"/>
 
                     </Grid.Column>
 
-                    <Grid.Column width={16} className="mt-2 mb-2">
+                    <Grid.Column width={16} className="my-12">
 
                         <p>Internal wallets will be generated through a seed phrase that will be shown on the next step.</p>
 
@@ -35,7 +35,7 @@ function CreateVault() {
 
                     </Grid.Column>
 
-                    <Grid.Column width={16} className="mt-2 mb-2">
+                    <Grid.Column width={16}>
 
                         <p className="m-0">Please note that if you import additional wallets by private key they will be considered external wallets.</p>
 
@@ -97,7 +97,7 @@ function CreateVault() {
 
             </Container>
 
-        </div>
+        </Container>
     )
 
 }
