@@ -93,9 +93,9 @@ function MainHub({toggleWalletDrawer}) {
                         <Button color="purple" basic content="Create a Vault*" fluid
                                 onClick={() => history.push('/createVault')}/>
 
-                      <Button color="orange" size="mini" basic content="Wallet Drawer Test" onClick={ () => toggleWalletDrawer() } fluid/>
-
                         <Button color="orange" basic content="I have a vault seed" fluid/>
+
+                        <Button color="orange" size="mini" basic content="Wallet Drawer Test" onClick={ () => toggleWalletDrawer() } fluid/>
 
                     </Container>
 

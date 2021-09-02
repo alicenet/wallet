@@ -61,8 +61,8 @@ export default function withWalletDrawer(Component, isOpen = false) {
                 >
 
                     <Grid.Column width={16} textAlign="center">
-                        <Header as="h3" className="mt-4">
-                            Wallets<br />
+                        <Header as="h3" className="flex flex-col items-center mt-4">
+                            Wallets
                             <Image src={MadIcon} size="mini" />
                         </Header>
                     </Grid.Column>
