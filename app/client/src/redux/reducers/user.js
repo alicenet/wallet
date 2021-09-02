@@ -2,12 +2,9 @@ import { USER_ACTION_TYPES } from '../constants/_constants';
 
 // The user reducer contains all information regarding the user and their wallets state
 const initialUserState = {
-    hasAccount: false,
-    accountLocked: true,
-    wallets: {
-        internal: [],
-        external: [],
-    },
+    account_locked: false,
+    has_vault: false,
+    vault_path: "",
 }
 
 /* User Reducer */
@@ -17,12 +14,12 @@ export default function userReducer(state = initialUserState, action) {
 
         case USER_ACTION_TYPES.MARK_ACCOUNT_LOCKED:
             return Object.assign({}, state, {
-                accountLocked: true,
+                account_locked: true,
             });
 
         case USER_ACTION_TYPES.MARK_ACCOUNT_UNLOCKED:
             return Object.assign({}, state, {
-                accountLocked: false,
+                account_locked: false,
             });
 
         default: return state;

@@ -22,6 +22,7 @@ module.exports = {
         'flexWrap',
         'fontSize',
         'gap',
+        'height',
         'justifyContent',
         'justifyItems',
         'justifySelf',

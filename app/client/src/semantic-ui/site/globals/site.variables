@@ -10,7 +10,7 @@
 @black            : #212121; /* mad */
 @blue             : #59849F; /* mad */
 @brown            : #A5673F; /* def */
-@green            : #4AEC75; /* mad */
+@green            : #2ACC55; /* mad: #4AEC75; */
 @grey             : #383838; /* mad */
 @olive            : #B5CC18; /* def */
 @orange           : #eb9e34; /* non-def */ 

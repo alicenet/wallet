@@ -37,7 +37,7 @@ function App() {
     }
 
     return (
-        <Container fluid>
+        <Container fluid className="h-full w-full justify-center items-center">
             <Router>
                 <Switch>
                     <DefaultRoutes/>
