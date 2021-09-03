@@ -40,7 +40,7 @@ function App() {
     }
 
     return (
-        <Container className="h-screen" fluid>
+        <Container fluid className="h-full w-full justify-center items-center">
             <Router>
                 <Switch>
                     <DefaultRoutes/>

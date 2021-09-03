@@ -6,7 +6,9 @@ import {Button, Container, Grid, Header, Image, Modal} from "semantic-ui-react";
 
 import MadIcon from "../../Assets/icon.png";
 
-function MainHub() {
+import withWalletDrawer from 'hocs/withWalletDrawer/withWalletDrawer';
+
+function MainHub({toggleWalletDrawer}) {
 
     const [openModal, setOpenModal] = React.useState(false)
 
@@ -93,6 +95,8 @@ function MainHub() {
 
                         <Button color="orange" basic content="I have a vault seed" fluid/>
 
+                        <Button color="orange" size="mini" basic content="Wallet Drawer Test" onClick={ () => toggleWalletDrawer() } fluid/>
+
                     </Container>
 
                     <p className="text-green-500 text-sm">*Don&apos;t worry you&apos;ll be able to import additional
@@ -108,4 +112,4 @@ function MainHub() {
 
 }
 
-export default MainHub;
+export default withWalletDrawer(MainHub);
