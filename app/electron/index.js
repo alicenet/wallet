@@ -52,7 +52,7 @@ async function createWindow() {
         pathname: path.join(__dirname, '../index.html'),
         protocol: 'file:',
         slashes: true,
-      })
+      }),
     );
   }
 }
@@ -76,7 +76,7 @@ app.on('web-contents-created', (event, contents) => {
     // Log and prevent the app from navigating to a new page if that page's origin is not whitelisted
     if (!validOrigins.includes(parsedUrl.origin)) {
       console.error(
-        `The application tried to redirect to the following address: '${parsedUrl}'. This origin is not whitelisted and the attempt to navigate was blocked.`
+        `The application tried to redirect to the following address: '${parsedUrl}'. This origin is not whitelisted and the attempt to navigate was blocked.`,
       );
 
       event.preventDefault();
