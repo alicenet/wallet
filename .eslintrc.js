@@ -1,17 +1,12 @@
 module.exports = {
-  extends: ['airbnb', 'prettier'],
-  plugins: ['prettier'],
+  extends: ['plugin:react/recommended', 'airbnb'],
+  plugins: ['react'],
   parser: 'babel-eslint',
   parserOptions: {
     sourcetype: 'module',
     allowImportExportEverywhere: true,
   },
-  rules: {
-    'prettier/prettier': ['error'],
-    'react/jsx-filename-extension': ['off'],
-    'react/jsx-props-no-spreading': ['off'],
-    'import/prefer-default-export': ['off'],
-  },
+  rules: {},
   settings: {
     react: {
       version: 'latest',
