@@ -10,7 +10,9 @@
     "build-windows": "./helpers/build-helper.sh && electron-builder build -c.extraMetadata.main=./app-build/electron/index.js --windows --publish never",
     "build-mac": "./helpers/build-helper.sh && electron-builder build -c.extraMetadata.main=./app-build/electron/index.js --mac --publish never",
     "build-all": "./helpers/build-helper.sh && electron-builder build -c.extraMetadata.main=./app-build/electron/index.js --mac --windows --linux --publish never",
-    "dev": "concurrently \"cd app/client && npm start\" \"electron ./app/electron\""
+    "dev": "concurrently \"cd app/client && npm start\" \"electron ./app/electron\"",
+    "lint": "eslint .",
+    "lint-fix": "eslint --fix ."
   },
   "author": "",
   "license": "ISC",
@@ -21,11 +23,20 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.10.4",
+    "@typescript-eslint/parser": "^4.30.0",
+    "babel-eslint": "^10.1.0",
     "concurrently": "^5.3.0",
     "electron": "^13.1.9",
     "electron-builder": "^22.8.0",
     "electron-notarize": "^1.0.1",
-    "electron-rebuild": "^3.1.1"
+    "electron-rebuild": "^3.1.1",
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-plugin-import": "^2.24.2",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-react": "^7.25.1",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "typescript": "^4.4.2"
   },
   "build": {
     "afterSign": "notarize.js",
