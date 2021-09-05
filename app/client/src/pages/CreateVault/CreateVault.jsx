@@ -13,11 +13,11 @@ function CreateVault() {
     const history = useHistory();
 
     return (
-        <Container className="h-full flex flex-col items-center justify-center" fluid>
+        <Container className="h-full flex flex-col justify-center" fluid>
 
             <HeaderMenu/>
 
-            <Container fluid>
+            <Container className="h-full flex flex-col items-center justify-center">
 
                 <Grid textAlign="center">
 
@@ -29,17 +29,21 @@ function CreateVault() {
 
                     <Grid.Column width={16} className="my-12">
 
-                        <p>Internal wallets will be generated through a seed phrase that will be shown on the next step.</p>
+                        <p>Internal wallets will be generated through a seed phrase that will be shown on the next
+                            step.</p>
 
-                        <p>Your seed phrase is the key to your internal wallets, please keep it in a secure location.</p>
+                        <p>Your seed phrase is the key to your internal wallets, please keep it in a secure
+                            location.</p>
 
                     </Grid.Column>
 
                     <Grid.Column width={16}>
 
-                        <p className="m-0">Please note that if you import additional wallets by private key they will be considered external wallets.</p>
+                        <p className="m-0">Please note that if you import additional wallets by private key they will be
+                            considered external wallets.</p>
 
-                        <p className="m-0">Please keep those keys safe, as the seed phrase will not cover any imported wallets!</p>
+                        <p className="m-0">Please keep those keys safe, as the seed phrase will not cover any imported
+                            wallets!</p>
 
                     </Grid.Column>
 
@@ -47,9 +51,11 @@ function CreateVault() {
 
                         <Container fluid className="flex flex-auto flex-col items-center gap-5 w-72">
 
-                            <Button color="purple" basic content="Get Seed Phrase" fluid onClick={() => history.push('/yourSeedPhrase')}/>
+                            <Button color="purple" basic content="Get Seed Phrase" fluid
+                                    onClick={() => history.push('/yourSeedPhrase')}/>
 
-                            <Button color="orange" basic content="Just Generate A Keystore" fluid onClick={() => history.push('/vaultOptOut')}/>
+                            <Button color="orange" basic content="Just Generate A Keystore" fluid
+                                    onClick={() => history.push('/vaultOptOut')}/>
 
                         </Container>
 

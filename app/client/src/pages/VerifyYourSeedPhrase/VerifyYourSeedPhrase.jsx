@@ -41,11 +41,11 @@ function VerifyYourSeedPhrase({seedPhrase}) {
     const isButtonDisabled = word => chosenPhrase.includes(word);
 
     return (
-        <Container className="h-full" fluid>
+        <Container className="h-full flex flex-col justify-center" fluid>
 
             <HeaderMenu/>
 
-            <Container>
+            <Container className="h-full flex flex-col items-center justify-center">
 
                 <Grid textAlign="center">
 

@@ -17,11 +17,11 @@ function YourSeedPhrase({seedPhrase}) {
     const history = useHistory();
 
     return (
-        <Container className="h-full" fluid>
+        <Container className="h-full flex flex-col justify-center" fluid>
 
             <HeaderMenu/>
 
-            <Container>
+            <Container className="h-full flex flex-col items-center justify-center">
 
                 <Grid textAlign="center">
 
