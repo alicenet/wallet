@@ -5,6 +5,7 @@ import { useBoolToggler } from 'hooks/_hooks.js';
 import MadIcon from "../../Assets/icon.png";
 import PropTypes from 'prop-types';
 import { VAULT_ACTIONS } from 'redux/actions/_actions';
+import util from 'util/_util';
 
 /**
  * Provide wallet tab as a drawer to the passed Component
@@ -25,9 +26,9 @@ export default function withWalletDrawer(Component, isOpen = false) {
             console.log("Set active wallet to, " + wallet.initId);
         }
 
-        const addWallet = () => {
+        const addWallet = async () => {
             // CAT_TODO: Update to history.push after vault debugging
-            dispatch(VAULT_ACTIONS.addInternalWalletToState())
+            console.log("This needs updated to push to walletAdd UserStory");
         }
 
         const WalletButtons = () => {

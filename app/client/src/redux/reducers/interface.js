@@ -3,7 +3,7 @@ import { INTERFACE_ACTION_TYPES } from '../constants/_constants';
 // Global UI Component States
 const initialInterfaceState = {
     globalLoading: false, // Is there a global loading state?
-    showDebug: false // Is the state debug overlay showing?
+    showDebug: true // Is the state debug overlay showing?
 }
 
 /* Modal Reducer */
