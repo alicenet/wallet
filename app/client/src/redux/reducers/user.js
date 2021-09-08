@@ -4,7 +4,7 @@ import { USER_ACTION_TYPES } from '../constants/_constants';
 const initialUserState = {
     account_locked: false,
     has_vault: false,
-    vault_path: "",
+    vault_pass_hash: "", // A vault password hash is stored for preflights
 }
 
 /* User Reducer */

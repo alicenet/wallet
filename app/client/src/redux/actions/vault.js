@@ -22,3 +22,30 @@ export function addInternalWalletToState(walletData) {
         dispatch({type: VAULT_ACTION_TYPES.ADD_INTERNAL_WALLET, payload: walletToAdd });
     }
 }
+
+/**
+ * Read vault state from storage
+ * @returns 
+ */
+async function readVaultStateFromStorage() {
+    return async function (dispatch) {
+        
+    }
+}
+
+/**
+ * Encrypt vault state to storage
+ */
+async function encryptVaultStateToStorage() {
+    return async function (dispatch, getState) {
+        let vaultState = getState();
+        let newVaultState = {
+            seed: "", // String of master seed
+            hdLoadCount: 0, // Amount of wallets to load from HD seed following default derivation path :: length of []wallets.internal
+            wallets: {
+                external: [], // Any added keys for external wallets
+            }
+        }
+        console.log(vaultState, newVaultState);
+    }
+}

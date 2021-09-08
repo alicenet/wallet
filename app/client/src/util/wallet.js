@@ -26,14 +26,29 @@ export async function generateBip39Mnemonic() {
     return mnemonic;
 }
 
+export async function getSeedBytesFromMnemonic(mnemonic) {
+    const seedBytes = await bip39.mnemonicToSeed(mnemonic);
+    if (utils.generic.isDebug()) { console.log(`A Bip39 Mnemonic has been used to get seedBytes`, { seedBytes: seedBytes }) }
+    return seedBytes;
+}
+
 /**
  * Returns respective HDKeyChain of a mnemonic phrase 
  * @param {string} mnemonic - mnemonic phrase separated by ' '  
  */
-export async function getHDChainFromMnemonic(mnemonic) {
-    const seedBytes = await bip39.mnemonicToSeed(mnemonic);
+export async function getHDChainFromSeedBytes(seedBytes) {
     const hdChain = HDKey.fromMasterSeed(seedBytes);
-    if (utils.generic.isDebug()) { console.log(`An HD Chain has been derrived`, { hdChain: hdChain }) }
+    /*
+    let seedByteString = seedBytes.toString('hex');
+    console.log(seedByteString);
+    let seedBytes2 = Buffer.from(seedByteString, 'hex');
+    console.log({
+        seedBytes: seedBytes,
+        seedByteString: seedByteString,
+        seedBytes2: seedBytes2,
+    })
+    */
+    if (utils.generic.isDebug()) { console.log(`An HD Chain has been derrived from seed bytes`, { hdChain: hdChain }) }
     return hdChain;
 }
 

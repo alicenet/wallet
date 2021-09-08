@@ -2,8 +2,6 @@ import { VAULT_ACTION_TYPES  } from '../constants/_constants';
 
 // The user reducer contains all information regarding the user and their wallets state
 const initialVaultState = {
-    vault_locked: false,
-    vault_path: "", // The actual vault path of this loaded vault -- Not to be confused with user.vaultPath which is an assumption of the vault to attempt to be loaded
     wallets: {
         internal: [],
         external: [],
@@ -11,7 +9,7 @@ const initialVaultState = {
 }
 
 /* User Reducer */
-export default function userReducer(state = initialVaultState, action) {
+export default function vaultReducer(state = initialVaultState, action) {
 
     switch (action.type) {
 

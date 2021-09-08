@@ -2,10 +2,12 @@
 import { readConfigRequest, readConfigResponse, writeConfigRequest } from "secure-electron-store";
 import { v4 as uuidv4 } from 'uuid';
 import util from 'util/_util';
-import log from 'loglevel';
 
 import { scrypt } from 'scrypt-js'; // External -- scrypt-js -- scrypt is not in current version of node -- Change to supplied crypto module if node16+ used
 import crypto from 'crypto';
+
+import { getLogger, logModules, ADDITIONAL_LOG_OPTS } from 'log/logHelper';
+const log = getLogger(logModules.ELECTRON_STORE_MESSENGER);
 
 /**
  * Middleware to mimic syncronous-non-event based access to secure-electron-store 
@@ -67,7 +69,7 @@ class StoreMessenger {
      */
     subscribeToKey(key, callback, forceUnsub) {
         let id = uuidv4(); // Create the uid for the subscription
-        if (util.generic.isDebug) { log.debug(`${this._shortId(id)} has subscribed to ${key}`) }
+        if (ADDITIONAL_LOG_OPTS.LOG_ELECTRON_MESSENGER_SUBSCRIBER_EVENTS) { log.debug(`${this._shortId(id)} has subscribed to ${key}`); }
         // Wrap the callback to immediately unsub after the value is fetched
         let theCb = forceUnsub ? (
             (key, value) => {
@@ -85,14 +87,14 @@ class StoreMessenger {
      * @param {Array.Strings} keys - The key to be notified of events on
      * @param {Func} callback - ([keys], [values]) => {} :: Where keys are the keys events have happened on, and values are their latest values
      */
-    subscribeToKeys(keys, callback) {} // TBD if needed
+    subscribeToKeys(keys, callback) { } // TBD if needed
 
     /**
       * Unsubscribe from any events associated with the uuid
       * @param {String} uid - The v4uuid associated with the subscription :: Generally returned from subscribeToKey() or handled internally
     */
     unsubscribe(uid) {
-        if (util.generic.isDebug) { log.debug(`${this._shortId(uid)} has unsubscribed from ${this.subscribers[uid].keys}`) }
+        if (ADDITIONAL_LOG_OPTS.LOG_ELECTRON_MESSENGER_SUBSCRIBER_EVENTS) { log.debug(`${this._shortId(uid)} has unsubscribed from ${this.subscribers[uid].keys}`); }
         delete this.subscribers[uid];
     }
 
@@ -103,7 +105,11 @@ class StoreMessenger {
      */
     writeToStore(key, value) {
         window.api.store.send(writeConfigRequest, key, value);
-        if (util.generic.isDebug()) { console.log('Plain Value written to store with key: ' + key + " and value:", value) }
+        if (util.generic.stringHasJsonStructure(value)) {
+            log.debug('JSON Like Structure written as value with key: ' + key, JSON.parse(value));
+        } else {
+            log.debug('Plain Value written to store with key: ' + key + " and value:", value);
+        }
     }
 
     async writeEncryptedToStore(key, value, password) {
@@ -122,8 +128,8 @@ class StoreMessenger {
             cipher.on('data', (chunk) => encrypted += chunk);
             cipher.on('end', () => {
                 let storageJson = this._createEncryptedValueStoreJSONString(algorithm, iv, encrypted);
+                log.debug('Encrypted Value prepared for storage with key: ' + key + " and JSON: ", JSON.parse(storageJson));
                 this.writeToStore(key, storageJson)
-                if (util.generic.isDebug()) { console.log('Encrypted Value written to store with key: ' + key + " and JSON: ", JSON.parse(storageJson)) }
             });
 
             cipher.write(value);
@@ -157,7 +163,7 @@ class StoreMessenger {
                 }
             });
             decipher.on('end', () => {
-                if (util.generic.isDebug()) { console.log('Decryption requested and completed for following encryptionStore: ', encryptedJsonObj) }
+                log.debug('Decryption requested and completed for following encryptionStore: ', encryptedJsonObj);
                 cb(null, decrypted)
             });
 
@@ -210,7 +216,7 @@ window.api.store.onReceive(readConfigResponse, function (args) {
     if (isJson) {
         let [err, value] = util.generic.safeJsonParse(val);
         if (!!err) {
-            console.error("Error parsing JSON from assumed JSON String :> " + val + " <: in electron store for following key : " + args.key);
+            log.error("Error parsing JSON from assumed JSON String :> " + val + " <: in electron store for following key : " + args.key);
             val = args.value; // Fallback to args.value
         }
         val = value;
