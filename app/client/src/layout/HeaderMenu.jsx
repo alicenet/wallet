@@ -1,21 +1,21 @@
 import React from 'react';
 
-import {Container, Header, Image, Menu} from 'semantic-ui-react';
+import {Container, Header, Icon, Image, Menu, Tab} from 'semantic-ui-react';
 
-import { withRouter } from 'react-router-dom';
+import {withRouter} from 'react-router-dom';
 
 import MadIcon from '../Assets/icon.png';
 
-function CreateVault({ history }) {
+function CreateVault({history, showTabs}) {
 
     return (
         <Menu secondary className="m-0">
 
-            <Container fluid>
+            <Container fluid className="flex flex-row content-center justify-start">
 
                 <Menu.Item as='a' header className='p-0' onClick={() => history.push('/')}>
 
-                    <Container fluid className="flex flex-row content-center items-center justify-center self-center justify-items-center">
+                    <Container fluid className="flex flex-row items-center">
 
                         <Image src={MadIcon} size="mini" className="mx-1"/>
 
@@ -26,6 +26,35 @@ function CreateVault({ history }) {
                         </Container>
 
                     </Container>
+
+                </Menu.Item>
+
+            </Container>
+
+            <Container fluid className="flex flex-row content-center justify-center">
+
+                {showTabs && <Tab activeIndex={-1} menu={{secondary: true, pointing: true}} panes={[
+                    {
+                        menuItem: 'Wallets'
+                    },
+                    {
+                        menuItem: 'Transactions'
+                    },
+                    {
+                        menuItem: 'MadNet'
+                    },
+                    {
+                        menuItem: 'Ethereum'
+                    },
+                ]}/>}
+
+            </Container>
+
+            <Container fluid className="flex flex-row content-center justify-end">
+
+                <Menu.Item as='a' header onClick={() => history.push('/')} className="mx-0">
+
+                    <Icon name="cog" size="large" className="mx-0"/>
 
                 </Menu.Item>
 
