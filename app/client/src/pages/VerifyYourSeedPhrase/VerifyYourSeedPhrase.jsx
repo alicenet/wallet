@@ -61,9 +61,9 @@ function VerifyYourSeedPhrase({seedPhrase}) {
 
                     </Grid.Column>
 
-                    <Grid.Column width={16} className="my-2">
+                    <Grid.Column className="flex flex-auto flex-col items-center gap-10">
 
-                        <Container fluid className="flex-wrap text-left	px-20">
+                        <Container fluid className="flex-wrap text-left">
 
                             {seedPhrase.map(word =>
                                 <Button
@@ -78,13 +78,9 @@ function VerifyYourSeedPhrase({seedPhrase}) {
 
                         </Container>
 
-                    </Grid.Column>
+                        <Container className="flex flex-auto flex-col justify-center gap-10">
 
-                    <Grid.Column className="flex flex-auto flex-col items-center gap-5">
-
-                        <Container className="flex flex-auto flex-col justify-center gap-10 px-20">
-
-                            <TextArea rows={5} disabled value={chosenPhrase.join(' ')}
+                            <TextArea rows={4} disabled value={chosenPhrase.join(' ')}
                                       className="bg-white p-4 rounded border-3 border-gray-400 hover:border-gray-500 focus:border-gray-500 focus:outline-none"/>
 
                             <Container className="flex flex-auto flex-row justify-between">
