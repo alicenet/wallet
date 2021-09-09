@@ -1,10 +1,10 @@
 import React from 'react';
-import { Sidebar, Header, Button, Grid, Icon, Image, ButtonGroup } from 'semantic-ui-react';
-import { connect } from 'react-redux';
-import { useBoolToggler } from 'hooks/_hooks.js';
+import {Button, ButtonGroup, Grid, Header, Icon, Image, Sidebar} from 'semantic-ui-react';
+import {connect} from 'react-redux';
+import {useBoolToggler} from 'hooks/_hooks.js';
 import MadIcon from "../../Assets/icon.png";
 import PropTypes from 'prop-types';
-import { VAULT_ACTIONS } from 'redux/actions/_actions';
+import {VAULT_ACTIONS} from 'redux/actions/_actions';
 
 /**
  * Provide wallet tab as a drawer to the passed Component
@@ -13,7 +13,7 @@ import { VAULT_ACTIONS } from 'redux/actions/_actions';
  * @returns { Function } - Return same component with toggleWalletDrawer as a prop for opening/closing the wallet drawer
  */
 export default function withWalletDrawer(Component, isOpen = false) {
-    function ComponentWithDrawer({ wallets, dispatch, ...props }) {
+    function ComponentWithDrawer({wallets, dispatch, ...props}) {
 
         const [isVisible, toggleSetIsVisible] = useBoolToggler(isOpen);
         const closeDrawer = () => toggleSetIsVisible(false);
@@ -32,17 +32,38 @@ export default function withWalletDrawer(Component, isOpen = false) {
 
         const WalletButtons = () => {
             const genWalletButtonProps = (wallet) => ({
-                onClick: () => clickWalletButton(wallet), content: wallet.name, key: wallet.initId, disabled: activeWallet === wallet.initId,
-                basic: true, className: "mt-2", color: "grey", fluid: true, icon: "id card outline", size: "small"
+                onClick: () => clickWalletButton(wallet),
+                content: wallet.name,
+                key: wallet.initId,
+                disabled: activeWallet === wallet.initId,
+                basic: true,
+                className: "mt-2",
+                color: "grey",
+                fluid: true,
+                icon: "id card outline",
+                size: "small"
             });
             const WalletButtons = wallets.internal.map(wallet => <Button {...genWalletButtonProps(wallet)} />);
 
-            const walletActionProps = { basic: true, size: "mini" }
+            const walletActionProps = {basic: true, size: "mini"}
             const WalletActions = <ButtonGroup size="mini" className="flex justify-between align-between mt-8"
-                buttons={[
-                    { onClick: closeDrawer, className: "w-0.5", color: "grey", icon: "angle double left", key: "close_btn", ...walletActionProps },
-                    { onClick: addWallet, color: "green", content: "Add Wallet", icon: <Icon name="plus" className="bg-transparent" />, key: "add_btn", labelPosition: "right", ...walletActionProps }
-                ]}
+                                               buttons={[
+                                                   {
+                                                       onClick: closeDrawer,
+                                                       className: "w-0.5",
+                                                       color: "grey",
+                                                       icon: "angle double left",
+                                                       key: "close_btn", ...walletActionProps
+                                                   },
+                                                   {
+                                                       onClick: addWallet,
+                                                       color: "green",
+                                                       content: "Add Wallet",
+                                                       icon: <Icon name="plus" className="bg-transparent"/>,
+                                                       key: "add_btn",
+                                                       labelPosition: "right", ...walletActionProps
+                                                   }
+                                               ]}
             />
 
             return [WalletButtons, WalletActions];
@@ -53,7 +74,7 @@ export default function withWalletDrawer(Component, isOpen = false) {
             <Sidebar.Pushable>
                 <Sidebar
                     as={Grid}
-                    animation='push'
+                    animation='overlay'
                     icon='labeled'
                     visible={isVisible}
                     className="bg-gray-100"
@@ -63,19 +84,18 @@ export default function withWalletDrawer(Component, isOpen = false) {
                     <Grid.Column width={16} textAlign="center">
                         <Header as="h3" className="flex flex-col items-center mt-4">
                             Wallets
-                            <Image src={MadIcon} size="mini" />
+                            <Image src={MadIcon} size="mini"/>
                         </Header>
                     </Grid.Column>
 
                     <Grid.Column width={16} textAlign="center">
-                        <WalletButtons />
+                        <WalletButtons/>
                     </Grid.Column>
-
 
                 </Sidebar>
 
-                <Sidebar.Pusher className="flex justify-center items-center">
-                    <Component {...props} toggleWalletDrawer={(b) => toggleSetIsVisible(b)} />
+                <Sidebar.Pusher className="flex justify-center items-center" dimmed={isVisible}>
+                    <Component {...props} toggleWalletDrawer={(b) => toggleSetIsVisible(b)}/>
                 </Sidebar.Pusher>
 
             </Sidebar.Pushable>
@@ -87,7 +107,7 @@ export default function withWalletDrawer(Component, isOpen = false) {
         wallets: PropTypes.object.isRequired,
     }
 
-    const stateMap = state => ({ wallets: state.vault.wallets });
+    const stateMap = state => ({wallets: state.vault.wallets});
     return connect(stateMap)(ComponentWithDrawer);
 
 }

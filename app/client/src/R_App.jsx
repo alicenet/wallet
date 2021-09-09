@@ -4,11 +4,11 @@ import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 import ReduxStateViewer, {handleDebugListener} from 'redux/debug/StateViewer';
 import util from 'util/_util';
 
-import MainHub from 'pages/MainHub/MainHub';
-import CreateVault from './pages/CreateVault/CreateVault';
-import VaultOptOut from './pages/VaultOptOut/VaultOptOut';
-import YourSeedPhrase from './pages/YourSeedPhrase/YourSeedPhrase';
-import VerifyYourSeedPhrase from './pages/VerifyYourSeedPhrase/VerifyYourSeedPhrase';
+import MainHub from './pages/MainHub';
+import CreateVault from './pages/CreateVault';
+import VaultOptOut from './pages/VaultOptOut';
+import YourSeedPhrase from './pages/YourSeedPhrase';
+import VerifyYourSeedPhrase from './pages/VerifyYourSeedPhrase';
 
 /**
  * Main App Entrypoint
@@ -41,12 +41,19 @@ function App() {
 
     return (
         <Container fluid className="h-full w-full justify-center items-center">
+
             <Router>
+
                 <Switch>
+
                     <DefaultRoutes/>
+
                     <DebugTools/>
+
                 </Switch>
+
             </Router>
+
         </Container>
     );
 }
