@@ -56,7 +56,7 @@ function VaultOptOut() {
                     <Container fluid className="flex flex-auto flex-col items-center gap-5 w-96">
 
                         <Button color="purple" basic disabled={!isChecked} content="Generate Seed" fluid
-                                onClick={() => history.push('/')}/>
+                                onClick={() => history.push('/YourSeedPhrase')}/>
 
                         <Checkbox onChange={() => setIsChecked(prevState => !prevState)} checked={isChecked}
                                   label={<label>I Understand and wish to opt out of vault storage</label>}/>

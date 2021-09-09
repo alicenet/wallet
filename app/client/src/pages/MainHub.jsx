@@ -44,7 +44,7 @@ function MainHub({ toggleWalletDrawer }) {
                         onOpen={() => setOpenModal(true)}
                         open={openModal}
                         dimmer="inverted"
-                        trigger={<a style={{cursor: 'pointer'}} className="text-purple-700 text-sm">What is a
+                        trigger={<a href="#" style={{cursor: 'pointer'}} className="text-purple-700 text-sm">What is a
                             vault?</a>}
                     >
 
