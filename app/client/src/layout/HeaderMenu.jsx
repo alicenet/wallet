@@ -1,12 +1,12 @@
 import React from 'react';
 
-import {Container, Header, Image, Menu} from "semantic-ui-react";
+import {Container, Header, Image, Menu} from 'semantic-ui-react';
 
-import {withRouter} from "react-router-dom";
+import { withRouter } from 'react-router-dom';
 
-import MadIcon from "../Assets/icon.png";
+import MadIcon from '../Assets/icon.png';
 
-function CreateVault({history}) {
+function CreateVault({ history }) {
 
     return (
         <Menu secondary className="m-0">

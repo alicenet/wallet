@@ -74,7 +74,7 @@ export default function withWalletDrawer(Component, isOpen = false) {
             <Sidebar.Pushable>
                 <Sidebar
                     as={Grid}
-                    animation='push'
+                    animation='overlay'
                     icon='labeled'
                     visible={isVisible}
                     className="bg-gray-100"
@@ -94,7 +94,7 @@ export default function withWalletDrawer(Component, isOpen = false) {
 
                 </Sidebar>
 
-                <Sidebar.Pusher className="flex justify-center items-center">
+                <Sidebar.Pusher className="flex justify-center items-center" dimmed={isVisible}>
                     <Component {...props} toggleWalletDrawer={(b) => toggleSetIsVisible(b)}/>
                 </Sidebar.Pusher>
 
