@@ -5,7 +5,6 @@
   "homepage": "./",
   "dependencies": {
     "big-integer": "^1.6.48",
-    "classnames": "^2.3.1",
     "copy-to-clipboard": "^3.3.1",
     "cross-env": "^7.0.3",
     "electron-settings": "^4.0.2",

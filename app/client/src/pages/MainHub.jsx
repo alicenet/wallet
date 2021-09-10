@@ -8,7 +8,7 @@ import MadIcon from '../Assets/icon.png';
 
 import withWalletDrawer from 'hocs/withWalletDrawer/withWalletDrawer';
 
-function MainHub({ toggleWalletDrawer }) {
+function MainHub({toggleWalletDrawer}) {
 
     const [openModal, setOpenModal] = React.useState(false)
 
@@ -44,8 +44,7 @@ function MainHub({ toggleWalletDrawer }) {
                         onOpen={() => setOpenModal(true)}
                         open={openModal}
                         dimmer="inverted"
-                        trigger={<a href="#" style={{cursor: 'pointer'}} className="text-purple-700 text-sm">What is a
-                            vault?</a>}
+                        trigger={<Button className="text-purple-700 text-sm bg-transparent">What is a vault?</Button>}
                     >
 
                         <Modal.Content>
@@ -95,7 +94,8 @@ function MainHub({ toggleWalletDrawer }) {
 
                         <Button color="orange" basic content="I have a vault seed" fluid/>
 
-                        <Button color="orange" size="mini" basic content="Wallet Drawer Test" onClick={ toggleWalletDrawer } fluid/>
+                        <Button color="orange" size="mini" basic content="Wallet Drawer Test"
+                                onClick={() => toggleWalletDrawer()} fluid/>
 
                     </Container>
 

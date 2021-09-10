@@ -23,7 +23,7 @@ function CreateVault() {
 
                 </Grid.Column>
 
-                <Grid.Column width={16} className="my-12">
+                <Grid.Column width={16} className="my-20">
 
                     <p>Internal wallets will be generated through a seed phrase that will be shown on the next
                         step.</p>
@@ -35,17 +35,17 @@ function CreateVault() {
 
                 <Grid.Column width={16}>
 
-                    <p className="m-0">Please note that if you import additional wallets by private key they will be
+                    <p className="m-0 text-sm">Please note that if you import additional wallets by private key they will be
                         considered external wallets.</p>
 
-                    <p className="m-0">Please keep those keys safe, as the seed phrase will not cover any imported
+                    <p className="m-0 text-sm">Please keep those keys safe, as the seed phrase will not cover any imported
                         wallets!</p>
 
                 </Grid.Column>
 
                 <Grid.Column width={16} className="flex flex-auto flex-col items-center gap-5">
 
-                    <Container fluid className="flex flex-auto flex-col items-center gap-5 w-72">
+                    <Container fluid className="flex flex-auto flex-col items-center gap-5 w-80">
 
                         <Button color="purple" basic content="Get Seed Phrase" fluid
                                 onClick={() => history.push('/yourSeedPhrase')}/>
@@ -53,17 +53,13 @@ function CreateVault() {
                         <Button color="orange" basic content="Just Generate A Keystore" fluid
                                 onClick={() => history.push('/vaultOptOut')}/>
 
-                    </Container>
-
                     <Modal
                         onClose={() => setOpenModal(false)}
                         onOpen={() => setOpenModal(true)}
                         open={openModal}
                         dimmer="inverted"
                         trigger={
-                            <p style={{cursor: 'pointer'}} className="text-purple-400 text-sm">
-                                <strong>More Info On How Wallets Are Generated</strong>
-                            </p>
+                            <Button className="text-purple-500 text-sm bg-transparent">More Info On How Wallets Are Generated</Button>
                         }
                     >
 
@@ -92,6 +88,8 @@ function CreateVault() {
                         </Modal.Content>
 
                     </Modal>
+
+                    </Container>
 
                 </Grid.Column>
 

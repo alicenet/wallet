@@ -1,12 +1,12 @@
 import React from 'react';
 
-import classNames from 'classnames';
-
 import {useHistory} from 'react-router-dom';
 
 import {Button, Checkbox, Container, Grid, Header, Icon, Modal, Radio} from 'semantic-ui-react';
 
 import Page from '../layout/Page';
+
+import utils from '../util/_util';
 
 function SeedPhraseVerified() {
 
@@ -43,7 +43,7 @@ function SeedPhraseVerified() {
                               checked={enableAdvancedWalletOptions} className="py-5"
                               label={<label className="text-sm">Enable Advanced Wallet Options</label>}/>
 
-                    <Container className={classNames("p-3 text-left border-2 border-solid border-gray-300", {['bg-gray-300']: !enableAdvancedWalletOptions})}>
+                    <Container className={utils.generic.classNames("p-3 text-left border-2 border-solid border-gray-300", {['bg-gray-300']: !enableAdvancedWalletOptions})}>
 
                         <p className="border border-black"><strong>Advanced Options</strong></p>
 

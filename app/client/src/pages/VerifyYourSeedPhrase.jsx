@@ -61,8 +61,9 @@ function VerifyYourSeedPhrase({ seedPhrase }) {
 
                     <Container fluid className="flex-wrap text-left">
 
-                        {seedPhrase.map(word =>
+                        {seedPhrase.map((word, index) =>
                             <Button
+                                key={`seed-phrase-btn-${index}`}
                                 className="mx-2 my-1"
                                 color="blue"
                                 toggle

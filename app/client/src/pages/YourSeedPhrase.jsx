@@ -39,9 +39,9 @@ function YourSeedPhrase({seedPhrase}) {
 
                     <Grid celled columns={6}>
 
-                        {chunk(seedPhrase, Math.floor(seedPhrase.length / 2)).map(someSeeds =>
+                        {chunk(seedPhrase, Math.floor(seedPhrase.length / 2)).map((someSeeds, index) =>
 
-                            <GridRow>
+                            <GridRow key={`seed-row-${index}`}>
 
                                 {someSeeds.map(word => <Grid.Column key={word}>{word}</Grid.Column>)}
 
