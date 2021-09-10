@@ -6,12 +6,12 @@ import {Container} from 'semantic-ui-react';
 
 import HeaderMenu from './HeaderMenu';
 
-const Page = ({ children }) => {
+const Page = ({children}) => {
 
-  return (
+    return (
         <Container className="h-full flex flex-col justify-center" fluid>
 
-            <HeaderMenu/>
+            <HeaderMenu showTabs={false}/>
 
             <Container className="h-full flex flex-col items-center justify-center">
 
@@ -20,11 +20,11 @@ const Page = ({ children }) => {
             </Container>
 
         </Container>
-  );
+    );
 };
 
 Page.propTypes = {
-  children: PropTypes.node.isRequired,
+    children: PropTypes.node.isRequired,
 };
 
 export default Page;
