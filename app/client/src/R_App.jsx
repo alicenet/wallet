@@ -9,6 +9,7 @@ import CreateVault from './pages/CreateVault';
 import VaultOptOut from './pages/VaultOptOut';
 import YourSeedPhrase from './pages/YourSeedPhrase';
 import VerifyYourSeedPhrase from './pages/VerifyYourSeedPhrase';
+import SeedPhraseVerified from './pages/SeedPhraseVerified';
 
 /**
  * Main App Entrypoint
@@ -29,6 +30,7 @@ function App() {
                 <Route exact path="/vaultOptOut" component={VaultOptOut}/>
                 <Route exact path="/yourSeedPhrase" component={YourSeedPhrase}/>
                 <Route exact path="/verifyYourSeedPhrase" component={VerifyYourSeedPhrase}/>
+                <Route exact path="/seedPhraseVerified" component={SeedPhraseVerified}/>
             </>
         )
     }

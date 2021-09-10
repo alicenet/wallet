@@ -54,7 +54,7 @@ function CreateVault({history, showTabs}) {
 
                 <Menu.Item as='a' header onClick={() => history.push('/')} className="mx-0">
 
-                    <Icon name="cog" size="large" className="mx-0"/>
+                    <Icon name="cog" size="large" className="mx-0 transform duration-300 hover:rotate-90"/>
 
                 </Menu.Item>
 
