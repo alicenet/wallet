@@ -3,16 +3,19 @@ import { utilsWallet_logger as log } from 'log/logHelper';
 const bip39 = require('bip39');
 var HDKey = require('hdkey');
 
-// Switch to hdkey not ethererum-cryptography ^
-
-// CAT_TODO: Subject to change, not JSdoccing yet
-export function generateStateWalletObject(walletName, privKey, pubKey, pubAdd) {
+/** Creates a raw state wallet object from a wallet_name and private key
+ * Internal keyring wallets are validated for existence and stored inside the vault
+ * @param { String } walletName - The name of the wallet - extracted from the vault
+ * @param { String } privKey - The private key of this wallet - extracted from the vault 
+ */
+export function generateRawStateWalletObject(walletName, privKey) {
+    // Derrive public key and public address to state for ease of use
     return {
-        name: "A New Wallet",
-        pubAdd: "PUBADD_TEST_STATE_STRING",
-        pubKey: "PUBK_TEST_STATE_STRING",
-        privkey: "PRIVK_TEST_STATE_STRING",
-        initId: uuidv4(), // Initialized State ID for quick client side identification
+        name: walletName,
+        pubAdd: "PUBLIC_ADDRESS_DERRIVE",
+        pubKey: "PUBLIC_KEY_DERRIVE",
+        privkey: privKey,
+        stateId: uuidv4(), // Initialized State ID for quick client side identification -- Not stored elsewhere, can be used as key in map()
     }
 }
 

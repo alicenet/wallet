@@ -3,27 +3,20 @@ import { buildVaultStateObject } from 'redux/reducers/vault'
 import { electronStoreCommonActions } from 'store/electronStoreHelper';
 import util from 'util/_util';
 
-/** After a vault has been decrypted call this actions for any wallets to be added to the internal keyring 
- * Internal keyring wallets are validated for existence and stored inside the vault
- * @param {Object} walletData - Object comprised of the following data points
- * @param {String} walletData.name - The name of the wallet - extracted from the vault
- * @param {String} walletData.pubAdd - The public address of this wallet - extracted from the vault
- * @param {String} walletData.pubKey - The public key of this wallet - extracted from the vault
- * @param {String} walletData.privKey - 
- * 
+/* !!!!!!! ____   ATTENTION: ______ !!!!!!!!  
+
+It is critical that new vault actions have implementations written in the WalletManagerMiddleware to facilitate syncronous state between
+the global MadNetJS Wallet and the Redux State! 
+
+To facilitate the Virtual DOM being updated when wallet mutation happens, we store a immutable state collection of
+what the MadNetWallet object in ../middleware/WalletManagerMiddleware is composed of to the reduxState :: Immutable keys are stored in state, while
+the mutable Wallet objects themselves are handled within MadNetWalletJS's instance 
+
+:: This way wallet actions occuring in the Redux state are mirrored to MadWallet.Account global mutable.
+
+:: Some dispatched actions occur exclusively in the middleware!
+  
 */
-export function addInternalWalletToState(walletData) {
-    return async function (dispatch) {
-        // CAT_TODO: Update from passed walletData;
-        const walletName = "A New Wallet";
-        const privKey = "PRIVK_TEST_STATE_STRING"
-        const pubKey = "PUBK_TEST_STATE_STRING";
-        const pubAdd = "PUBADD_TEST_STATE_STRING"
-        // Generate the wallet object
-        const walletToAdd = util.wallet.generateStateWalletObject(walletName, privKey, pubKey, pubAdd);
-        dispatch({ type: VAULT_ACTION_TYPES.ADD_INTERNAL_WALLET, payload: walletToAdd });
-    }
-}
 
 /**
  * Stores new HD Vault to state, as well as storing to the secure-electron-store
@@ -34,7 +27,21 @@ export function generateNewSecureHDVault(mnemonic, password) {
     return async function (dispatch) {
         let [preflightHash, firstWalletNode] = await electronStoreCommonActions.createNewSecureHDVault(mnemonic, password);
         electronStoreCommonActions.storePreflightHash(preflightHash);
-        const vaultPayload = buildVaultStateObject({ preflightHash: preflightHash, internalWallets: [firstWalletNode] })
+        // Create and dispatch the vault state object
+        const vaultPayload = buildVaultStateObject({ preflightHash: preflightHash, internalWallets: [firstWalletNode.privateKey] })
         dispatch({ type: VAULT_ACTION_TYPES.SET_VAULT_TO_STATE, payload: vaultPayload });
+    }
+}
+
+/** After a vault has been decrypted call this actions for any wallets to be added to the internal keyring and to the MadWallet object within state
+ * Internal keyring wallets are validated for existence and stored inside the vault
+ * @param {String} walletName - The name of the wallet - extracted from the vault
+ * @param {String} privKey - The private key of this wallet - extracted from the vault 
+*/
+export function addInternalWalletToState(walletName, privKey) {
+    return async function (dispatch) {
+        // Generate the wallet object
+        const walletToAdd = util.wallet.generateStateWalletObject(walletName, privKey);
+        dispatch({ type: VAULT_ACTION_TYPES.ADD_INTERNAL_WALLET, payload: walletToAdd });
     }
 }
