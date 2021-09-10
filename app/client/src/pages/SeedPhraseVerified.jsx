@@ -37,7 +37,7 @@ function SeedPhraseVerified() {
 
                 </Grid.Column>
 
-                <Grid.Column width={8} className="my-20 p-3 text-left border-2" style={{border: 'solid lightgray'}}>
+                <Grid.Column width={10} className="my-20 p-3 text-left border-2 border-solid border-gray-300">
 
                     <p className="border border-black"><strong>Advanced Options</strong></p>
 
