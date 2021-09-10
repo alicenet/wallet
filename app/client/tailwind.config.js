@@ -34,9 +34,12 @@ module.exports = {
         'minWidth',
         'outline',
         'padding',
+        'rotate',
         'textAlign',
         'textColor',
         'textTransform',
+        'transitionDuration',
+        'transform',
         'width',
     ]
 }
