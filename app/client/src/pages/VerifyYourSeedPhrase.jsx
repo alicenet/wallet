@@ -87,7 +87,7 @@ function VerifyYourSeedPhrase({ seedPhrase }) {
                             <Button color={seedPhraseIsCorrect ? 'teal' : 'red'} disabled={!seedPhraseIsCorrect}
                                     basic
                                     content={verifyPhraseButtonText}
-                                    onClick={() => history.push('/')}/>
+                                    onClick={() => history.push('/seedPhraseVerified')}/>
 
                         </Container>
 
