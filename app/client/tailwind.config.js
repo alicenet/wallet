@@ -35,7 +35,6 @@ module.exports = {
         'outline',
         'padding',
         'rotate',
-        'scale',
         'textAlign',
         'textColor',
         'textTransform',
