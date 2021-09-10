@@ -1,13 +1,12 @@
 /* Code for prepping events and dependencies for the secure-electon-store */
 import { readConfigRequest, readConfigResponse, writeConfigRequest } from "secure-electron-store";
+import { electronStoreMessenger_logger as log, ADDITIONAL_LOG_OPTS } from 'log/logHelper';
 import { v4 as uuidv4 } from 'uuid';
 import util from 'util/_util';
 
 import { scrypt } from 'scrypt-js'; // External -- scrypt-js -- scrypt is not in current version of node -- Change to supplied crypto module if node16+ used
 import crypto from 'crypto';
 
-import { getLogger, logModules, ADDITIONAL_LOG_OPTS } from 'log/logHelper';
-const log = getLogger(logModules.ELECTRON_STORE_MESSENGER);
 
 /**
  * Middleware to mimic syncronous-non-event based access to secure-electron-store 

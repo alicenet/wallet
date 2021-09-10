@@ -1,5 +1,6 @@
 import { USER_ACTION_TYPES } from '../constants/_constants';
 import utils from 'util/_util';
+import {commonActions as electronStoreCommonsActions } from 'store/electronStoreHelper';
 
 ///////////////////////////
 /* Internal Action Calls */
@@ -15,9 +16,21 @@ function _unlockAccount() {
     return { type: USER_ACTION_TYPES.MARK_ACCOUNT_UNLOCKED };
 }
 
-////////////////////////////////////////////////////////////////////////////////////////
-/* External Async Action Calls -- Require forwarded dispatch from connected component */
-////////////////////////////////////////////////////////////////////////////////////////
+function _setPreflightHash(preflightHash) {
+    return { type: USER_ACTION_TYPES.SET_PREFLIGHT_HASH, payload: preflightHash }
+}
+
+//////////////////////////////////
+/* External Async Action Calls */
+/////////////////////////////////
+
+/**
+ * Sets and updates the redux=state user.prefightHash and stores to electron
+ * Should only be called when user is setting a new password
+ */
+export function setAndStorePreflightHash(preflightHash) {
+    _setPreflightHash(preflightHash); // Set the preflight hash to redux state
+}
 
 /* Check for existing user account files and set state accordingly */
 export function checkForUserAccount() {

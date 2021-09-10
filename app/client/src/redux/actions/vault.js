@@ -1,5 +1,7 @@
 import { VAULT_ACTION_TYPES } from 'redux/constants/_constants';
-import util from 'util/_util'; 
+import { buildVaultStateObject } from 'redux/reducers/vault'
+import { electronStoreCommonActions } from 'store/electronStoreHelper';
+import util from 'util/_util';
 
 /** After a vault has been decrypted call this actions for any wallets to be added to the internal keyring 
  * Internal keyring wallets are validated for existence and stored inside the vault
@@ -19,33 +21,20 @@ export function addInternalWalletToState(walletData) {
         const pubAdd = "PUBADD_TEST_STATE_STRING"
         // Generate the wallet object
         const walletToAdd = util.wallet.generateStateWalletObject(walletName, privKey, pubKey, pubAdd);
-        dispatch({type: VAULT_ACTION_TYPES.ADD_INTERNAL_WALLET, payload: walletToAdd });
+        dispatch({ type: VAULT_ACTION_TYPES.ADD_INTERNAL_WALLET, payload: walletToAdd });
     }
 }
 
 /**
- * Read vault state from storage
- * @returns 
+ * Stores new HD Vault to state, as well as storing to the secure-electron-store
+ * @param {String} mnemonic 
+ * @param {String} password 
  */
-async function readVaultStateFromStorage() {
+export function generateNewSecureHDVault(mnemonic, password) {
     return async function (dispatch) {
-        
-    }
-}
-
-/**
- * Encrypt vault state to storage
- */
-async function encryptVaultStateToStorage() {
-    return async function (dispatch, getState) {
-        let vaultState = getState();
-        let newVaultState = {
-            seed: "", // String of master seed
-            hdLoadCount: 0, // Amount of wallets to load from HD seed following default derivation path :: length of []wallets.internal
-            wallets: {
-                external: [], // Any added keys for external wallets
-            }
-        }
-        console.log(vaultState, newVaultState);
+        let [preflightHash, firstWalletNode] = await electronStoreCommonActions.createNewSecureHDVault(mnemonic, password);
+        electronStoreCommonActions.storePreflightHash(preflightHash);
+        const vaultPayload = buildVaultStateObject({ preflightHash: preflightHash, internalWallets: [firstWalletNode] })
+        dispatch({ type: VAULT_ACTION_TYPES.SET_VAULT_TO_STATE, payload: vaultPayload });
     }
 }

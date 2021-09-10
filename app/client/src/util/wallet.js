@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import utils from 'util/_util';
+import { utilsWallet_logger as log } from 'log/logHelper';
 const bip39 = require('bip39');
 var HDKey = require('hdkey');
 
@@ -18,53 +18,70 @@ export function generateStateWalletObject(walletName, privKey, pubKey, pubAdd) {
 
 /**
  * Generate and return a bip39 pnemonic as a string
- * @returns String - Bip39 Mnemonic as string 
+ * @returns { String } A Bip39 Mnemonic as a string 
  */
-export async function generateBip39Mnemonic() {
+export function generateBip39Mnemonic() {
     const mnemonic = bip39.generateMnemonic();
-    if (utils.generic.isDebug()) { console.log(`A Bip39 Mnemonic has been generated`, { mnemonic: mnemonic }) }
+    log.debug(`A Bip39 Mnemonic has been generated`, { mnemonic: mnemonic });
     return mnemonic;
 }
 
-export async function getSeedBytesFromMnemonic(mnemonic) {
-    const seedBytes = await bip39.mnemonicToSeed(mnemonic);
-    if (utils.generic.isDebug()) { console.log(`A Bip39 Mnemonic has been used to get seedBytes`, { seedBytes: seedBytes }) }
-    return seedBytes;
+/**
+ * Gets Uint8Array ofr SeedBytes from mnemonic
+ * @param {String} mnemonic 
+ * @returns { Promise<Uint8Array> } - Promise with Uint8Array of representing SeedBytes
+ */
+export function getSeedBytesFromMnemonic(mnemonic) {
+    return new Promise(async res => {
+        const seedBytes = await bip39.mnemonicToSeed(mnemonic);
+        log.debug(`A Bip39 Mnemonic has been used to get seedBytes`, { seedBytes: seedBytes });
+        res(seedBytes);
+    })
 }
 
 /**
  * Returns respective HDKeyChain of a mnemonic phrase 
- * @param {string} mnemonic - mnemonic phrase separated by ' '  
+ * @param { String } mnemonic - mnemonic phrase separated by ' '
+ * @returns { HDKey } - HDKeyChain
  */
-export async function getHDChainFromSeedBytes(seedBytes) {
+export function getHDChainFromSeedBytes(seedBytes) {
     const hdChain = HDKey.fromMasterSeed(seedBytes);
-    /*
-    let seedByteString = seedBytes.toString('hex');
-    console.log(seedByteString);
-    let seedBytes2 = Buffer.from(seedByteString, 'hex');
-    console.log({
-        seedBytes: seedBytes,
-        seedByteString: seedByteString,
-        seedBytes2: seedBytes2,
-    })
-    */
-    if (utils.generic.isDebug()) { console.log(`An HD Chain has been derrived from seed bytes`, { hdChain: hdChain }) }
+    log.debug(`An HD Chain has been derrived from seed bytes`, { hdChain: hdChain });
     return hdChain;
 }
 
 /**
  * @param { Object } hdChain - The HD Keychain -- Should be derrived from mnemonic via util.wallet.getHDChainFromMnemonic()
- * @param { Integer } nodeNum - The node to derrive from the derivation path: m'/44'/60'/0'/<node>
- * @returns { Object } - HD Keychain's requested Node
+ * @returns { HDKey } - HD Keychain's requested Node
  */
-export async function getHDWalletNodeFromHDChain(hdChain, nodeNum) {
+export function getHDWalletNodeFromHDChain(hdChain, nodeNum) {
     const node = hdChain.derive("m'/44'/60'/0'/0" + String(nodeNum));
-    if (utils.generic.isDebug()) {
-        console.log(`A Wallet Node has been requested`, {
-            nodeNumber: nodeNum,
-            node: node,
-            nodeExtendedPrivKey: node.privateExtendedKey,
-        })
-    }
+    log.debug(`A Wallet Node has been requested`, { nodeNumber: nodeNum, node: node, nodeExtendedPrivKey: node.privateExtendedKey });
     return node;
+}
+
+/**
+ * Quickly get passed HDChain from Mnemonic using wallet utilities from utils/wallet.js
+ * @param { String } mnemonic - mnemonic phrase separated by ' '
+ * @returns {Promise<HDKey>} - Promise that resolves to requested HD Chain
+ */
+export function streamlineHDChainFromMnemonic(mnemonic) {
+    return new Promise(async res => {
+        const seedBytes = await getSeedBytesFromMnemonic(mnemonic);
+        res(getHDChainFromSeedBytes(seedBytes));
+    })
+}
+
+/**
+ * Quickly get a derivative wallet from a Mnemonic using wallet utilities from utils/wallet.js
+ * @param { String } mnemonic - mnemonic phrase separated by ' '
+ * @param { Integer } nodeNum - The node to derrive from the derivation path: m'/44'/60'/0'/<node>
+ * @returns {Promise<HDKey>} - Promise that resolves to the requested HD wallet node
+ */
+export function streamLineHDWalletNodeFromMnemonic(mnemonic, nodeNum) {
+    return new Promise(async res => {
+        const seedBytes = await getSeedBytesFromMnemonic(mnemonic);
+        const hdChain = getHDChainFromSeedBytes(seedBytes);
+        res(getHDWalletNodeFromHDChain(hdChain, nodeNum));
+    })
 }

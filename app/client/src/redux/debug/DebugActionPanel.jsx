@@ -1,13 +1,13 @@
 import React from 'react';
 import { connect } from "react-redux";
 import { Input, Button, Grid, Header, Container, TextArea, Form, FormButton } from 'semantic-ui-react';
-import { USER_ACTIONS, MODAL_ACTIONS } from '../actions/_actions';
+import { USER_ACTIONS, MODAL_ACTIONS, VAULT_ACTIONS } from 'redux/actions/_actions';
 
 import util from 'util/_util';
 
-import { utilityActons as utilStoreHelper } from 'store/electronStoreHelper';
+import { electronStoreUtilityActons as utilStoreHelper } from 'store/electronStoreHelper';
 
-function DebugActionPanel({ dispatch }) {
+function DebugActionPanel({ dispatch, vault }) {
 
     const [vaultExists, setVaultExists] = React.useState("unknown");
     const [vaultWasntFound, setVaultWasntFound] = React.useState(false);
@@ -22,7 +22,9 @@ function DebugActionPanel({ dispatch }) {
     const [hdChain, setHdChain] = React.useState(false);
     const [walletNode, setWalletNode] = React.useState(false);
 
-    const DButton = (props) => <Form.Button basic size="mini" fluid {...props} className={"m-1 ml-0 " + props.className } />
+    const [vaultPassword, setVaultPassword] = React.useState("");
+
+    const DButton = (props) => <Form.Button basic size="mini" fluid {...props} className={"m-1 ml-0 " + props.className} />
 
     ////////////////////////////
     /*      Vault Actions     */
@@ -75,6 +77,11 @@ function DebugActionPanel({ dispatch }) {
     const writeValue = async () => {
         if (!valueToWrite || !customStorageKey) { return console.warn("Fill out key && value for write debugging!") }
         utilStoreHelper.writePlainValueToStore(customStorageKey, valueToWrite);
+    }
+
+    const saveMnemonicAsVault = async () => {
+        if (!vaultPassword) { return setVaultPassword("REQUIRED!"); }
+        dispatch(VAULT_ACTIONS.generateNewSecureHDVault(testingMnemonic, vaultPassword))
     }
 
     return (
@@ -138,7 +145,11 @@ function DebugActionPanel({ dispatch }) {
                     <DButton primary disabled={!seedBytes || !!hdChain} content="getHdChainFromSeedBytes)" fluid onClick={getHDChainFromSeedBytes} />
                     <DButton primary disabled={!hdChain || !!walletNode} content="getWalletNodeFromHdChain)" fluid onClick={getNodeFromHDChain} />
 
-                    <DButton color="purple" className="mt-4" content="Log(SeedBytes,Chain,Wallet)" fluid onClick={ () => console.log({seedBytes: seedBytes, hdChain: hdChain, walletNode: walletNode})} />
+                    <DButton color="purple" className="mt-4" content="Log(SeedBytes,Chain,Wallet)" fluid onClick={() => console.log({ seedBytes: seedBytes, hdChain: hdChain, walletNode: walletNode })} />
+
+                    <Form.Input placeholder="Password for vault" size="mini" value={vaultPassword} onChange={e => setVaultPassword(e.target.value)} />
+
+                    <DButton basic={false} color="green" onClick={saveMnemonicAsVault} content="Save Mnemonic As New Vault" />
 
                 </Form>
 
@@ -195,4 +206,5 @@ function DebugActionPanel({ dispatch }) {
 
 }
 
-export default connect()(DebugActionPanel)
+const stateMap = state => ({ vault: state.vault });
+export default connect(stateMap)(DebugActionPanel)

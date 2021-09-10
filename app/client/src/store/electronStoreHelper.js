@@ -1,11 +1,7 @@
 import electronStoreMessenger from './electronStoreMessenger';
-import crypto from 'crypto';
-import { getLogger, logModules } from 'log/logHelper';
+import { electronStoreHelper_logger as log } from 'log/logHelper';
 import utils from 'util/_util';
-import scrypt from 'scrypt-js';
 import { utils as web3Utils } from 'web3'
-
-const log = getLogger(logModules.ELECTRON_STORE_HELPER);
 
 /** A utility module to assist in reading and writing from the secure-electron-store using the elctronStoreMessenger 
  * without directly utilizing the pub/sub interface provided by it, but rather it's sync-mimicking abstractions
@@ -60,9 +56,9 @@ function writePlainValueToStore(key, value) {
 }
 
 /**
- * Write encrypted value to secure-electron-store
- * @param { String } key - Key to use for the respectively supplied value
- * @param { String } value - Value you wish to write to the secure-electron-store 
+ * Write encrypted value to secure-electron-store -- Stringify JSON first
+ * @param { String } key - Key to use for the respectively supplied value 
+ * @param { String } value - Value you wish to write to the secure-electron-store -- JSON should be stringified 
  */
 function writeEncryptedValueToStore(key, value, password) {
     _requireKeyValuePassword("writeEncryptedValueToStore", key, value, password);
@@ -73,7 +69,7 @@ function writeEncryptedValueToStore(key, value, password) {
 /**
  * Read a plaintext value from the secure-electron-store -- 
  * @param { String } key - Key for the value you wish to fetch 
- * @returns Returns the value for the corresponding key
+ * @returns {Promise<*>} Returns Promise<the value for the corresponding key>
  */
 function readPlainValueFromStore(key) {
     _requireKey("readPlainValueFromStore", key);
@@ -81,7 +77,7 @@ function readPlainValueFromStore(key) {
         electronStoreMessenger.readFromStore(key, (keyOfValue, value) => {
             if (!value) { res({ error: "Key is not in secure-electron-storage!" }) }
             if (typeof value === "object" && utils.generic.stringHasJsonStructure(JSON.stringify(value))) {
-                log.debug("Plain K:V read from electron store => " + key + " : " , value);
+                log.debug("Plain K:V read from electron store => " + key + " : ", value);
             } else {
                 log.debug("Plain K:V read from electron store => " + key + " : " + value);
             }
@@ -100,12 +96,12 @@ function readEncryptedValueFromStore(key, password) {
     _requireKeyPassword("readEncryptedValueFromStore", key, password);
     electronStoreMessenger.readEncryptedFromStore(key, password, async (err, keyOfValue, value) => {
         if (err) { console.error(err); return { error: err }; }
-        log.debug("Plain K:V decrypted from electron store => " + key + " : " + value);
+        log.debug("Plain K:V decrypted from electron store => " + keyOfValue + " : " + value);
         return value;
     })
 }
 
-export const utilityActons = {
+export const electronStoreUtilityActons = {
     writePlainValueToStore: writePlainValueToStore,
     writeEncryptedToStore: writeEncryptedValueToStore,
     readPlainValueFromStore: readPlainValueFromStore,
@@ -113,23 +109,54 @@ export const utilityActons = {
 }
 
 //////////////////////////////////////
-/* Abstracted Common Store Actions  */
+/* Abstracted Common Store Actions  */ // Functions thats remove the need to know the keys for common stored items
 /////////////////////////////////////
 
 /** Full abstraction of vault generation -- Returns mnemonic
  * @param { String } mnemonic - Mnemonic to generate the vault based off of :: Should be a mnemonic that has been verified by the vault owner,
  * @param { String } password - Passphrase to cipher the vault with :: A hash will also be stored for pre-flights and admin actions as "preflightHash",    
- * @returns { Boolean } - Returns true if vault has been created successfully 
+ * @returns { Array[passwordHash, firstWalletNode] } - Returns a hash of the password used to encrypt the vault and the firstWalletNode if the vault has been created successfully 
  */
-export async function createNewSecureHDVault(mnemonic, password) {
+function createNewSecureHDVault(mnemonic, password) {
     return new Promise(async res => {
-        let preflightHash = web3Utils.keccak256(password);
-        // TODO start here
+        let wu = utils.wallet; // Wallet utils shorthand
+        // Generate keccak256 hash of the password -- Returned for any preflights if desired
+        let passwordHash = web3Utils.keccak256(password);
+        // Get seedBytes => chain => firstWalletNode
+        let seedBytes = wu.getSeedBytesFromMnemonic(mnemonic);
+        let hdChain = wu.getHDChainFromSeedBytes(seedBytes);
+        let firstWalletNode = wu.getHDWalletNodeFromHDChain(hdChain, 0);
+        // Create the vault object string
+        const vaultObjectString = JSON.stringify({
+            mnemonic: mnemonic,
+            hd_wallet_count: 1,
+            wallets: {
+                external: [],
+            }
+        });
+        await writeEncryptedValueToStore("vault", vaultObjectString, password);
+        log.debug('A new secure vault as key "vault" has been saved to the store.')
+        res([passwordHash, firstWalletNode]);
     })
 }
 
-createNewSecureHDVault("mnemonic", "password");
+/**
+ * Store preflight hash as plain value to the electron-store
+ * @param { String } hashAsString - Hash to be stored as a string
+ * @returns { Boolean }
+ */
+function storePreflightHash(hashAsString) {
+    writePlainValueToStore("preflightHash", hashAsString);
+}
 
-export const commonActions = {
+function getPreflightHash() {
+    return new Promise(async res => {
+        res(await readPlainValueFromStore("preflightHash"));
+    })
+}
+
+export const electronStoreCommonActions = {
     createNewSecureHDVault: createNewSecureHDVault,
+    storePreflightHash: storePreflightHash,
+    getPreflightHash: getPreflightHash,
 }
