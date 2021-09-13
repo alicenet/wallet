@@ -6,7 +6,7 @@ import {Button, Checkbox, Container, Grid, Header, Icon, Modal, Radio} from 'sem
 
 import Page from '../layout/Page';
 
-import { classNames } from 'util/_util';
+import {classNames, curveTypes} from 'util/_util';
 
 function SeedPhraseVerified() {
 
@@ -14,9 +14,14 @@ function SeedPhraseVerified() {
 
     const [enableAdvancedWalletOptions, setEnableAdvancedOptions] = React.useState(false)
 
-    const [curveType, setCurveType] = React.useState(1)
+    const [curveType, setCurveType] = React.useState(curveTypes.SECP256K1)
 
     const history = useHistory();
+
+    const toggleAdvancedOptions = () => {
+        setEnableAdvancedOptions(prevState => !prevState);
+        setCurveType(1);
+    }
 
     return (
         <Page>
@@ -39,11 +44,12 @@ function SeedPhraseVerified() {
 
                 <Grid.Column width={10} className="my-20">
 
-                    <Checkbox onChange={() => setEnableAdvancedOptions(prevState => !prevState)}
+                    <Checkbox onChange={toggleAdvancedOptions}
                               checked={enableAdvancedWalletOptions} className="py-5"
                               label={<label className="text-sm">Enable Advanced Wallet Options</label>}/>
 
-                    <Container className={classNames("p-3 text-left border-2 border-solid border-gray-300", {['bg-gray-300']: !enableAdvancedWalletOptions})}>
+                    <Container
+                        className={classNames("p-3 text-left border-2 border-solid border-gray-300", {['bg-gray-300']: !enableAdvancedWalletOptions})}>
 
                         <p className="border border-black"><strong>Advanced Options</strong></p>
 
@@ -98,18 +104,18 @@ function SeedPhraseVerified() {
                             <Radio
                                 label='Secp256k1 (default)'
                                 name='curveType'
-                                value='1'
-                                onChange={() => setCurveType(1)}
-                                checked={curveType === 1}
+                                value={curveTypes.SECP256K1}
+                                onChange={() => setCurveType(curveTypes.SECP256K1)}
+                                checked={curveType === curveTypes.SECP256K1}
                                 readOnly={!enableAdvancedWalletOptions}
                             />
 
                             <Radio
                                 label='Barreto-Naehrig'
                                 name='curveType'
-                                value='2'
-                                onChange={() => setCurveType(2)}
-                                checked={curveType === 2}
+                                value={curveTypes.BARRETO_NAEHRIG}
+                                onChange={() => setCurveType(curveTypes.BARRETO_NAEHRIG)}
+                                checked={curveType === curveTypes.BARRETO_NAEHRIG}
                                 readOnly={!enableAdvancedWalletOptions}
                             />
 
