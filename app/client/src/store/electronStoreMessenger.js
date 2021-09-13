@@ -29,7 +29,7 @@ class StoreMessenger {
     }
 
     /**
-     * Return standardized object for an encrypted store value to use withn secure-electron-store
+     * Return standardized object for an encrypted store value to use within secure-electron-store
      * @param { String } algorithm 
      * @param { Uint8Array } iv 
      * @param { String } cipherText 
@@ -86,7 +86,7 @@ class StoreMessenger {
      * @param {Array.Strings} keys - The key to be notified of events on
      * @param {Func} callback - ([keys], [values]) => {} :: Where keys are the keys events have happened on, and values are their latest values
      */
-    subscribeToKeys(keys, callback) { } // TBD if needed
+    // subscribeToKeys(keys, callback) { } // TBD if needed
 
     /**
       * Unsubscribe from any events associated with the uuid

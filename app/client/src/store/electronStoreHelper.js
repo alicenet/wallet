@@ -147,8 +147,13 @@ function createNewSecureHDVault(mnemonic, password) {
  */
 function storePreflightHash(hashAsString) {
     writePlainValueToStore("preflightHash", hashAsString);
+    return true;
 }
 
+/**
+ * Fetch the currently stored preflight hash from the electron store
+ * @returns { Promise <String>} - Return preflight hash as a string
+ */
 function getPreflightHash() {
     return new Promise(async res => {
         res(await readPlainValueFromStore("preflightHash"));
