@@ -47,7 +47,7 @@ function VerifyYourSeedPhrase({ seedPhrase }) {
 
                 <Grid.Column width={16} className="my-5">
 
-                    <Header content="Verify Your Seed Phrase" as="h3" className="my-0"/>
+                    <Header content="Verify Your Seed Phrase now" as="h3" className="my-0"/>
 
                 </Grid.Column>
 
