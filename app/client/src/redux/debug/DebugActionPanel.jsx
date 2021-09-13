@@ -9,6 +9,8 @@ import { electronStoreUtilityActons as utilStoreHelper } from 'store/electronSto
 
 function DebugActionPanel({ dispatch, vault }) {
 
+    console.log(vault);
+
     const [vaultExists, setVaultExists] = React.useState("unknown");
     const [vaultWasntFound, setVaultWasntFound] = React.useState(false);
     const [testingMnemonic, setTestingMnemonic] = React.useState("unknown hold print furnace paper walk crucial junk country list phrase because");

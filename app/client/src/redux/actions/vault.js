@@ -29,7 +29,8 @@ export function generateNewSecureHDVault(mnemonic, password, curveType = "secp25
     return async function (dispatch) {
         let [preflightHash, firstWalletNode] = await electronStoreCommonActions.createNewSecureHDVault(mnemonic, password, curveType);
         electronStoreCommonActions.storePreflightHash(preflightHash); // Store preflight hash for pre-action auth checking
-        const preInitPayload = { preflightHash: preflightHash, wallets: { internal: [{node: firstWalletNode, name: "Main_Wallet"}], external: [] }, curve: curveType }; // Payload needed by initMadWallet() in WalletManagerMiddleware
+        dispatch({ type: VAULT_ACTION_TYPES.SET_PREFLIGHT_HASH, payload: preflightHash }); // Dispatch the preflightHash Update
+        const preInitPayload = { wallets: { internal: [{ privK: firstWalletNode.privateKey.toString('hex'), name: "Main Wallet", curve: curveType }], external: [] }, curve: curveType }; // Payload needed by initMadWallet() in WalletManagerMiddleware
         dispatch({ type: MIDDLEWARE_ACTION_TYPES.INIT_MAD_WALLET, payload: preInitPayload }); // Pass off to MadWalletMiddleware to finish state initiation
     }
 }

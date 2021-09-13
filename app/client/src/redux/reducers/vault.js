@@ -30,14 +30,32 @@ const initialVaultState = buildVaultStateObject({ exists: false });
 //////////////////////////////////////
 /* Vault State Object Constructors */
 /////////////////////////////////////
-export const constructWalletObject = (walletName, privK, address, curve) => {
-    return { name: walletName, privK: privK, address: address, curve: curve }
+/**
+ * 
+ * @param { Object } walletDetails - Object composed of wallet details
+ * @property { String } walletDetails.name - Name of the wallet ( For UI )
+ * @property { String } walletDetails.privK - Private Key for the wallet
+ * @property { String } walletDetails.address - Address for this wallet ( For UI )
+ * @property { String } walletDetauls.curve - Curve used to derrive public key from privK
+ * @returns  { Object } - Wallet Object
+ */
+export const constructWalletObject = ({ name, privK, address, curve, isInternal }) => {
+    return { name: name, privK: privK, address: address, curve: curve, isInternal: isInternal }
 };
 
 /* Vault Reducer */
 export default function vaultReducer(state = initialVaultState, action) {
 
     switch (action.type) {
+
+        case VAULT_ACTION_TYPES.SET_WALLETS_STATE:
+            console.log(action);
+            return Object.assign({}, state, {
+                wallets: {
+                    internal: action.payload.internal,
+                    external: action.payload.external
+                },
+            })
 
         case VAULT_ACTION_TYPES.ADD_EXTERNAL_WALLET:
             return Object.assign({}, state, {
