@@ -1,6 +1,7 @@
 import MadWallet from 'madwalletjs';
 import { vaultActionTypes } from '../constants/vault';
 import { walletManMiddleware_logger as log } from 'log/logHelper';
+import util from 'util/_util';
 
 const madWallet = new MadWallet();
 
@@ -27,17 +28,33 @@ export default function WalletManagerMiddleware(storeAPI) {
     }
 }
 
+/**
+ * WalletManagerMiddleware parsing of SET_VAUL_TO_STATE action
+ * @param { Object } vaultPayload - Payload called from SET_VAULT_TO_STATE
+ */
 function setVaultToStateHandler(vaultPayload) {
-    console.log(vaultPayload)
     // Extract all wallets from payload and add to MadWallet.Accounts
-    let allPKeysToAdd = [];
+    let accountAdds = [];
     for (let walletType in vaultPayload.wallets) {
-        let pKey = vaultPayload.wallets[walletType].privateKey;
-        allPKeysToAdd.push(pKey);
-        // TODO: START HERE -- Address curve being pushed to wallets array in state and constructing wallets in MadWallet Object here for all pushed wallets
+        for (let wallet of vaultPayload.wallets[walletType]) {
+            let pKey = wallet[0].privateKey.toString('hex'); // Wallet should be an array of [HDKey<WalletNode>, curveType] 
+            let curve = wallet[1];
+            accountAdds.push(madWallet.Account.addAccount(pKey, util.wallet.curveStringToNum(curve)));
+        }
     }
+    Promise.all(accountAdds).then( () => {
+        log.debug("SET_VAULT_TO_STATE handled by WalletManagerMiddleware: MadWallet.Account.accounts:", madWallet.Account.accounts);
+    })
 }
 
 function walletAdditonHandler() {
 
+}
+
+/**
+ * Return reference to active madWallet instance
+ * @returns 
+ */
+export function getMadWalletInstance() {
+    return madWallet;
 }

@@ -81,7 +81,13 @@ function DebugActionPanel({ dispatch, vault }) {
 
     const saveMnemonicAsVault = async () => {
         if (!vaultPassword) { return setVaultPassword("REQUIRED!"); }
-        dispatch(VAULT_ACTIONS.generateNewSecureHDVault(testingMnemonic, vaultPassword))
+        let test = await dispatch(VAULT_ACTIONS.generateNewSecureHDVault(testingMnemonic, vaultPassword))
+        console.log(test);
+    }
+
+    const printMadWalletInstance = () => {
+        let madWallet = dispatch(VAULT_ACTIONS.getMadWallet());
+        console.log(madWallet);
     }
 
     return (
@@ -89,7 +95,7 @@ function DebugActionPanel({ dispatch, vault }) {
         <Grid>
 
             <Grid.Column width={8}>
-                <Header as="h4">ELCETRON STORE ACTIONS</Header>
+                <Header as="h4">ELECTRON STORE ACTIONS</Header>
 
                 <Form>
                     <Form.Group widths="equal">
@@ -150,6 +156,8 @@ function DebugActionPanel({ dispatch, vault }) {
                     <Form.Input placeholder="Password for vault" size="mini" value={vaultPassword} onChange={e => setVaultPassword(e.target.value)} />
 
                     <DButton basic={false} color="green" onClick={saveMnemonicAsVault} content="Save Mnemonic As New Vault" />
+
+                    <DButton basic={false} color="green" onClick={printMadWalletInstance} content="Print madWallet instance (getMadWallet)" />
 
                 </Form>
 

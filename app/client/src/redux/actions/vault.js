@@ -1,6 +1,7 @@
-import { VAULT_ACTION_TYPES } from 'redux/constants/_constants';
-import { buildVaultStateObject } from 'redux/reducers/vault'
+import { VAULT_ACTION_TYPES, MIDDLEWARE_ACTION_TYPES } from 'redux/constants/_constants';
+import { buildVaultStateObject, } from 'redux/reducers/vault'
 import { electronStoreCommonActions } from 'store/electronStoreHelper';
+import { getMadWalletInstance } from 'redux/middleware/WalletManagerMiddleware'
 import util from 'util/_util';
 
 /* !!!!!!! ____   ATTENTION: ______ !!!!!!!!  
@@ -19,18 +20,26 @@ the mutable Wallet objects themselves are handled within MadNetWalletJS's instan
 */
 
 /**
- * Stores new HD Vault to state, as well as storing to the secure-electron-store
- * @param {String} mnemonic 
- * @param {String} password 
+ * Stores new HD Vault to state, as well as storing to the secure-electron-store -- WARNING: This erases stored vault! Use for new vault initiation ONLY
+ * @param {String} mnemonic - Mnemonic to use to generate new vault
+ * @param {String} password  - Password to encrypt vault with
+ * @param {String} curveType - Curve type for public address derivation :: default: "secp256k1" || "barreto-naehrig"
  */
-export function generateNewSecureHDVault(mnemonic, password) {
+export function generateNewSecureHDVault(mnemonic, password, curveType = "secp256k1") {
     return async function (dispatch) {
-        let [preflightHash, firstWalletNode] = await electronStoreCommonActions.createNewSecureHDVault(mnemonic, password);
-        electronStoreCommonActions.storePreflightHash(preflightHash);
-        // Create and dispatch the vault state object
-        const vaultPayload = buildVaultStateObject({ preflightHash: preflightHash, internalWallets: [firstWalletNode.privateKey] })
-        dispatch({ type: VAULT_ACTION_TYPES.SET_VAULT_TO_STATE, payload: vaultPayload });
+        let [preflightHash, firstWalletNode] = await electronStoreCommonActions.createNewSecureHDVault(mnemonic, password, curveType);
+        electronStoreCommonActions.storePreflightHash(preflightHash); // Store preflight hash for pre-action auth checking
+        const preInitPayload = { preflightHash: preflightHash, wallets: { internal: [firstWalletNode], external: [] }, curve: curveType }; // Payload needed by initMadWallet() in WalletManagerMiddleware
+        dispatch({ type: MIDDLEWARE_ACTION_TYPES.INIT_MAD_WALLET, payload: preInitPayload }); // Pass off to MadWalletMiddleware to finish state initiation
     }
+}
+
+/**
+ * Used to load a secure HD vault from storage -- Passes to WalletMiddleware to sync MadWallet state.
+ * @param { String } password - The password used to initially encrypt the vault 
+ */
+export function loadSecureHDVaultFromStorage(password) {
+    // TODO:
 }
 
 /** After a vault has been decrypted call this actions for any wallets to be added to the internal keyring and to the MadWallet object within state
@@ -43,5 +52,15 @@ export function addInternalWalletToState(walletName, privKey) {
         // Generate the wallet object
         const walletToAdd = util.wallet.generateStateWalletObject(walletName, privKey);
         dispatch({ type: VAULT_ACTION_TYPES.ADD_INTERNAL_WALLET, payload: walletToAdd });
+    }
+}
+
+/**
+ * Returns a reference to the mad wallet instance from WalletManagerMiddleware
+ * @returns {Object<MadWallet-JS>}
+ */
+export function getMadWallet() {
+    return function (dispatch) {
+        return getMadWalletInstance();
     }
 }

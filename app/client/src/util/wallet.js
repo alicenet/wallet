@@ -88,3 +88,13 @@ export function streamLineHDWalletNodeFromMnemonic(mnemonic, nodeNum) {
         res(getHDWalletNodeFromHDChain(hdChain, nodeNum));
     })
 }
+
+/**
+ * Return the equivelent integer for a given curvetype as used in MadWallet-JS
+ */
+export function curveStringToNum(curveString) {
+    if (curveString !== "secp256k1" && curveString !== "barreto-naehrig") {
+        throw new Error("Invalid curve name: ", curveString);
+    }
+    return curveString === "secp256k1" ? 1 : 2; // 1 is secp, 2 for bn
+}

@@ -115,9 +115,10 @@ export const electronStoreUtilityActons = {
 /** Full abstraction of vault generation -- Returns mnemonic
  * @param { String } mnemonic - Mnemonic to generate the vault based off of :: Should be a mnemonic that has been verified by the vault owner,
  * @param { String } password - Passphrase to cipher the vault with :: A hash will also be stored for pre-flights and admin actions as "preflightHash",    
+ * @param { String } curve - One of: "secp256k1", "secp" or "barreto-naehrig", "bn"
  * @returns { Array[passwordHash, firstWalletNode] } - Returns a hash of the password used to encrypt the vault and the firstWalletNode if the vault has been created successfully 
  */
-function createNewSecureHDVault(mnemonic, password) {
+function createNewSecureHDVault(mnemonic, password, curveType="secp256k1") {
     return new Promise(async res => {
         let wu = utils.wallet; // Wallet utils shorthand
         // Generate keccak256 hash of the password -- Returned for any preflights if desired
@@ -130,7 +131,9 @@ function createNewSecureHDVault(mnemonic, password) {
         const vaultObjectString = JSON.stringify({
             mnemonic: mnemonic,
             hd_wallet_count: 1,
+            hd_wallet_curve: curveType,
             wallets: {
+                internal: [],
                 external: [],
             }
         });

@@ -10,7 +10,7 @@ export const logModules = {
 }
 
 const GLOBAL_LEVEL = false; // "SILENT"" to silence all logs exported from this module
-const EXCLUSIVE = logModules.WALLET_MANAGER_MIDDLEWARE // Flag a module name for exclusive logging
+const EXCLUSIVE = false; // logModules.WALLET_MANAGER_MIDDLEWARE // Flag a module name for exclusive logging
 
 // Log Modules Levels -- Set as needed
 const logLevels = {

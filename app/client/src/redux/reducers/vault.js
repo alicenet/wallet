@@ -11,20 +11,28 @@ import { reduxState_logger as log } from 'log/logHelper'
  * @param { Array } options.externalWallets - Array of <ExternalWallets> -- Default []
  * @returns { Object } -- JSON Object for vault state
  */
-export const buildVaultStateObject = ({ exists = true, isLocked = false, preflightHash = "", internalWallets = [], externalWallets = [] } = {}, madWallet = false) => {
+export const buildVaultStateObject = ({ exists = true, isLocked = false, preflightHash = "", internalWallets = [], externalWallets = [] } = {}, hdCurve = "secp256k1") => {
     return {
         exists: exists, // Does the "vault" key exist in the electron store?
         is_locked: isLocked, // Locking vault wipes current state :: Required user to re-enter password -- Vault is deciphered and reloaded
         preflight_hash: preflightHash, // keccak256 hash of the user-admin password :: The password for this hash is used for encrypting the vault and performing admin tasks
+        hd_curve: hdCurve, // Curve used for internal wallets
         wallets: {
-            external: externalWallets, // External wallets are stored as part of the encrypted store
-            internal: internalWallets, // Internal wallets are generated from the HD Chain and populated on decipher, not kept in store
+            external: externalWallets, // Array of <WalletObject>s as defined below
+            internal: internalWallets, // Array of <WalletObject>s as defined below
         },
     }
 }
 
 // The vault reducer contains all information regarding the user and their wallets state
 const initialVaultState = buildVaultStateObject({ exists: false });
+
+//////////////////////////////////////
+/* Vault State Object Constructors */
+/////////////////////////////////////
+export const constructWalletObject = (walletName, privK, address, curve) => {
+    return { name: walletName, privK: privK, address: address, curve: curve }
+};
 
 /* Vault Reducer */
 export default function vaultReducer(state = initialVaultState, action) {
