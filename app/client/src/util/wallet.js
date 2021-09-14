@@ -98,3 +98,8 @@ export function curveStringToNum(curveString) {
     }
     return curveString === "secp256k1" ? 1 : 2; // 1 is secp, 2 for bn
 }
+
+export const curveTypes = {
+    SECP256K1: 1,
+    BARRETO_NAEHRIG: 2,
+}

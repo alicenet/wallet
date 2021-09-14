@@ -10,5 +10,6 @@ const utils = {
 
 // Quick exports
 export const classNames = generic.classNames;
+export const curveTypes = wallet.curveTypes;
 
 export default utils;
