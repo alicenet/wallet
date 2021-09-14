@@ -16,14 +16,28 @@ function FirstWalletGenerated() {
     const history = useHistory();
 
     const handleFormSubmit = () => {
-        setFormState(prevState => {
-            return {
-                password: {value: prevState.password.value},
-                verifiedPassword: {value: prevState.verifiedPassword.value}
-            }
-        })
+        if (!formState.password.value) {
+            setFormState(prevState => {
+                return {
+                    ...prevState,
+                    password: {
+                        value: prevState.password.value,
+                        error: 'Password is required'
+                    }
+                }
+            });
+        } else {
+            setFormState(prevState => {
+                return {
+                    ...prevState,
+                    password: {
+                        value: prevState.password.value
+                    }
+                };
+            });
+        }
 
-        if (formState.verifiedPassword.value?.length > 0) {
+        if (formState.password.value?.length > 0) {
             if (formState.password.value !== formState.verifiedPassword.value) {
                 setFormState(prevState => {
                     return {
@@ -44,20 +58,6 @@ function FirstWalletGenerated() {
                     };
                 });
             }
-        } else {
-            setFormState(prevState => {
-                return {
-                    ...prevState,
-                    verifiedPassword: {
-                        value: prevState.verifiedPassword.value,
-                        error: 'Password is required'
-                    }
-                }
-            });
-        }
-
-        if (!Object.keys(formState).every(key => !formState[key].error)) {
-            history.push('/')
         }
     }
 
