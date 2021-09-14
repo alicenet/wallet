@@ -45,6 +45,36 @@ export const waitFor = (msLength, callerId) => {
     });
 }
 
-export const isDebug = () => {
-    return process.env.REACT_APP_DEBUG
-};
+/**
+ * Check if a string has json-like structures
+ * @param {String} str - String to check 
+ * @returns 
+ */
+export const stringHasJsonStructure = (str) => {
+    if (typeof str !== 'string') return false;
+    try {
+        const result = JSON.parse(str);
+        const type = Object.prototype.toString.call(result);
+        return type === '[object Object]'
+            || type === '[object Array]';
+    } catch (err) {
+        return false;
+    }
+}
+
+/**
+ * Attempt to parse json, return error if err occurs.
+ * @param {String} str 
+ * @returns { Object } - (err, jsonObj)
+ */
+export const safeJsonParse = (str) => {
+    try {
+        return [null, JSON.parse(str)];
+    } catch (err) {
+        return [err];
+    }
+}
+
+export const isDebug = () => { return process.env.REACT_APP_DEBUG };
+
+console.log(process.env);

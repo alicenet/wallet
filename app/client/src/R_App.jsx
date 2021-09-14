@@ -47,13 +47,9 @@ function App() {
             <Router>
 
                 <Switch>
-
                     <DefaultRoutes/>
-
-                    <DebugTools/>
-
                 </Switch>
-
+                    <DebugTools/>
             </Router>
 
         </Container>

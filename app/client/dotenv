@@ -1,4 +1,4 @@
 # Build legacy application? "" for default or "legacy" for legacy version
 REACT_APP_RUN_TYPE=""
 # Run with debug functionality?
-DEBUG = ""
+REACT_APP_DEBUG=TRUE
