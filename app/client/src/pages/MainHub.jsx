@@ -2,9 +2,9 @@ import React from 'react';
 
 import {useHistory} from 'react-router-dom';
 
-import {Button, Container, Grid, Header, Image, Modal} from "semantic-ui-react";
+import {Button, Container, Grid, Header, Image, Modal} from 'semantic-ui-react';
 
-import MadIcon from "../../Assets/icon.png";
+import MadIcon from '../Assets/icon.png';
 
 import withWalletDrawer from 'hocs/withWalletDrawer/withWalletDrawer';
 
@@ -44,8 +44,7 @@ function MainHub({toggleWalletDrawer}) {
                         onOpen={() => setOpenModal(true)}
                         open={openModal}
                         dimmer="inverted"
-                        trigger={<a style={{cursor: 'pointer'}} className="text-purple-700 text-sm">What is a
-                            vault?</a>}
+                        trigger={<Button className="text-purple-700 text-sm bg-transparent">What is a vault?</Button>}
                     >
 
                         <Modal.Content>
@@ -95,7 +94,8 @@ function MainHub({toggleWalletDrawer}) {
 
                         <Button color="orange" basic content="I have a vault seed" fluid/>
 
-                        <Button color="orange" size="mini" basic content="Wallet Drawer Test" onClick={ () => toggleWalletDrawer() } fluid/>
+                        <Button color="orange" size="mini" basic content="Wallet Drawer Test"
+                                onClick={() => toggleWalletDrawer()} fluid/>
 
                     </Container>
 

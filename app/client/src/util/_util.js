@@ -8,4 +8,7 @@ const utils = {
     wallet: wallet,
 }
 
+// Quick exports
+export const classNames = generic.classNames;
+
 export default utils;

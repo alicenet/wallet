@@ -4,11 +4,12 @@ import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 import ReduxStateViewer, {handleDebugListener} from 'redux/debug/StateViewer';
 import util from 'util/_util';
 
-import MainHub from 'pages/MainHub/MainHub';
-import CreateVault from './pages/CreateVault/CreateVault';
-import VaultOptOut from './pages/VaultOptOut/VaultOptOut';
-import YourSeedPhrase from './pages/YourSeedPhrase/YourSeedPhrase';
-import VerifyYourSeedPhrase from './pages/VerifyYourSeedPhrase/VerifyYourSeedPhrase';
+import MainHub from './pages/MainHub';
+import CreateVault from './pages/CreateVault';
+import VaultOptOut from './pages/VaultOptOut';
+import YourSeedPhrase from './pages/YourSeedPhrase';
+import VerifyYourSeedPhrase from './pages/VerifyYourSeedPhrase';
+import SeedPhraseVerified from './pages/SeedPhraseVerified';
 
 /**
  * Main App Entrypoint
@@ -29,6 +30,7 @@ function App() {
                 <Route exact path="/vaultOptOut" component={VaultOptOut}/>
                 <Route exact path="/yourSeedPhrase" component={YourSeedPhrase}/>
                 <Route exact path="/verifyYourSeedPhrase" component={VerifyYourSeedPhrase}/>
+                <Route exact path="/seedPhraseVerified" component={SeedPhraseVerified}/>
             </>
         )
     }
@@ -41,12 +43,15 @@ function App() {
 
     return (
         <Container fluid className="h-full w-full justify-center items-center">
+
             <Router>
+
                 <Switch>
                     <DefaultRoutes/>
                 </Switch>
                     <DebugTools/>
             </Router>
+
         </Container>
     );
 }

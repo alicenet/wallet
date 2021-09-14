@@ -15,7 +15,7 @@ module.exports = {
         'alignSelf',
         'backgroundColor',
         'borderColor',
-        'borderRadius',
+        'borderStyle',
         'borderWidth',
         'display',
         'flex',
@@ -34,9 +34,12 @@ module.exports = {
         'minWidth',
         'outline',
         'padding',
+        'rotate',
         'textAlign',
         'textColor',
         'textTransform',
+        'transitionDuration',
+        'transform',
         'width',
     ]
 }

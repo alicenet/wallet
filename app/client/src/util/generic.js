@@ -1,6 +1,33 @@
 import log from 'loglevel';
-import { v4 as uuidv4 } from 'uuid';
-import { splitStringWithEllipsis } from './string';
+import {v4 as uuidv4} from 'uuid';
+import {splitStringWithEllipsis} from './string';
+
+/**
+ * Conditionally joins classNames together
+ * @param classNames - an object per class name
+ */
+export const classNames = (...classNames) => {
+    let classes = [];
+
+    classNames.forEach(className => {
+        if (!className) {
+            return;
+        }
+
+        const classNameType = typeof className;
+        if (classNameType === 'string') {
+            classes.push(className);
+        } else if (classNameType === 'object') {
+            for(const key in className) {
+                if(className[key]) {
+                    classes.push(key)
+                }
+            }
+        }
+    })
+
+    return classes.join(' ');
+}
 
 /**
  * Async promise waiter, used for artificial waiting
