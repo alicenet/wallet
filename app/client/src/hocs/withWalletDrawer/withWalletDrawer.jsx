@@ -42,10 +42,11 @@ export default function withWalletDrawer(Component, isOpen = false) {
                 icon: "id card outline",
                 size: "small"
             });
-            const WalletButtons = wallets.internal.map(wallet => <Button {...genWalletButtonProps(wallet)} />);
+
+            const WalletButtons = wallets.internal.map(wallet => <Button key={wallet.initId} {...genWalletButtonProps(wallet)} />);
 
             const walletActionProps = {basic: true, size: "mini"}
-            const WalletActions = <ButtonGroup size="mini" className="flex justify-between align-between mt-8"
+            const WalletActions = <ButtonGroup key="actions" size="mini" className="flex justify-between align-between mt-8"
                                                buttons={[
                                                    {
                                                        onClick: closeDrawer,
@@ -65,7 +66,7 @@ export default function withWalletDrawer(Component, isOpen = false) {
                                                ]}
             />
 
-            return [WalletButtons, WalletActions];
+            return [WalletButtons, WalletActions]
         }
 
         return (

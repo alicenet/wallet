@@ -22,9 +22,9 @@ the mutable Wallet objects themselves are handled within MadNetWalletJS's instan
  * Stores new HD Vault to state, as well as storing to the secure-electron-store -- WARNING: This erases stored vault! Use for new vault initiation ONLY
  * @param {String} mnemonic - Mnemonic to use to generate new vault
  * @param {String} password  - Password to encrypt vault with
- * @param {String} curveType - Curve type for public address derivation :: default: "secp256k1" || "barreto-naehrig"
+ * @param {String} curveType - Curve type for public address derivation :: default: see util.wallet curve types -- Default secp256k1
  */
-export function generateNewSecureHDVault(mnemonic, password, curveType = "secp256k1") {
+export function generateNewSecureHDVault(mnemonic, password, curveType = util.wallet.curveTypes.SECP256K1 ) {
     return async function (dispatch) {
         let [preflightHash, firstWalletNode] = await electronStoreCommonActions.createNewSecureHDVault(mnemonic, password, curveType);
         electronStoreCommonActions.storePreflightHash(preflightHash); // Store preflight hash for pre-action auth checking

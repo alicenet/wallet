@@ -8,7 +8,7 @@ import MadIcon from '../Assets/icon.png';
 
 import withWalletDrawer from 'hocs/withWalletDrawer/withWalletDrawer';
 
-function MainHub({toggleWalletDrawer}) {
+function NewUserHub({toggleWalletDrawer}) {
 
     const [openModal, setOpenModal] = React.useState(false)
 
@@ -90,7 +90,7 @@ function MainHub({toggleWalletDrawer}) {
                     <Container fluid className="flex flex-auto flex-col items-center gap-3 w-72">
 
                         <Button color="purple" basic content="Create a Vault*" fluid
-                                onClick={() => history.push('/createVault')}/>
+                                onClick={() => history.push('/newVault/createVault')}/>
 
                         <Button color="orange" basic content="I have a vault seed" fluid/>
 
@@ -112,4 +112,4 @@ function MainHub({toggleWalletDrawer}) {
 
 }
 
-export default withWalletDrawer(MainHub);
+export default withWalletDrawer(NewUserHub);

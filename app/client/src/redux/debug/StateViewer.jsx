@@ -19,21 +19,27 @@ function StateViewer({ redux }) {
             // Isolate the keys of each state, ignore nesting and label as object for now -- Improve i/when f needed
             for (let key in redux[reducer]) {
                 rows.push(
-                    <Table.Row>
+                    <Table.Row key={key}>
                         <Table.Cell>{key}</Table.Cell>
                         <Table.Cell>{typeof redux[reducer][key] !== "object" ? String(redux[reducer][key]) : 'object'}</Table.Cell>
                     </Table.Row>
                 )
             }
             // Add the table
-            tables.push(<>
-                <Header as="h3">{reducer}</Header>
-                <Table>
+            tables.push(
+                <Table key={reducer}>
+                    <Table.Header>
+                        <Table.Row>
+                            <Table.Cell>
+                                <Header as="h3">{reducer}</Header>
+                            </Table.Cell>
+                        </Table.Row>
+                    </Table.Header>
                     <Table.Body>
                         {rows}
                     </Table.Body>
                 </Table>
-            </>)
+            )
         }
         return tables;
     }

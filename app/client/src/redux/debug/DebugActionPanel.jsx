@@ -131,7 +131,7 @@ function DebugActionPanel({ dispatch, vault }) {
                     </Form.Group>
 
                     <Header as="h6" className="mt-1 mb-0">Read Output</Header>
-                    <TextArea fluid className="mt-1" value={typeof storeReadOutput === "object" ? JSON.stringify(storeReadOutput) : storeReadOutput} />
+                    <TextArea className="mt-1" value={typeof storeReadOutput === "object" ? JSON.stringify(storeReadOutput) : storeReadOutput} />
 
                 </Form>
 
@@ -140,7 +140,7 @@ function DebugActionPanel({ dispatch, vault }) {
             <Grid.Column width={8}>
                 <Header as="h4" className="mb-0">WALLET UTILITY -- FUNCTION TESTING</Header>
                 <Header sub color="red">Testing Mnemonic -- DO NOT USE FOR ANYTHING OTHER THAN TESTING</Header>
-                <TextArea DButton className="w-full mb-0 mt-2" value={testingMnemonic} />
+                <TextArea className="w-full mb-0 mt-2" value={testingMnemonic} />
                 <Header sub className="mt-0"> Functions </Header>
 
                 <Form>

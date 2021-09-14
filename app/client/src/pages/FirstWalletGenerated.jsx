@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 
 import { Button, Form, Grid, Header } from 'semantic-ui-react';
 
@@ -6,8 +7,9 @@ import { useHistory } from 'react-router-dom';
 import { useFormState } from 'hooks/_hooks';
 
 import Page from '../layout/Page';
+import { VAULT_ACTIONS } from 'redux/actions/_actions'
 
-function FirstWalletGenerated() {
+function FirstWalletGenerated({ seedPhrase, desiredCurve, dispatch }) {
 
     const [formState, formSetter] = useFormState(["password", "verifiedPassword"]);
 
@@ -22,9 +24,11 @@ function FirstWalletGenerated() {
 
         if (formState.password.value !== formState.verifiedPassword.value) { return formSetter.setVerifiedPasswordError("Password do not match."); }
         else { formSetter.clearVerifiedPasswordError() }
-        // ALL OK -- Do stuff here. . .
-        console.log("ALL OK (Hopefully)");
+        // Dispatch the vault generation action and. . .
+        dispatch(VAULT_ACTIONS.generateNewSecureHDVault(seedPhrase, formState.password.value, desiredCurve))
+        history.push("/hub");
     }
+
 
     return (
         <Page>
@@ -111,4 +115,5 @@ function FirstWalletGenerated() {
 
 }
 
-export default FirstWalletGenerated;
+const stateMap = state => ({ seedPhrase: state.user.potential_seed_phrase, desiredCurve: state.user.desired_hd_curve });
+export default connect(stateMap)(FirstWalletGenerated);

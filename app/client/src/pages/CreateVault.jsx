@@ -48,7 +48,7 @@ function CreateVault() {
                     <Container fluid className="flex flex-auto flex-col items-center gap-5 w-80">
 
                         <Button color="purple" basic content="Get Seed Phrase" fluid
-                                onClick={() => history.push('/yourSeedPhrase')}/>
+                                onClick={() => history.push('/newVault/yourSeedPhrase')}/>
 
                         <Button color="orange" basic content="Just Generate A Keystore" fluid
                                 onClick={() => history.push('/vaultOptOut')}/>

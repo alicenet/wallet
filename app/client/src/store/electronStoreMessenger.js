@@ -205,22 +205,28 @@ class StoreMessenger {
 const storeMessenger = new StoreMessenger()
 export default storeMessenger;
 
-// Core secure-electron-store event for responses
-window.api.store.onReceive(readConfigResponse, function (args) {
+try {
 
-    let val = args.value;
+    // Core secure-electron-store event for responses
+    window.api.store.onReceive(readConfigResponse, function (args) {
 
-    // If value is JSON, make object
-    let isJson = util.generic.stringHasJsonStructure(val);
-    if (isJson) {
-        let [err, value] = util.generic.safeJsonParse(val);
-        if (!!err) {
-            log.error("Error parsing JSON from assumed JSON String :> " + val + " <: in electron store for following key : " + args.key);
-            val = args.value; // Fallback to args.value
+        let val = args.value;
+
+        // If value is JSON, make object
+        let isJson = util.generic.stringHasJsonStructure(val);
+        if (isJson) {
+            let [err, value] = util.generic.safeJsonParse(val);
+            if (!!err) {
+                log.error("Error parsing JSON from assumed JSON String :> " + val + " <: in electron store for following key : " + args.key);
+                val = args.value; // Fallback to args.value
+            }
+            val = value;
         }
-        val = value;
-    }
 
-    storeMessenger.notifyEvent(args.key, val);
+        storeMessenger.notifyEvent(args.key, val);
 
-});
+    });
+
+} catch (ex) {
+    log.warn("It appears electron store is not available, you may be running in vanilla browser. You won't have access to storage this way.")
+}

@@ -7,13 +7,14 @@ import {Button, Container, Grid, Header, TextArea} from 'semantic-ui-react';
 import { useHistory } from 'react-router-dom';
 
 import Page from '../layout/Page';
+import { connect } from 'react-redux';
 
 function VerifyYourSeedPhrase({ seedPhrase }) {
 
+    seedPhrase = seedPhrase.split(' '); // Split to array
+
     const [seedPhraseIsCorrect, setSeedPhraseIsCorrect] = React.useState(false);
-
     const [chosenPhrase, setChosenPhrase] = React.useState([]);
-
     const [verifyPhraseButtonText, setVerifyPhraseButtonText] = React.useState("Verify Phrase");
 
     const history = useHistory();
@@ -83,12 +84,12 @@ function VerifyYourSeedPhrase({ seedPhrase }) {
                         <Container className="flex flex-auto flex-row justify-between">
 
                             <Button color="purple" basic content="Get New Seed Phrase"
-                                    onClick={() => history.push('/yourSeedPhrase')}/>
+                                    onClick={() => history.push('/newVault/yourSeedPhrase')}/>
 
                             <Button color={seedPhraseIsCorrect ? 'teal' : 'red'} disabled={!seedPhraseIsCorrect}
                                     basic
                                     content={verifyPhraseButtonText}
-                                    onClick={() => history.push('/seedPhraseVerified')}/>
+                                    onClick={() => history.push('/newVault/seedPhraseVerified')}/>
 
                         </Container>
 
@@ -103,12 +104,13 @@ function VerifyYourSeedPhrase({ seedPhrase }) {
 
 }
 
-export default VerifyYourSeedPhrase;
+const stateMap = state => ({ seedPhrase: state.user.potential_seed_phrase });
+export default connect(stateMap)(VerifyYourSeedPhrase);
 
 VerifyYourSeedPhrase.defaultProps = {
-    seedPhrase: ['apart', 'think', 'stumble', 'derive', 'tank', 'gown', 'gas', 'squat', 'crack', 'whisper', 'knee', 'hint', 'hammer', 'goose', 'deer', 'science'],
+    seedPhrase: "",
 };
 
 VerifyYourSeedPhrase.propTypes = {
-    seedPhrase: PropTypes.arrayOf(PropTypes.string),
+    seedPhrase: PropTypes.string.isRequired,
 };
