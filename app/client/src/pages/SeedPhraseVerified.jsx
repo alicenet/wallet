@@ -129,8 +129,7 @@ function SeedPhraseVerified() {
 
                     <Container fluid className="flex flex-auto flex-col items-center gap-2 w-60">
 
-                        <Button color="teal" basic content="Generate My Wallet" fluid
-                                onClick={() => history.push('/')}/>
+                        <Button color="teal" basic content="Generate My Wallet" fluid onClick={() => history.push('/firstWalletGenerated')}/>
 
                     </Container>
 
