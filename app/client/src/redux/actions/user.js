@@ -1,6 +1,5 @@
 import { USER_ACTION_TYPES } from '../constants/_constants';
 import utils from 'util/_util';
-import {commonActions as electronStoreCommonsActions } from 'store/electronStoreHelper';
 
 ///////////////////////////
 /* Internal Action Calls */

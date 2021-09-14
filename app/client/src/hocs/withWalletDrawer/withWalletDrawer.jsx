@@ -4,8 +4,6 @@ import { connect } from 'react-redux';
 import { useBoolToggler } from 'hooks/_hooks.js';
 import MadIcon from "../../Assets/icon.png";
 import PropTypes from 'prop-types';
-import { VAULT_ACTIONS } from 'redux/actions/_actions';
-import util from 'util/_util';
 
 /**
  * Provide wallet tab as a drawer to the passed Component

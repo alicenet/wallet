@@ -49,7 +49,6 @@ export default function vaultReducer(state = initialVaultState, action) {
     switch (action.type) {
 
         case VAULT_ACTION_TYPES.SET_WALLETS_STATE:
-            console.log(action);
             return Object.assign({}, state, {
                 wallets: {
                     internal: action.payload.internal,

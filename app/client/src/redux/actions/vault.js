@@ -1,5 +1,4 @@
 import { VAULT_ACTION_TYPES, MIDDLEWARE_ACTION_TYPES } from 'redux/constants/_constants';
-import { buildVaultStateObject, } from 'redux/reducers/vault'
 import { electronStoreCommonActions } from 'store/electronStoreHelper';
 import { getMadWalletInstance } from 'redux/middleware/WalletManagerMiddleware'
 import util from 'util/_util';

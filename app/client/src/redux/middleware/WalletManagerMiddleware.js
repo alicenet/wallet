@@ -1,8 +1,7 @@
 import MadWallet from 'madwalletjs';
 import { MIDDLEWARE_ACTION_TYPES, VAULT_ACTION_TYPES } from '../constants/_constants';
-import { walletManMiddleware_logger as log } from 'log/logHelper';
 import util from 'util/_util';
-import { constructWalletObject, buildVaultStateObject } from 'redux/reducers/vault';
+import { constructWalletObject } from 'redux/reducers/vault';
 
 const madWallet = new MadWallet();
 
@@ -17,6 +16,7 @@ export default function WalletManagerMiddleware(storeAPI) {
             switch (action.type) {
                 case MIDDLEWARE_ACTION_TYPES.INIT_MAD_WALLET:
                     initMadWallet(action.payload, storeAPI.dispatch); break;
+                default: break;
             }
             // Do anything here: pass the action onwards with next(action),
             // or restart the pipeline with storeAPI.dispatch(action)
@@ -76,9 +76,7 @@ function initMadWallet(initPayload, dispatch) {
 
 }
 
-function walletAdditonHandler() {
-
-}
+// function walletAdditonHandler() {}
 
 /**
  * Return reference to active madWallet instance
