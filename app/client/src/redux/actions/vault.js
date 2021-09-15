@@ -1,5 +1,5 @@
 import { VAULT_ACTION_TYPES, MIDDLEWARE_ACTION_TYPES } from 'redux/constants/_constants';
-import { electronStoreCommonActions } from 'store/electronStoreHelper';
+import { electronStoreCommonActions } from '../../Store/electronStoreHelper';
 import { getMadWalletInstance } from 'redux/middleware/WalletManagerMiddleware'
 import util from 'util/_util';
 
@@ -12,7 +12,7 @@ To facilitate the Virtual DOM being updated when wallet mutation happens, we sto
 what the MadNetWallet object in ../middleware/WalletManagerMiddleware is composed of to the reduxState :: Immutable keys are stored in state, while
 the mutable Wallet objects themselves are handled within MadNetWalletJS's instance 
 
-:: This way wallet actions occuring in the Redux state are mirrored to MadWallet.Account global mutable.
+:: This way wallet actions occurring in the Redux state are mirrored to MadWallet.Account global mutable.
 
 :: Some dispatched actions occur exclusively in the middleware!
   
@@ -22,9 +22,9 @@ the mutable Wallet objects themselves are handled within MadNetWalletJS's instan
  * Stores new HD Vault to state, as well as storing to the secure-electron-store -- WARNING: This erases stored vault! Use for new vault initiation ONLY
  * @param {String} mnemonic - Mnemonic to use to generate new vault
  * @param {String} password  - Password to encrypt vault with
- * @param {String} curveType - Curve type for public address derivation :: default: "secp256k1" || "barreto-naehrig"
+ * @param {String} curveType - Curve type for public address derivation :: default: see util.wallet curve types -- Default secp256k1
  */
-export function generateNewSecureHDVault(mnemonic, password, curveType = "secp256k1") {
+export function generateNewSecureHDVault(mnemonic, password, curveType = util.wallet.curveTypes.SECP256K1 ) {
     return async function (dispatch) {
         let [preflightHash, firstWalletNode] = await electronStoreCommonActions.createNewSecureHDVault(mnemonic, password, curveType);
         electronStoreCommonActions.storePreflightHash(preflightHash); // Store preflight hash for pre-action auth checking

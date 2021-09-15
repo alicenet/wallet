@@ -1,20 +1,24 @@
 import React from 'react';
-
-import PropTypes from 'prop-types';
-
+import Page from '../layout/Page';
+import PropTypes from 'prop-types'
+import chunk from 'lodash/chunk';
+import {Button, Checkbox, Container, Grid, GridRow, Header} from 'semantic-ui-react';
+import {USER_ACTIONS} from 'redux/actions/_actions';
+import {connect} from 'react-redux';
 import {useHistory} from 'react-router-dom';
 
-import {Button, Checkbox, Container, Grid, GridRow, Header} from 'semantic-ui-react';
+function YourSeedPhrase({seedPhrase, dispatch}) {
 
-import chunk from 'lodash/chunk';
-
-import Page from '../layout/Page';
-
-function YourSeedPhrase({seedPhrase}) {
+    seedPhrase = seedPhrase.split(' ');
 
     const [isChecked, setIsChecked] = React.useState(false);
-
     const history = useHistory();
+
+    const rollPotentialSeedPhrase = React.useCallback(() => dispatch(USER_ACTIONS.setNewPotentialMnemonic()), [dispatch]);
+
+    React.useEffect(() => {
+        rollPotentialSeedPhrase();
+    }, [rollPotentialSeedPhrase]); // Roll initial seed phrase
 
     return (
         <Page>
@@ -45,10 +49,17 @@ function YourSeedPhrase({seedPhrase}) {
 
                                 {someSeeds.map(word => <Grid.Column key={word}>{word}</Grid.Column>)}
 
+
                             </GridRow>
                         )}
 
                     </Grid>
+
+                </Grid.Column>
+
+                <Grid.Column width={16}>
+
+                    <Button size="tiny" content="Reroll Phrase" onClick={rollPotentialSeedPhrase}/>
 
                 </Grid.Column>
 
@@ -66,12 +77,20 @@ function YourSeedPhrase({seedPhrase}) {
 
                     <Container fluid className="flex flex-auto flex-col items-center gap-5 w-96">
 
-                        <Button color="purple" basic disabled={!isChecked}
-                                content="I'm Ready To Verify The Seed Phrase" fluid
-                                onClick={() => history.push('/verifyYourSeedPhrase')}/>
+                        <Button.Group className="flex justify-center w-72">
+
+                            <Button color="orange" basic
+                                    content="Go Back" fluid
+                                    onClick={() => history.goBack()}/>
+
+                            <Button color="purple" basic disabled={!isChecked}
+                                    content="Verify The Seed Phrase" fluid
+                                    onClick={() => history.push('/newVault/verifyYourSeedPhrase')}/>
+
+                        </Button.Group>
 
                         <Checkbox onChange={() => setIsChecked(prevState => !prevState)} checked={isChecked}
-                                  label={<label>I Have Stores This Seed Securely</label>}/>
+                                  label={<label>I Have Stored This Seed Securely</label>}/>
 
                     </Container>
 
@@ -84,12 +103,13 @@ function YourSeedPhrase({seedPhrase}) {
 
 }
 
-export default YourSeedPhrase;
-
 YourSeedPhrase.defaultProps = {
-    seedPhrase: ['science', 'crack', 'knee', 'whisper', 'gown', 'gas', 'hint', 'car', 'stumble', 'derive', 'tank', 'apart'],
+    seedPhrase: "",
 };
 
 YourSeedPhrase.propTypes = {
-    seedPhrase: PropTypes.arrayOf(PropTypes.string),
+    seedPhrase: PropTypes.string.isRequired
 };
+
+const stateMap = state => ({seedPhrase: state.user.potential_seed_phrase});
+export default connect(stateMap)(YourSeedPhrase);

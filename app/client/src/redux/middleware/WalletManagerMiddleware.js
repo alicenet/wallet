@@ -37,9 +37,9 @@ function initMadWallet(initPayload, dispatch) {
     for (let walletType in initPayload.wallets) {
         for (let wallet of initPayload.wallets[walletType]) {
             if (walletType === "internal") {
-                internalAccountAdds.push([wallet.privK, util.wallet.curveStringToNum(wallet.curve), wallet.name]);
+                internalAccountAdds.push([wallet.privK, wallet.curve, wallet.name]);
             } else {
-                externalAccountAdds.push([wallet.privK, util.wallet.curveStringToNum(wallet.curve), wallet.name]);
+                externalAccountAdds.push([wallet.privK, wallet.curve, wallet.name]);
             }
         }
     }
@@ -62,7 +62,7 @@ function initMadWallet(initPayload, dispatch) {
                 name: walletName,
                 privK: account.MultiSigner[signerKeyToUse].privK,
                 address: account.address,
-                curve: signerKeyToUse === "bnSigner" ? "barreto-naehrig" : "secp256k1",
+                curve: signerKeyToUse === "bnSigner" ? util.wallet.curveTypes.BARRETO_NAEHRIG : util.wallet.curveTypes.SECP256K1,
                 isInternal: isInternal,
             })
             if (walletObj.isInternal) {

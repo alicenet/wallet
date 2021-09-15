@@ -1,5 +1,6 @@
 import { USER_ACTION_TYPES } from '../constants/_constants';
 import utils from 'util/_util';
+import { curveTypes } from 'util/wallet';
 
 ///////////////////////////
 /* Internal Action Calls */
@@ -15,20 +16,32 @@ function _unlockAccount() {
     return { type: USER_ACTION_TYPES.MARK_ACCOUNT_UNLOCKED };
 }
 
-function _setPreflightHash(preflightHash) {
-    return { type: USER_ACTION_TYPES.SET_PREFLIGHT_HASH, payload: preflightHash }
-}
-
 //////////////////////////////////
 /* External Async Action Calls */
 /////////////////////////////////
 
 /**
- * Sets and updates the redux=state user.prefightHash and stores to electron
- * Should only be called when user is setting a new password
+ * Sets a new mnemonic to potential_seed_phrase for HD Wallet / Vault generation 
+ * @returns null
  */
-export function setAndStorePreflightHash(preflightHash) {
-    _setPreflightHash(preflightHash); // Set the preflight hash to redux state
+export function setNewPotentialMnemonic() {
+    return async function (dispatch) {
+        let phrase = utils.wallet.generateBip39Mnemonic();
+        dispatch({ type: USER_ACTION_TYPES.SET_POTENTIAL_SEED_PHRASE, payload: phrase });
+    }
+}
+
+/**
+ * @param { String } curveType - One of utils.curveTypes 
+ * @returns 
+ */
+export function setDesiredCurveType(curveType) {
+    return async function (dispatch) {
+        if (curveType !== curveTypes.SECP256K1 && curveType !== curveTypes.BARRETO_NAEHRIG) {
+            throw new Error("Attempting to dispatch setDesiredCurveType with invalid curve type. Use utils.curveTypes! ")
+        }
+        dispatch({ type: USER_ACTION_TYPES.SET_DESIRED_HD_CURVE, payload: curveType });
+    }
 }
 
 /* Check for existing user account files and set state accordingly */
@@ -49,8 +62,8 @@ export function loadUserAccount() {
 
 export function lockAccount() {
     return async function (dispatch) {
-        // .. Asyncronous logic to lock account if needed
-        // ...
+        // .. Asyncronous logic to lock account if needed 
+        // ... TBD: Remove state from store and require a new unlock cycle with deciphering
         await utils.generic.waitFor(1000);
         dispatch(_lockAccount());
     }
@@ -59,7 +72,7 @@ export function lockAccount() {
 export function unlockAccount() {
     return async function (dispatch) {
         // .. Asyncronous logic to unlock account if needed
-        // ...
+        // ... Decipher store back into redux state
         await utils.generic.waitFor(1000);
         dispatch(_unlockAccount());
     }

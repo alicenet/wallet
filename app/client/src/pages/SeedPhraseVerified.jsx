@@ -1,22 +1,27 @@
 import React from 'react';
-
 import {useHistory} from 'react-router-dom';
+import {useDispatch} from 'react-redux';
 
 import {Button, Checkbox, Container, Grid, Header, Icon, Modal, Radio} from 'semantic-ui-react';
 
 import Page from '../layout/Page';
-
 import {classNames, curveTypes} from 'util/_util';
+import {USER_ACTIONS} from 'redux/actions/_actions';
 
 function SeedPhraseVerified() {
 
     const [openModal, setOpenModal] = React.useState(false)
-
     const [enableAdvancedWalletOptions, setEnableAdvancedOptions] = React.useState(false)
-
     const [curveType, setCurveType] = React.useState(curveTypes.SECP256K1)
 
     const history = useHistory();
+    const dispatch = useDispatch();
+
+    const advance = () => {
+        // Set desired curve to active curve state and advance screen
+        dispatch(USER_ACTIONS.setDesiredCurveType(curveType));
+        history.push('/newVault/firstWalletGenerated');
+    }
 
     const toggleAdvancedOptions = () => {
         setEnableAdvancedOptions(prevState => !prevState);
@@ -49,7 +54,7 @@ function SeedPhraseVerified() {
                               label={<label className="text-sm">Enable Advanced Wallet Options</label>}/>
 
                     <Container
-                        className={classNames("p-3 text-left border-2 border-solid border-gray-300", {['bg-gray-300']: !enableAdvancedWalletOptions})}>
+                        className={classNames("p-3 text-left border-2 border-solid border-gray-300", {'bg-gray-300': !enableAdvancedWalletOptions})}>
 
                         <p className="border border-black"><strong>Advanced Options</strong></p>
 
@@ -79,12 +84,10 @@ function SeedPhraseVerified() {
                                         <p>Mad Wallet allows you to set the default ECC for generating the key pair.</p>
 
                                         <p>ECC types are set on a per vault basis and will be used for all wallets
-                                            generated
-                                            with this seed.</p>
+                                            generated with this seed.</p>
 
                                         <p>If you change from the default type, make a note of it for when you import
-                                            your
-                                            seed for recovery.</p>
+                                            your seed for recovery.</p>
 
                                         <p>Additional wallets of the opposing type can be generated or imported if
                                             necessary, but will not be recoverable by the vault seed phrase.</p>
@@ -129,7 +132,7 @@ function SeedPhraseVerified() {
 
                     <Container fluid className="flex flex-auto flex-col items-center gap-2 w-60">
 
-                        <Button color="teal" basic content="Generate My Wallet" fluid onClick={() => history.push('/firstWalletGenerated')}/>
+                        <Button color="teal" basic content="Generate My Wallet" fluid onClick={advance}/>
 
                     </Container>
 

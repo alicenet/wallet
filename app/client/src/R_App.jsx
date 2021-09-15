@@ -4,13 +4,14 @@ import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 import ReduxStateViewer, {handleDebugListener} from 'redux/debug/StateViewer';
 import util from 'util/_util';
 
-import MainHub from './pages/MainHub';
+import NewUserHub from './pages/NewUserHub';
 import CreateVault from './pages/CreateVault';
 import VaultOptOut from './pages/VaultOptOut';
 import YourSeedPhrase from './pages/YourSeedPhrase';
 import VerifyYourSeedPhrase from './pages/VerifyYourSeedPhrase';
 import SeedPhraseVerified from './pages/SeedPhraseVerified';
 import FirstWalletGenerated from './pages/FirstWalletGenerated';
+import ReturningUserHub from './pages/ReturningUserHub';
 
 /**
  * Main App Entrypoint
@@ -26,13 +27,23 @@ function App() {
     const DefaultRoutes = () => {
         return (
             <>
-                <Route exact path="/" component={MainHub}/>
-                <Route exact path="/createVault" component={CreateVault}/>
+
+                {/* New User Hub -- Send after determining no vault exists */}
+                <Route exact path="/newUserHub" component={NewUserHub}/>
+                
+                {/* New User - Vault Opt Out Flow */}
                 <Route exact path="/vaultOptOut" component={VaultOptOut}/>
-                <Route exact path="/yourSeedPhrase" component={YourSeedPhrase}/>
-                <Route exact path="/verifyYourSeedPhrase" component={VerifyYourSeedPhrase}/>
-                <Route exact path="/seedPhraseVerified" component={SeedPhraseVerified}/>
-                <Route exact path="/firstWalletGenerated" component={FirstWalletGenerated}/>
+
+                {/* New Vault User Flow */}
+                <Route exact path="/newVault/createVault" component={CreateVault}/>
+                <Route exact path="/newVault/yourSeedPhrase" component={YourSeedPhrase}/>
+                <Route exact path="/newVault/verifyYourSeedPhrase" component={VerifyYourSeedPhrase}/>
+                <Route exact path="/newVault/seedPhraseVerified" component={SeedPhraseVerified}/>
+                <Route exact path="/newVault/firstWalletGenerated" component={FirstWalletGenerated}/>
+
+                {/* Wallet Hub -- Send here if vault exists */}
+                <Route exact path="/hub" component={ReturningUserHub} />                
+
             </>
         )
     }
