@@ -1,23 +1,22 @@
 import React from 'react';
-import {connect} from 'react-redux'
 import {useHistory} from 'react-router-dom';
+import {useDispatch} from 'react-redux';
 
 import {Button, Checkbox, Container, Grid, Header, Icon, Modal, Radio} from 'semantic-ui-react';
 
 import Page from '../layout/Page';
-
 import {classNames, curveTypes} from 'util/_util';
 import {USER_ACTIONS} from 'redux/actions/_actions';
 
-function SeedPhraseVerified({dispatch}) {
+function SeedPhraseVerified() {
 
     const [openModal, setOpenModal] = React.useState(false)
-
     const [enableAdvancedWalletOptions, setEnableAdvancedOptions] = React.useState(false)
-
     const [curveType, setCurveType] = React.useState(curveTypes.SECP256K1)
 
     const history = useHistory();
+    const dispatch = useDispatch();
+
     const advance = () => {
         // Set desired curve to active curve state and advance screen
         dispatch(USER_ACTIONS.setDesiredCurveType(curveType));
@@ -146,4 +145,4 @@ function SeedPhraseVerified({dispatch}) {
 
 }
 
-export default connect()(SeedPhraseVerified);
+export default SeedPhraseVerified;
