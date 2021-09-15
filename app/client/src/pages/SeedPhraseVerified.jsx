@@ -1,15 +1,15 @@
 import React from 'react';
-import { connect } from 'react-redux'
-import { useHistory } from 'react-router-dom';
+import {connect} from 'react-redux'
+import {useHistory} from 'react-router-dom';
 
-import { Button, Checkbox, Container, Grid, Header, Icon, Modal, Radio } from 'semantic-ui-react';
+import {Button, Checkbox, Container, Grid, Header, Icon, Modal, Radio} from 'semantic-ui-react';
 
 import Page from '../layout/Page';
 
-import { classNames, curveTypes } from 'util/_util';
-import { USER_ACTIONS } from 'redux/actions/_actions';
+import {classNames, curveTypes} from 'util/_util';
+import {USER_ACTIONS} from 'redux/actions/_actions';
 
-function SeedPhraseVerified({ dispatch }) {
+function SeedPhraseVerified({dispatch}) {
 
     const [openModal, setOpenModal] = React.useState(false)
 
@@ -36,7 +36,7 @@ function SeedPhraseVerified({ dispatch }) {
 
                 <Grid.Column width={16} className="my-5">
 
-                    <Header content="Seed Phrase Verified" as="h3" className="my-0" />
+                    <Header content="Seed Phrase Verified" as="h3" className="my-0"/>
 
                 </Grid.Column>
 
@@ -51,11 +51,11 @@ function SeedPhraseVerified({ dispatch }) {
                 <Grid.Column width={10} className="my-20">
 
                     <Checkbox onChange={toggleAdvancedOptions}
-                        checked={enableAdvancedWalletOptions} className="py-5"
-                        label={<label className="text-sm">Enable Advanced Wallet Options</label>} />
+                              checked={enableAdvancedWalletOptions} className="py-5"
+                              label={<label className="text-sm">Enable Advanced Wallet Options</label>}/>
 
                     <Container
-                        className={classNames("p-3 text-left border-2 border-solid border-gray-300", { 'bg-gray-300': !enableAdvancedWalletOptions })}>
+                        className={classNames("p-3 text-left border-2 border-solid border-gray-300", {'bg-gray-300': !enableAdvancedWalletOptions})}>
 
                         <p className="border border-black"><strong>Advanced Options</strong></p>
 
@@ -69,7 +69,7 @@ function SeedPhraseVerified({ dispatch }) {
 
                                     <strong>
                                         Public Address Key Operation Curve
-                                        <Icon name="question circle" style={{ cursor: 'pointer' }} className="px-2" />
+                                        <Icon name="question circle" style={{cursor: 'pointer'}} className="px-2"/>
                                     </strong>
                                 </p>}
                         >
@@ -78,26 +78,24 @@ function SeedPhraseVerified({ dispatch }) {
 
                                 <Modal.Description className="flex flex-col items-center gap-10">
 
-                                    <Header content="Key Operation Curve" as="h3" className="my-0" />
+                                    <Header content="Key Operation Curve" as="h3" className="my-0"/>
 
                                     <Container className="flex flex-auto flex-col gap-3 p-5 text-center">
 
                                         <p>Mad Wallet allows you to set the default ECC for generating the key pair.</p>
 
                                         <p>ECC types are set on a per vault basis and will be used for all wallets
-                                        generated
-                                            with this seed.</p>
+                                            generated with this seed.</p>
 
                                         <p>If you change from the default type, make a note of it for when you import
-                                        your
-                                            seed for recovery.</p>
+                                            your seed for recovery.</p>
 
                                         <p>Additional wallets of the opposing type can be generated or imported if
                                             necessary, but will not be recoverable by the vault seed phrase.</p>
 
                                     </Container>
 
-                                    <Button color="purple" onClick={() => setOpenModal(false)} content="Got it!" />
+                                    <Button color="purple" onClick={() => setOpenModal(false)} content="Got it!"/>
 
                                 </Modal.Description>
 
@@ -135,7 +133,7 @@ function SeedPhraseVerified({ dispatch }) {
 
                     <Container fluid className="flex flex-auto flex-col items-center gap-2 w-60">
 
-                        <Button color="teal" basic content="Generate My Wallet" fluid onClick={advance} />
+                        <Button color="teal" basic content="Generate My Wallet" fluid onClick={advance}/>
 
                     </Container>
 
