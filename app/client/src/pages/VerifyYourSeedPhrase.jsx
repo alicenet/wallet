@@ -4,20 +4,21 @@ import PropTypes from 'prop-types';
 
 import {Button, Container, Grid, Header, TextArea} from 'semantic-ui-react';
 
-import { useHistory } from 'react-router-dom';
+import {useHistory} from 'react-router-dom';
+import {useSelector} from 'react-redux';
 
 import Page from '../layout/Page';
-import { connect } from 'react-redux';
 
-function VerifyYourSeedPhrase({ seedPhrase }) {
-
-    seedPhrase = seedPhrase.split(' '); // Split to array
+function VerifyYourSeedPhrase() {
 
     const [seedPhraseIsCorrect, setSeedPhraseIsCorrect] = React.useState(false);
     const [chosenPhrase, setChosenPhrase] = React.useState([]);
     const [verifyPhraseButtonText, setVerifyPhraseButtonText] = React.useState("Verify Phrase");
 
     const history = useHistory();
+    const {seedPhrase} = useSelector(state => ({seedPhrase: state.user.potential_seed_phrase}));
+
+    const seedPhraseSplitted = seedPhrase.split(' '); // Split to array
 
     React.useEffect(() => {
         if (seedPhraseIsCorrect) {
@@ -62,7 +63,7 @@ function VerifyYourSeedPhrase({ seedPhrase }) {
 
                     <Container fluid className="flex-wrap text-left">
 
-                        {seedPhrase.map((word, index) =>
+                        {seedPhraseSplitted.map((word, index) =>
                             <Button
                                 key={`seed-phrase-btn-${index}`}
                                 className="mx-2 my-1"
@@ -104,9 +105,7 @@ function VerifyYourSeedPhrase({ seedPhrase }) {
 
 }
 
-const stateMap = state => ({ seedPhrase: state.user.potential_seed_phrase });
-
-export default connect(stateMap)(VerifyYourSeedPhrase);
+export default VerifyYourSeedPhrase;
 
 VerifyYourSeedPhrase.defaultProps = {
     seedPhrase: '',

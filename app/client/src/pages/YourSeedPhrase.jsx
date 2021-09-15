@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types'
 
-import {connect, useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {useHistory} from 'react-router-dom';
 
 import Page from '../layout/Page';
@@ -12,12 +12,13 @@ import {Button, Checkbox, Container, Grid, GridRow, Header} from 'semantic-ui-re
 
 import {USER_ACTIONS} from 'redux/actions/_actions';
 
-function YourSeedPhrase({seedPhrase}) {
+function YourSeedPhrase() {
 
     const history = useHistory();
     const dispatch = useDispatch();
+    const {seedPhrase} = useSelector(state => ({seedPhrase: state.user.potential_seed_phrase}));
 
-    seedPhrase = seedPhrase.split(' ');
+    const seedPhraseSplitted = seedPhrase.split(' '); // Split to array
 
     const [isChecked, setIsChecked] = React.useState(false);
 
@@ -50,7 +51,7 @@ function YourSeedPhrase({seedPhrase}) {
 
                     <Grid celled columns={6}>
 
-                        {chunk(seedPhrase, Math.floor(seedPhrase.length / 2)).map((someSeeds, index) =>
+                        {chunk(seedPhraseSplitted, Math.floor(seedPhraseSplitted.length / 2)).map((someSeeds, index) =>
 
                             <GridRow key={`seed-row-${index}`}>
 
@@ -117,6 +118,4 @@ YourSeedPhrase.propTypes = {
     seedPhrase: PropTypes.string.isRequired
 };
 
-const stateMap = state => ({seedPhrase: state.user.potential_seed_phrase});
-
-export default connect(stateMap)(YourSeedPhrase);
+export default YourSeedPhrase;
