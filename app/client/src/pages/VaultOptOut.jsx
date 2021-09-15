@@ -2,7 +2,7 @@ import React from 'react';
 
 import {Button, Checkbox, Container, Grid, Header} from 'semantic-ui-react';
 
-import { useHistory } from 'react-router-dom';
+import {useHistory} from 'react-router-dom';
 
 import Page from '../layout/Page';
 
@@ -54,15 +54,12 @@ function VaultOptOut() {
                 <Grid.Column width={16} className="flex-col">
 
                     <Container fluid className="flex flex-auto flex-col items-center gap-5 w-96">
-                        
+
                         <Button.Group className="flex justify-center w-72">
 
-                            <Button color="orange" basic content="Go Back" fluid
-                            onClick={() => history.goBack()} />                        
+                            <Button color="orange" basic content="Go Back" fluid onClick={() => history.goBack()}/>
 
-
-                            <Button color="purple" basic disabled={!isChecked} content= "Generate Keystore" fluid
-                            onClick={() => history.push('/YourSeedPhrase')}/>
+                            <Button color="purple" basic disabled={!isChecked} content="Generate Keystore" fluid onClick={() => history.push('/YourSeedPhrase')}/>
 
                         </Button.Group>
 

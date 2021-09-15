@@ -1,18 +1,26 @@
 import React from 'react';
-import Page from '../layout/Page';
 import PropTypes from 'prop-types'
-import chunk from 'lodash/chunk';
-import {Button, Checkbox, Container, Grid, GridRow, Header} from 'semantic-ui-react';
-import {USER_ACTIONS} from 'redux/actions/_actions';
-import {connect} from 'react-redux';
+
+import {useDispatch, useSelector} from 'react-redux';
 import {useHistory} from 'react-router-dom';
 
-function YourSeedPhrase({seedPhrase, dispatch}) {
+import Page from '../layout/Page';
 
-    seedPhrase = seedPhrase.split(' ');
+import chunk from 'lodash/chunk';
+
+import {Button, Checkbox, Container, Grid, GridRow, Header} from 'semantic-ui-react';
+
+import {USER_ACTIONS} from 'redux/actions/_actions';
+
+function YourSeedPhrase() {
+
+    const history = useHistory();
+    const dispatch = useDispatch();
+    const {seedPhrase} = useSelector(state => ({seedPhrase: state.user.potential_seed_phrase}));
+
+    const seedPhraseSplitted = seedPhrase.split(' '); // Split to array
 
     const [isChecked, setIsChecked] = React.useState(false);
-    const history = useHistory();
 
     const rollPotentialSeedPhrase = React.useCallback(() => dispatch(USER_ACTIONS.setNewPotentialMnemonic()), [dispatch]);
 
@@ -43,12 +51,11 @@ function YourSeedPhrase({seedPhrase, dispatch}) {
 
                     <Grid celled columns={6}>
 
-                        {chunk(seedPhrase, Math.floor(seedPhrase.length / 2)).map((someSeeds, index) =>
+                        {chunk(seedPhraseSplitted, Math.floor(seedPhraseSplitted.length / 2)).map((someSeeds, index) =>
 
                             <GridRow key={`seed-row-${index}`}>
 
                                 {someSeeds.map(word => <Grid.Column key={word}>{word}</Grid.Column>)}
-
 
                             </GridRow>
                         )}
@@ -104,12 +111,11 @@ function YourSeedPhrase({seedPhrase, dispatch}) {
 }
 
 YourSeedPhrase.defaultProps = {
-    seedPhrase: "",
+    seedPhrase: '',
 };
 
 YourSeedPhrase.propTypes = {
     seedPhrase: PropTypes.string.isRequired
 };
 
-const stateMap = state => ({seedPhrase: state.user.potential_seed_phrase});
-export default connect(stateMap)(YourSeedPhrase);
+export default YourSeedPhrase;

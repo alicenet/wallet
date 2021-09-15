@@ -30,7 +30,7 @@ function App() {
 
                 {/* New User Hub -- Send after determining no vault exists */}
                 <Route exact path="/newUserHub" component={NewUserHub}/>
-                
+
                 {/* New User - Vault Opt Out Flow */}
                 <Route exact path="/vaultOptOut" component={VaultOptOut}/>
 
@@ -42,7 +42,7 @@ function App() {
                 <Route exact path="/newVault/firstWalletGenerated" component={FirstWalletGenerated}/>
 
                 {/* Wallet Hub -- Send here if vault exists */}
-                <Route exact path="/hub" component={ReturningUserHub} />                
+                <Route exact path="/hub" component={ReturningUserHub}/>
 
             </>
         )
@@ -62,7 +62,7 @@ function App() {
                 <Switch>
                     <DefaultRoutes/>
                 </Switch>
-                    <DebugTools/>
+                <DebugTools/>
             </Router>
 
         </Container>

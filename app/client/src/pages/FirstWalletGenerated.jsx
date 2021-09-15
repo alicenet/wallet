@@ -1,34 +1,50 @@
 import React from 'react';
-import { connect } from 'react-redux';
 
-import { Button, Form, Grid, Header } from 'semantic-ui-react';
+import {Button, Form, Grid, Header} from 'semantic-ui-react';
 
-import { useHistory } from 'react-router-dom';
-import { useFormState } from 'hooks/_hooks';
+import {useHistory} from 'react-router-dom';
+import {useDispatch, useSelector} from 'react-redux';
+import {useFormState} from 'hooks/_hooks';
 
+import {VAULT_ACTIONS} from 'redux/actions/_actions'
 import Page from '../layout/Page';
-import { VAULT_ACTIONS } from 'redux/actions/_actions'
 
-function FirstWalletGenerated({ seedPhrase, desiredCurve, dispatch }) {
+function FirstWalletGenerated() {
+
+    const history = useHistory();
+    const dispatch = useDispatch();
+    const {seedPhrase, desiredCurve} = useSelector(state => ({
+        seedPhrase: state.user.potential_seed_phrase,
+        desiredCurve: state.user.desired_hd_curve
+    }));
 
     const [formState, formSetter] = useFormState(["password", "verifiedPassword"]);
 
-    const history = useHistory();
-
     const handleFormSubmit = () => {
-        if (!formState.password.value) { return formSetter.setPasswordError("Password is required"); }
-        else { formSetter.clearPasswordError() }
+        if (!formState.password.value) {
+            return formSetter.setPasswordError("Password is required");
+        } else {
+            formSetter.clearPasswordError()
+        }
 
-        if (formState.password.value.length < 7) { return formSetter.setPasswordError("Password must be atleast 8 characters long."); }
-        else { formSetter.clearPasswordError() }
+        if (formState.password.value.length < 7) {
+            return formSetter.setPasswordError("Password must be atleast 8 characters long.");
+        } else {
+            formSetter.clearPasswordError()
+        }
 
-        if (formState.password.value !== formState.verifiedPassword.value) { return formSetter.setVerifiedPasswordError("Password do not match."); }
-        else { formSetter.clearVerifiedPasswordError() }
+        if (formState.password.value !== formState.verifiedPassword.value) {
+            return formSetter.setVerifiedPasswordError("Password do not match.");
+        } else {
+            formSetter.clearVerifiedPasswordError()
+        }
+
         // Dispatch the vault generation action and. . .
         dispatch(VAULT_ACTIONS.generateNewSecureHDVault(seedPhrase, formState.password.value, desiredCurve))
         history.push("/hub");
     }
 
+    console.log(desiredCurve, seedPhrase);
 
     return (
         <Page>
@@ -37,7 +53,7 @@ function FirstWalletGenerated({ seedPhrase, desiredCurve, dispatch }) {
 
                 <Grid.Column width={16} className="my-5">
 
-                    <Header content="Vault and First Wallet Generated" as="h3" className="my-0" />
+                    <Header content="Vault and First Wallet Generated" as="h3" className="my-0"/>
 
                 </Grid.Column>
 
@@ -74,7 +90,9 @@ function FirstWalletGenerated({ seedPhrase, desiredCurve, dispatch }) {
                                 placeholder='Enter Password'
                                 type='password'
                                 required
-                                onChange={e => { formSetter.setPassword(e.target.value) }}
+                                onChange={e => {
+                                    formSetter.setPassword(e.target.value)
+                                }}
                                 error={!!formState.password.error && {
                                     content: formState.password.error,
                                     pointing: 'below',
@@ -87,7 +105,9 @@ function FirstWalletGenerated({ seedPhrase, desiredCurve, dispatch }) {
                                 placeholder='Enter Password'
                                 type='password'
                                 required
-                                onChange={e => { formSetter.setVerifiedPassword(e.target.value) }}
+                                onChange={e => {
+                                    formSetter.setVerifiedPassword(e.target.value)
+                                }}
                                 error={!!formState.verifiedPassword.error && {
                                     content: formState.verifiedPassword.error,
                                     pointing: 'below',
@@ -102,9 +122,9 @@ function FirstWalletGenerated({ seedPhrase, desiredCurve, dispatch }) {
 
                 <Grid.Column width={16} className="flex flex-auto flex-row justify-around">
 
-                    <Button color="purple" basic content="Back" className="w-52" onClick={() => history.push('/')} />
+                    <Button color="purple" basic content="Back" className="w-52" onClick={() => history.push('/')}/>
 
-                    <Button color="teal" basic content='Secure My Wallets' className="w-52" onClick={handleFormSubmit} />
+                    <Button color="teal" basic content='Secure My Wallets' className="w-52" onClick={handleFormSubmit}/>
 
                 </Grid.Column>
 
@@ -115,5 +135,4 @@ function FirstWalletGenerated({ seedPhrase, desiredCurve, dispatch }) {
 
 }
 
-const stateMap = state => ({ seedPhrase: state.user.potential_seed_phrase, desiredCurve: state.user.desired_hd_curve });
-export default connect(stateMap)(FirstWalletGenerated);
+export default FirstWalletGenerated;
