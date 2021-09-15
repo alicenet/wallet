@@ -17,7 +17,7 @@ function SeedPhraseVerified() {
     const history = useHistory();
     const dispatch = useDispatch();
 
-    const advance = () => {
+    const generateWallet = () => {
         // Set desired curve to active curve state and advance screen
         dispatch(USER_ACTIONS.setDesiredCurveType(curveType));
         history.push('/newVault/firstWalletGenerated');
@@ -132,7 +132,7 @@ function SeedPhraseVerified() {
 
                     <Container fluid className="flex flex-auto flex-col items-center gap-2 w-60">
 
-                        <Button color="teal" basic content="Generate My Wallet" fluid onClick={advance}/>
+                        <Button color="teal" basic content="Generate My Wallet" fluid onClick={generateWallet}/>
 
                     </Container>
 
