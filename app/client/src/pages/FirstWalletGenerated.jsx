@@ -1,19 +1,20 @@
 import React from 'react';
-import { connect } from 'react-redux';
 
 import { Button, Form, Grid, Header } from 'semantic-ui-react';
 
 import { useHistory } from 'react-router-dom';
+import {connect, useDispatch} from 'react-redux';
 import { useFormState } from 'hooks/_hooks';
 
-import Page from '../layout/Page';
 import { VAULT_ACTIONS } from 'redux/actions/_actions'
+import Page from '../layout/Page';
 
-function FirstWalletGenerated({ seedPhrase, desiredCurve, dispatch }) {
-
-    const [formState, formSetter] = useFormState(["password", "verifiedPassword"]);
+function FirstWalletGenerated({ seedPhrase, desiredCurve }) {
 
     const history = useHistory();
+    const dispatch = useDispatch();
+
+    const [formState, formSetter] = useFormState(["password", "verifiedPassword"]);
 
     const handleFormSubmit = () => {
         if (!formState.password.value) { return formSetter.setPasswordError("Password is required"); }
@@ -28,7 +29,6 @@ function FirstWalletGenerated({ seedPhrase, desiredCurve, dispatch }) {
         dispatch(VAULT_ACTIONS.generateNewSecureHDVault(seedPhrase, formState.password.value, desiredCurve))
         history.push("/hub");
     }
-
 
     return (
         <Page>

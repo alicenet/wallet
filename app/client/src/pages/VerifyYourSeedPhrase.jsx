@@ -105,10 +105,11 @@ function VerifyYourSeedPhrase({ seedPhrase }) {
 }
 
 const stateMap = state => ({ seedPhrase: state.user.potential_seed_phrase });
+
 export default connect(stateMap)(VerifyYourSeedPhrase);
 
 VerifyYourSeedPhrase.defaultProps = {
-    seedPhrase: "",
+    seedPhrase: '',
 };
 
 VerifyYourSeedPhrase.propTypes = {

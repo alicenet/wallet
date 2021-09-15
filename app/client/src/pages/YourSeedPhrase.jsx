@@ -1,18 +1,25 @@
 import React from 'react';
-import Page from '../layout/Page';
 import PropTypes from 'prop-types'
-import chunk from 'lodash/chunk';
-import {Button, Checkbox, Container, Grid, GridRow, Header} from 'semantic-ui-react';
-import {USER_ACTIONS} from 'redux/actions/_actions';
-import {connect} from 'react-redux';
+
+import {connect, useDispatch} from 'react-redux';
 import {useHistory} from 'react-router-dom';
 
-function YourSeedPhrase({seedPhrase, dispatch}) {
+import Page from '../layout/Page';
+
+import chunk from 'lodash/chunk';
+
+import {Button, Checkbox, Container, Grid, GridRow, Header} from 'semantic-ui-react';
+
+import {USER_ACTIONS} from 'redux/actions/_actions';
+
+function YourSeedPhrase({seedPhrase}) {
+
+    const history = useHistory();
+    const dispatch = useDispatch();
 
     seedPhrase = seedPhrase.split(' ');
 
     const [isChecked, setIsChecked] = React.useState(false);
-    const history = useHistory();
 
     const rollPotentialSeedPhrase = React.useCallback(() => dispatch(USER_ACTIONS.setNewPotentialMnemonic()), [dispatch]);
 
@@ -48,7 +55,6 @@ function YourSeedPhrase({seedPhrase, dispatch}) {
                             <GridRow key={`seed-row-${index}`}>
 
                                 {someSeeds.map(word => <Grid.Column key={word}>{word}</Grid.Column>)}
-
 
                             </GridRow>
                         )}
@@ -104,7 +110,7 @@ function YourSeedPhrase({seedPhrase, dispatch}) {
 }
 
 YourSeedPhrase.defaultProps = {
-    seedPhrase: "",
+    seedPhrase: '',
 };
 
 YourSeedPhrase.propTypes = {
@@ -112,4 +118,5 @@ YourSeedPhrase.propTypes = {
 };
 
 const stateMap = state => ({seedPhrase: state.user.potential_seed_phrase});
+
 export default connect(stateMap)(YourSeedPhrase);
