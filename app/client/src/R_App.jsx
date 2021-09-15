@@ -28,6 +28,9 @@ function App() {
         return (
             <>
 
+                <Route exact path="/" component={NewUserHub}/>
+
+
                 {/* New User Hub -- Send after determining no vault exists */}
                 <Route exact path="/newUserHub" component={NewUserHub}/>
 
