@@ -27,7 +27,28 @@ function _unlockAccount() {
 export function setNewPotentialMnemonic() {
     return async function (dispatch) {
         let phrase = utils.wallet.generateBip39Mnemonic();
+        dispatch(setExistingMnemonic(phrase));
+    }
+}
+
+/**
+ * Sets an existing mnemonic for HD Wallet / Vault generation
+ * @param { String } phrase - a mnemonic to potential_seed_phrase
+ * @returns null
+ */
+export function setExistingMnemonic(phrase) {
+    return async function (dispatch) {
         dispatch({ type: USER_ACTION_TYPES.SET_POTENTIAL_SEED_PHRASE, payload: phrase });
+    }
+}
+
+/**
+ * Clears mnemonic / Vault generation
+ * @returns null
+ */
+export function clearMnemonic() {
+    return async function (dispatch) {
+        dispatch(setExistingMnemonic(''));
     }
 }
 
@@ -62,7 +83,7 @@ export function loadUserAccount() {
 
 export function lockAccount() {
     return async function (dispatch) {
-        // .. Asyncronous logic to lock account if needed 
+        // .. Asynchronous logic to lock account if needed
         // ... TBD: Remove state from store and require a new unlock cycle with deciphering
         await utils.generic.waitFor(1000);
         dispatch(_lockAccount());
@@ -71,7 +92,7 @@ export function lockAccount() {
 
 export function unlockAccount() {
     return async function (dispatch) {
-        // .. Asyncronous logic to unlock account if needed
+        // .. Asynchronous logic to unlock account if needed
         // ... Decipher store back into redux state
         await utils.generic.waitFor(1000);
         dispatch(_unlockAccount());

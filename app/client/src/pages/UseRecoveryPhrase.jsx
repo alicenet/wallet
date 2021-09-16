@@ -3,6 +3,7 @@ import React from 'react';
 import { Button, Container, Grid, Header, TextArea } from 'semantic-ui-react';
 
 import { useHistory } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 
 import trim from 'lodash/trim';
 import uniq from 'lodash/uniq';
@@ -10,15 +11,21 @@ import toLower from 'lodash/toLower';
 import words from 'lodash/words';
 
 import Page from '../layout/Page';
+import { USER_ACTIONS } from '../redux/actions/_actions';
 
 function UseRecoveryPhrase() {
 
+    const { storedSeedPhrase } = useSelector(state => ({
+        storedSeedPhrase: state.user.potential_seed_phrase,
+    }));
+
     const [seedPhraseIsCorrect, setSeedPhraseIsCorrect] = React.useState(false);
     const [verifyPhraseButtonText, setVerifyPhraseButtonText] = React.useState('Use This Phrase');
-    const [seedPhrase, setSeedPhrase] = React.useState('');
+    const [seedPhrase, setSeedPhrase] = React.useState((storedSeedPhrase || []).join(' '));
     const [parsedSeedPhrase, setParsedSeedPhrase] = React.useState([]);
 
     const history = useHistory();
+    const dispatch = useDispatch();
 
     React.useEffect(() => {
         if (seedPhraseIsCorrect) {
@@ -38,7 +45,12 @@ function UseRecoveryPhrase() {
     }, [seedPhrase]);
 
     const handlePhraseChange = phrase => {
-        setSeedPhrase(toLower(phrase).match(/[a-z ]/g).join(''));
+        setSeedPhrase(toLower(phrase).match(/[a-z ]/g)?.join(''));
+    }
+
+    const phraseEntered = () => {
+        dispatch(USER_ACTIONS.setExistingMnemonic(parsedSeedPhrase));
+        history.push('/newVault/phraseEntered');
     }
 
     return (
@@ -74,20 +86,20 @@ function UseRecoveryPhrase() {
 
                     <Container fluid className="flex-wrap text-left max-h-36 overflow-y-auto overscroll-auto">
 
-                        {parsedSeedPhrase.map((word, index) => {
-                            return (<Button
+                        {parsedSeedPhrase.map((word, index) =>
+                            <Button
                                 key={`seed-phrase-btn-${index}`}
                                 className="mx-2 my-1"
                                 color="blue"
                                 content={word}
-                            />)
-                        })}
+                            />
+                        )}
 
                     </Container>
 
                     <Container className="flex flex-auto flex-col justify-center gap-10">
 
-                        <TextArea rows={4} value={seedPhrase} onChange={e => handlePhraseChange(e.target.value)}
+                        <TextArea rows={3} value={seedPhrase} onChange={e => handlePhraseChange(e.target.value)}
                                   className="bg-white p-4 rounded border-3 border-gray-400 hover:border-gray-500 focus:border-gray-500 focus:outline-none"/>
 
                         <Container className="flex flex-auto flex-row justify-between">
@@ -98,7 +110,7 @@ function UseRecoveryPhrase() {
                             <Button color={seedPhraseIsCorrect ? 'teal' : 'red'} disabled={!seedPhraseIsCorrect}
                                     basic
                                     content={verifyPhraseButtonText}
-                                    onClick={() => history.push('/newVault/seedPhraseVerified')}/>
+                                    onClick={phraseEntered}/>
 
                         </Container>
 

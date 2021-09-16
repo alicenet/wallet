@@ -13,6 +13,7 @@ import SeedPhraseVerified from './pages/SeedPhraseVerified';
 import FirstWalletGenerated from './pages/FirstWalletGenerated';
 import ReturningUserHub from './pages/ReturningUserHub';
 import UseRecoveryPhrase from './pages/UseRecoveryPhrase';
+import PhraseEntered from './pages/PhraseEntered';
 
 /**
  * Main App Entrypoint
@@ -44,6 +45,7 @@ function App() {
                 <Route exact path="/newVault/verifyYourSeedPhrase" component={VerifyYourSeedPhrase}/>
                 <Route exact path="/newVault/seedPhraseVerified" component={SeedPhraseVerified}/>
                 <Route exact path="/newVault/firstWalletGenerated" component={FirstWalletGenerated}/>
+                <Route exact path="/newVault/phraseEntered" component={PhraseEntered}/>
 
                 <Route exact path="/newVault/useRecoveryPhrase" component={UseRecoveryPhrase}/>
 
