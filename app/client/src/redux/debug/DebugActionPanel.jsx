@@ -4,8 +4,7 @@ import { Input, Button, Grid, Header, Container, TextArea, Form, FormButton } fr
 import { USER_ACTIONS, MODAL_ACTIONS, VAULT_ACTIONS } from 'redux/actions/_actions';
 
 import util from 'util/_util';
-
-import { electronStoreUtilityActons as utilStoreHelper } from '../../store/electronStoreHelper';
+import { electronStoreUtilityActons as utilStoreHelper } from '../../Store/electronStoreHelper';
 
 function DebugActionPanel({ dispatch, vault }) {
 
