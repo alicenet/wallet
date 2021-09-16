@@ -5,6 +5,7 @@ import { Button, Container, Grid, Header, TextArea } from 'semantic-ui-react';
 import { useHistory } from 'react-router-dom';
 
 import trim from 'lodash/trim';
+import uniq from 'lodash/uniq';
 
 import Page from '../layout/Page';
 
@@ -27,7 +28,7 @@ function UseRecoveryPhrase() {
     }, [seedPhraseIsCorrect]);
 
     React.useEffect(() => {
-        setSeedPhraseIsCorrect(parsedSeedPhrase.length === 12);
+        setSeedPhraseIsCorrect(parsedSeedPhrase.length === 12 && uniq(parsedSeedPhrase).length === 12);
     }, [parsedSeedPhrase]);
 
     React.useEffect(() => {
