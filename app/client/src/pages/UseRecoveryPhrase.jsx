@@ -37,7 +37,9 @@ function UseRecoveryPhrase() {
     }, [seedPhraseIsCorrect]);
 
     React.useEffect(() => {
-        setSeedPhraseIsCorrect(parsedSeedPhrase.length === 12 && uniq(parsedSeedPhrase).length === 12);
+        setSeedPhraseIsCorrect(parsedSeedPhrase.length === 12
+            && uniq(parsedSeedPhrase).length === 12
+            && parsedSeedPhrase.every(phrase => phrase.length > 2 && phrase.length < 9));
     }, [parsedSeedPhrase]);
 
     React.useEffect(() => {
