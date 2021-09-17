@@ -4,9 +4,9 @@ import {Button, Checkbox, Container, Grid, Header} from 'semantic-ui-react';
 
 import {useHistory} from 'react-router-dom';
 
-import Page from '../layout/Page';
+import Page from '../../layout/Page';
 
-function VaultOptOut() {
+function VaultOptOutDisclaimer() {
 
     const [isChecked, setIsChecked] = React.useState(false);
 
@@ -77,4 +77,4 @@ function VaultOptOut() {
 
 }
 
-export default VaultOptOut;
+export default VaultOptOutDisclaimer;

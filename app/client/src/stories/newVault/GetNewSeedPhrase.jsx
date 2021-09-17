@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import {useDispatch, useSelector} from 'react-redux';
 import {useHistory} from 'react-router-dom';
 
-import Page from '../layout/Page';
+import Page from '../../layout/Page';
 
 import chunk from 'lodash/chunk';
 
@@ -12,7 +12,7 @@ import {Button, Checkbox, Container, Grid, GridRow, Header} from 'semantic-ui-re
 
 import {USER_ACTIONS} from 'redux/actions/_actions';
 
-function YourSeedPhrase() {
+function GetNewSeedPhrase() {
 
     const history = useHistory();
     const dispatch = useDispatch();
@@ -92,7 +92,7 @@ function YourSeedPhrase() {
 
                             <Button color="purple" basic disabled={!isChecked}
                                     content="Verify The Seed Phrase" fluid
-                                    onClick={() => history.push('/newVault/verifyYourSeedPhrase')}/>
+                                    onClick={() => history.push('/newVault/verifySeedPhrase')}/>
 
                         </Button.Group>
 
@@ -110,12 +110,12 @@ function YourSeedPhrase() {
 
 }
 
-YourSeedPhrase.defaultProps = {
+GetNewSeedPhrase.defaultProps = {
     seedPhrase: '',
 };
 
-YourSeedPhrase.propTypes = {
+GetNewSeedPhrase.propTypes = {
     seedPhrase: PropTypes.string.isRequired
 };
 
-export default YourSeedPhrase;
+export default GetNewSeedPhrase;

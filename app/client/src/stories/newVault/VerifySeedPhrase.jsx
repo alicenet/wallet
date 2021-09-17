@@ -7,7 +7,7 @@ import {Button, Container, Grid, Header, TextArea} from 'semantic-ui-react';
 import {useHistory} from 'react-router-dom';
 import {useSelector} from 'react-redux';
 
-import Page from '../layout/Page';
+import Page from '../../layout/Page';
 
 function VerifyYourSeedPhrase() {
 
@@ -85,12 +85,12 @@ function VerifyYourSeedPhrase() {
                         <Container className="flex flex-auto flex-row justify-between">
 
                             <Button color="purple" basic content="Get New Seed Phrase"
-                                    onClick={() => history.push('/newVault/yourSeedPhrase')}/>
+                                    onClick={() => history.push('/newVault/getNewSeedPhrase')}/>
 
                             <Button color={seedPhraseIsCorrect ? 'teal' : 'red'} disabled={!seedPhraseIsCorrect}
                                     basic
                                     content={verifyPhraseButtonText}
-                                    onClick={() => history.push('/newVault/seedPhraseVerified')}/>
+                                    onClick={() => history.push('/newVault/chooseEllipticCurve')}/>
 
                         </Container>
 

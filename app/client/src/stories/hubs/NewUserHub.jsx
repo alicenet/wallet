@@ -4,13 +4,12 @@ import { useHistory } from 'react-router-dom';
 
 import { Button, Container, Grid, Header, Image, Modal } from 'semantic-ui-react';
 
-import MadIcon from '../Assets/icon.png';
+import MadIcon from '../../Assets/icon.png';
 
-import withWalletDrawer from "../hocs/withWalletDrawer/withWalletDrawer";
-import { USER_ACTIONS } from "../redux/actions/_actions";
+import { USER_ACTIONS } from "../../redux/actions/_actions";
 import { useDispatch } from "react-redux";
 
-function NewUserHub({ toggleWalletDrawer }) {
+function NewUserHub() {
 
     const [openModal, setOpenModal] = React.useState(false)
 
@@ -96,9 +95,6 @@ function NewUserHub({ toggleWalletDrawer }) {
 
                         <Button color="orange" basic content="I have a vault seed" fluid onClick={useRecoveryPhrase}/>
 
-                        <Button color="orange" size="mini" basic content="Wallet Drawer Test"
-                                onClick={() => toggleWalletDrawer()} fluid/>
-
                     </Container>
 
                     <p className="text-green-500 text-sm">*Don&apos;t worry you&apos;ll be able to import additional wallets later</p>
@@ -112,4 +108,4 @@ function NewUserHub({ toggleWalletDrawer }) {
 
 }
 
-export default withWalletDrawer(NewUserHub);
+export default NewUserHub;

@@ -4,16 +4,10 @@ import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 import ReduxStateViewer, {handleDebugListener} from 'redux/debug/StateViewer';
 import util from 'util/_util';
 
-import NewUserHub from './pages/NewUserHub';
-import CreateVault from './pages/CreateVault';
-import VaultOptOut from './pages/VaultOptOut';
-import YourSeedPhrase from './pages/YourSeedPhrase';
-import VerifyYourSeedPhrase from './pages/VerifyYourSeedPhrase';
-import SeedPhraseVerified from './pages/SeedPhraseVerified';
-import FirstWalletGenerated from './pages/FirstWalletGenerated';
-import ReturningUserHub from './pages/ReturningUserHub';
-import UseRecoveryPhrase from './pages/UseRecoveryPhrase';
-import PhraseEntered from './pages/PhraseEntered';
+// User Story Components
+import * as Hubs from './stories/hubs/_hubs';
+import * as NewVaultFlows from './stories/newVault/_newVault';
+import * as OptOutFlow from './stories/optOut/_optOut';
 
 /**
  * Main App Entrypoint
@@ -30,28 +24,26 @@ function App() {
         return (
             <>
 
-                <Route exact path="/" component={NewUserHub}/>
-
+                <Route exact path="/" component={Hubs.NewUserHub}/>
 
                 {/* New User Hub -- Send after determining no vault exists */}
-                <Route exact path="/newUserHub" component={NewUserHub}/>
+                <Route exact path="/newUserHub" component={Hubs.NewUserHub}/>
 
                 {/* New User - Vault Opt Out Flow */}
-                <Route exact path="/vaultOptOut" component={VaultOptOut}/>
+                <Route exact path="/optOut/disclaimer" component={OptOutFlow.VaultOptOutDisclaimer}/>
 
                 {/* New Vault User Flow */}
-                <Route exact path="/newVault/createVault" component={CreateVault}/>
-                <Route exact path="/newVault/yourSeedPhrase" component={YourSeedPhrase}/>
-                <Route exact path="/newVault/verifyYourSeedPhrase" component={VerifyYourSeedPhrase}/>
-                <Route exact path="/newVault/seedPhraseVerified" component={SeedPhraseVerified}/>
-                <Route exact path="/newVault/firstWalletGenerated" component={FirstWalletGenerated}/>
-                <Route exact path="/newVault/phraseEntered" component={PhraseEntered}/>
+                <Route exact path="/newVault/createVault" component={NewVaultFlows.CreateVault}/>
+                <Route exact path="/newVault/getNewSeedPhrase" component={NewVaultFlows.GetNewSeedPhrase}/>
+                <Route exact path="/newVault/verifySeedPhrase" component={NewVaultFlows.VerifySeedPhrase}/>
+                <Route exact path="/newVault/chooseEllipticCurve" component={NewVaultFlows.ChooseEllipticCurve}/>
+                <Route exact path="/newVault/secureNewVault" component={NewVaultFlows.SecureNewVault}/>
 
                 {/* Load Existing Vault User Flow */}
-                <Route exact path="/newVault/useRecoveryPhrase" component={UseRecoveryPhrase}/>
+                <Route exact path="/newVault/useRecoveryPhrase" component={NewVaultFlows.EnterRecoveryPhrase}/>
 
                 {/* Wallet Hub -- Send here if vault exists */}
-                <Route exact path="/hub" component={ReturningUserHub}/>
+                <Route exact path="/hub" component={Hubs.ReturningUserHub}/>
 
             </>
         )
