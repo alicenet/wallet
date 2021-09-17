@@ -52,7 +52,7 @@ function EnterRecoveryPhrase() {
 
     const phraseEntered = () => {
         dispatch(USER_ACTIONS.setExistingMnemonic(parsedSeedPhrase));
-        history.push('/newVault/chooseEllipticCurve', {isRestore: true});
+        history.push('/newVault/chooseRecoveryEllipticCurve');
     }
 
     return (
