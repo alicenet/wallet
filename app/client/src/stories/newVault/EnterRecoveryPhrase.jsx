@@ -16,7 +16,7 @@ import { USER_ACTIONS } from '../../redux/actions/_actions';
 function EnterRecoveryPhrase() {
 
     const { storedSeedPhrase } = useSelector(state => ({
-        storedSeedPhrase: state.user.potential_seed_phrase.split(" "),
+        storedSeedPhrase: state.user.potential_seed_phrase.split(' '),
     }));
 
     const [seedPhraseIsCorrect, setSeedPhraseIsCorrect] = React.useState(false);
@@ -47,7 +47,7 @@ function EnterRecoveryPhrase() {
     }, [seedPhrase]);
 
     const handlePhraseChange = phrase => {
-        setSeedPhrase(toLower(phrase).match(/[a-z ]/g)?.join(''));
+        setSeedPhrase((toLower(phrase).match(/[a-z ]/g) || []).join(''));
     }
 
     const phraseEntered = () => {
