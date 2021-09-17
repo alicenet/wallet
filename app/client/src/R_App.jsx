@@ -47,6 +47,7 @@ function App() {
                 <Route exact path="/newVault/firstWalletGenerated" component={FirstWalletGenerated}/>
                 <Route exact path="/newVault/phraseEntered" component={PhraseEntered}/>
 
+                {/* Load Existing Vault User Flow */}
                 <Route exact path="/newVault/useRecoveryPhrase" component={UseRecoveryPhrase}/>
 
                 {/* Wallet Hub -- Send here if vault exists */}
