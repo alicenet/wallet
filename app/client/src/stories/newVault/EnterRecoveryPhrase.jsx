@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Button, Container, Grid, Header, TextArea } from 'semantic-ui-react';
+import { Button, Container, Grid, Header, Label, Segment, TextArea } from 'semantic-ui-react';
 
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -28,12 +28,9 @@ function EnterRecoveryPhrase() {
     const dispatch = useDispatch();
 
     React.useEffect(() => {
-        if (seedPhraseIsCorrect) {
+        seedPhraseIsCorrect ?
             setVerifyPhraseButtonText("Verify Phrase")
-        }
-        else {
-            setVerifyPhraseButtonText("Phrase isn't correct")
-        }
+            : setVerifyPhraseButtonText("Phrase isn't correct");
     }, [seedPhraseIsCorrect]);
 
     React.useEffect(() => {
@@ -68,7 +65,8 @@ function EnterRecoveryPhrase() {
 
                 <Grid.Column width={16}>
 
-                    <p>Please note the derivation path: m/44'/0'/0'/0/0 will be used.</p>
+                    <p>Enter a seed and select deterministic wallets to import from that seed.<br/>
+                        These accounts will be added to your current wallet vault.</p>
 
                 </Grid.Column>
 
@@ -80,7 +78,7 @@ function EnterRecoveryPhrase() {
 
                 <Grid.Column className="flex flex-auto flex-col items-center gap-10">
 
-                    <Container fluid className="flex-wrap text-left max-h-36 overflow-y-auto overscroll-auto" style={{minHeight: "72px"}}>
+                    <Container fluid className="flex-wrap text-left max-h-36 overflow-y-auto overscroll-auto" style={{ minHeight: "72px" }}>
 
                         {parsedSeedPhrase.map((word, index) =>
                             <Button
@@ -97,9 +95,18 @@ function EnterRecoveryPhrase() {
                     <Container className="flex flex-auto flex-col justify-center gap-10">
 
                         <Container className="flex flex-col">
-                           <TextArea rows={3} value={seedPhrase} onChange={e => handlePhraseChange(e.target.value)}
-                                  className="bg-white p-4 rounded border-3 border-gray-400 hover:border-gray-500 focus:border-gray-500 focus:outline-none mb-0"/>
-                                  <p className="mt-2 text-xs"> Please note the derivation path: m/44'/0'/0'/0/0 will be used.</p>
+
+                            <Segment className="p-0">
+
+                                <Label attached='top'>Seed Phrase</Label>
+
+                                <TextArea ref={input => input && input.focus()} fluid rows={3} value={seedPhrase} onChange={e => handlePhraseChange(e.target.value)}
+                                          className="hover:border-gray-500 focus:border-gray-500 focus:outline-none w-full p-3 resize-none"/>
+
+                            </Segment>
+
+                            <p className="text-xs"> Please note the derivation path: m/44'/0'/0'/0/0 will be used.</p>
+
                         </Container>
 
                         <Container className="flex flex-auto flex-row justify-between">

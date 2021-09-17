@@ -37,6 +37,7 @@ module.exports = {
         'overflow',
         'overscrollBehavior',
         'padding',
+        'resize',
         'rotate',
         'textAlign',
         'textColor',
