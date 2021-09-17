@@ -1,6 +1,7 @@
 import { USER_ACTION_TYPES } from '../constants/_constants';
 import utils from 'util/_util';
 import { curveTypes } from 'util/wallet';
+import { default_log as log } from 'log/logHelper';
 
 ///////////////////////////
 /* Internal Action Calls */
@@ -37,6 +38,13 @@ export function setNewPotentialMnemonic() {
  * @returns null
  */
 export function setExistingMnemonic(phrase) {
+    if (typeof phrase !== "string") {
+        try {
+            phrase = phrase.join(" ");
+        } catch (ex) {
+            log.error("Unable to parse passed parameter to string. Seed Phrase must be passed as string or simple array!")
+        }
+    }
     return async function (dispatch) {
         dispatch({ type: USER_ACTION_TYPES.SET_POTENTIAL_SEED_PHRASE, payload: phrase });
     }

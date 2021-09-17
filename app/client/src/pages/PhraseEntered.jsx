@@ -2,7 +2,7 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { Button, Container, Grid, Header, Icon, Modal, Radio } from 'semantic-ui-react';
+import { Button, Container, Input, Grid, Header, Icon, Modal, Radio } from 'semantic-ui-react';
 
 import Page from '../layout/Page';
 import { curveTypes } from 'util/_util';
@@ -13,8 +13,7 @@ function PhraseEntered() {
     const history = useHistory();
     const dispatch = useDispatch();
 
-    const { seedPhrase, desiredCurve } = useSelector(state => ({
-        seedPhrase: state.user.potential_seed_phrase,
+    const { desiredCurve } = useSelector(state => ({
         desiredCurve: state.user.desired_hd_curve,
     }));
 
@@ -23,7 +22,7 @@ function PhraseEntered() {
 
     const loadMyVault = () => {
         dispatch(USER_ACTIONS.setDesiredCurveType(curveType));
-        history.push('/newUserHub')
+        history.push('/newVault/firstWalletGenerated', { backPath: '/newVault/phraseEntered' });
     }
 
     return (
@@ -33,7 +32,7 @@ function PhraseEntered() {
 
                 <Grid.Column width={16} className="my-5">
 
-                    <Header content="Phrase Entered" as="h3" className="my-0"/>
+                    <Header content="Phrase Entered" as="h3" className="my-0" />
 
                 </Grid.Column>
 
@@ -44,23 +43,6 @@ function PhraseEntered() {
                     <p className="text-sm">Using this seed phrase, your wallets will be generated.</p>
 
                     <p className="text-sm">Please make sure to select the same Key Operation Curve that you used when creating the vault.</p>
-
-                </Grid.Column>
-
-                <Grid.Column width={12} className="flex flex-auto flex-col items-center gap-10">
-
-                    <Container fluid className="flex-wrap text-left max-h-36 overflow-y-auto overscroll-auto">
-
-                        {seedPhrase.map((word, index) => {
-                            return (<Button
-                                key={`seed-phrase-btn-${index}`}
-                                className="mx-2 my-1"
-                                color="blue"
-                                content={word}
-                            />)
-                        })}
-
-                    </Container>
 
                 </Grid.Column>
 
@@ -79,7 +61,7 @@ function PhraseEntered() {
                                 <p className="text-sm">
                                     <strong>
                                         Public Address Key Operation Curve
-                                        <Icon name="question circle" style={{ cursor: 'pointer' }} className="px-2"/>
+                                        <Icon name="question circle" style={{ cursor: 'pointer' }} className="px-2" />
                                     </strong>
                                 </p>}
                         >
@@ -88,7 +70,7 @@ function PhraseEntered() {
 
                                 <Modal.Description className="flex flex-col items-center gap-10">
 
-                                    <Header content="Key Operation Curve" as="h3" className="my-0"/>
+                                    <Header content="Key Operation Curve" as="h3" className="my-0" />
 
                                     <Container className="flex flex-auto flex-col gap-3 p-5 text-center">
 
@@ -105,7 +87,7 @@ function PhraseEntered() {
 
                                     </Container>
 
-                                    <Button color="purple" onClick={() => setOpenModal(false)} content="Got it!"/>
+                                    <Button color="purple" onClick={() => setOpenModal(false)} content="Got it!" />
 
                                 </Modal.Description>
 
@@ -141,9 +123,9 @@ function PhraseEntered() {
 
                     <Container className="flex flex-auto flex-row justify-between">
 
-                        <Button color="purple" basic content="Back" onClick={() => history.push('/newVault/useRecoveryPhrase')}/>
+                        <Button color="purple" basic content="Back" onClick={() => history.push('/newVault/useRecoveryPhrase')} />
 
-                        <Button color="teal" basic content="Load My Vault" onClick={loadMyVault}/>
+                        <Button color="teal" basic content="Secure My Vault" onClick={loadMyVault} />
 
                     </Container>
 

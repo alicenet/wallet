@@ -16,7 +16,7 @@ import { USER_ACTIONS } from '../redux/actions/_actions';
 function UseRecoveryPhrase() {
 
     const { storedSeedPhrase } = useSelector(state => ({
-        storedSeedPhrase: state.user.potential_seed_phrase,
+        storedSeedPhrase: state.user.potential_seed_phrase.split(" "),
     }));
 
     const [seedPhraseIsCorrect, setSeedPhraseIsCorrect] = React.useState(false);
@@ -68,13 +68,7 @@ function UseRecoveryPhrase() {
 
                 <Grid.Column width={16}>
 
-                    <p>Enter a seed and select deterministic wallets to import from that seed.<br/>These accounts will be added to your current wallet vault.</p>
-
-                </Grid.Column>
-
-                <Grid.Column width={16}>
-
-                    <p>Please note that derivation path: m/44'/0'/0'/0/0 will be used.</p>
+                    <p>Please note the derivation path: m/44'/0'/0'/0/0 will be used.</p>
 
                 </Grid.Column>
 
@@ -86,7 +80,7 @@ function UseRecoveryPhrase() {
 
                 <Grid.Column className="flex flex-auto flex-col items-center gap-10">
 
-                    <Container fluid className="flex-wrap text-left max-h-36 overflow-y-auto overscroll-auto">
+                    <Container fluid className="flex-wrap text-left max-h-36 overflow-y-auto overscroll-auto" style={{minHeight: "72px"}}>
 
                         {parsedSeedPhrase.map((word, index) =>
                             <Button
@@ -94,6 +88,7 @@ function UseRecoveryPhrase() {
                                 className="mx-2 my-1"
                                 color="blue"
                                 content={word}
+                                size="mini"
                             />
                         )}
 
@@ -101,8 +96,11 @@ function UseRecoveryPhrase() {
 
                     <Container className="flex flex-auto flex-col justify-center gap-10">
 
-                        <TextArea rows={3} value={seedPhrase} onChange={e => handlePhraseChange(e.target.value)}
-                                  className="bg-white p-4 rounded border-3 border-gray-400 hover:border-gray-500 focus:border-gray-500 focus:outline-none"/>
+                        <Container className="flex flex-col">
+                           <TextArea rows={3} value={seedPhrase} onChange={e => handlePhraseChange(e.target.value)}
+                                  className="bg-white p-4 rounded border-3 border-gray-400 hover:border-gray-500 focus:border-gray-500 focus:outline-none mb-0"/>
+                                  <p className="mt-2 text-xs"> Please note the derivation path: m/44'/0'/0'/0/0 will be used.</p>
+                        </Container>
 
                         <Container className="flex flex-auto flex-row justify-between">
 

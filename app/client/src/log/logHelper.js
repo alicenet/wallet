@@ -33,6 +33,7 @@ const getSetLogLevel = (moduleType) => {
     return log.getLogger(moduleType);
 };
 
+export const default_log = log;
 export const electronStoreHelper_logger = getSetLogLevel(logModules.ELECTRON_STORE_HELPER);
 export const electronStoreMessenger_logger = getSetLogLevel(logModules.ELECTRON_STORE_MESSENGER);
 export const reduxState_logger = getSetLogLevel(logModules.REDUX_STATE);
