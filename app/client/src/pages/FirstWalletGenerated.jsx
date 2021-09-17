@@ -44,8 +44,6 @@ function FirstWalletGenerated() {
         history.push("/hub");
     }
 
-    console.log(desiredCurve, seedPhrase);
-
     return (
         <Page>
 

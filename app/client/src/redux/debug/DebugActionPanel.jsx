@@ -1,15 +1,15 @@
 import React from 'react';
 import { connect } from "react-redux";
 import { Input, Button, Grid, Header, Container, TextArea, Form, FormButton } from 'semantic-ui-react';
-import { USER_ACTIONS, MODAL_ACTIONS, VAULT_ACTIONS } from 'redux/actions/_actions';
+import { USER_ACTIONS, MODAL_ACTIONS, VAULT_ACTIONS, INTERFACE_ACTIONS } from 'redux/actions/_actions';
+import { useHistory } from 'react-router-dom';
 
 import util from 'util/_util';
-
 import { electronStoreUtilityActons as utilStoreHelper } from '../../store/electronStoreHelper';
 
 function DebugActionPanel({ dispatch, vault }) {
 
-    console.log(vault);
+    const history = useHistory();
 
     const [vaultExists, setVaultExists] = React.useState("unknown");
     const [vaultWasntFound, setVaultWasntFound] = React.useState(false);
@@ -27,6 +27,12 @@ function DebugActionPanel({ dispatch, vault }) {
     const [vaultPassword, setVaultPassword] = React.useState("");
 
     const DButton = (props) => <Form.Button basic size="mini" fluid {...props} className={"m-1 ml-0 " + props.className} />
+
+    // Nav Actions //
+    const goto = (locationPath) => {
+        dispatch(INTERFACE_ACTIONS.DEBUG_toggleShowDebug(false));
+        history.push(locationPath)
+    }
 
     ////////////////////////////
     /*      Vault Actions     */
@@ -175,6 +181,12 @@ function DebugActionPanel({ dispatch, vault }) {
             <Grid.Column width={8}>
                 <Header as="h4">MODAL ACTIONS</Header>
                 <DButton content="open_GlobalErrorModalTest" onClick={() => dispatch(MODAL_ACTIONS.openGlobalErrorModal("This is a debug error!"))} />
+            </Grid.Column>
+
+            <Grid.Column width={8}>
+                <Header as="h4">Goto User Story</Header>
+                <DButton content="New User - Recovery Flow" onClick={ () => goto("/newVault/useRecoveryPhrase")} />
+                <DButton content="Root Flow" onClick={ () => goto("/")} />
             </Grid.Column>
 
             <Grid.Column width={16}>

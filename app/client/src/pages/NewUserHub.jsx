@@ -1,18 +1,26 @@
 import React from 'react';
 
-import {useHistory} from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
-import {Button, Container, Grid, Header, Image, Modal} from 'semantic-ui-react';
+import { Button, Container, Grid, Header, Image, Modal } from 'semantic-ui-react';
 
 import MadIcon from '../Assets/icon.png';
 
-import withWalletDrawer from 'hocs/withWalletDrawer/withWalletDrawer';
+import withWalletDrawer from "../hocs/withWalletDrawer/withWalletDrawer";
+import { USER_ACTIONS } from "../redux/actions/_actions";
+import { useDispatch } from "react-redux";
 
-function NewUserHub({toggleWalletDrawer}) {
+function NewUserHub({ toggleWalletDrawer }) {
 
     const [openModal, setOpenModal] = React.useState(false)
 
     const history = useHistory();
+    const dispatch = useDispatch();
+
+    const useRecoveryPhrase = () => {
+        dispatch(USER_ACTIONS.clearMnemonic());
+        history.push('/newVault/useRecoveryPhrase')
+    }
 
     return (
         <Container fluid className="h-full flex items-center justify-center">
@@ -84,10 +92,9 @@ function NewUserHub({toggleWalletDrawer}) {
 
                     <Container fluid className="flex flex-auto flex-col items-center gap-3 w-72">
 
-                        <Button color="purple" basic content="Create a Vault*" fluid
-                                onClick={() => history.push('/newVault/createVault')}/>
+                        <Button color="purple" basic content="Create a Vault*" fluid onClick={() => history.push('/newVault/createVault')}/>
 
-                        <Button color="orange" basic content="I have a vault seed" fluid/>
+                        <Button color="orange" basic content="I have a vault seed" fluid onClick={useRecoveryPhrase}/>
 
                         <Button color="orange" size="mini" basic content="Wallet Drawer Test"
                                 onClick={() => toggleWalletDrawer()} fluid/>
