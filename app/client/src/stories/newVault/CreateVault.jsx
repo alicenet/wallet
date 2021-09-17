@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom';
 
 import {Button, Container, Grid, Header, Modal} from 'semantic-ui-react';
 
-import Page from '../layout/Page';
+import Page from '../../layout/Page';
 
 function CreateVault() {
 
@@ -48,10 +48,10 @@ function CreateVault() {
                     <Container fluid className="flex flex-auto flex-col items-center gap-5 w-80">
 
                         <Button color="purple" basic content="Get Seed Phrase" fluid
-                                onClick={() => history.push('/newVault/yourSeedPhrase')}/>
+                                onClick={() => history.push('/newVault/getNewSeedPhrase')}/>
 
                         <Button color="orange" basic content="Just Generate A Keystore" fluid
-                                onClick={() => history.push('/vaultOptOut')}/>
+                                onClick={() => history.push('/optOut/disclaimer')}/>
 
                     <Modal
                         onClose={() => setOpenModal(false)}

@@ -10,10 +10,10 @@ import uniq from 'lodash/uniq';
 import toLower from 'lodash/toLower';
 import words from 'lodash/words';
 
-import Page from '../layout/Page';
-import { USER_ACTIONS } from '../redux/actions/_actions';
+import Page from '../../layout/Page';
+import { USER_ACTIONS } from '../../redux/actions/_actions';
 
-function UseRecoveryPhrase() {
+function EnterRecoveryPhrase() {
 
     const { storedSeedPhrase } = useSelector(state => ({
         storedSeedPhrase: state.user.potential_seed_phrase.split(" "),
@@ -52,7 +52,7 @@ function UseRecoveryPhrase() {
 
     const phraseEntered = () => {
         dispatch(USER_ACTIONS.setExistingMnemonic(parsedSeedPhrase));
-        history.push('/newVault/phraseEntered');
+        history.push('/newVault/chooseEllipticCurve', {isRestore: true});
     }
 
     return (
@@ -125,4 +125,4 @@ function UseRecoveryPhrase() {
 
 }
 
-export default UseRecoveryPhrase;
+export default EnterRecoveryPhrase;

@@ -1,0 +1,18 @@
+User Stories Pertaining To:
+
+- As a user I want to create a new vault
+- As a user I want to recover a vault
+
+New Vault Flow:
+1. Create Vault
+2. Get New Seed Phrase
+3. Verify Seed Phrase
+4. Choose Curve
+5. Secure New Vault
+
+Restore Vault Flow:
+1. Create Vault
+2. Enter Recovery Phrase
+3. Secure New Vault
+
+Both Push To => ReturningUserHub

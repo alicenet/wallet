@@ -7,9 +7,9 @@ import {useDispatch, useSelector} from 'react-redux';
 import {useFormState} from 'hooks/_hooks';
 
 import {VAULT_ACTIONS} from 'redux/actions/_actions'
-import Page from '../layout/Page';
+import Page from '../../layout/Page';
 
-function FirstWalletGenerated() {
+function SecureNewVault() {
 
     const history = useHistory();
     const dispatch = useDispatch();
@@ -120,7 +120,7 @@ function FirstWalletGenerated() {
 
                 <Grid.Column width={16} className="flex flex-auto flex-row justify-around">
 
-                    <Button color="purple" basic content="Back" className="w-52" onClick={() => history.push('/')}/>
+                    <Button color="red" basic content="Cancel Vault Creation" className="w-52" onClick={() => history.push('/')}/>
 
                     <Button color="teal" basic content='Secure My Wallets' className="w-52" onClick={handleFormSubmit}/>
 
@@ -133,4 +133,4 @@ function FirstWalletGenerated() {
 
 }
 
-export default FirstWalletGenerated;
+export default SecureNewVault;
