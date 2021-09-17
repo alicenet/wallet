@@ -13,7 +13,8 @@ function ChooseRecoveryEllipticCurve() {
     const history = useHistory();
     const dispatch = useDispatch();
 
-    const { desiredCurve } = useSelector(state => ({
+    const { desiredCurve, seedPhrase } = useSelector(state => ({
+        seedPhrase: state.user.potential_seed_phrase.split(' '),
         desiredCurve: state.user.desired_hd_curve,
     }));
 
@@ -32,13 +33,31 @@ function ChooseRecoveryEllipticCurve() {
 
                 <Grid.Column width={16} className="my-5">
 
-                    <Header content="Phrase Entered" as="h3" className="my-0" />
+                    <Header content="Phrase Entered" as="h3" className="my-0"/>
+
+                </Grid.Column>
+
+                <Grid.Column width={12}>
+
+                    <p>You have successfully entered your seed phrase.</p>
+
+                    <Container fluid className="flex-wrap text-left">
+
+                        {seedPhrase.map((word, index) =>
+                            <Button
+                                key={`seed-phrase-btn-${index}`}
+                                className="mx-2 my-1"
+                                color="blue"
+                                content={word}
+                                size="mini"
+                            />
+                        )}
+
+                    </Container>
 
                 </Grid.Column>
 
                 <Grid.Column width={16}>
-
-                    <p className="mb-10">You have successfully entered your seed phrase.</p>
 
                     <p className="text-sm">Using this seed phrase, your wallets will be generated.</p>
 
@@ -61,7 +80,7 @@ function ChooseRecoveryEllipticCurve() {
                                 <p className="text-sm">
                                     <strong>
                                         Public Address Key Operation Curve
-                                        <Icon name="question circle" style={{ cursor: 'pointer' }} className="px-2" />
+                                        <Icon name="question circle" style={{ cursor: 'pointer' }} className="px-2"/>
                                     </strong>
                                 </p>}
                         >
@@ -70,7 +89,7 @@ function ChooseRecoveryEllipticCurve() {
 
                                 <Modal.Description className="flex flex-col items-center gap-10">
 
-                                    <Header content="Key Operation Curve" as="h3" className="my-0" />
+                                    <Header content="Key Operation Curve" as="h3" className="my-0"/>
 
                                     <Container className="flex flex-auto flex-col gap-3 p-5 text-center">
 
@@ -87,7 +106,7 @@ function ChooseRecoveryEllipticCurve() {
 
                                     </Container>
 
-                                    <Button color="purple" onClick={() => setOpenModal(false)} content="Got it!" />
+                                    <Button color="purple" onClick={() => setOpenModal(false)} content="Got it!"/>
 
                                 </Modal.Description>
 
@@ -123,9 +142,9 @@ function ChooseRecoveryEllipticCurve() {
 
                     <Container className="flex flex-auto flex-row justify-between">
 
-                        <Button color="purple" basic content="Back" onClick={() => history.push('/newVault/useRecoveryPhrase')} />
+                        <Button color="purple" basic content="Back" onClick={() => history.push('/newVault/useRecoveryPhrase')}/>
 
-                        <Button color="teal" basic content="Secure My Vault" onClick={loadMyVault} />
+                        <Button color="teal" basic content="Secure My Vault" onClick={loadMyVault}/>
 
                     </Container>
 
