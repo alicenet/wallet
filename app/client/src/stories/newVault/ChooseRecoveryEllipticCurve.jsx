@@ -1,34 +1,29 @@
 import React from 'react';
-import {useHistory} from 'react-router-dom';
-import {useDispatch} from 'react-redux';
+import { useHistory } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 
-import {Button, Checkbox, Container, Grid, Header, Icon, Modal, Radio} from 'semantic-ui-react';
+import { Button, Container, Grid, Header, Icon, Modal, Radio } from 'semantic-ui-react';
 
 import Page from '../../layout/Page';
-import {classNames, curveTypes} from 'util/_util';
-import {USER_ACTIONS} from 'redux/actions/_actions';
+import { curveTypes } from 'util/_util';
+import { USER_ACTIONS } from 'redux/actions/_actions';
 
-function ChooseEllipticCurve() {
+function ChooseRecoveryEllipticCurve() {
+
+    const history = useHistory();
+    const dispatch = useDispatch();
+
+    const { desiredCurve } = useSelector(state => ({
+        desiredCurve: state.user.desired_hd_curve,
+    }));
 
     const [openModal, setOpenModal] = React.useState(false)
-    const [enableAdvancedWalletOptions, setEnableAdvancedOptions] = React.useState(false)
-    const history = useHistory();
-    const [curveType, setCurveType] = React.useState(curveTypes.SECP256K1)
+    const [curveType, setCurveType] = React.useState(desiredCurve || curveTypes.SECP256K1)
 
-    const dispatch = useDispatch();
-    const isRestore = history.location?.state?.isRestore;
-
-    const generateWallet = () => {
-        // Set desired curve to active curve state and advance screen
+    const loadMyVault = () => {
         dispatch(USER_ACTIONS.setDesiredCurveType(curveType));
         history.push('/newVault/secureNewVault');
     }
-
-    const toggleAdvancedOptions = () => {
-        setEnableAdvancedOptions(prevState => !prevState);
-        setCurveType(1);
-    }
-
 
     return (
         <Page>
@@ -37,32 +32,25 @@ function ChooseEllipticCurve() {
 
                 <Grid.Column width={16} className="my-5">
 
-                    <Header content={isRestore ? "Recovery Phrase Entered" : "Seed Phrase Verified"} as="h3" className="my-0"/>
+                    <Header content="Phrase Entered" as="h3" className="my-0" />
 
                 </Grid.Column>
 
                 <Grid.Column width={16}>
 
-                    <p>You have successfully {isRestore ? "entered" : "verified"} your seed phrase.</p>
+                    <p className="mb-10">You have successfully entered your seed phrase.</p>
 
-                    <p className="text-sm">Using this seed phrase, your first wallet will be generated.</p>
+                    <p className="text-sm">Using this seed phrase, your wallets will be generated.</p>
 
-                    {isRestore ? (
-                        <p className="text-sm">Please make sure to select the same Key Operation Curve that you used when creating the vault.</p>
-                    ) : null}
+                    <p className="text-sm">Please make sure to select the same Key Operation Curve that you used when creating the vault.</p>
 
                 </Grid.Column>
 
-                <Grid.Column width={10} className="my-20">
+                <Grid.Column width={12}>
 
-                    <Checkbox onChange={toggleAdvancedOptions}
-                              checked={enableAdvancedWalletOptions} className="py-5"
-                              label={<label className="text-sm">Enable Advanced Wallet Options</label>}/>
+                    <Container className="p-3 text-left border-2 border-solid border-gray-300">
 
-                    <Container
-                        className={classNames("p-3 text-left border-2 border-solid border-gray-300", {'bg-gray-300': !enableAdvancedWalletOptions})}>
-
-                        <p className="border border-black"><strong>Advanced Options</strong></p>
+                        <p><strong>Advanced Options</strong></p>
 
                         <Modal
                             onClose={() => setOpenModal(false)}
@@ -71,10 +59,9 @@ function ChooseEllipticCurve() {
                             dimmer="inverted"
                             trigger={
                                 <p className="text-sm">
-
                                     <strong>
                                         Public Address Key Operation Curve
-                                        <Icon name="question circle" style={{cursor: 'pointer'}} className="px-2"/>
+                                        <Icon name="question circle" style={{ cursor: 'pointer' }} className="px-2" />
                                     </strong>
                                 </p>}
                         >
@@ -83,7 +70,7 @@ function ChooseEllipticCurve() {
 
                                 <Modal.Description className="flex flex-col items-center gap-10">
 
-                                    <Header content="Key Operation Curve" as="h3" className="my-0"/>
+                                    <Header content="Key Operation Curve" as="h3" className="my-0" />
 
                                     <Container className="flex flex-auto flex-col gap-3 p-5 text-center">
 
@@ -100,7 +87,7 @@ function ChooseEllipticCurve() {
 
                                     </Container>
 
-                                    <Button color="purple" onClick={() => setOpenModal(false)} content="Got it!"/>
+                                    <Button color="purple" onClick={() => setOpenModal(false)} content="Got it!" />
 
                                 </Modal.Description>
 
@@ -116,7 +103,6 @@ function ChooseEllipticCurve() {
                                 value={curveTypes.SECP256K1}
                                 onChange={() => setCurveType(curveTypes.SECP256K1)}
                                 checked={curveType === curveTypes.SECP256K1}
-                                readOnly={!enableAdvancedWalletOptions}
                             />
 
                             <Radio
@@ -125,7 +111,6 @@ function ChooseEllipticCurve() {
                                 value={curveTypes.BARRETO_NAEHRIG}
                                 onChange={() => setCurveType(curveTypes.BARRETO_NAEHRIG)}
                                 checked={curveType === curveTypes.BARRETO_NAEHRIG}
-                                readOnly={!enableAdvancedWalletOptions}
                             />
 
                         </Container>
@@ -134,13 +119,13 @@ function ChooseEllipticCurve() {
 
                 </Grid.Column>
 
-                <Grid.Column width={16} className="flex-col">
+                <Grid.Column width={16}>
 
                     <Container className="flex flex-auto flex-row justify-between">
 
-                        <Button color="purple" basic content="Back" onClick={() => history.push( isRestore ? '/newVault/useRecoveryPhrase' : '/newVault/verifySeedPhrase')} />
+                        <Button color="purple" basic content="Back" onClick={() => history.push('/newVault/useRecoveryPhrase')} />
 
-                        <Button color="teal" basic content="Secure My Vault" onClick={generateWallet} />
+                        <Button color="teal" basic content="Secure My Vault" onClick={loadMyVault} />
 
                     </Container>
 
@@ -153,4 +138,4 @@ function ChooseEllipticCurve() {
 
 }
 
-export default ChooseEllipticCurve;
+export default ChooseRecoveryEllipticCurve;
