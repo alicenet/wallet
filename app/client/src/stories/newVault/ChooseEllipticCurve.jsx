@@ -1,22 +1,21 @@
 import React from 'react';
-import {useHistory} from 'react-router-dom';
-import {useDispatch} from 'react-redux';
+import { useHistory } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 
-import {Button, Checkbox, Container, Grid, Header, Icon, Modal, Radio} from 'semantic-ui-react';
+import { Button, Checkbox, Container, Grid, Header, Icon, Radio } from 'semantic-ui-react';
 
 import Page from '../../layout/Page';
-import {classNames, curveTypes} from 'util/_util';
-import {USER_ACTIONS} from 'redux/actions/_actions';
+import { classNames, curveTypes } from 'util/_util';
+import { USER_ACTIONS } from 'redux/actions/_actions';
+import KeyOperationCurveModal from './KeyOperationCurveModal';
 
 function ChooseEllipticCurve() {
 
-    const [openModal, setOpenModal] = React.useState(false)
     const [enableAdvancedWalletOptions, setEnableAdvancedOptions] = React.useState(false)
     const history = useHistory();
     const [curveType, setCurveType] = React.useState(curveTypes.SECP256K1)
 
     const dispatch = useDispatch();
-    const isRestore = history.location?.state?.isRestore;
 
     const generateWallet = () => {
         // Set desired curve to active curve state and advance screen
@@ -29,84 +28,48 @@ function ChooseEllipticCurve() {
         setCurveType(1);
     }
 
-
     return (
         <Page>
 
-            <Grid textAlign="center">
+            <Grid textAlign="center" className="m-0">
 
-                <Grid.Column width={16} className="my-5">
+                <Grid.Column width={16} className="p-0 self-center">
 
-                    <Header content={isRestore ? "Recovery Phrase Entered" : "Seed Phrase Verified"} as="h3" className="my-0"/>
+                    <Header content="Seed Phrase Verified" as="h3" className="m-0"/>
 
                 </Grid.Column>
 
-                <Grid.Column width={16}>
+                <Grid.Column width={16} className="p-0 self-center">
 
-                    <p>You have successfully {isRestore ? "entered" : "verified"} your seed phrase.</p>
+                    <p>You have successfully verified your seed phrase.</p>
 
                     <p className="text-sm">Using this seed phrase, your first wallet will be generated.</p>
 
-                    {isRestore ? (
-                        <p className="text-sm">Please make sure to select the same Key Operation Curve that you used when creating the vault.</p>
-                    ) : null}
-
                 </Grid.Column>
 
-                <Grid.Column width={10} className="my-20">
+                <Grid.Column width={10} className="p-0 self-center">
 
-                    <Checkbox onChange={toggleAdvancedOptions}
-                              checked={enableAdvancedWalletOptions} className="py-5"
+                    <Checkbox onChange={toggleAdvancedOptions} className="py-5"
+                              checked={enableAdvancedWalletOptions}
                               label={<label className="text-sm">Enable Advanced Wallet Options</label>}/>
 
                     <Container
-                        className={classNames("p-3 text-left border-2 border-solid border-gray-300", {'bg-gray-300': !enableAdvancedWalletOptions})}>
+                        className={classNames("p-3 text-left border-2 border-solid border-gray-300", { 'bg-gray-300': !enableAdvancedWalletOptions })}>
 
                         <p className="border border-black"><strong>Advanced Options</strong></p>
 
-                        <Modal
-                            onClose={() => setOpenModal(false)}
-                            onOpen={() => setOpenModal(true)}
-                            open={openModal}
-                            dimmer="inverted"
-                            trigger={
-                                <p className="text-sm">
+                        <KeyOperationCurveModal>
 
-                                    <strong>
-                                        Public Address Key Operation Curve
-                                        <Icon name="question circle" style={{cursor: 'pointer'}} className="px-2"/>
-                                    </strong>
-                                </p>}
-                        >
+                            <p className="text-sm">
 
-                            <Modal.Content>
+                                <strong>
+                                    Public Address Key Operation Curve
+                                    <Icon name="question circle" style={{ cursor: 'pointer' }} className="px-2"/>
 
-                                <Modal.Description className="flex flex-col items-center gap-10">
+                                </strong>
+                            </p>
 
-                                    <Header content="Key Operation Curve" as="h3" className="my-0"/>
-
-                                    <Container className="flex flex-auto flex-col gap-3 p-5 text-center">
-
-                                        <p>Mad Wallet allows you to set the default ECC for generating the key pair.</p>
-
-                                        <p>ECC types are set on a per vault basis and will be used for all wallets
-                                            generated with this seed.</p>
-
-                                        <p>If you change from the default type, make a note of it for when you import
-                                            your seed for recovery.</p>
-
-                                        <p>Additional wallets of the opposing type can be generated or imported if
-                                            necessary, but will not be recoverable by the vault seed phrase.</p>
-
-                                    </Container>
-
-                                    <Button color="purple" onClick={() => setOpenModal(false)} content="Got it!"/>
-
-                                </Modal.Description>
-
-                            </Modal.Content>
-
-                        </Modal>
+                        </KeyOperationCurveModal>
 
                         <Container fluid className="flex flex-auto flex-col gap-4">
 
@@ -134,13 +97,13 @@ function ChooseEllipticCurve() {
 
                 </Grid.Column>
 
-                <Grid.Column width={16} className="flex-col">
+                <Grid.Column width={12} className="p-0 self-center">
 
-                    <Container className="flex flex-auto flex-row justify-between">
+                    <Container className="flex justify-between">
 
-                        <Button color="purple" basic content="Back" onClick={() => history.push( isRestore ? '/newVault/useRecoveryPhrase' : '/newVault/verifySeedPhrase')} />
+                        <Button color="orange" basic className="m-0" content="Go Back" onClick={() => history.push('/newVault/verifySeedPhrase')}/>
 
-                        <Button color="teal" basic content="Secure My Vault" onClick={generateWallet} />
+                        <Button color="teal" basic className="m-0" content="Secure My Vault" onClick={generateWallet}/>
 
                     </Container>
 

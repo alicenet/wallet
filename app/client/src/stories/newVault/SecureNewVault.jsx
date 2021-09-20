@@ -1,19 +1,20 @@
 import React from 'react';
 
-import {Button, Form, Grid, Header} from 'semantic-ui-react';
+import { Button, Container, Form, Grid, Header } from 'semantic-ui-react';
 
-import {useHistory} from 'react-router-dom';
-import {useDispatch, useSelector} from 'react-redux';
-import {useFormState} from 'hooks/_hooks';
+import { useHistory } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { useFormState } from 'hooks/_hooks';
 
-import {VAULT_ACTIONS} from 'redux/actions/_actions'
+import { VAULT_ACTIONS } from 'redux/actions/_actions'
+
 import Page from '../../layout/Page';
 
 function SecureNewVault() {
 
     const history = useHistory();
     const dispatch = useDispatch();
-    const {seedPhrase, desiredCurve} = useSelector(state => ({
+    const { seedPhrase, desiredCurve } = useSelector(state => ({
         seedPhrase: state.user.potential_seed_phrase,
         desiredCurve: state.user.desired_hd_curve
     }));
@@ -23,19 +24,22 @@ function SecureNewVault() {
     const handleFormSubmit = () => {
         if (!formState.password.value) {
             return formSetter.setPasswordError("Password is required");
-        } else {
+        }
+        else {
             formSetter.clearPasswordError()
         }
 
         if (formState.password.value.length < 7) {
-            return formSetter.setPasswordError("Password must be atleast 8 characters long.");
-        } else {
+            return formSetter.setPasswordError("Password must be at least 8 characters long.");
+        }
+        else {
             formSetter.clearPasswordError()
         }
 
         if (formState.password.value !== formState.verifiedPassword.value) {
             return formSetter.setVerifiedPasswordError("Password do not match.");
-        } else {
+        }
+        else {
             formSetter.clearVerifiedPasswordError()
         }
 
@@ -47,15 +51,15 @@ function SecureNewVault() {
     return (
         <Page>
 
-            <Grid textAlign="center">
+            <Grid textAlign="center" className="m-0">
 
-                <Grid.Column width={16} className="my-5">
+                <Grid.Column width={16} className="p-0 self-center">
 
-                    <Header content="Vault and First Wallet Generated" as="h3" className="my-0"/>
+                    <Header content="Vault and First Wallet Generated" as="h3" className="m-0"/>
 
                 </Grid.Column>
 
-                <Grid.Column width={16} className="my-5">
+                <Grid.Column width={16} className="p-0 self-center">
 
                     <p className="text-green-400">
 
@@ -65,7 +69,7 @@ function SecureNewVault() {
 
                 </Grid.Column>
 
-                <Grid.Column width={10} className="text-sm">
+                <Grid.Column width={12} className="p-0 self-center text-sm">
 
                     <p>One last thing!</p>
 
@@ -76,7 +80,7 @@ function SecureNewVault() {
 
                 </Grid.Column>
 
-                <Grid.Column width={8} className="my-5">
+                <Grid.Column width={8} className="p-0 self-center">
 
                     <Form onSubmit={(event => handleFormSubmit(event))}>
 
@@ -118,12 +122,15 @@ function SecureNewVault() {
 
                 </Grid.Column>
 
-                <Grid.Column width={16} className="flex flex-auto flex-row justify-around">
+                <Grid.Column width={12} className="p-0 self-center">
 
-                    <Button color="red" basic content="Cancel Vault Creation" className="w-52" onClick={() => history.push('/')}/>
+                    <Container className="flex justify-between">
 
-                    <Button color="teal" basic content='Secure My Wallets' className="w-52" onClick={handleFormSubmit}/>
+                        <Button color="red" basic content="Cancel Vault Creation" className="m-0" onClick={() => history.push('/')}/>
 
+                        <Button color="teal" basic content='Secure My Wallets' className="m-0" onClick={handleFormSubmit}/>
+
+                    </Container>
                 </Grid.Column>
 
             </Grid>

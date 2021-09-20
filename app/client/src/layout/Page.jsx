@@ -9,11 +9,11 @@ import HeaderMenu from './HeaderMenu';
 const Page = ({children}) => {
 
     return (
-        <Container className="h-full flex flex-col justify-center" fluid>
+        <Container className="h-full flex flex-col" fluid>
 
             <HeaderMenu showTabs={false}/>
 
-            <Container className="h-full flex flex-col items-center justify-center">
+            <Container className="w-full h-full flex">
 
                 {children}
 

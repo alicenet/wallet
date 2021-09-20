@@ -1,6 +1,6 @@
 import { VAULT_ACTION_TYPES, MIDDLEWARE_ACTION_TYPES } from 'redux/constants/_constants';
 import { getMadWalletInstance } from 'redux/middleware/WalletManagerMiddleware'
-import { electronStoreCommonActions } from '../../store/electronStoreHelper';
+import { electronStoreCommonActions } from '../../Store/electronStoreHelper';
 import util from 'util/_util';
 
 /* !!!!!!! ____   ATTENTION: ______ !!!!!!!!  

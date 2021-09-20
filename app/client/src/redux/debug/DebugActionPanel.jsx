@@ -5,7 +5,7 @@ import { USER_ACTIONS, MODAL_ACTIONS, VAULT_ACTIONS, INTERFACE_ACTIONS } from 'r
 import { useHistory } from 'react-router-dom';
 
 import util from 'util/_util';
-import { electronStoreUtilityActons as utilStoreHelper } from '../../store/electronStoreHelper';
+import { electronStoreUtilityActons as utilStoreHelper } from '../../Store/electronStoreHelper';
 
 function DebugActionPanel({ dispatch, vault }) {
 
