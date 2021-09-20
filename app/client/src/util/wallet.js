@@ -1,5 +1,7 @@
+
 import { v4 as uuidv4 } from 'uuid';
 import { utilsWallet_logger as log } from 'log/logHelper';
+import Web3 from 'web3'
 const bip39 = require('bip39');
 var HDKey = require('hdkey');
 
@@ -97,6 +99,33 @@ export function curveStringToNum(curveString) {
         throw new Error("Invalid curve name: ", curveString);
     }
     return curveString === "secp256k1" ? 1 : 2; // 1 is secp, 2 for bn
+}
+
+/**
+ * Unlock a keystore using web3.utils
+ * @param {*} keystore - Keystore JSON to unlock
+ * @param {*} password - Password to use to unlock the json
+ */
+export function unlockKeystore(keystore, password) {
+
+}
+
+/**
+ * Generate and return a new JSON blob representing the data for a keystore.
+ * @param { Boolean } asBlob - Password to secure the keystore with 
+ * @param { String } password - Password to secure the keystore with 
+ * @param { CurveType } curve - Curve if desired, default to type 1
+ * @returns { Blob || JSON String } - JSON Blob || Json String
+ */
+export function generateKeystore(asBlob, password, curve = 1) {
+    let web3 = new Web3();
+    let wallet = web3.eth.accounts.wallet.create(1)
+    web3.eth.accounts.wallet.add(wallet[0]) 
+    let ks = web3.eth.accounts.wallet.encrypt(password)
+    let keystore = ks[0];
+    if (curve === 2) { keystore["curve"] = 2 } // Note the curve if BN -- This gets removed on reads
+    let ksJSONBlob = new Blob([JSON.stringify(keystore, null, 2)]);
+    return asBlob ? ksJSONBlob : keystore;
 }
 
 export const curveTypes = {

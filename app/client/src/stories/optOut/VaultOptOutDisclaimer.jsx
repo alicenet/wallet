@@ -59,7 +59,7 @@ function VaultOptOutDisclaimer() {
 
                             <Button color="orange" basic content="Go Back" fluid onClick={() => history.goBack()}/>
 
-                            <Button color="purple" basic disabled={!isChecked} content="Generate Keystore" fluid onClick={() => history.push('/YourSeedPhrase')}/>
+                            <Button color="purple" basic disabled={!isChecked} content="Generate Keystore" fluid onClick={() => history.push('/optOut/generateKeyStore')}/>
 
                         </Button.Group>
 
