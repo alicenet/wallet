@@ -55,30 +55,49 @@ function EnterRecoveryPhrase() {
     return (
         <Page>
 
-            <Grid textAlign="center">
+            <Grid textAlign="center" className="m-0">
 
-                <Grid.Column width={16} className="my-5">
+                <Grid.Column width={16} className="p-0 self-center">
 
-                    <Header content="Use A Recovery Phrase" as="h3" className="my-0"/>
+                    <Header content="Use A Recovery Phrase" as="h3" className="m-0"/>
 
                 </Grid.Column>
 
-                <Grid.Column width={16}>
+                <Grid.Column width={16} className="p-0 self-center">
 
                     <p>Enter a seed and select deterministic wallets to import from that seed.<br/>
                         These accounts will be added to your current wallet vault.</p>
 
                 </Grid.Column>
 
-                <Grid.Column width={16}>
+                <Grid.Column width={16} className="p-0 self-center">
 
                     <p>Only attempt imports of seeds that you have used this derivation path with for results you expect.</p>
 
                 </Grid.Column>
 
-                <Grid.Column className="flex flex-auto flex-col items-center gap-10">
+                <Grid.Column width={12} className="p-0 self-center">
 
-                    <Container fluid className="flex-wrap text-left max-h-36 overflow-y-auto overscroll-auto" style={{ minHeight: "72px" }}>
+                    <Container>
+
+                        <Segment className="p-0">
+
+                            <Label attached='top'>Seed Phrase</Label>
+
+                            <TextArea ref={input => input && input.focus()} fluid rows={3} value={seedPhrase} onChange={e => handlePhraseChange(e.target.value)}
+                                      className="border-0 hover:border-gray-500 focus:border-gray-500 focus:outline-none w-full p-3 resize-none"/>
+
+                        </Segment>
+
+                        <p className="text-xs"> Please note the derivation path: m/44'/0'/0'/0/0 will be used.</p>
+
+                    </Container>
+
+                </Grid.Column>
+
+                <Grid.Column width={12} className="p-0 self-center">
+
+                    <Container fluid className="flex-wrap text-left max-h-24 overflow-y-auto overscroll-auto" style={{ minHeight: "72px" }}>
 
                         {parsedSeedPhrase.map((word, index) =>
                             <Button
@@ -92,34 +111,18 @@ function EnterRecoveryPhrase() {
 
                     </Container>
 
-                    <Container className="flex flex-auto flex-col justify-center gap-10">
+                </Grid.Column>
 
-                        <Container className="flex flex-col">
+                <Grid.Column width={12} className="p-0 self-center">
 
-                            <Segment className="p-0">
+                    <Container className="flex justify-between">
 
-                                <Label attached='top'>Seed Phrase</Label>
+                        <Button color="orange" basic className="m-0" content="Go Back" onClick={() => history.goBack()}/>
 
-                                <TextArea ref={input => input && input.focus()} fluid rows={3} value={seedPhrase} onChange={e => handlePhraseChange(e.target.value)}
-                                          className="hover:border-gray-500 focus:border-gray-500 focus:outline-none w-full p-3 resize-none"/>
-
-                            </Segment>
-
-                            <p className="text-xs"> Please note the derivation path: m/44'/0'/0'/0/0 will be used.</p>
-
-                        </Container>
-
-                        <Container className="flex flex-auto flex-row justify-between">
-
-                            <Button color="purple" basic content="Back"
-                                    onClick={() => history.push('/newUserHub')}/>
-
-                            <Button color={seedPhraseIsCorrect ? 'teal' : 'red'} disabled={!seedPhraseIsCorrect}
-                                    basic
-                                    content={verifyPhraseButtonText}
-                                    onClick={phraseEntered}/>
-
-                        </Container>
+                        <Button color={seedPhraseIsCorrect ? 'teal' : 'red'} disabled={!seedPhraseIsCorrect}
+                                basic className="m-0"
+                                content={verifyPhraseButtonText}
+                                onClick={phraseEntered}/>
 
                     </Container>
 

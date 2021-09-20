@@ -20,7 +20,6 @@ module.exports = {
         'display',
         'flex',
         'flexDirection',
-        'flexGrow',
         'flexShrink',
         'flexWrap',
         'fontSize',
