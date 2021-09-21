@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from "react";
-import { StoreContext } from "./Store/store.js";
+import { StoreContext } from "./oldStore/store.js";
 
 import { Dimmer, Loader, Container, Grid, Menu, Image } from "semantic-ui-react";
 

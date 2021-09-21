@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef } from 'react';
-import { StoreContext } from "../Store/store.js";
+import { StoreContext } from "../oldStore/store.js";
 import MadNetAdapter from "../Utils/madNetAdapter.js";
 import { Button, Menu } from 'semantic-ui-react';
 
