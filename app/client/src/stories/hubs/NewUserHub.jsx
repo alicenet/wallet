@@ -1,7 +1,5 @@
 import React from 'react';
-
 import { useHistory } from 'react-router-dom';
-
 import { Button, Container, Grid, Header, Image, Modal } from 'semantic-ui-react';
 
 import MadIcon from '../../Assets/icon.png';
@@ -12,9 +10,19 @@ import { useDispatch } from "react-redux";
 function NewUserHub() {
 
     const [openModal, setOpenModal] = React.useState(false)
+    const [checkUserLoader, setCheckUserLoader] = React.useState();
 
     const history = useHistory();
     const dispatch = useDispatch();
+
+    /* Check if user has a vault behind the scenes */
+    React.useEffect( () => {
+        const checkForAccount = async () => {
+            let hasAccount = await dispatch(USER_ACTIONS.checkForAndLoadUserAccount());
+            console.log(hasAccount);
+        }
+        checkForAccount();
+    }, []);
 
     const useRecoveryPhrase = () => {
         dispatch(USER_ACTIONS.clearMnemonic());

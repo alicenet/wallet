@@ -163,8 +163,19 @@ function getPreflightHash() {
     })
 }
 
+/**
+ * Check if user has vault -- Returns boolean if they do
+ */
+function checkIfUserHasVault() {
+    return new Promise(async res => {
+        let hasVault = readEncryptedValueFromStore("vault");
+        console.log(hasVault);
+    })
+}
+
 export const electronStoreCommonActions = {
     createNewSecureHDVault: createNewSecureHDVault,
     storePreflightHash: storePreflightHash,
     getPreflightHash: getPreflightHash,
+    checkIfUserHasVault: checkIfUserHasVault,
 }

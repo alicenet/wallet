@@ -2,6 +2,7 @@ import { USER_ACTION_TYPES } from '../constants/_constants';
 import utils from 'util/_util';
 import { curveTypes } from 'util/wallet';
 import { default_log as log } from 'log/logHelper';
+import { electronStoreCommonActions } from 'store/electronStoreHelper';
 
 ///////////////////////////
 /* Internal Action Calls */
@@ -73,13 +74,17 @@ export function setDesiredCurveType(curveType) {
     }
 }
 
-/* Check for existing user account files and set state accordingly */
-export function checkForUserAccount() {
+/**
+ *  Check for existing user account files and set state accordingly
+ * @returns { Boolean } - Does the user have a vault? 
+ */
+export function checkForAndLoadUserAccount() {
     return async function (dispatch) {
-        // Check for account...
-
-        // If exists...
-        loadUserAccount();
+        let userExists = await electronStoreCommonActions.checkIfUserHasVault();
+        if (userExists) {
+            dispatch(loadUserAccount());
+            return true;
+        } else { return false }
     }
 }
 
