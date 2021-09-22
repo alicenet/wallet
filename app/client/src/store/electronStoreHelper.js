@@ -94,14 +94,21 @@ function readPlainValueFromStore(key) {
 */
 function readEncryptedValueFromStore(key, password) {
     _requireKeyPassword("readEncryptedValueFromStore", key, password);
-    electronStoreMessenger.readEncryptedFromStore(key, password, async (err, keyOfValue, value) => {
-        if (err) { console.error(err); return { error: err }; }
-        log.debug("Plain K:V decrypted from electron store => " + keyOfValue + " : " + value);
-        return value;
+    return new Promise(res => {
+        electronStoreMessenger.readEncryptedFromStore(key, password, async (err, keyOfValue, value) => {
+            if (err) { console.error(err); return { error: err }; }
+            log.debug("Plain K:V decrypted from electron store => " + keyOfValue + " : " + value);
+            res(value);
+        })
     })
 }
 
+function completelyDeleteElectronStore() {
+    electronStoreMessenger.deleteStore();
+}
+
 export const electronStoreUtilityActons = {
+    completelyDeleteElectronStore: completelyDeleteElectronStore,
     writePlainValueToStore: writePlainValueToStore,
     writeEncryptedToStore: writeEncryptedValueToStore,
     readPlainValueFromStore: readPlainValueFromStore,
@@ -118,7 +125,7 @@ export const electronStoreUtilityActons = {
  * @param { String } curve - One of: "secp256k1", "secp" or "barreto-naehrig", "bn"
  * @returns { Array[passwordHash, firstWalletNode] } - Returns a hash of the password used to encrypt the vault and the firstWalletNode if the vault has been created successfully 
  */
-function createNewSecureHDVault(mnemonic, password, curveType="secp256k1") {
+function createNewSecureHDVault(mnemonic, password, curveType = "secp256k1") {
     return new Promise(async res => {
         let wu = utils.wallet; // Wallet utils shorthand
         // Generate keccak256 hash of the password -- Returned for any preflights if desired
@@ -133,13 +140,25 @@ function createNewSecureHDVault(mnemonic, password, curveType="secp256k1") {
             hd_wallet_count: 1,
             hd_wallet_curve: curveType,
             wallets: {
-                internal: [],
+                internal: [{name: "Main Wallet"}], // When storing internal wallets the only key we need to store in their name
                 external: [],
             }
         });
         await writeEncryptedValueToStore("vault", vaultObjectString, password);
         log.debug('A new secure vault as key "vault" has been saved to the store.')
         res([passwordHash, firstWalletNode]);
+    })
+}
+
+/**
+ * Unlocks and returns the current Vault object -- Should be called after a preflightHash check has been done
+ * @param { String } password -- Password used to secure vault -- Should be verified with preflightHash check first
+ * @returns { Object } - JSON Vault Object 
+ */
+function unlockAndGetSecuredHDVault(password) {
+    return new Promise(async res => {
+        let vault = await readEncryptedValueFromStore("vault", password);
+        res(JSON.parse(vault));
     })
 }
 
@@ -168,8 +187,26 @@ function getPreflightHash() {
  */
 function checkIfUserHasVault() {
     return new Promise(async res => {
-        let hasVault = readEncryptedValueFromStore("vault");
-        console.log(hasVault);
+        let hasVault = await readPlainValueFromStore("vault");
+        if (!!hasVault.error) {
+            log.warn("A potential error ocurred when checking for user vault :: Unfound key is normal. err => ", hasVault.error)
+            res(false);
+        } else { res(true) }
+    })
+}
+
+/**
+ * Check input password against stored preflight hash 
+ * 
+ */
+function checkPasswordAgainstPreflightHash(password) {
+    return new Promise(async res => {
+        const preflightHash = await readPlainValueFromStore("preflightHash");
+        if (preflightHash.error) {
+            log.warn("Error fetching preflight hash from store. Are you sure you should be calling this function? Verify that the application is in a state that this hash should exist.");
+        }
+        const pwHash = web3Utils.keccak256(password);
+        res(preflightHash === pwHash);
     })
 }
 
@@ -178,4 +215,6 @@ export const electronStoreCommonActions = {
     storePreflightHash: storePreflightHash,
     getPreflightHash: getPreflightHash,
     checkIfUserHasVault: checkIfUserHasVault,
+    checkPasswordAgainstPreflightHash: checkPasswordAgainstPreflightHash,
+    unlockAndGetSecuredHDVault: unlockAndGetSecuredHDVault,
 }

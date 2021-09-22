@@ -1,4 +1,5 @@
 import { USER_ACTION_TYPES } from '../constants/_constants';
+import { VAULT_ACTION_TYPES } from '../constants/_constants';
 import utils from 'util/_util';
 import { curveTypes } from 'util/wallet';
 import { default_log as log } from 'log/logHelper';
@@ -78,19 +79,16 @@ export function setDesiredCurveType(curveType) {
  *  Check for existing user account files and set state accordingly
  * @returns { Boolean } - Does the user have a vault? 
  */
-export function checkForAndLoadUserAccount() {
+export function checkForUserAccount() {
     return async function (dispatch) {
-        let userExists = await electronStoreCommonActions.checkIfUserHasVault();
-        if (userExists) {
-            dispatch(loadUserAccount());
+        let vaultExists = await electronStoreCommonActions.checkIfUserHasVault();
+        if (vaultExists) {
+            dispatch({type: VAULT_ACTION_TYPES.MARK_EXISTS_AND_LOCKED}); // Mark the vault as existing & locked
             return true;
-        } else { return false }
-    }
-}
-
-export function loadUserAccount() {
-    return async function (dispatch) {
-        console.log("Loading user account");
+        } else { 
+            // CAT TODO: Check for keystore paths if no vault
+            return false 
+        }
     }
 }
 

@@ -16,10 +16,10 @@ function NewUserHub() {
     const dispatch = useDispatch();
 
     /* Check if user has a vault behind the scenes */
-    React.useEffect( () => {
+    React.useEffect(() => {
         const checkForAccount = async () => {
-            let hasAccount = await dispatch(USER_ACTIONS.checkForAndLoadUserAccount());
-            console.log(hasAccount);
+            let hasAccount = await dispatch(USER_ACTIONS.checkForUserAccount());
+            if ( hasAccount ) { history.push('/returningUserLoad/hasExistingVault')};
         }
         checkForAccount();
     }, []);
@@ -36,11 +36,11 @@ function NewUserHub() {
 
                 <Grid.Column width={16}>
 
-                    <Header content="Welcome to" as="h3" className="my-0"/>
+                    <Header content="Welcome to" as="h3" className="my-0" />
 
-                    <Image src={MadIcon} size="tiny" centered/>
+                    <Image src={MadIcon} size="tiny" centered />
 
-                    <Header content="MadWallet" as="h3" className="my-0"/>
+                    <Header content="MadWallet" as="h3" className="my-0" />
 
                 </Grid.Column>
 
@@ -66,7 +66,7 @@ function NewUserHub() {
 
                             <Modal.Description className="flex flex-col items-center gap-10">
 
-                                <Header content="MadBase Wallet Vault" as="h3" className="my-0"/>
+                                <Header content="MadBase Wallet Vault" as="h3" className="my-0" />
 
                                 <Container className="flex flex-auto flex-col gap-3 p-5 text-center">
 
@@ -76,16 +76,16 @@ function NewUserHub() {
                                         keystore are secured by your passphrase in the vault file.</p>
 
                                     <p>Some users may not wish to subject to a single point of failure in wallet
-                                        storage. To recognize this you will get the final say over how your wallets are
+                                    storage. To recognize this you will get the final say over how your wallets are
                                         stored and will be given the option to opt out of vault storage.</p>
 
                                     <p>Please note that opting out of vault storage will make user flows more
-                                        complicated, and you will be asked for individual key-store passwords frequently
+                                    complicated, and you will be asked for individual key-store passwords frequently
                                         when loading and interacting with wallets.</p>
 
                                 </Container>
 
-                                <Button color="purple" onClick={() => setOpenModal(false)} content="Got it!"/>
+                                <Button color="purple" onClick={() => setOpenModal(false)} content="Got it!" />
 
                             </Modal.Description>
 
@@ -99,9 +99,9 @@ function NewUserHub() {
 
                     <Container fluid className="flex flex-auto flex-col items-center gap-3 w-72">
 
-                        <Button color="purple" basic content="Create a Vault*" fluid onClick={() => history.push('/newVault/createVault')}/>
+                        <Button color="purple" basic content="Create a Vault*" fluid onClick={() => history.push('/newVault/createVault')} />
 
-                        <Button color="orange" basic content="I have a vault seed" fluid onClick={useRecoveryPhrase}/>
+                        <Button color="orange" basic content="I have a vault seed" fluid onClick={useRecoveryPhrase} />
 
                     </Container>
 

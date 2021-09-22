@@ -90,6 +90,24 @@ export function streamLineHDWalletNodeFromMnemonic(mnemonic, nodeNum) {
 }
 
 /**
+ * Quickly get a set of derivative wallets from a Mnemonic using wallet utilities from utils/wallet.js
+ * @param { String } mnemonic - mnemonic phrase separated by ' '
+ * @param { Array.<Number> } nodeNums - The nodes to derrive from the derivation path: m'/44'/60'/0'/<node>
+ * @returns { Array.<HDKey> } - Promise that resolves to the requested HD wallet nodes
+ */
+export function streamLineHDWalletNodesFromMnemonic(mnemonic, nodeNums) {
+    return new Promise(async res => {
+        const seedBytes = await getSeedBytesFromMnemonic(mnemonic);
+        const hdChain = getHDChainFromSeedBytes(seedBytes);
+        let derrivedWallets = [];
+        nodeNums.forEach((nodeNumber) => {
+            derrivedWallets.push(getHDWalletNodeFromHDChain(hdChain, nodeNumber));
+        })
+        res(derrivedWallets);
+    })
+}
+
+/**
  * Return the equivelent integer for a given curvetype as used in MadWallet-JS
  */
 export function curveStringToNum(curveString) {
@@ -98,6 +116,24 @@ export function curveStringToNum(curveString) {
     }
     return curveString === "secp256k1" ? 1 : 2; // 1 is secp, 2 for bn
 }
+
+/**
+ * Standardized Wallet Data Object for State Storage and General Use
+ * @param { Object } walletDetails - Object composed of wallet details
+ * @param { String } walletDetails.name - Name of the wallet ( For UI )
+ * @param { String } walletDetails.privK - Private Key for the wallet
+ * @param { String } walletDetails.address - Address for this wallet ( For UI )
+ * @param { String } walletDetauls.curve - Curve used to derrive public key from privK
+ * @param { Boolean } walletDetauls.isInternal - Is this wallet derrives from the Mnemonic HD Chain?
+ * @returns  { Object } - Wallet Object
+ */
+export const constructWalletObject = (name, privK, address, curve, isInternal) => {
+    if (!name || !privK || !address || !curve || typeof isInternal === "undefined") {
+        throw new Error("Attempting to generate standardized wallet object without correct parameters. Verify all function inputs.")
+    }
+    return { name: name, privK: privK, address: address, curve: curve, isInternal: isInternal }
+};
+
 
 export const curveTypes = {
     SECP256K1: 1,
