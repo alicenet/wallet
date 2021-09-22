@@ -1,11 +1,11 @@
 import React from 'react';
 import { connect } from "react-redux";
-import { Input, Button, Grid, Header, Container, TextArea, Form, FormButton } from 'semantic-ui-react';
+import { Input, Button, Grid, Header, Container, TextArea, Form, FormButton, ButtonGroup } from 'semantic-ui-react';
 import { USER_ACTIONS, MODAL_ACTIONS, VAULT_ACTIONS, INTERFACE_ACTIONS } from 'redux/actions/_actions';
 import { useHistory } from 'react-router-dom';
 
 import util from 'util/_util';
-import { electronStoreUtilityActons as utilStoreHelper } from '../../store/electronStoreHelper';
+import { electronStoreUtilityActons, electronStoreUtilityActons as utilStoreHelper } from '../../store/electronStoreHelper';
 
 function DebugActionPanel({ dispatch, vault }) {
 
@@ -28,6 +28,14 @@ function DebugActionPanel({ dispatch, vault }) {
 
     const DButton = (props) => <Form.Button basic size="mini" fluid {...props} className={"m-1 ml-0 " + props.className} />
 
+    /* Check if user has a vault behind the scenes */
+    React.useEffect(() => {
+        const checkForAccount = async () => {
+            await dispatch(USER_ACTIONS.checkForUserAccount());
+        }
+        checkForAccount();
+    }, []);
+
     // Nav Actions //
     const goto = (locationPath) => {
         dispatch(INTERFACE_ACTIONS.DEBUG_toggleShowDebug(false));
@@ -37,18 +45,9 @@ function DebugActionPanel({ dispatch, vault }) {
     ////////////////////////////
     /*      Vault Actions     */
     ////////////////////////////
-    const checkVaultExists = () => {
-        if (false) {
-            setVaultExists(true);
-        }
-        else {
-            setVaultExists(false);
-            setVaultWasntFound(true);
-            setTimeout(() => { setVaultExists("unknown") }, 2000)
-        }
+    const deleteVault = () => {
+        console.log('')
     }
-
-    // testKey, testVal  :: EtestKey, EtestVal
 
     ////////////////////////////
     /* Wallet Util Functions  */
@@ -76,8 +75,19 @@ function DebugActionPanel({ dispatch, vault }) {
     //////////////////////
     // Store Operations //
     //////////////////////
+    const deleteStore = () => {
+        electronStoreUtilityActons.completelyDeleteElectronStore();
+    }
+
     const readValue = async () => {
         let read = await utilStoreHelper.readPlainValueFromStore(customValueRead)
+        if (read.error) { read = read.error }
+        return setStoreReadOutput(read);
+    }
+
+    const readSecure = async () => {
+        if (!vaultPassword) { return setVaultPassword("REQUIRED FOR READ!"); }
+        let read = await utilStoreHelper.readEncryptedValueFromStore(customValueRead, vaultPassword);
         if (read.error) { read = read.error }
         return setStoreReadOutput(read);
     }
@@ -88,7 +98,7 @@ function DebugActionPanel({ dispatch, vault }) {
     }
 
     const saveMnemonicAsVault = async () => {
-        if (!vaultPassword) { return setVaultPassword("REQUIRED!"); }
+        if (!vaultPassword) { return setVaultPassword("REQUIRED FOR VAULT SET!"); }
         let test = await dispatch(VAULT_ACTIONS.generateNewSecureHDVault(testingMnemonic, vaultPassword))
         console.log(test);
     }
@@ -119,7 +129,7 @@ function DebugActionPanel({ dispatch, vault }) {
 
                 </Form>
 
-                <Button size="mini" fluid content="electron_DELETE_STORE_NO_CONFIRM" onClick={() => console.log("DELSTORE")} color="red" className="mt-4" />
+                <Button size="mini" fluid content="electron_DELETE_STORE_NO_CONFIRM" onClick={deleteStore} color="red" className="mt-4" />
 
                 <Header as="h5">Custom Store Write/Reads</Header>
 
@@ -133,7 +143,10 @@ function DebugActionPanel({ dispatch, vault }) {
 
                     <Form.Group widths="equal">
                         <Form.Input value={customValueRead} onChange={e => setCustomValueRead(e.target.value)} size="mini" placeholder="PlainReadKey" />
-                        <FormButton fluid size="mini" content="Read" onClick={readValue} />
+                        <ButtonGroup size="mini">
+                            <FormButton fluid size="mini" content="Read" onClick={readValue} />
+                            <FormButton fluid size="mini" content="Decipher" onClick={readSecure} className="ml-2" />
+                        </ButtonGroup>
                     </Form.Group>
 
                     <Header as="h6" className="mt-1 mb-0">Read Output</Header>
@@ -144,28 +157,32 @@ function DebugActionPanel({ dispatch, vault }) {
             </Grid.Column>
 
             <Grid.Column width={8}>
-                <Header as="h4" className="mb-0">WALLET UTILITY -- FUNCTION TESTING</Header>
-                <Header sub color="red">Testing Mnemonic -- DO NOT USE FOR ANYTHING OTHER THAN TESTING</Header>
+                <Header as="h4" className="mb-0">WALLET / VAULT UTILITY -- FUNCTION TESTING</Header>
+                <Header as="h5" className="mt-2 mb-0">Vault: {String(vault.exists)} </Header>
+                <Header sub color="red" className="mt-2">Testing Mnemonic -- DO NOT USE FOR ELSEWHERE</Header>
                 <TextArea className="w-full mb-0 mt-2" value={testingMnemonic} />
-                <Header sub className="mt-0"> Functions </Header>
 
                 <Form>
-                    <Form.Group widths="equal">
-                        <DButton content="setNewTestingMnemonic" color="orange" onClick={utilWalletSpinNewMnemonc} />
+                    <Form.Group widths="equal" className="mb-0">
+                        <DButton content="getNewTestingMnemonic" color="orange" onClick={utilWalletSpinNewMnemonc} />
                         <DButton content="clearTestingMnemonic" color="red" onClick={() => setTestingMnemonic("")} />
                     </Form.Group>
 
+                    <DButton basic={false} color="green" onClick={saveMnemonicAsVault} content="Save Mnemonic As New Vault" className="m-0" />
+
+                    <Header as="h6" className="m-0 mt-2">HD Chain Functions</Header>
                     <DButton primary disabled={!testingMnemonic || !!seedBytes} content="getSeedBytesFromMnemonic" fluid onClick={getSeedBytesFromMnemonic} />
                     <DButton primary disabled={!seedBytes || !!hdChain} content="getHdChainFromSeedBytes)" fluid onClick={getHDChainFromSeedBytes} />
                     <DButton primary disabled={!hdChain || !!walletNode} content="getWalletNodeFromHdChain)" fluid onClick={getNodeFromHDChain} />
 
-                    <DButton color="purple" className="mt-4" content="Log(SeedBytes,Chain,Wallet)" fluid onClick={() => console.log({ seedBytes: seedBytes, hdChain: hdChain, walletNode: walletNode })} />
+                    <Header as="h6" className="m-0 mt-2">Log</Header>
+                    <DButton color="purple" className="mt-1" content="Log(SeedBytes,Chain,Wallet)" fluid onClick={() => console.log({ seedBytes: seedBytes, hdChain: hdChain, walletNode: walletNode })} />
 
-                    <Form.Input placeholder="Password for vault" size="mini" value={vaultPassword} onChange={e => setVaultPassword(e.target.value)} />
+                    <Header as="h6" className="m-0 mt-2">Cipher/Decipher Key</Header>
+                    <Form.Input placeholder="Password for cipher/decipher & Save New Vault" size="mini" value={vaultPassword} onChange={e => setVaultPassword(e.target.value)} />
 
-                    <DButton basic={false} color="green" onClick={saveMnemonicAsVault} content="Save Mnemonic As New Vault" />
-
-                    <DButton basic={false} color="green" onClick={printMadWalletInstance} content="Print madWallet instance (getMadWallet)" />
+                    <Header as="h6" className="m-0 mt-2">Mad Wallet Instance</Header>
+                    <DButton basic={false} color="purple" basic onClick={printMadWalletInstance} content="Print madWallet instance (getMadWallet)" />
 
                 </Form>
 
@@ -174,8 +191,7 @@ function DebugActionPanel({ dispatch, vault }) {
 
             <Grid.Column width={8}>
                 <Header as="h4">USER ACTIONS</Header>
-                <DButton content="user_lockAccount" onClick={() => dispatch(USER_ACTIONS.lockAccount())} />
-                <DButton content="user_unlockAccount" onClick={() => dispatch(USER_ACTIONS.unlockAccount())} className="mt-2 md:mt-0" />
+                TBD
             </Grid.Column>
 
             <Grid.Column width={8}>
@@ -185,41 +201,8 @@ function DebugActionPanel({ dispatch, vault }) {
 
             <Grid.Column width={8}>
                 <Header as="h4">Goto User Story</Header>
-                <DButton content="New User - Recovery Flow" onClick={ () => goto("/newVault/useRecoveryPhrase")} />
-                <DButton content="Root Flow" onClick={ () => goto("/")} />
-            </Grid.Column>
-
-            <Grid.Column width={16}>
-
-                <Header as="h4">VAULT MANAGEMENT</Header>
-
-                <DButton
-                    content={vaultExists === "unknown" ? "Check For Vault" : vaultExists ? "Vault Exists" : "Not Found!"}
-                    color={vaultExists === "unknown" ? "orange" : vaultExists ? "green" : "red"}
-                    onClick={checkVaultExists}
-                />
-
-                {vaultWasntFound && vaultExists !== true ? (<>
-                    <Input size="mini" placeholder="New Vault Password" action={{ content: "CreateNew", size: "mini" }} className="p-2" />
-                </>) : null}
-
-                {vaultExists === true ? (
-                    <Input disabled={!vaultExists} size="mini" placeholder="Vault Password" action={{ content: "Unlock", size: "mini", disabled: !vaultExists }} className="p-2" />
-                ) : null}
-
-                {vaultExists === true ? (
-                    <DButton color="red" content="Delete Vault" />
-                ) : null}
-
-                {vaultExists !== true && vaultWasntFound ? (<>
-                    <Header sub>New Vault Seed:</Header>
-                    <Container fluid className="text-xs">
-                        Generate a new vault to show its seed. It will encrypted and stored immediately with the above password using AES-512.
-                    </Container>
-                </>
-                ) : null}
-
-
+                <DButton content="New User - Recovery Flow" onClick={() => goto("/newVault/useRecoveryPhrase")} />
+                <DButton content="Root Flow" onClick={() => goto("/")} />
             </Grid.Column>
 
         </Grid>

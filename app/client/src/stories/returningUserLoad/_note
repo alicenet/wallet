@@ -1,0 +1,9 @@
+User Stories Pertaining To:
+
+- As a returning user I want to unlock my Vault
+- As a returning opt-out user I want to unlock my keystores
+
+Has Vault:
+
+1 - HasExistingVault -- Check password
+2 - Forward to ReturningUserHub if OK
