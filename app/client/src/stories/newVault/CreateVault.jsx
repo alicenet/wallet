@@ -1,8 +1,8 @@
 import React from 'react';
 
-import { useHistory } from 'react-router-dom';
+import {useHistory} from 'react-router-dom';
 
-import { Button, Container, Grid, Header } from 'semantic-ui-react';
+import {Button, Container, Grid, Header} from 'semantic-ui-react';
 
 import Page from '../../layout/Page';
 
@@ -43,14 +43,14 @@ function CreateVault() {
 
                 </Grid.Column>
 
-                <Grid.Column width={16} className="p-0 self-center">
+                <Grid.Column width={5} className="p-0 self-center">
 
-                    <Container className="flex flex-col justify-between gap-2 w-80">
+                    <Container className="flex flex-col justify-between gap-2">
 
-                        <Button color="purple" basic content="Get Seed Phrase" fluid
+                        <Button color="purple" basic content="Get Seed Phrase" className="m-0"
                                 onClick={() => history.push('/newVault/getNewSeedPhrase')}/>
 
-                        <Button color="orange" basic content="Just Generate A Keystore" fluid
+                        <Button color="orange" basic content="Use A Keystore" className="m-0"
                                 onClick={() => history.push('/optOut/disclaimer')}/>
 
                         <DeterministicWalletGenerationModal>
