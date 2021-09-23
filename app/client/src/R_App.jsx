@@ -1,7 +1,7 @@
 import React from 'react';
-import {Container} from 'semantic-ui-react';
-import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
-import ReduxStateViewer, {handleDebugListener} from 'redux/debug/StateViewer';
+import { Container } from 'semantic-ui-react';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import ReduxStateViewer, { handleDebugListener } from 'redux/debug/StateViewer';
 import util from 'util/_util';
 
 // User Story Components
@@ -32,6 +32,7 @@ function App() {
 
                 {/* New User - Vault Opt Out Flow */}
                 <Route exact path="/optOut/disclaimer" component={OptOutFlow.VaultOptOutDisclaimer}/>
+                <Route exact path="/optOut/createKeystore" component={OptOutFlow.CreateAKeystore}/>
 
                 {/* New Vault User Flow */}
                 <Route exact path="/newVault/createVault" component={NewVaultFlows.CreateVault}/>
@@ -62,15 +63,12 @@ function App() {
 
     return (
         <Container fluid className="h-full w-full justify-center items-center">
-
             <Router>
-
                 <Switch>
                     <DefaultRoutes/>
                 </Switch>
                 <DebugTools/>
             </Router>
-
         </Container>
     );
 }
