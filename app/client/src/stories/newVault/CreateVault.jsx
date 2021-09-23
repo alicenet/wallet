@@ -43,7 +43,7 @@ function CreateVault() {
 
                 </Grid.Column>
 
-                <Grid.Column width={5} className="p-0 self-center">
+                <Grid.Column width={6} className="p-0 self-center">
 
                     <Container className="flex flex-col justify-between gap-2">
 

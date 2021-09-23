@@ -71,8 +71,6 @@ function SecureNewVault() {
 
                 <Grid.Column width={10} className="p-0 self-center text-sm">
 
-                    <p>One last thing!</p>
-
                     <p>Please select a password to secure your vault.</p>
 
                     <p>This password will be used to lock your wallets when you are not using them as well as to perform
