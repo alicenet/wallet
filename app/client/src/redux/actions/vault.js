@@ -24,12 +24,11 @@ the mutable Wallet objects themselves are handled within MadNetWalletJS's instan
  * @param {String} password  - Password to encrypt vault with
  * @param {String} curveType - Curve type for public address derivation :: default: see util.wallet curve types -- Default secp256k1
  */
-export function generateNewSecureHDVault(mnemonic, password, curveType = util.wallet.curveTypes.SECP256K1 ) {
+export function generateNewSecureHDVault(mnemonic, password, curveType = util.wallet.curveTypes.SECP256K1) {
     return async function (dispatch) {
         let [preflightHash, firstWalletNode] = await electronStoreCommonActions.createNewSecureHDVault(mnemonic, password, curveType);
         electronStoreCommonActions.storePreflightHash(preflightHash); // Store preflight hash for pre-action auth checking
-        dispatch({ type: VAULT_ACTION_TYPES.SET_PREFLIGHT_HASH, payload: preflightHash }); // Dispatch the preflightHash Update
-        const preInitPayload = { wallets: { internal: [{ privK: firstWalletNode.privateKey.toString('hex'), name: "Main Wallet", curve: curveType }], external: [] }, curve: curveType }; // Payload needed by initMadWallet() in WalletManagerMiddleware
+        const preInitPayload = { wallets: { internal: [{ privK: firstWalletNode.privateKey.toString('hex'), name: "Main Wallet", curve: curveType }], external: [] } }; // Payload needed by initMadWallet() in WalletManagerMiddleware
         dispatch({ type: MIDDLEWARE_ACTION_TYPES.INIT_MAD_WALLET, payload: preInitPayload }); // Pass off to MadWalletMiddleware to finish state initiation
     }
 }
@@ -39,7 +38,38 @@ export function generateNewSecureHDVault(mnemonic, password, curveType = util.wa
  * @param { String } password - The password used to initially encrypt the vault 
  */
 export function loadSecureHDVaultFromStorage(password) {
-    // TODO:
+    return async function (dispatch) {
+        let wu = util.wallet;
+        // Unlock vault for parsing and note the mnemonic for HD wallets 
+        const unlockedVault = await electronStoreCommonActions.unlockAndGetSecuredHDVault(password);
+        const mnemonic = unlockedVault.mnemonic;
+        const hdLoadCount = unlockedVault.hd_wallet_count;
+        const hdCurve = unlockedVault.hd_wallet_curve;
+        // Verify curve integrity
+        if (hdCurve !== 1 && hdCurve !== 2) {
+            throw new Error("Vault state HD Curve is incoompatible. Should be int(1) or int(2). Curve read: " + hdCurve);
+        }
+        // Extract internal wallets by using mnemonic
+        let hdNodesToLoad = [];
+        for (let i = 1; i <= hdLoadCount; i++) {
+            hdNodesToLoad.push(i);
+        }
+        const internalHDWallets = await wu.streamLineHDWalletNodesFromMnemonic(mnemonic, hdNodesToLoad);
+        const preInitPayload = { wallets: { internal: [], external: [] } }; // Payload needed by initMadWallet() in WalletManagerMiddleware
+        internalHDWallets.forEach((walletNode, nodeIdx) => {
+            const walletName = unlockedVault.wallets.internal[nodeIdx].name; // Pair walletNode IDX with it's name
+            // Construct the wallet Object
+            const internalWalletObj = {
+                name: walletName,
+                privK: walletNode.privateKey.toString('hex'),
+                curve: hdCurve,
+            }
+            preInitPayload.wallets.internal.push(internalWalletObj); // Add it to the wallet init
+        })
+        // CAT - TODO: Add external wallet parsing support
+        dispatch({ type: MIDDLEWARE_ACTION_TYPES.INIT_MAD_WALLET, payload: preInitPayload }); // Pass off to MadWalletMiddleware to finish state initiation
+        return true;
+    }
 }
 
 /** After a vault has been decrypted call this actions for any wallets to be added to the internal keyring and to the MadWallet object within state

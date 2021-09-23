@@ -1,5 +1,5 @@
 import { connect } from "react-redux";
-import { Grid, Table, Header } from 'semantic-ui-react';
+import { Grid, Table, Header, Button } from 'semantic-ui-react';
 import DebugActionPanel from "./DebugActionPanel";
 import store from 'redux/store/store';
 import log from 'loglevel';
@@ -49,7 +49,10 @@ function StateViewer({ redux }) {
         <Grid padded className={lstyle.debugInterface}>
 
             <Grid.Column width={16}>
-                <Header as="h2">State Actions</Header>
+                <div className="flex items-center justify-between">
+                    <Header as="h2">State Actions</Header>
+                    <Button size="mini" content="Print Redux State" onClick={() => console.log(redux)} />
+                </div>
                 <DebugActionPanel />
             </Grid.Column>
 
