@@ -33,13 +33,15 @@ class StoreMessenger {
      * @param { String } algorithm 
      * @param { Uint8Array } iv 
      * @param { String } cipherText 
+     * @param { String } salt
      * @returns 
      */
-    _createEncryptedValueStoreJSONString(algorithm, iv, cipherText) {
+    _createEncryptedValueStoreJSONString(algorithm, iv, cipherText, salt) {
         return JSON.stringify({
             algorithm: algorithm,
             cipherText: cipherText,
             iv: iv,
+            salt: salt,
         });
     }
 
@@ -119,8 +121,9 @@ class StoreMessenger {
 
     async writeEncryptedToStore(key, value, password) {
         const algorithm = 'aes-256-cbc';
-
-        let sKey = await scrypt(new Buffer.from(password), new Buffer.from('salt'), 1024, 8, 1, 32, () => { });
+    
+        const salt = crypto.randomBytes(64);
+        let sKey = await scrypt(new Buffer.from(password), new Buffer.from(salt), 1024, 8, 1, 32, () => { });
 
         crypto.randomFill(new Uint8Array(16), (err, iv) => {
             if (err) throw err;
@@ -132,7 +135,7 @@ class StoreMessenger {
 
             cipher.on('data', (chunk) => encrypted += chunk);
             cipher.on('end', () => {
-                let storageJson = this._createEncryptedValueStoreJSONString(algorithm, iv, encrypted);
+                let storageJson = this._createEncryptedValueStoreJSONString(algorithm, iv, encrypted, salt);
                 log.debug('Encrypted Value prepared for storage with key: ' + key + " and JSON: ", JSON.parse(storageJson));
                 this.writeToStore(key, storageJson)
             });
@@ -156,9 +159,9 @@ class StoreMessenger {
         const cipherText = encryptedJsonObj.cipherText;
         const algorithm = encryptedJsonObj.algorithm;
         const iv = new Uint8Array(Object.values(encryptedJsonObj.iv));
-        const key = await scrypt(Buffer.from(password), Buffer.from('salt'), 1024, 8, 1, 32);
+        const key = await scrypt(Buffer.from(password), encryptedJsonObj.salt.data, 1024, 8, 1, 32);
 
-        let decipher = await crypto.createDecipheriv(algorithm, key, iv);
+        let decipher = crypto.createDecipheriv(algorithm, key, iv);
         let decrypted = "";
 
         try {
