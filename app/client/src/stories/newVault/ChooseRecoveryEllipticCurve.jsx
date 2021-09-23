@@ -21,7 +21,7 @@ function ChooseRecoveryEllipticCurve() {
 
     const [curveType, setCurveType] = React.useState(desiredCurve || curveTypes.SECP256K1)
 
-    const loadMyVault = () => {
+    const secureMyVault = () => {
         dispatch(USER_ACTIONS.setDesiredCurveType(curveType));
         history.push('/newVault/secureNewVault');
     }
@@ -41,7 +41,7 @@ function ChooseRecoveryEllipticCurve() {
 
                     <p>You have successfully entered your seed phrase.</p>
 
-                    <Container fluid className="text-left">
+                    <Container fluid>
 
                         {seedPhrase.map((word, index) =>
                             <Button
@@ -113,7 +113,7 @@ function ChooseRecoveryEllipticCurve() {
 
                         <Button color="purple" basic content="Back" className="m-0" onClick={() => history.push('/newVault/useRecoveryPhrase')}/>
 
-                        <Button color="teal" basic content="Secure My Vault" className="m-0" onClick={loadMyVault}/>
+                        <Button color="teal" basic content="Secure My Vault" className="m-0" onClick={secureMyVault}/>
 
                     </Container>
 
