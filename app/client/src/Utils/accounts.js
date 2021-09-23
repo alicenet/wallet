@@ -41,8 +41,8 @@ class Accounts {
         try {
             let web3 = new Web3();
             // Below two vars currently unused
-            let wallet = web3.eth.accounts.wallet.create(1)
-            let acct = await web3.eth.accounts.wallet.add(wallet[0]) 
+            // let wallet = web3.eth.accounts.wallet.create(1)
+            // let acct = await web3.eth.accounts.wallet.add(wallet[0]) 
             let ks = await web3.eth.accounts.wallet.encrypt(password)
             ks = ks[0]
             if (curve) {

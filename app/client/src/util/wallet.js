@@ -1,7 +1,5 @@
-
 import { v4 as uuidv4 } from 'uuid';
 import { utilsWallet_logger as log } from 'log/logHelper';
-import Web3 from 'web3'
 const bip39 = require('bip39');
 var HDKey = require('hdkey');
 
@@ -146,7 +144,7 @@ export function generateKeystore(asBlob, password, curve = 1) {
     return asBlob ? ksJSONBlob : keystore;
 }
 
-* Standardized Wallet Data Object for State Storage and General Use
+/** Standardized Wallet Data Object for State Storage and General Use
  * @param { Object } walletDetails - Object composed of wallet details
  * @param { String } walletDetails.name - Name of the wallet ( For UI )
  * @param { String } walletDetails.privK - Private Key for the wallet

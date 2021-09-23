@@ -10,9 +10,6 @@ import * as NewVaultFlows from './stories/newVault/_newVault';
 import * as OptOutFlow from './stories/optOut/_optOut';
 import * as ReturningUserLoadFlows from './stories/returningUserLoad/_returnUserLoad';
 
-// TESTING
-import TestingBay from './stories/TestingBay';
-
 /**
  * Main App Entrypoint
  */
@@ -28,7 +25,7 @@ function App() {
         return (
             <>
 
-                <Route exact path="/" component={TestingBay}/>
+                <Route exact path="/" component={Hubs.NewUserHub}/>
 
                 {/* New User Hub -- Send after determining no vault exists */}
                 <Route exact path="/newUserHub" component={Hubs.NewUserHub}/>
