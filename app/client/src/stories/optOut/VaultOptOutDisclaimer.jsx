@@ -19,7 +19,7 @@ function VaultOptOutDisclaimer() {
 
                 <Grid.Column width={16} className="p-0 self-center">
 
-                    <Header content="Vault Opt Out" as="h3" className="m-0"/>
+                    <Header content="Vault Opt Out" as="h3" className="m-0" />
 
                 </Grid.Column>
 
@@ -53,12 +53,22 @@ function VaultOptOutDisclaimer() {
                     <Container className="flex justify-between">
 
                         <div>
-                            <Button color="orange" basic content="Go Back" className="m-0 h-11" onClick={() => history.goBack()}/>
 
-                            <Button color="purple" basic disabled={!isChecked} content="Generate Keystore" fluid onClick={() => history.push('/YourSeedPhrase')}/>
+                            <Button color="orange" basic content="Go Back" className="m-0 h-11" onClick={() => history.goBack()} />
 
-                            <Checkbox onChange={() => setIsChecked(prevState => !prevState)} checked={isChecked}
-                                      label={<label className="text-sm">I Understand and wish to opt out of vault storage</label>}/>
+                        </div>
+
+                        <div className="flex flex-col gap-2">
+
+                            <Button.Group size='large'>
+
+                                <Button color="purple" basic disabled={!isChecked} content="New" className="m-0 h-11" onClick={() => history.push('/YourSeedPhrase')} />
+
+                                <Button.Or className="w-0 self-center text-sm" />
+
+                                <Button color="purple" basic disabled={!isChecked} content="Existing" className="m-0 h-11" onClick={() => history.push('/YourSeedPhrase')} />
+
+                            </Button.Group>
 
                         </div>
 
