@@ -29,7 +29,7 @@ function EnterRecoveryPhrase() {
 
     React.useEffect(() => {
         seedPhraseIsCorrect ?
-            setVerifyPhraseButtonText("Verify Phrase")
+            setVerifyPhraseButtonText("Use This Phrase")
             : setVerifyPhraseButtonText("Phrase isn't correct");
     }, [seedPhraseIsCorrect]);
 
