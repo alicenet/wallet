@@ -10,7 +10,6 @@ import { useDispatch } from "react-redux";
 function NewUserHub() {
 
     const [openModal, setOpenModal] = React.useState(false)
-    const [checkUserLoader, setCheckUserLoader] = React.useState();
 
     const history = useHistory();
     const dispatch = useDispatch();
