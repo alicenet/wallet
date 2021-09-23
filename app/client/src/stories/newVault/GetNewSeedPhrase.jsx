@@ -55,7 +55,7 @@ function GetNewSeedPhrase() {
 
                             <GridRow key={`seed-row-${index}`}>
 
-                                {someSeeds.map((word, position) => <Grid.Column key={`seed-${position}-${word}`}>{word}</Grid.Column>)}
+                                {someSeeds.map((word, position) => <Grid.Column key={`seed-column-${position}`}>{word}</Grid.Column>)}
 
                             </GridRow>
                         )}
