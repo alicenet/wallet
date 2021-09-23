@@ -10,7 +10,7 @@ import { VAULT_ACTIONS } from 'redux/actions/_actions'
 
 import Page from '../../layout/Page';
 
-function SecureNewVault() {
+function CreateAKeystore() {
 
     const history = useHistory();
     const dispatch = useDispatch();
@@ -19,9 +19,16 @@ function SecureNewVault() {
         desiredCurve: state.user.desired_hd_curve
     }));
 
-    const [formState, formSetter] = useFormState(["password", "verifiedPassword"]);
+    const [formState, formSetter] = useFormState(["name", "password", "verifiedPassword"]);
 
     const handleFormSubmit = () => {
+        if (!formState.name.value) {
+            return formSetter.setNameError("Name is required");
+        }
+        else {
+            formSetter.clearNameError()
+        }
+
         if (!formState.password.value) {
             return formSetter.setPasswordError("Password is required");
         }
@@ -55,26 +62,17 @@ function SecureNewVault() {
 
                 <Grid.Column width={16} className="p-0 self-center">
 
-                    <Header content="Vault and First Wallet Generated" as="h3" className="m-0"/>
+                    <Header content="Create A Keystore" as="h3" className="m-0"/>
 
                 </Grid.Column>
 
-                <Grid.Column width={16} className="p-0 self-center">
+                <Grid.Column width={16} className="p-0 self-center text-sm">
 
-                    <p className="text-green-400">
+                    <p>Please select a password to secure your keystore and act as a general administration password.</p>
 
-                        <strong>Your vault and first wallet has been created!</strong>
+                    <p>The keystore password will be used to lock your keystore. You will need it to load this wallet again.</p>
 
-                    </p>
-
-                </Grid.Column>
-
-                <Grid.Column width={10} className="p-0 self-center text-sm">
-
-                    <p>Please select a password to secure your vault.</p>
-
-                    <p>This password will be used to lock your wallets when you are not using them as well as to perform
-                        general wallet administrative tasks such as exporting private keys. Do not lose it!</p>
+                    <p>The administrative password is used for general administrative tasks.</p>
 
                 </Grid.Column>
 
@@ -85,8 +83,22 @@ function SecureNewVault() {
                         <Form.Group className="flex flex-auto flex-col m-0 text-left text-sm gap-5">
 
                             <Form.Input
+                                id='name'
+                                label='Keystore Name'
+                                placeholder='Enter Name'
+                                type='text'
+                                required
+                                onChange={e => {
+                                    formSetter.setName(e.target.value)
+                                }}
+                                error={!!formState.name.error && {
+                                    content: formState.name.error
+                                }}
+                            />
+
+                            <Form.Input
                                 id='password'
-                                label='Password'
+                                label='Keystore Password'
                                 placeholder='Enter Password'
                                 type='password'
                                 required
@@ -122,7 +134,7 @@ function SecureNewVault() {
 
                     <Container className="flex justify-between">
 
-                        <Button color="red" basic content="Cancel Vault Creation" className="m-0" onClick={() => history.push('/')}/>
+                        <Button color="red" basic content="Back" className="m-0" onClick={() => history.push('/optOut/disclaimer')}/>
 
                         <Button color="teal" basic content='Secure My Wallets' className="m-0" onClick={handleFormSubmit}/>
 
@@ -136,4 +148,4 @@ function SecureNewVault() {
 
 }
 
-export default SecureNewVault;
+export default CreateAKeystore;

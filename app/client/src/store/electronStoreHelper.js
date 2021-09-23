@@ -96,7 +96,7 @@ function readEncryptedValueFromStore(key, password) {
     _requireKeyPassword("readEncryptedValueFromStore", key, password);
     return new Promise(res => {
         electronStoreMessenger.readEncryptedFromStore(key, password, async (err, keyOfValue, value) => {
-            if (err) { console.error(err); return { error: err }; }
+            if (err) { log.error(err); return { error: err }; }
             log.debug("Plain K:V decrypted from electron store => " + keyOfValue + " : " + value);
             res(value);
         })

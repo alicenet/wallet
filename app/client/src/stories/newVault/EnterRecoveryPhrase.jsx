@@ -29,7 +29,7 @@ function EnterRecoveryPhrase() {
 
     React.useEffect(() => {
         seedPhraseIsCorrect ?
-            setVerifyPhraseButtonText("Verify Phrase")
+            setVerifyPhraseButtonText("Use This Phrase")
             : setVerifyPhraseButtonText("Phrase isn't correct");
     }, [seedPhraseIsCorrect]);
 
@@ -84,7 +84,7 @@ function EnterRecoveryPhrase() {
 
                             <Label attached='top'>Seed Phrase</Label>
 
-                            <TextArea ref={input => input && input.focus()} fluid rows={3} value={seedPhrase} onChange={e => handlePhraseChange(e.target.value)}
+                            <TextArea ref={input => input && input.focus()} rows={3} value={seedPhrase} onChange={e => handlePhraseChange(e.target.value)}
                                       className="border-0 hover:border-gray-500 focus:border-gray-500 focus:outline-none w-full p-3 resize-none"/>
 
                         </Segment>

@@ -30,7 +30,7 @@ function VerifyYourSeedPhrase() {
         if (seedPhraseIsCorrect) {
             setVerifyPhraseButtonText("Verify Phrase")
         } else {
-            setVerifyPhraseButtonText("Phrase isn't correct yet!")
+            setVerifyPhraseButtonText("Phrase isn't correct!")
         }
     }, [seedPhraseIsCorrect]);
 

@@ -47,9 +47,9 @@ function GetNewSeedPhrase() {
 
                 </Grid.Column>
 
-                <Grid.Column width={12} className="self-center">
+                <Grid.Column width={12} className="p-0 self-center">
 
-                    <Grid celled columns={6}>
+                    <Grid celled columns={6} className="m-0">
 
                         {chunk(seedPhraseSplitted, Math.floor(seedPhraseSplitted.length / 2)).map((someSeeds, index) =>
 
