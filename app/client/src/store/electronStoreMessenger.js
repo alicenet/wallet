@@ -115,8 +115,8 @@ class StoreMessenger {
 
     async writeEncryptedToStore(key, value, password) {
         const algorithm = 'aes-256-cbc';
-
-        const salt = crypto.randomBytes(512);
+    
+        const salt = crypto.randomBytes(64);
         let sKey = await scrypt(new Buffer.from(password), new Buffer.from(salt), 1024, 8, 1, 32, () => { });
 
         crypto.randomFill(new Uint8Array(16), (err, iv) => {
