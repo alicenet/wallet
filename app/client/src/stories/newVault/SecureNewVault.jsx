@@ -69,7 +69,7 @@ function SecureNewVault() {
 
                 </Grid.Column>
 
-                <Grid.Column width={12} className="p-0 self-center text-sm">
+                <Grid.Column width={10} className="p-0 self-center text-sm">
 
                     <p>One last thing!</p>
 
@@ -96,8 +96,7 @@ function SecureNewVault() {
                                     formSetter.setPassword(e.target.value)
                                 }}
                                 error={!!formState.password.error && {
-                                    content: formState.password.error,
-                                    pointing: 'below',
+                                    content: formState.password.error
                                 }}
                             />
 
@@ -111,8 +110,7 @@ function SecureNewVault() {
                                     formSetter.setVerifiedPassword(e.target.value)
                                 }}
                                 error={!!formState.verifiedPassword.error && {
-                                    content: formState.verifiedPassword.error,
-                                    pointing: 'below',
+                                    content: formState.verifiedPassword.error
                                 }}
                             />
 
