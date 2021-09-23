@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from "react-redux";
-import { Input, Button, Grid, Header, Container, TextArea, Form, FormButton, ButtonGroup } from 'semantic-ui-react';
+import { Button, Grid, Header, TextArea, Form, FormButton, ButtonGroup } from 'semantic-ui-react';
 import { USER_ACTIONS, MODAL_ACTIONS, VAULT_ACTIONS, INTERFACE_ACTIONS } from 'redux/actions/_actions';
 import { useHistory } from 'react-router-dom';
 
@@ -11,8 +11,6 @@ function DebugActionPanel({ dispatch, vault }) {
 
     const history = useHistory();
 
-    const [vaultExists, setVaultExists] = React.useState("unknown");
-    const [vaultWasntFound, setVaultWasntFound] = React.useState(false);
     const [testingMnemonic, setTestingMnemonic] = React.useState("unknown hold print furnace paper walk crucial junk country list phrase because");
 
     const [valueToWrite, setValueToWrite] = React.useState("");
@@ -34,7 +32,7 @@ function DebugActionPanel({ dispatch, vault }) {
             await dispatch(USER_ACTIONS.checkForUserAccount());
         }
         checkForAccount();
-    }, []);
+    }, [dispatch]);
 
     // Nav Actions //
     const goto = (locationPath) => {

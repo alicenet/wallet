@@ -1,22 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types'
 
-import { useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import {useDispatch, useSelector} from 'react-redux';
+import {useHistory} from 'react-router-dom';
 
 import Page from '../../layout/Page';
 
 import chunk from 'lodash/chunk';
 
-import { Button, Checkbox, Container, Grid, GridRow, Header } from 'semantic-ui-react';
+import {Button, Checkbox, Container, Grid, GridRow, Header} from 'semantic-ui-react';
 
-import { USER_ACTIONS } from 'redux/actions/_actions';
+import {USER_ACTIONS} from 'redux/actions/_actions';
 
 function GetNewSeedPhrase() {
 
     const history = useHistory();
     const dispatch = useDispatch();
-    const { seedPhrase } = useSelector(state => ({ seedPhrase: state.user.potential_seed_phrase }));
+    const {seedPhrase} = useSelector(state => ({seedPhrase: state.user.potential_seed_phrase}));
 
     const seedPhraseSplitted = seedPhrase.split(' '); // Split to array
 
@@ -47,7 +47,7 @@ function GetNewSeedPhrase() {
 
                 </Grid.Column>
 
-                <Grid.Column width={14} className="self-center">
+                <Grid.Column width={12} className="self-center">
 
                     <Grid celled columns={6}>
 
@@ -55,7 +55,7 @@ function GetNewSeedPhrase() {
 
                             <GridRow key={`seed-row-${index}`}>
 
-                                {someSeeds.map(word => <Grid.Column key={word}>{word}</Grid.Column>)}
+                                {someSeeds.map((word, position) => <Grid.Column key={`seed-column-${position}`}>{word}</Grid.Column>)}
 
                             </GridRow>
                         )}
@@ -82,13 +82,15 @@ function GetNewSeedPhrase() {
 
                         <div>
 
-                            <Button color="orange" basic className="m-0" content="Go Back" onClick={() => history.goBack()}/>
+                            <Button color="orange" basic className="m-0" content="Go Back"
+                                    onClick={() => history.push('/newVault/createVault')}/>
 
                         </div>
 
                         <div className="flex flex-col gap-2">
 
-                            <Button color="purple" basic disabled={!isChecked} content="Verify The Seed Phrase" onClick={() => history.push('/newVault/verifySeedPhrase')}
+                            <Button color="purple" basic disabled={!isChecked} content="Verify The Seed Phrase"
+                                    onClick={() => history.push('/newVault/verifySeedPhrase')}
                                     className="m-0"/>
 
                             <Checkbox onChange={() => setIsChecked(prevState => !prevState)} checked={isChecked}
