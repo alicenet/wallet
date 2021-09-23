@@ -51,7 +51,7 @@ export function loadSecureHDVaultFromStorage(password) {
         }
         // Extract internal wallets by using mnemonic
         let hdNodesToLoad = [];
-        for (let i = 1; i <= hdLoadCount; i++) {
+        for (let i = 0; i < hdLoadCount; i++) {
             hdNodesToLoad.push(i);
         }
         const internalHDWallets = await wu.streamLineHDWalletNodesFromMnemonic(mnemonic, hdNodesToLoad);

@@ -75,4 +75,4 @@ export const safeJsonParse = (str) => {
     }
 }
 
-export const isDebug = () => { return process.env.REACT_APP_DEBUG };
+export const isDebug = process.env.REACT_APP_DEBUG === "TRUE";

@@ -51,14 +51,20 @@ function initMadWallet(initPayload, dispatch) {
         allToAdd.forEach((addition) => { addedPromises.push(madWallet.Account.addAccount(addition[0], addition[1])); }); // [privK, curveInt] })
         let internalWallets = [];
         let externalWallets = [];
+
         Promise.all(addedPromises).then(() => {
-            // After adding inject internal || external based on match in previous array
+            // After adding inject internal || external based on match in previous array to redux state with constructed wallet objects
             madWallet.Account.accounts.forEach(account => {
                 let signerKeyToUse = parseInt(account.MultiSigner.curve) === 1 ? "secpSigner" : "bnSigner";  // Key to use under MultiSigner for this account to get privK
-                let privK = account.MultiSigner[signerKeyToUse].privK;
-                // Compare each account for its existance in internal vs external -- If it's within internal keys assume it's internal else external
+                let privK = account.MultiSigner[signerKeyToUse].privK; // Note the privK
+                let filteredPk;
+                let match = allToAdd.filter(addition => {
+                    filteredPk = addition[0];
+                    return addition[0] === privK
+                })[0]; // Match privK to current account from MadNetWallet.accounts
+                // Construct the wallet based off of data creation from madwallet -- We let mad wallet build this data and then store it back to state 
                 let walletObj = util.wallet.constructWalletObject(
-                    allToAdd.filter(addition => addition[0] === privK)[0][2], // 2nd index in initial parsing gives us the name,
+                    match[2], // 2nd index in initial parsing gives us the name,
                     account.MultiSigner[signerKeyToUse].privK,
                     account.address,
                     signerKeyToUse === "bnSigner" ? util.wallet.curveTypes.BARRETO_NAEHRIG : util.wallet.curveTypes.SECP256K1,

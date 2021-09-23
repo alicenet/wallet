@@ -55,7 +55,7 @@ function App() {
     }
 
     const DebugTools = () => {
-        return util.generic.isDebug() ? (<>
+        return util.generic.isDebug ? (<>
             <ReduxStateViewer/>
         </>) : null
     }

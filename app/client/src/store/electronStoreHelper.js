@@ -131,9 +131,10 @@ function createNewSecureHDVault(mnemonic, password, curveType = "secp256k1") {
         // Generate keccak256 hash of the password -- Returned for any preflights if desired
         let passwordHash = web3Utils.keccak256(password);
         // Get seedBytes => chain => firstWalletNode
-        let seedBytes = wu.getSeedBytesFromMnemonic(mnemonic);
+        let seedBytes = await wu.getSeedBytesFromMnemonic(mnemonic);
         let hdChain = wu.getHDChainFromSeedBytes(seedBytes);
         let firstWalletNode = wu.getHDWalletNodeFromHDChain(hdChain, 0);
+
         // Create the vault object string
         const vaultObjectString = JSON.stringify({
             mnemonic: mnemonic,

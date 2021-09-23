@@ -22,7 +22,7 @@ function DebugActionPanel({ dispatch, vault }) {
     const [hdChain, setHdChain] = React.useState(false);
     const [walletNode, setWalletNode] = React.useState(false);
 
-    const [vaultPassword, setVaultPassword] = React.useState("");
+    const [vaultPassword, setVaultPassword] = React.useState("testing");
 
     const DButton = (props) => <Form.Button basic size="mini" fluid {...props} className={"m-1 ml-0 " + props.className} />
 
@@ -44,7 +44,7 @@ function DebugActionPanel({ dispatch, vault }) {
     /*      Vault Actions     */
     ////////////////////////////
     const deleteVault = () => {
-        console.log('')
+        console.log('TBD')
     }
 
     ////////////////////////////
@@ -98,7 +98,6 @@ function DebugActionPanel({ dispatch, vault }) {
     const saveMnemonicAsVault = async () => {
         if (!vaultPassword) { return setVaultPassword("REQUIRED FOR VAULT SET!"); }
         let test = await dispatch(VAULT_ACTIONS.generateNewSecureHDVault(testingMnemonic, vaultPassword))
-        console.log(test);
     }
 
     const printMadWalletInstance = () => {

@@ -18,10 +18,10 @@ function NewUserHub() {
     React.useEffect(() => {
         const checkForAccount = async () => {
             let hasAccount = await dispatch(USER_ACTIONS.checkForUserAccount());
-            if ( hasAccount ) { history.push('/returningUserLoad/hasExistingVault')};
+            if (hasAccount) { history.push('/returningUserLoad/hasExistingVault') };
         }
         checkForAccount();
-    }, []);
+    }, [history, dispatch]);
 
     const useRecoveryPhrase = () => {
         dispatch(USER_ACTIONS.clearMnemonic());

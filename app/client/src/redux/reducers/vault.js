@@ -50,7 +50,7 @@ export default function vaultReducer(state = initialVaultState, action) {
                 is_locked: true,
             })
 
-        case VAULT_ACTION_TYPES.MARK_EXISTS_AND_LOCKED:
+        case VAULT_ACTION_TYPES.MARK_EXISTS_AND_UNLOCKED:
             log.debug(["Marking Vault as non-existing and not-locked"]);
             return Object.assign({}, state, {
                 exists: false,

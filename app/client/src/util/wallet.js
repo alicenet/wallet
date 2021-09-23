@@ -58,8 +58,16 @@ export function getHDChainFromSeedBytes(seedBytes) {
  * @returns { HDKey } - HD Keychain's requested Node
  */
 export function getHDWalletNodeFromHDChain(hdChain, nodeNum) {
-    const node = hdChain.derive("m'/44'/60'/0'/0" + String(nodeNum));
-    log.debug(`A Wallet Node has been requested`, { nodeNumber: nodeNum, node: node, nodeExtendedPrivKey: node.privateExtendedKey });
+    const derivationPath = "m/44'/60'/0'/0/" + String(nodeNum);
+    const node = hdChain.derive(derivationPath);
+    log.debug(`A Wallet Node has been requested`, {
+        nodeNumber: nodeNum,
+        derivationPath: derivationPath,
+        node: node,
+        nodeExtendedPrivKey: node.privateExtendedKey,
+        privK: node.privateKey.toString('hex'),
+        pubK: node.publicKey.toString('hex'),
+    });
     return node;
 }
 
@@ -85,9 +93,14 @@ export function streamLineHDWalletNodeFromMnemonic(mnemonic, nodeNum) {
     return new Promise(async res => {
         const seedBytes = await getSeedBytesFromMnemonic(mnemonic);
         const hdChain = getHDChainFromSeedBytes(seedBytes);
-        res(getHDWalletNodeFromHDChain(hdChain, nodeNum));
+        const walletNode = getHDWalletNodeFromHDChain(hdChain, nodeNum);
+        res(walletNode);
     })
 }
+
+// let seedBytes = wu.getSeedBytesFromMnemonic(mnemonic);
+// let hdChain = wu.getHDChainFromSeedBytes(seedBytes);
+// let firstWalletNode = wu.getHDWalletNodeFromHDChain(hdChain, 0);
 
 /**
  * Quickly get a set of derivative wallets from a Mnemonic using wallet utilities from utils/wallet.js

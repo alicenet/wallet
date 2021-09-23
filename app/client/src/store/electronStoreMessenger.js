@@ -1,5 +1,5 @@
 /* Code for prepping events and dependencies for the secure-electon-store */
-import { readConfigRequest, readConfigResponse, writeConfigRequest, deleteConfigRequest, deleteConfigResponse  } from "secure-electron-store";
+import { readConfigRequest, readConfigResponse, writeConfigRequest, deleteConfigRequest, deleteConfigResponse } from "secure-electron-store";
 import { electronStoreMessenger_logger as log, ADDITIONAL_LOG_OPTS } from 'log/logHelper';
 import { v4 as uuidv4 } from 'uuid';
 import util from 'util/_util';
@@ -17,6 +17,16 @@ class StoreMessenger {
 
     constructor() {
         this.subscribers = {};
+        this.storeAvailable = !!window && !!window.api && !!window.api.store
+        if (this.storeAvailable) {
+            log.debug("DEBUG: Store files located in: ", window.api.store.path)
+        } else {
+            log.warn("secure-electron-store not available. Fallback only available in debug mode set accordingly.");
+            if (!util.generic.isDebug) {
+                throw new Error("When running application without a store, you must be in debug mode to proceed. Set .env accordingly.")
+            }
+        }
+        this.fakeStore = {};
     }
 
     /**
@@ -109,11 +119,21 @@ class StoreMessenger {
      * @param {*} value - Value to be stored
      */
     writeToStore(key, value) {
+        if (!this.storeAvailable) { return this._writeToFakeStore(key, value) }
         window.api.store.send(writeConfigRequest, key, value);
         if (util.generic.stringHasJsonStructure(value)) {
             log.debug('JSON Like Structure written as value with key: ' + key, JSON.parse(value));
         } else {
             log.debug('Plain Value written to store with key: ' + key + " and value:", value);
+        }
+    }
+
+    _writeToFakeStore(key, value) {
+        this.fakeStore[key] = value;
+        if (util.generic.stringHasJsonStructure(value)) {
+            log.debug('FAKESTORE: JSON Like Structure written as value with key: ' + key, JSON.parse(value));
+        } else {
+            log.debug('FAKESTORE: Plain Value written to store with key: ' + key + " and value:", value);
         }
     }
 
@@ -186,14 +206,16 @@ class StoreMessenger {
      * @param {Func} callback - (key, value) => {...} :: key = key that was checked, value = respective value of the key   
      */
     readFromStore(key, callback = (key, value) => { }) {
+        if (!this.storeAvailable) { return this._readFromFakeStore(key, callback) }
         this.subscribeToKey(key, callback, true);
-        if (!window.api) {
-            throw new Error("Critical error, window.api not found :: Store cannot exist.");
-        }
-        if (!window.api.store) {
-            throw new Error("Critical error, window.api.store not found :: Store doesn't exist. Verify context running has window, window.api, and window.api.store");
-        }
         window.api.store.send(readConfigRequest, key);
+    }
+
+    /** Shim for fake store reads */
+    _readFromFakeStore(key, callback = (key, value) => { }) {
+        let value = this.fakeStore[key];
+        log.debug("FAKE KEY VALUE READ: " + key);
+        return callback(key, value);
     }
 
     /**
@@ -203,12 +225,20 @@ class StoreMessenger {
      * @param {Func} callback - (error, key, value) => {...} :: key = key that was checked, value = respective value of the key   
      */
     readEncryptedFromStore(key, password, callback = (key, decryptedValue) => { }) {
+        if (!this.storeAvailable) { return this._readEncryptedFromFakeStore(key, password, callback) }
         // Subscribe internally and read the key as the storeMessenger
         this.readFromStore(key, (key, value) => {
             this.decipherEncryptedValue(value, password, (error, decryptedValue) => {
                 callback(error, key, decryptedValue);
             })
         }, true);
+    }
+
+    _readEncryptedFromFakeStore(key, password, callback = (key, decryptedValue) => { }) {
+        let value = JSON.parse(this.fakeStore[key]);
+        this.decipherEncryptedValue(value, password, (error, decryptedValue) => {
+            callback(error, key, decryptedValue);
+        })
     }
 
 }
@@ -235,8 +265,8 @@ try {
         storeMessenger.notifyEvent(args.key, val);
     });
 
-    window.api.store.onReceive(deleteConfigResponse, function(args){
-        if (args.success){
+    window.api.store.onReceive(deleteConfigResponse, function (args) {
+        if (args.success) {
             log.info("Electron store successfully deleted.")
         }
     });
