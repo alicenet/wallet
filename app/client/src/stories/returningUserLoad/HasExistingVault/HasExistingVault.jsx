@@ -4,7 +4,7 @@ import { Button, Container, Form, Grid, Header } from 'semantic-ui-react';
 import ForgottenVaultPasswordModal from './ForgottenVaultPasswordModal';
 
 import { useHistory } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useFormState } from 'hooks/_hooks';
 
 import { VAULT_ACTIONS } from 'redux/actions/_actions'
@@ -24,10 +24,11 @@ function UnlockExistingVault() {
     const handleFormSubmit = async () => {
         // Check password against preflight hash
         const pw = formState.password.value;
-        const isCorrecPassword = await electronStoreCommonActions.checkPasswordAgainstPreflightHash(pw);
-        if (!isCorrecPassword) {
+        const isCorrectPassword = await electronStoreCommonActions.checkPasswordAgainstPreflightHash(pw);
+        if (!isCorrectPassword) {
             return formSetter.setPasswordError(incorrectPasswordError)
-        } else { formSetter.clearPasswordError(); }
+        }
+        else { formSetter.clearPasswordError(); }
         // Dispatch the vault generation action and. . .
         let loaded = await dispatch(VAULT_ACTIONS.loadSecureHDVaultFromStorage(pw))
         if (loaded) {
@@ -42,7 +43,7 @@ function UnlockExistingVault() {
 
                 <Grid.Column width={16} className="p-0 self-center">
 
-                    <Header content="Unlock Your Account" as="h3" className="m-0" />
+                    <Header content="Unlock Your Account" as="h3" className="m-0"/>
                     <p className="text-green-400 mt-6">
                         <strong>Unlock your account to continue using MadWallet!</strong>
                     </p>
@@ -66,7 +67,7 @@ function UnlockExistingVault() {
                                     pointing: 'above',
                                 }}
                             />
-                            <ForgottenVaultPasswordModal incorrectPwEntered={incorrectPwEntered} />
+                            <ForgottenVaultPasswordModal incorrectPwEntered={incorrectPwEntered}/>
                         </Form.Group>
                     </Form>
 
@@ -75,7 +76,7 @@ function UnlockExistingVault() {
                 <Grid.Column width={12} className="p-0 self-center">
 
                     <Container className="flex justify-center">
-                        <Button color="teal" basic content='Unlock Vault' disabled={!formState.password.value} className="m-0" onClick={handleFormSubmit} />
+                        <Button color="teal" basic content='Unlock Vault' disabled={!formState.password.value} className="m-0" onClick={handleFormSubmit}/>
                     </Container>
 
                 </Grid.Column>
