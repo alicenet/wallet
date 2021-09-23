@@ -1,3 +1,4 @@
+import Web3 from 'web3';
 import { v4 as uuidv4 } from 'uuid';
 import { utilsWallet_logger as log } from 'log/logHelper';
 const bip39 = require('bip39');
