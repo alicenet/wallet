@@ -95,7 +95,7 @@ function readPlainValueFromStore(key) {
 function readEncryptedValueFromStore(key, password) {
     _requireKeyPassword("readEncryptedValueFromStore", key, password);
     electronStoreMessenger.readEncryptedFromStore(key, password, async (err, keyOfValue, value) => {
-        if (err) { console.error(err); return { error: err }; }
+        if (!!err) { log.error(err); return { error: err }; }
         log.debug("Plain K:V decrypted from electron store => " + keyOfValue + " : " + value);
         return value;
     })
@@ -118,7 +118,7 @@ export const electronStoreUtilityActons = {
  * @param { String } curve - One of: "secp256k1", "secp" or "barreto-naehrig", "bn"
  * @returns { Array[passwordHash, firstWalletNode] } - Returns a hash of the password used to encrypt the vault and the firstWalletNode if the vault has been created successfully 
  */
-function createNewSecureHDVault(mnemonic, password, curveType="secp256k1") {
+function createNewSecureHDVault(mnemonic, password, curveType = "secp256k1") {
     return new Promise(async res => {
         let wu = utils.wallet; // Wallet utils shorthand
         // Generate keccak256 hash of the password -- Returned for any preflights if desired
