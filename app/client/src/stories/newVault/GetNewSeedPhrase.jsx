@@ -31,15 +31,15 @@ function GetNewSeedPhrase() {
     return (
         <Page>
 
-            <Grid textAlign="center">
+            <Grid textAlign="center" className="m-0">
 
-                <Grid.Column width={16} className="my-5">
+                <Grid.Column width={16} className="p-0 self-center">
 
-                    <Header content="Your Seed Phrase" as="h3" className="my-0"/>
+                    <Header content="Your Seed Phrase" as="h3" className="m-0"/>
 
                 </Grid.Column>
 
-                <Grid.Column width={16}>
+                <Grid.Column width={16} className="p-0 self-center">
 
                     <p>Below is your seed phrase, please store it in a secure place.</p>
 
@@ -47,7 +47,7 @@ function GetNewSeedPhrase() {
 
                 </Grid.Column>
 
-                <Grid.Column width={16}>
+                <Grid.Column width={12} className="self-center">
 
                     <Grid celled columns={6}>
 
@@ -55,7 +55,7 @@ function GetNewSeedPhrase() {
 
                             <GridRow key={`seed-row-${index}`}>
 
-                                {someSeeds.map(word => <Grid.Column key={word}>{word}</Grid.Column>)}
+                                {someSeeds.map((word, position) => <Grid.Column key={`seed-column-${position}`}>{word}</Grid.Column>)}
 
                             </GridRow>
                         )}
@@ -64,13 +64,7 @@ function GetNewSeedPhrase() {
 
                 </Grid.Column>
 
-                <Grid.Column width={16}>
-
-                    <Button size="tiny" content="Reroll Phrase" onClick={rollPotentialSeedPhrase}/>
-
-                </Grid.Column>
-
-                <Grid.Column width={16}>
+                <Grid.Column width={16} className="p-0 self-center">
 
                     <p className="text-red-600 uppercase text-sm">
 
@@ -78,26 +72,31 @@ function GetNewSeedPhrase() {
 
                     </p>
 
+                    <Button circular size="tiny" icon="redo" content="Reroll Phrase" onClick={rollPotentialSeedPhrase}/>
+
                 </Grid.Column>
 
-                <Grid.Column width={16} className="flex-col">
+                <Grid.Column width={12} className="p-0 self-center">
 
-                    <Container fluid className="flex flex-auto flex-col items-center gap-5 w-96">
+                    <Container className="flex justify-between">
 
-                        <Button.Group className="flex justify-center w-72">
+                        <div>
 
-                            <Button color="orange" basic
-                                    content="Go Back" fluid
-                                    onClick={() => history.goBack()}/>
+                            <Button color="orange" basic className="m-0" content="Go Back"
+                                    onClick={() => history.push('/newVault/createVault')}/>
 
-                            <Button color="purple" basic disabled={!isChecked}
-                                    content="Verify The Seed Phrase" fluid
-                                    onClick={() => history.push('/newVault/verifySeedPhrase')}/>
+                        </div>
 
-                        </Button.Group>
+                        <div className="flex flex-col gap-2">
 
-                        <Checkbox onChange={() => setIsChecked(prevState => !prevState)} checked={isChecked}
-                                  label={<label>I Have Stored This Seed Securely</label>}/>
+                            <Button color="purple" basic disabled={!isChecked} content="Verify The Seed Phrase"
+                                    onClick={() => history.push('/newVault/verifySeedPhrase')}
+                                    className="m-0"/>
+
+                            <Checkbox onChange={() => setIsChecked(prevState => !prevState)} checked={isChecked}
+                                      label={<label className="text-sm">I Have Stored This Seed Securely</label>}/>
+
+                        </div>
 
                     </Container>
 

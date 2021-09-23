@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
-import { StoreContext } from "../Store/store.js";
+import { StoreContext } from "../oldStore/store.js";
 import Web3Adapter from '../Utils/web3Adapter.js';
 import { Icon, Container, Button, Grid, Card, Form, Segment, Statistic, Menu } from 'semantic-ui-react';
 

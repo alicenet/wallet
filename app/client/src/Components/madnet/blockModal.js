@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Modal, Segment, Accordion, Icon, List, Divider } from "semantic-ui-react"
-import { StoreContext } from "../../Store/store.js";
+import { StoreContext } from "../../oldStore/store.js";
 import Help from '../help.js';
 
 // BlockModal display

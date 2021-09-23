@@ -8,6 +8,7 @@ import util from 'util/_util';
 import * as Hubs from './stories/hubs/_hubs';
 import * as NewVaultFlows from './stories/newVault/_newVault';
 import * as OptOutFlow from './stories/optOut/_optOut';
+import * as ReturningUserLoadFlows from './stories/returningUserLoad/_returnUserLoad';
 
 // TESTING
 import TestingBay from './stories/TestingBay';
@@ -42,9 +43,12 @@ function App() {
                 <Route exact path="/newVault/chooseEllipticCurve" component={NewVaultFlows.ChooseEllipticCurve}/>
                 <Route exact path="/newVault/secureNewVault" component={NewVaultFlows.SecureNewVault}/>
 
-                {/* Load Existing Vault User Flow */}
+                {/* Restore Vault With Seed User Flow */}
                 <Route exact path="/newVault/useRecoveryPhrase" component={NewVaultFlows.EnterRecoveryPhrase}/>
                 <Route exact path="/newVault/chooseRecoveryEllipticCurve" component={NewVaultFlows.ChooseRecoveryEllipticCurve}/>
+
+                {/* Returning User Load */}
+                <Route exact path="/returningUserLoad/hasExistingVault" component={ReturningUserLoadFlows.HasExistingVault}/>
 
                 {/* Wallet Hub -- Send here if vault exists */}
                 <Route exact path="/hub" component={Hubs.ReturningUserHub}/>

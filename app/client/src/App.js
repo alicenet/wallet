@@ -4,7 +4,7 @@ import copy from 'copy-to-clipboard';
 
 // import './App.css'; -- Uncomment for legacy load
 import MainView from './MainView.js';
-import { Store } from './Store/store.js';
+import { Store } from './oldStore/store.js';
 
 /**
  * Main App

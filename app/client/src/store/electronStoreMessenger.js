@@ -1,5 +1,5 @@
 /* Code for prepping events and dependencies for the secure-electon-store */
-import { readConfigRequest, readConfigResponse, writeConfigRequest } from "secure-electron-store";
+import { readConfigRequest, readConfigResponse, writeConfigRequest, deleteConfigRequest, deleteConfigResponse  } from "secure-electron-store";
 import { electronStoreMessenger_logger as log, ADDITIONAL_LOG_OPTS } from 'log/logHelper';
 import { v4 as uuidv4 } from 'uuid';
 import util from 'util/_util';
@@ -57,6 +57,12 @@ class StoreMessenger {
                 this.subscribers[sub].callbacks[keyIdx](key, value);
             }
         }
+    }
+
+    /** Completely delete the electron store and all key/values -- Primarily for debugging */
+    deleteStore() {
+        log.info("About to completely delete the electron store -- I certainly hope this was on purpose.");
+        window.api.store.send(deleteConfigRequest);
     }
 
     /**
@@ -212,9 +218,7 @@ try {
 
     // Core secure-electron-store event for responses
     window.api.store.onReceive(readConfigResponse, function (args) {
-
         let val = args.value;
-
         // If value is JSON, make object
         let isJson = util.generic.stringHasJsonStructure(val);
         if (isJson) {
@@ -225,9 +229,13 @@ try {
             }
             val = value;
         }
-
         storeMessenger.notifyEvent(args.key, val);
+    });
 
+    window.api.store.onReceive(deleteConfigResponse, function(args){
+        if (args.success){
+            log.info("Electron store successfully deleted.")
+        }
     });
 
 } catch (ex) {

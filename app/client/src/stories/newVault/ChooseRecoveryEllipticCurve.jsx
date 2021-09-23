@@ -2,22 +2,23 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { Button, Container, Grid, Header, Icon, Modal, Radio } from 'semantic-ui-react';
+import { Button, Container, Grid, Header, Icon, Radio } from 'semantic-ui-react';
 
 import Page from '../../layout/Page';
 import { curveTypes } from 'util/_util';
 import { USER_ACTIONS } from 'redux/actions/_actions';
+import KeyOperationCurveModal from './KeyOperationCurveModal';
 
 function ChooseRecoveryEllipticCurve() {
 
     const history = useHistory();
     const dispatch = useDispatch();
 
-    const { desiredCurve } = useSelector(state => ({
+    const { desiredCurve, seedPhrase } = useSelector(state => ({
+        seedPhrase: state.user.potential_seed_phrase.split(' '),
         desiredCurve: state.user.desired_hd_curve,
     }));
 
-    const [openModal, setOpenModal] = React.useState(false)
     const [curveType, setCurveType] = React.useState(desiredCurve || curveTypes.SECP256K1)
 
     const loadMyVault = () => {
@@ -28,17 +29,34 @@ function ChooseRecoveryEllipticCurve() {
     return (
         <Page>
 
-            <Grid textAlign="center">
+            <Grid textAlign="center" className="m-0">
 
-                <Grid.Column width={16} className="my-5">
+                <Grid.Column width={16} className="p-0 self-center">
 
-                    <Header content="Phrase Entered" as="h3" className="my-0" />
+                    <Header content="Phrase Entered" as="h3" className="m-0"/>
 
                 </Grid.Column>
 
-                <Grid.Column width={16}>
+                <Grid.Column width={10} className="p-0 self-center">
 
-                    <p className="mb-10">You have successfully entered your seed phrase.</p>
+                    <p>You have successfully entered your seed phrase.</p>
+
+                    <Container fluid className="text-left">
+
+                        {seedPhrase.map((word, index) =>
+                            <Button
+                                key={`seed-phrase-btn-${index}`}
+                                className="mx-2 my-1"
+                                color="blue"
+                                content={word}
+                            />
+                        )}
+
+                    </Container>
+
+                </Grid.Column>
+
+                <Grid.Column width={16} className="p-0 self-center">
 
                     <p className="text-sm">Using this seed phrase, your wallets will be generated.</p>
 
@@ -46,54 +64,24 @@ function ChooseRecoveryEllipticCurve() {
 
                 </Grid.Column>
 
-                <Grid.Column width={12}>
+                <Grid.Column width={10} className="p-0 self-center">
 
                     <Container className="p-3 text-left border-2 border-solid border-gray-300">
 
                         <p><strong>Advanced Options</strong></p>
 
-                        <Modal
-                            onClose={() => setOpenModal(false)}
-                            onOpen={() => setOpenModal(true)}
-                            open={openModal}
-                            dimmer="inverted"
-                            trigger={
-                                <p className="text-sm">
-                                    <strong>
-                                        Public Address Key Operation Curve
-                                        <Icon name="question circle" style={{ cursor: 'pointer' }} className="px-2" />
-                                    </strong>
-                                </p>}
-                        >
+                        <KeyOperationCurveModal>
 
-                            <Modal.Content>
+                            <p className="text-sm">
 
-                                <Modal.Description className="flex flex-col items-center gap-10">
+                                <strong>
+                                    Public Address Key Operation Curve
+                                    <Icon name="question circle" style={{ cursor: 'pointer' }} className="px-2"/>
 
-                                    <Header content="Key Operation Curve" as="h3" className="my-0" />
+                                </strong>
+                            </p>
 
-                                    <Container className="flex flex-auto flex-col gap-3 p-5 text-center">
-
-                                        <p>Mad Wallet allows you to set the default ECC for generating the key pair.</p>
-
-                                        <p>ECC types are set on a per vault basis and will be used for all wallets
-                                            generated with this seed.</p>
-
-                                        <p>If you change from the default type, make a note of it for when you import
-                                            your seed for recovery.</p>
-
-                                        <p>Additional wallets of the opposing type can be generated or imported if
-                                            necessary, but will not be recoverable by the vault seed phrase.</p>
-
-                                    </Container>
-
-                                    <Button color="purple" onClick={() => setOpenModal(false)} content="Got it!" />
-
-                                </Modal.Description>
-
-                            </Modal.Content>
-
-                        </Modal>
+                        </KeyOperationCurveModal>
 
                         <Container fluid className="flex flex-auto flex-col gap-4">
 
@@ -119,13 +107,13 @@ function ChooseRecoveryEllipticCurve() {
 
                 </Grid.Column>
 
-                <Grid.Column width={16}>
+                <Grid.Column width={12} className="p-0 self-center">
 
-                    <Container className="flex flex-auto flex-row justify-between">
+                    <Container className="flex justify-between">
 
-                        <Button color="purple" basic content="Back" onClick={() => history.push('/newVault/useRecoveryPhrase')} />
+                        <Button color="purple" basic content="Back" className="m-0" onClick={() => history.push('/newVault/useRecoveryPhrase')}/>
 
-                        <Button color="teal" basic content="Secure My Vault" onClick={loadMyVault} />
+                        <Button color="teal" basic content="Secure My Vault" className="m-0" onClick={loadMyVault}/>
 
                     </Container>
 
