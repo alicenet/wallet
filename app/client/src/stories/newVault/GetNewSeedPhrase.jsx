@@ -83,7 +83,7 @@ function GetNewSeedPhrase() {
                         <div>
 
                             <Button color="orange" basic className="m-0" content="Go Back"
-                                    onClick={() => history.goBack()}/>
+                                    onClick={() => history.push('/newVault/createVault')}/>
 
                         </div>
 

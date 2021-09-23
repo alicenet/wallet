@@ -7,18 +7,24 @@ import {Button, Container, Grid, Header, Label, Segment, TextArea} from 'semanti
 import {useHistory} from 'react-router-dom';
 import {useSelector} from 'react-redux';
 
-import uniq from 'lodash/uniq';
+import shuffle from 'lodash/shuffle';
 
 import Page from '../../layout/Page';
 
 function VerifyYourSeedPhrase() {
 
+    const [actionedButtons, setActionedButtons] = React.useState(new Set());
     const [seedPhraseIsCorrect, setSeedPhraseIsCorrect] = React.useState(false);
-    const [chosenPhrase, setChosenPhrase] = React.useState(Array(12).fill(null));
+    const [chosenPhrase, setChosenPhrase] = React.useState([]);
     const [verifyPhraseButtonText, setVerifyPhraseButtonText] = React.useState("Verify Phrase");
+    const [shuffledSeedPhrase, setShuffledSeedPhrase] = React.useState([]);
 
     const history = useHistory();
     const {seedPhrase} = useSelector(state => ({seedPhrase: state.user.potential_seed_phrase}));
+
+    React.useEffect(() => {
+        setShuffledSeedPhrase(shuffle(seedPhrase.split(' ')));
+    }, [seedPhrase])
 
     React.useEffect(() => {
         if (seedPhraseIsCorrect) {
@@ -29,20 +35,26 @@ function VerifyYourSeedPhrase() {
     }, [seedPhraseIsCorrect]);
 
     React.useEffect(() => {
-        setSeedPhraseIsCorrect(uniq(chosenPhrase.filter(word => !!word)).length === 12);
+        setSeedPhraseIsCorrect(chosenPhrase.length === 12);
     }, [chosenPhrase]);
 
     const handlePhraseClick = (word, index) => {
         let phrase = [...chosenPhrase];
-        if (chosenPhrase[index] === word) {
-            phrase[index] = null;
+        let indexOf = chosenPhrase.indexOf(word);
+
+        if (actionedButtons.has(index)) {
+            if (indexOf !== -1) {
+                actionedButtons.delete(index);
+                phrase.splice(indexOf, 1);
+            }
         } else {
-            phrase[index] = word;
+            setActionedButtons(prevState => prevState.add(index))
+            phrase.push(word);
         }
-        setChosenPhrase(phrase)
+        setChosenPhrase(phrase);
     };
 
-    const isButtonDisabled = (word, index) => chosenPhrase[index] === word;
+    const isButtonDisabled = index => actionedButtons.has(index);
 
     return (
         <Page>
@@ -65,15 +77,15 @@ function VerifyYourSeedPhrase() {
 
                     <Container fluid className="flex-wrap text-left">
 
-                        {seedPhrase.split(' ').map((word, index) =>
+                        {shuffledSeedPhrase.map((word, index) =>
                             <Button
                                 key={`seed-phrase-btn-${index}`}
                                 className="mx-2 my-1"
                                 color="blue"
                                 content={word}
                                 toggle
-                                basic={isButtonDisabled(word, index)}
-                                active={isButtonDisabled(word, index)}
+                                basic={isButtonDisabled(index)}
+                                active={isButtonDisabled(index)}
                                 onClick={() => handlePhraseClick(word, index)}
                             />
                         )}
