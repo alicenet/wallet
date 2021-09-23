@@ -187,6 +187,12 @@ class StoreMessenger {
      */
     readFromStore(key, callback = (key, value) => { }) {
         this.subscribeToKey(key, callback, true);
+        if (!window.api) {
+            throw new Error("Critical error, window.api not found :: Store cannot exist.");
+        }
+        if (!window.api.store) {
+            throw new Error("Critical error, window.api.store not found :: Store doesn't exist. Verify context running has window, window.api, and window.api.store");
+        }
         window.api.store.send(readConfigRequest, key);
     }
 
