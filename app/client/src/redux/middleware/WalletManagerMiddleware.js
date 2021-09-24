@@ -16,6 +16,10 @@ export default function WalletManagerMiddleware(storeAPI) {
             switch (action.type) {
                 case MIDDLEWARE_ACTION_TYPES.INIT_MAD_WALLET:
                     initMadWallet(action.payload, storeAPI.dispatch); break;
+                case MIDDLEWARE_ACTION_TYPES.ADD_WALLET_FROM_KEYSTORE:
+                    addWalletFromKeystore(action.payload, storeAPI.dispatch); break;
+                case MIDDLEWARE_ACTION_TYPES.ADD_NEXT_HD_WALLET:
+                    addNextHDWallet(storeAPI.dipatch); break;
                 default: break;
             }
             // Do anything here: pass the action onwards with next(action),
@@ -81,6 +85,14 @@ function initMadWallet(initPayload, dispatch) {
             res(true);
         });
     });
+}
+
+function addWalletFromKeystore() {
+
+}
+
+function addNextHDWallet() {
+
 }
 
 // function walletAdditonHandler() {}

@@ -137,7 +137,13 @@ export function curveStringToNum(curveString) {
  * @param {*} password - Password to use to unlock the json
  */
 export function unlockKeystore(keystore, password) {
-
+    try {
+        let web3 = new Web3();
+        return web3.eth.accounts.wallet.decrypt([keystore], password);
+    } catch (ex) {
+        log.error("Error unlocking keystore", ex);
+        return {error: ex}
+    }
 }
 
 /**
@@ -150,7 +156,7 @@ export function unlockKeystore(keystore, password) {
 export function generateKeystore(asBlob, password, curve = 1) {
     let web3 = new Web3();
     let wallet = web3.eth.accounts.wallet.create(1)
-    web3.eth.accounts.wallet.add(wallet[0]) 
+    web3.eth.accounts.wallet.add(wallet[0])
     let ks = web3.eth.accounts.wallet.encrypt(password)
     let keystore = ks[0];
     if (curve === 2) { keystore["curve"] = 2 } // Note the curve if BN -- This gets removed on reads
