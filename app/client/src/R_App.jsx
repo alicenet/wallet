@@ -33,6 +33,7 @@ function App() {
                 {/* New User - Vault Opt Out Flow */}
                 <Route exact path="/optOut/disclaimer" component={OptOutFlow.VaultOptOutDisclaimer}/>
                 <Route exact path="/optOut/createKeystore" component={OptOutFlow.CreateAKeystore}/>
+                <Route exact path="/optOut/useExistingKeystore" component={OptOutFlow.UseExistingKeystore}/>
 
                 {/* New Vault User Flow */}
                 <Route exact path="/newVault/createVault" component={NewVaultFlows.CreateVault}/>
