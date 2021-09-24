@@ -1,22 +1,24 @@
 import MadWallet from 'madwalletjs';
 import { MIDDLEWARE_ACTION_TYPES, VAULT_ACTION_TYPES } from '../constants/_constants';
 import util from 'util/_util';
-import {walletManMiddleware_logger as log} from '../../log/logHelper.js'
+import { walletManMiddleware_logger as log } from '../../log/logHelper.js'
 
 const madWallet = new MadWallet();
 
 /**
  * Syncronoizes state between the mutable madWallet instance above and the redux store that saves immutable data about the wallets
- * @param {*} storeAPI 
- * @returns 
+ * @param {*} storeAPI
+ * @returns
  */
 export default function WalletManagerMiddleware(storeAPI) {
     return function wrapDispatch(next) {
         return function handleAction(action) {
             switch (action.type) {
                 case MIDDLEWARE_ACTION_TYPES.INIT_MAD_WALLET:
-                    initMadWallet(action.payload, storeAPI.dispatch); break;
-                default: break;
+                    initMadWallet(action.payload, storeAPI.dispatch);
+                    break;
+                default:
+                    break;
             }
             // Do anything here: pass the action onwards with next(action),
             // or restart the pipeline with storeAPI.dispatch(action)
@@ -32,7 +34,7 @@ export default function WalletManagerMiddleware(storeAPI) {
  */
 function initMadWallet(initPayload, dispatch) {
     return new Promise(res => {
-        log.debug("Initiating MadWallet Instance & Syncronizing to Redux State. . .")
+        log.debug("Initiating MadWallet Instance & Synchronizing to Redux State. . .")
         // Extract all wallets from payload and add to MadWallet.Accounts
         let internalAccountAdds = []; // Internal HD Accounts
         let externalAccountAdds = []; // Externally imported accounts
@@ -40,7 +42,8 @@ function initMadWallet(initPayload, dispatch) {
             for (let wallet of initPayload.wallets[walletType]) {
                 if (walletType === "internal") {
                     internalAccountAdds.push([wallet.privK, wallet.curve, wallet.name]);
-                } else { // else, is an external wallet
+                }
+                else { // else, is an external wallet
                     externalAccountAdds.push([wallet.privK, wallet.curve, wallet.name]);
                 }
             }
@@ -57,11 +60,7 @@ function initMadWallet(initPayload, dispatch) {
             madWallet.Account.accounts.forEach(account => {
                 let signerKeyToUse = parseInt(account.MultiSigner.curve) === 1 ? "secpSigner" : "bnSigner";  // Key to use under MultiSigner for this account to get privK
                 let privK = account.MultiSigner[signerKeyToUse].privK; // Note the privK
-                let filteredPk;
-                let match = allToAdd.filter(addition => {
-                    filteredPk = addition[0];
-                    return addition[0] === privK
-                })[0]; // Match privK to current account from MadNetWallet.accounts
+                let match = allToAdd.filter(addition => addition[0] === privK)[0]; // Match privK to current account from MadNetWallet.accounts
                 // Construct the wallet based off of data creation from madwallet -- We let mad wallet build this data and then store it back to state 
                 let walletObj = util.wallet.constructWalletObject(
                     match[2], // 2nd index in initial parsing gives us the name,
@@ -72,7 +71,8 @@ function initMadWallet(initPayload, dispatch) {
                 );
                 if (walletObj.isInternal) {
                     internalWallets.push(walletObj);
-                } else {
+                }
+                else {
                     externalWallets.push(walletObj);
                 }
             });
@@ -83,11 +83,11 @@ function initMadWallet(initPayload, dispatch) {
     });
 }
 
-// function walletAdditonHandler() {}
+// function walletAdditionHandler() {}
 
 /**
  * Return reference to active madWallet instance
- * @returns 
+ * @returns
  */
 export function getMadWalletInstance() {
     return madWallet;
