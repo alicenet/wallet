@@ -15,6 +15,7 @@ module.exports = {
         'alignSelf',
         'backgroundColor',
         'borderColor',
+        'borderRadius',
         'borderStyle',
         'borderWidth',
         'cursor',

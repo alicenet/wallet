@@ -66,7 +66,7 @@ function VaultOptOutDisclaimer() {
 
                                 <Button.Or className="w-0 self-center text-sm"/>
 
-                                <Button color="purple" basic disabled={!isChecked} content="Existing" className="m-0 h-11" onClick={() => history.push('/')}/>
+                                <Button color="purple" basic disabled={!isChecked} content="Existing" className="m-0 h-11" onClick={() => history.push('/optOut/useExistingKeystore')}/>
 
                             </Button.Group>
 
