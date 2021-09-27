@@ -1,16 +1,17 @@
 import React from 'react';
 
-const views = {
-    electronStore: "electron-store",
-    reduxState: "redux-state",
-    vaultwallets: "vault-wallets",
+export const views = {
+    REDUX_STATE: "Redux State",
+    USER_STORIES: "User Stories",
+    ELECTRON_STORE: "Electron Store",
+    VAULT_WALLETS: "Vault & Wallets",
 }
 
 const defaultContextState = {
-    currentView: "electron-store",
+    currentView: views.VAULT_WALLETS,
 }
 
-const DebugContext = React.createContext();
+export const DebugContext = React.createContext();
 
 export default function DebugContextProvider({ children }) {
 
@@ -26,7 +27,7 @@ export default function DebugContextProvider({ children }) {
 }
 
 export const GetMockContextSetterByKey = (context, key) => {
-    let value = context[key];
+    let value = context.state[key];
     let setter = (val) => context.setState(s => ({ ...s, [key]: val }));
     return [value, setter];
 }

@@ -1,10 +1,21 @@
-import log from 'loglevel';
+import React from 'react';
+import DebugProvider, { DebugContext, GetMockContextSetterByKey, views } from './DebugContext.jsx';
+import { Grid, Form } from 'semantic-ui-react'
+
+import DebugMenu from './DebugMenu.jsx';
+import ReduxState from './panels/ReduxState.jsx';
+import VaultPanel from './panels/VaultPanel/_VaultPanel.jsx';
+import ElectronPanel from './panels/ElectronStorePanel.jsx';
+import UserStoriesPanel from './panels/UserStoriesPanel.jsx';
+
 import store from 'redux/store/store';
-import { useSelector, useDispatch } from "react-redux";
-import { INTERFACE_ACTIONS } from 'redux/actions/_actions';
-import DebugProvider from './DebugContext.jsx';
-import { Grid, Header } from 'semantic-ui-react'
+import { useDispatch, useSelector } from "react-redux";
+import { INTERFACE_ACTIONS, USER_ACTIONS } from 'redux/actions/_actions';
+
 import lstyle from './DebugPanel.module.scss';
+import log from 'loglevel';
+
+export const DButton = (props) => <Form.Button basic size="mini" fluid {...props} className={"m-1 ml-0 " + props.className} />
 
 /** Provide context to DebugPanel  */
 export default function DebugRoot() {
@@ -19,18 +30,38 @@ export default function DebugRoot() {
 /** Root Debug Panel */
 function DebugPanel() {
 
+    const dispatch = useDispatch();
+    const debugContext = React.useContext(DebugContext);
+    const [currentView] = GetMockContextSetterByKey(debugContext, "currentView");
+
+    const getCurrentView = () => {
+        switch (currentView) {
+            case views.REDUX_STATE: return <ReduxState />;
+            case views.VAULT_WALLETS: return <VaultPanel />;
+            case views.ELECTRON_STORE: return <ElectronPanel />;
+            case views.USER_STORIES: return <UserStoriesPanel />;
+            default: return null;
+        }
+    }
+
+    /* Check if user has a vault behind the scenes */
+    React.useEffect(() => {
+        const checkForAccount = async () => {
+            await dispatch(USER_ACTIONS.checkForUserAccount());
+        }
+        checkForAccount();
+    }, [dispatch]);
+
     return (
-
-        <Grid padded className={lstyle.debugInterface}>
-
-            <Grid.Column width={16}  >
-                <Header textAlign="left">Debug Panel</Header>
+        <Grid padded className={[lstyle.debugInterface, "absolute top-0 flex flex-col"].join(" ")} verticalAlign="top">
+            <Grid.Column width={16} className="pb-0 h-20 bg-gray-200" >
+                <DebugMenu />
             </Grid.Column>
-
+            <Grid.Column width={16} verticalAlign="top" className={lstyle.contentColumn}>
+                {getCurrentView()}
+            </Grid.Column>
         </Grid>
-
     )
-
 }
 
 /////////////////////////////
