@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container } from 'semantic-ui-react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import ReduxStateViewer, { handleDebugListener } from 'redux/debug/StateViewer';
+import DebugPanel, { handleDebugListener } from 'redux/debug/DebugPanel';
 import util from 'util/_util';
 
 // User Story Components
@@ -58,7 +58,7 @@ function App() {
 
     const DebugTools = () => {
         return util.generic.isDebug ? (<>
-            <ReduxStateViewer/>
+            <DebugPanel/>
         </>) : null
     }
 

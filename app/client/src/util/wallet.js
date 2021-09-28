@@ -61,6 +61,7 @@ export function getHDChainFromSeedBytes(seedBytes) {
 export function getHDWalletNodeFromHDChain(hdChain, nodeNum) {
     const derivationPath = "m/44'/60'/0'/0/" + String(nodeNum);
     const node = hdChain.derive(derivationPath);
+    console.log(nodeNum)
     log.debug(`A Wallet Node has been requested`, {
         nodeNumber: nodeNum,
         derivationPath: derivationPath,

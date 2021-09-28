@@ -6,7 +6,9 @@ module.exports = {
         extend: {},
     },
     variants: {
-        extend: {},
+        extend: {
+            margin: ['last'],
+        },
     },
     plugins: [],
     corePlugins: [
@@ -29,6 +31,7 @@ module.exports = {
         'fontWeight',
         'gap',
         'height',
+        'inset',
         'justifyContent',
         'justifyItems',
         'justifySelf',
@@ -40,6 +43,7 @@ module.exports = {
         'overflow',
         'overscrollBehavior',
         'padding',
+        'position',
         'resize',
         'rotate',
         'textAlign',
