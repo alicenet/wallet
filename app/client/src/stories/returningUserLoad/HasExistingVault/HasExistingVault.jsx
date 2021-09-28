@@ -44,8 +44,11 @@ function UnlockExistingVault() {
                 <Grid.Column width={16} className="p-0 self-center">
 
                     <Header content="Unlock Your Account" as="h3" className="m-0"/>
+
                     <p className="text-green-400 mt-6">
+
                         <strong>Unlock your account to continue using MadWallet!</strong>
+
                     </p>
 
                 </Grid.Column>
@@ -53,22 +56,27 @@ function UnlockExistingVault() {
                 <Grid.Column width={8} className="p-0 self-center">
 
                     <Form onSubmit={(event => handleFormSubmit(event))}>
+
                         <Form.Group className="flex flex-auto flex-col m-0 text-left text-sm gap-5 items-center h-32">
+
                             <Form.Input className="w-80"
-                                id='password'
-                                label='Password'
-                                placeholder='Enter Password'
-                                type='password'
-                                onChange={e => {
-                                    formSetter.setPassword(e.target.value)
-                                }}
-                                error={!!formState.password.error && {
-                                    content: formState.password.error,
-                                    pointing: 'above',
-                                }}
+                                        id='password'
+                                        label='Password'
+                                        placeholder='Enter Password'
+                                        type='password'
+                                        onChange={e => {
+                                            formSetter.setPassword(e.target.value)
+                                        }}
+                                        error={!!formState.password.error && {
+                                            content: formState.password.error,
+                                            pointing: 'above',
+                                        }}
                             />
+
                             <ForgottenVaultPasswordModal incorrectPwEntered={incorrectPwEntered}/>
+
                         </Form.Group>
+
                     </Form>
 
                 </Grid.Column>
@@ -76,7 +84,9 @@ function UnlockExistingVault() {
                 <Grid.Column width={12} className="p-0 self-center">
 
                     <Container className="flex justify-center">
+
                         <Button color="teal" basic content='Unlock Vault' disabled={!formState.password.value} className="m-0" onClick={handleFormSubmit}/>
+
                     </Container>
 
                 </Grid.Column>
