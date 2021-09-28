@@ -43,13 +43,13 @@ function UnlockExistingVault() {
 
                 <Grid.Column width={16} className="p-0 self-center">
 
-                    <Header content="Unlock Your Account" as="h3" className="m-0"/>
+                    <Header content=" Welcome Back" as="h3" className="m-0"/>
 
-                    <p className="text-green-400 mt-6">
+                </Grid.Column>
 
-                        <strong>Unlock your account to continue using MadWallet!</strong>
+                <Grid.Column width={16} className="p-0 self-center text-sm">
 
-                    </p>
+                    <p>Please enter your password to unlock your wallets.</p>
 
                 </Grid.Column>
 
@@ -59,18 +59,19 @@ function UnlockExistingVault() {
 
                         <Form.Group className="flex flex-auto flex-col m-0 text-left text-sm gap-5 items-center h-32">
 
-                            <Form.Input className="w-80"
-                                        id='password'
-                                        label='Password'
-                                        placeholder='Enter Password'
-                                        type='password'
-                                        onChange={e => {
-                                            formSetter.setPassword(e.target.value)
-                                        }}
-                                        error={!!formState.password.error && {
-                                            content: formState.password.error,
-                                            pointing: 'above',
-                                        }}
+                            <Form.Input
+                                className="w-80"
+                                id='password'
+                                label='Password'
+                                placeholder='Enter Password'
+                                type='password'
+                                onChange={e => {
+                                    formSetter.setPassword(e.target.value)
+                                }}
+                                error={!!formState.password.error && {
+                                    content: formState.password.error,
+                                    pointing: 'above',
+                                }}
                             />
 
                             <ForgottenVaultPasswordModal incorrectPwEntered={incorrectPwEntered}/>
