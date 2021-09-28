@@ -85,9 +85,7 @@ function initMadWallet(initPayload, dispatch) {
     });
 }
 
-<<<<<<< HEAD
 // function walletAdditionHandler() {}
-=======
 function addWalletFromKeystore() {
 
 }
@@ -95,9 +93,6 @@ function addWalletFromKeystore() {
 function addNextHDWallet() {
 
 }
-
-// function walletAdditonHandler() {}
->>>>>>> Rebase main changes in
 
 /**
  * Return reference to active madWallet instance
