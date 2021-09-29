@@ -21,10 +21,17 @@ function AdvancedSettings() {
         registryContractAddress: state.config.registry_contract_address,
     }));
 
-    const [formState, formSetter] = useFormState(["madNetChainId", "madNetProvider", "ethereumProvider", "registryContractAddress"]);
+    const [formState, formSetter] = useFormState(["MadNetChainId", "MadNetProvider", "EthereumProvider", "RegistryContractAddress"]);
+
+    React.useEffect(() => {
+        formSetter.setMadNetChainId(madNetChainId);
+        formSetter.setMadNetProvider(madNetProvider);
+        formSetter.setEthereumProvider(ethereumProvider);
+        formSetter.setRegistryContractAddress(registryContractAddress);
+    }, [madNetChainId, madNetProvider, ethereumProvider, registryContractAddress]);
 
     const handleFormSubmit = () => {
-        if (!formState.madNetChainId.value) {
+        if (!formState.MadNetChainId.value) {
             return formSetter.setMadNetChainIdError("MadNet ChainID is required");
         }
         else {
@@ -58,12 +65,12 @@ function AdvancedSettings() {
                                 label='MadNet ChainID'
                                 placeholder='Enter MadNet ChainID'
                                 required
-                                value={madNetChainId}
+                                value={formState.MadNetChainId.value}
                                 onChange={e => {
                                     formSetter.setMadNetChainId(e.target.value)
                                 }}
-                                error={!!formState.madNetChainId.error && {
-                                    content: formState.madNetChainId.error
+                                error={!!formState.MadNetChainId.error && {
+                                    content: formState.MadNetChainId.error
                                 }}
                             />
 
@@ -72,12 +79,12 @@ function AdvancedSettings() {
                                 label='MadNet Provider'
                                 placeholder='Enter MadNet Provider'
                                 required
-                                value={madNetProvider}
+                                value={formState.MadNetProvider.value}
                                 onChange={e => {
                                     formSetter.setMadNetProvider(e.target.value)
                                 }}
-                                error={!!formState.madNetProvider.error && {
-                                    content: formState.madNetProvider.error
+                                error={!!formState.MadNetProvider.error && {
+                                    content: formState.MadNetProvider.error
                                 }}
                             />
 
@@ -86,12 +93,12 @@ function AdvancedSettings() {
                                 label='Ethereum Provider'
                                 placeholder='Enter Ethereum Provider'
                                 required
-                                value={ethereumProvider}
+                                value={formState.EthereumProvider.value}
                                 onChange={e => {
                                     formSetter.setEthereumProvider(e.target.value)
                                 }}
-                                error={!!formState.ethereumProvider.error && {
-                                    content: formState.ethereumProvider.error
+                                error={!!formState.EthereumProvider.error && {
+                                    content: formState.EthereumProvider.error
                                 }}
                             />
 
@@ -100,12 +107,12 @@ function AdvancedSettings() {
                                 label='Registry Contract Address'
                                 placeholder='Enter Address'
                                 required
-                                value={registryContractAddress}
+                                value={formState.RegistryContractAddress.value}
                                 onChange={e => {
                                     formSetter.setRegistryContractAddress(e.target.value)
                                 }}
-                                error={!!formState.registryContractAddress.error && {
-                                    content: formState.registryContractAddress.error
+                                error={!!formState.RegistryContractAddress.error && {
+                                    content: formState.RegistryContractAddress.error
                                 }}
                             />
 
