@@ -45,9 +45,12 @@ export function updateRegistryContractAddress(newRegistryContractAddress) {
 }
 
 /**
- * Load deafult values to every field under configuration
- * @returns { Object } - Action object to be passed as first parameter within Redux.dispatch()
+ * Load default values to every field under configuration
+ * @returns null
  */
 export function loadDefaultValues() {
-    return { type: CONFIG_ACTION_TYPES.LOAD_DEFAULT_VALUES };
+    return async function (dispatch) {
+        dispatch({ type: CONFIG_ACTION_TYPES.LOAD_DEFAULT_VALUES });
+    }
+
 }

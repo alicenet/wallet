@@ -1,4 +1,5 @@
 import { CONFIG_ACTION_TYPES } from '../constants/_constants';
+import { reduxState_logger as log } from '../../log/logHelper';
 
 //  Any user editable and saveable configurations are loaded here
 const initialConfigurationState = {
@@ -40,11 +41,12 @@ export default function configurationReducer(state = initialConfigurationState, 
             });
 
         case CONFIG_ACTION_TYPES.LOAD_DEFAULT_VALUES:
+            log.debug(["Loading configuration default values:"]);
             return Object.assign({}, state, {
-                madNetChainId: initialConfigurationState.mad_net_chainID,
-                madNetProvider: initialConfigurationState.mad_net_provider,
-                ethereumProvider: initialConfigurationState.ethereum_provider,
-                registryContractAddress: initialConfigurationState.registry_contract_address,
+                mad_net_chainID: initialConfigurationState.mad_net_chainID,
+                mad_net_provider: initialConfigurationState.mad_net_provider,
+                ethereum_provider: initialConfigurationState.ethereum_provider,
+                registry_contract_address: initialConfigurationState.registry_contract_address,
             });
 
         default:
