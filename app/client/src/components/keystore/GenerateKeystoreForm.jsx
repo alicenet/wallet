@@ -1,28 +1,33 @@
 import React from 'react'
 import { useFormState } from 'hooks/_hooks';
-import { Header, Form, Message } from 'semantic-ui-react';
-import { useDispatch } from 'react-redux';
+import { Header, Form, Button } from 'semantic-ui-react';
 import utils from '../../util/_util.js';
-import { classNames } from 'util/generic.js';
 
 /**
- * @prop LoadKeystoreCB -- Additional function to call after pressing "Load This Keystore" -- Most likely a redux action or history push, etc
+ * @prop { Function (keystore<JSON>, password<String>) => {...} } loadKeystoreCB -- Additional function to call after pressing "Load This Keystore" -- Most likely a redux action or history push, etc
+ * @prop { Boolean } inline -- Compact the form into a single line?
+ * @prop { String } defaultPassword --Default password to use? ( Mainly for debugging )
+ * @prop { Boolean } showPassword -- Show the password in plain text?
  */
-export default function LoadKeystoreForm({ LoadKeystoreCB }) {
+export default function GenerateKeystoreForm({ loadKeystoreCB, inline, defaultPassword = "", showPassword = false }) {
 
     const [formState, formSetter] = useFormState(["password"])
     const [keystoreDL, setKeystoreDL] = React.useState(false);
 
     const downloadRef = React.useRef();
 
+    // Set defaults
+    React.useEffect(() => {
+        formSetter.setPassword(defaultPassword);
+    }, []); // eslint-disable-line
+
     const loadKeystore = () => {
         let fr = new FileReader();
         fr.readAsText(keystoreDL.data)
         fr.onload = (res) => {
             let ksJSON = JSON.parse(res.target.result);
-            console.log(ksJSON);
-            if (LoadKeystoreCB) {
-                LoadKeystoreCB();
+            if (loadKeystoreCB) {
+                loadKeystoreCB(ksJSON, formState.password.value);
             }
         }
     }
@@ -30,12 +35,58 @@ export default function LoadKeystoreForm({ LoadKeystoreCB }) {
     const generateWallet = async () => {
         let newStoreBlob = await utils.wallet.generateKeystore(true, formState.password.value);
         setKeystoreDL({
-            filename: "MadNet-Wallet_" + Date.now() + ".json",
+            filename: "MadWallet_" + Date.now() + ".json",
             data: newStoreBlob
         });
         downloadRef.current.href = URL.createObjectURL(newStoreBlob);
     }
 
+    const setFilename = async (e) => {
+        setKeystoreDL(s => ({
+            filename: "a",
+            ...s
+        }));
+    }
+
+
+    ////////////////////
+    // Inline Version //
+    ////////////////////
+    if (inline) {
+        return (
+            <Form size="mini" className="max-w-lg" >
+
+                <Header as="h4">Generate Keystore</Header>
+
+                <Form.Group widths="equal">
+
+                    <Form.Input
+                        label="Keystore Password"
+                        type={showPassword ? "text" : "password"} value={formState.password.value}
+                        onChange={e => formSetter.setPassword(e.target.value)}
+                        action={{ content: "Generate", size: "mini", onClick: generateWallet, icon: "refresh" }}
+                    />
+
+                    <Form.Input label="Keystore Download" disabled={!keystoreDL} value={keystoreDL.filename} onChange={setFilename}
+                        action={
+                            <Button.Group size="mini">
+                                <Button content="Download" icon="download" size="mini" color="purple" basic ref={downloadRef} href={keystoreDL ? URL.createObjectURL(keystoreDL.data) : ""} download={keystoreDL.filename} />
+                                <Button.Or text="or" />
+                                <Button content="Load" icon="arrow alternate circle right" labelPosition="right" color="green" basic onClick={loadKeystore} />
+                            </Button.Group>
+                        }
+                    />
+
+                </Form.Group>
+
+
+            </Form>
+        )
+    }
+
+    /////////////////////
+    // Column Version //
+    ////////////////////
     return (
 
         <Form size="mini" className="max-w-lg" >

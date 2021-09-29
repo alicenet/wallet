@@ -1,0 +1,40 @@
+.Toastify__toast {
+    min-height: 56px;
+}
+.Toastify__toast--error {
+    border: 1px solid #eb5757;
+    background: #fae1e2 !important;
+    border-radius: 6px !important;
+}
+.Toastify__toast--success {
+    border: 1px solid #3a9ea5 !important;
+    background: #f0f9fa !important;
+    border-radius: 6px !important;
+}
+
+.Toastify__toast--warning {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #ffa14a !important;
+    background: #ffebd8f2 !important;
+    border-radius: 6px !important;
+
+    .Toastify__toast-body {
+        color: darken(#ffa14a, 45) !important;
+    }
+
+}
+.Toastify__toast-body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: black;
+    font-size: 12px;
+    width: 100%;
+    font-weight: 400;
+    margin: 0px !important;
+}
+.Toastify__toast > button > svg {
+    display: none;
+}

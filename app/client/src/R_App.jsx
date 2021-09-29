@@ -9,6 +9,8 @@ import * as Hubs from './stories/hubs/_hubs';
 import * as NewVaultFlows from './stories/newVault/_newVault';
 import * as OptOutFlow from './stories/optOut/_optOut';
 import * as ReturningUserLoadFlows from './stories/returningUserLoad/_returnUserLoad';
+import { ToastContainer } from 'react-toastify';
+import PasswordRequestModal from 'components/modals/PasswordRequestModal';
 
 /**
  * Main App Entrypoint
@@ -68,7 +70,11 @@ function App() {
                 <Switch>
                     <DefaultRoutes/>
                 </Switch>
+
                 <DebugTools/>
+                <ToastContainer/>
+                <PasswordRequestModal/>
+
             </Router>
         </Container>
     );
