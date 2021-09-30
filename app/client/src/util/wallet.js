@@ -139,10 +139,14 @@ export function curveStringToNum(curveString) {
 export function unlockKeystore(keystore, password) {
     try {
         let web3 = new Web3();
-        return web3.eth.accounts.wallet.decrypt([keystore], password);
+        let storedCurve = keystore.curve ? keystore.curve : curveTypes.SECP256K1; // Falback to SECP256K1 if no stored curve
+        let unlocked = web3.eth.accounts.wallet.decrypt([keystore], password);
+        let firstWallet = unlocked["0"]; // We only care about the 0 entry for the keystore
+        firstWallet.curve = storedCurve; // Reinject the noted curve to the wallet
+        return firstWallet;
     } catch (ex) {
         log.error("Error unlocking keystore", ex);
-        return {error: ex}
+        return { error: ex }
     }
 }
 
@@ -153,7 +157,7 @@ export function unlockKeystore(keystore, password) {
  * @param { CurveType } curve - Curve if desired, default to type 1
  * @returns { Blob || JSON String } - JSON Blob || Json String
  */
-export function generateKeystore(asBlob, password, curve = 1) {
+export function generateKeystore(asBlob, password, curve = curveTypes.SECP256K1) {
     let web3 = new Web3();
     let wallet = web3.eth.accounts.wallet.create(1)
     web3.eth.accounts.wallet.add(wallet[0])
@@ -161,6 +165,7 @@ export function generateKeystore(asBlob, password, curve = 1) {
     let keystore = ks[0];
     if (curve === 2) { keystore["curve"] = 2 } // Note the curve if BN -- This gets removed on reads
     let ksJSONBlob = new Blob([JSON.stringify(keystore, null, 2)]);
+    console.log(keystore);
     return asBlob ? ksJSONBlob : keystore;
 }
 
@@ -185,7 +190,7 @@ export const constructWalletObject = (name, privK, address, curve, isInternal) =
  * @param { String } pKeyOrAddress 
  */
 export const strip0x = (pKeyOrAddress) => {
-    if (typeof pKeyOrAddress !== "string") { throw new Error("Only strings should be passed to strip0x(), handle this externally.")}
+    if (typeof pKeyOrAddress !== "string") { throw new Error("Only strings should be passed to strip0x(), handle this externally.") }
     // Only proceed if has prefix
     if (pKeyOrAddress[0] === "0" && pKeyOrAddress[1] === "x") {
         return pKeyOrAddress.slice(2, pKeyOrAddress.length);

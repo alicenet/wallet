@@ -11,3 +11,25 @@ html, body, #root {
 }
 
 @import './toastify.scss';
+
+/////////////////////////////////////////////////////////
+/* Semantic Very Specific Additional Class Overwrites */
+////////////////////////////////////////////////////////
+/* To be used as custom label class within a checkbox */
+.labelCheckbox  {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    font-size: 9px !important;
+    padding: 2px;
+    padding-left: 29px !important;
+    color: #555555 !important;
+    position: relative;
+    &:after {
+        width: 17px !important;
+        height: 17px !important;
+        font-size: 9px !important;
+        position: relative;
+        top:2px !important;
+    }
+} 

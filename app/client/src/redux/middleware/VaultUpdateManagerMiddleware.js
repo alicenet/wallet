@@ -14,7 +14,8 @@ export const ACTION_ELECTRON_SYNC = "ELECTRON_SYNC"
 export default function VaultUpdateManagerMiddleware(storeAPI) {
     return function wrapDispatch(next) {
         return function handleAction(action) {
-            if (storeAPI.getState().vault.exists && !storeAPI.getState().vault.is_locked) {
+            let state = storeAPI.getState();
+            if (state.vault.exists && !state.vault.is_locked && state.vault.is_locked !== null) {
                 switch (action.type) {
                     case ACTION_ELECTRON_SYNC:
                         syncStateToStore(storeAPI, action.payload.reason); break;
@@ -36,7 +37,7 @@ function syncStateToStore(storeAPI, reason) {
         walletStorage.internal.push({ name: w.name, privK: w.privK })
     }
     for (let w of wallets.external) {
-        walletStorage.external.push({ name: w.name, privK: w.privK })
+        walletStorage.external.push({ name: w.name, privK: w.privK, curve: w.curve })
     }
 
     // We need the password from the user to perform vault updates so create a wrap callback and wait until the user provides it.

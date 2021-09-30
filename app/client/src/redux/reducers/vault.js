@@ -6,12 +6,12 @@ import { curveTypes } from '../../util/_util';
  * Used to build complex updates to the vault state as a whole or the initial vault state
  * @param { Object  } options
  * @param { Boolean } options.exists - Does the vault exist -- Default: true
- * @param { Boolean } options.isLocked - Is the vault locked -- Default: false
+ * @param { Boolean || String==="unknown" } options.isLocked - Is the vault locked -- Default: null == "unknown"
  * @param { Array } options.internalWallets - Array of <InternalWallets> -- Default []
  * @param { Array } options.externalWallets - Array of <ExternalWallets> -- Default []
  * @returns { Object } -- JSON Object for vault state
  */
-export const buildVaultStateObject = ({ exists = false, isLocked = false, internalWallets = [], externalWallets = [] } = {}, hdCurve = curveTypes.SECP256K1, mnemonic = "") => {
+export const buildVaultStateObject = ({ exists = false, isLocked = null, internalWallets = [], externalWallets = [] } = {}, hdCurve = curveTypes.SECP256K1, mnemonic = "") => {
     return {
         exists: exists, // Does the "vault" key exist in the electron store?
         is_locked: isLocked, // Locking vault wipes current state :: Required user to re-enter password -- Vault is deciphered and reloaded

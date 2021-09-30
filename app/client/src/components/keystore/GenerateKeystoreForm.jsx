@@ -1,7 +1,8 @@
 import React from 'react'
 import { useFormState } from 'hooks/_hooks';
-import { Header, Form, Button } from 'semantic-ui-react';
+import { Header, Form, Button, Checkbox } from 'semantic-ui-react';
 import utils from '../../util/_util.js';
+import { curveTypes } from 'util/wallet.js';
 
 /**
  * @prop { Function (keystore<JSON>, password<String>) => {...} } loadKeystoreCB -- Additional function to call after pressing "Load This Keystore" -- Most likely a redux action or history push, etc
@@ -13,8 +14,12 @@ export default function GenerateKeystoreForm({ loadKeystoreCB, inline, defaultPa
 
     const [formState, formSetter] = useFormState(["password"])
     const [keystoreDL, setKeystoreDL] = React.useState(false);
+    const [curveType, setCurveType] = React.useState(curveTypes.SECP256K1);
+    const toggleCurveType = () => setCurveType(s => (s === curveTypes.SECP256K1 ? curveTypes.BARRETO_NAEHRIG : curveTypes.SECP256K1));
 
     const downloadRef = React.useRef();
+
+    // TODO ADD CURVE SWITCH
 
     // Set defaults
     React.useEffect(() => {
@@ -33,7 +38,7 @@ export default function GenerateKeystoreForm({ loadKeystoreCB, inline, defaultPa
     }
 
     const generateWallet = async () => {
-        let newStoreBlob = await utils.wallet.generateKeystore(true, formState.password.value);
+        let newStoreBlob = await utils.wallet.generateKeystore(true, formState.password.value, curveType);
         setKeystoreDL({
             filename: "MadWallet_" + Date.now() + ".json",
             data: newStoreBlob
@@ -61,7 +66,10 @@ export default function GenerateKeystoreForm({ loadKeystoreCB, inline, defaultPa
                 <Form.Group widths="equal">
 
                     <Form.Input
-                        label="Keystore Password"
+                        label={<label className="flex justify-between">
+                            Password 
+                            <Checkbox checked={curveType === curveTypes.BARRETO_NAEHRIG} onChange={toggleCurveType} label={<label className={"labelCheckbox"}>Use BN Curve</label>} className="flex justify-center items-center text-xs uppercase font-bold relative -top-0"/>
+                            </label>}
                         type={showPassword ? "text" : "password"} value={formState.password.value}
                         onChange={e => formSetter.setPassword(e.target.value)}
                         action={{ content: "Generate", size: "mini", onClick: generateWallet, icon: "refresh" }}

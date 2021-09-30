@@ -4,6 +4,7 @@ import { electronStoreCommonActions } from '../../store/electronStoreHelper';
 import { reduxState_logger as log } from 'log/logHelper';
 import util from 'util/_util';
 import { ACTION_ELECTRON_SYNC } from 'redux/middleware/VaultUpdateManagerMiddleware';
+import { curveTypes } from 'util/wallet';
 
 /* !!!!!!! ____   ATTENTION: ______ !!!!!!!!  
 
@@ -50,7 +51,7 @@ export function loadSecureHDVaultFromStorage(password) {
         const hdLoadCount = unlockedVault.hd_wallet_count;
         const hdCurve = unlockedVault.hd_wallet_curve;
         // Verify curve integrity
-        if (hdCurve !== 1 && hdCurve !== 2) {
+        if (hdCurve !== curveTypes.SECP256K1 && hdCurve !== curveTypes.BARRETO_NAEHRIG) {
             throw new Error("Vault state HD Curve is incompatible. Should be int(1) or int(2). Curve read: " + hdCurve);
         }
         // Extract internal wallets by using mnemonic
@@ -75,7 +76,7 @@ export function loadSecureHDVaultFromStorage(password) {
             const internalWalletObj = {
                 name: wallet.name,
                 privK: wallet.privK,
-                curve: 1, // TODO: Update keystore gen for support of internal curveType -- 
+                curve: wallet.curve, 
             }
             preInitPayload.wallets.external.push(internalWalletObj); // Add it to the wallet init
         })
@@ -115,6 +116,7 @@ export function addExternalWalletToState(keystore, password, walletName) {
             throw new Error("Must only pass valid JSON Keystore Object to addExternalWalletToState", ex)
         }
         let unlocked = { data: util.wallet.unlockKeystore(JSON.parse(ksString), password), name: walletName };
+        console.log(unlocked);
         let additions = await dispatch({ type: MIDDLEWARE_ACTION_TYPES.ADD_WALLET_FROM_KEYSTORE, payload: unlocked }); // Pass off to MadWalletMiddleware to finish state balancing
         if (additions.error) { return additions }
         let added = await dispatch({ type: VAULT_ACTION_TYPES.ADD_EXTERNAL_WALLET, payload: additions.external[0] });

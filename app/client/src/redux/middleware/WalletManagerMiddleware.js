@@ -2,6 +2,7 @@ import MadWallet from 'madwalletjs';
 import { MIDDLEWARE_ACTION_TYPES, VAULT_ACTION_TYPES } from '../constants/_constants';
 import util from 'util/_util';
 import { walletManMiddleware_logger as log } from '../../log/logHelper.js'
+import { curveTypes } from 'util/wallet';
 
 let madWallet = new MadWallet();
 
@@ -123,12 +124,19 @@ function initMadWallet(initPayload, dispatch) {
 function addWalletFromKeystore(keystore, walletName, dispatch) {
     return new Promise(async res => {
         // Extract pkey from keystore
-        let pKey = keystore["0"].privateKey;
-        // Add the private key to the MadWalletJS instance -- CAT TODO: use curve
+        let pKey = keystore.privateKey;
+        console.log(keystore);
+        // Extract the curve if viable -- Will only be present on MadWalletJS Generated Stores :: Fallback to SECP256k1
+        let curve = keystore.curve ? keystore.curve : 1;
+        // Verify curve
+        if (curve !== curveTypes.SECP256K1 && curve !== curveTypes.BARRETO_NAEHRIG) {
+            throw new Error("An invalid curve was found within a keystore: " + curve);
+        }
+        // Add the private key to the MadWalletJS instance
         try {
-            await madWallet.Account.addAccount(pKey, 1);
+            await madWallet.Account.addAccount(pKey, curve);
             // Balance the wallet state to redux with the wallet name
-            let externalAdds = [_walletArrayStructure(util.wallet.strip0x(pKey), 1, walletName)];
+            let externalAdds = [_walletArrayStructure(util.wallet.strip0x(pKey), curve, walletName)];
             let balancedState = await buildBalancedWalletState([], externalAdds);
             res(balancedState)
         } catch (ex) {
