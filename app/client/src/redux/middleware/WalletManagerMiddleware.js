@@ -145,7 +145,6 @@ function addNextHDWallet() {
 
 }
 
-
 /**
  * Build wallet state object against current madWalletJS instance accounts and passed wallets -- The return can be used to dispatch updated wallets accordingly
  * @param { Array } internalAdds - List of recently added internal _walletArrayStructs that need to be balanced
