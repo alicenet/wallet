@@ -6,6 +6,7 @@ import util from 'util/_util';
 
 // User Story Components
 import * as Hubs from './stories/hubs/_hubs';
+import * as Settings from './stories/settings/_settings';
 import * as NewVaultFlows from './stories/newVault/_newVault';
 import * as OptOutFlow from './stories/optOut/_optOut';
 import * as ReturningUserLoadFlows from './stories/returningUserLoad/_returnUserLoad';
@@ -51,6 +52,13 @@ function App() {
 
                 {/* Wallet Hub -- Send here if vault exists */}
                 <Route exact path="/hub" component={Hubs.ReturningUserHub}/>
+
+
+                {/* Wallet Hub -- Settings */}
+                <Route exact path="/wallet/settings" component={Settings.Settings}/>
+
+                {/* Wallet Hub -- Advanced Settings */}
+                <Route exact path="/wallet/advancedSettings" component={Settings.AdvancedSettings}/>
 
             </>
         )

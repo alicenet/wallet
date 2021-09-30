@@ -1,4 +1,5 @@
 import { CONFIG_ACTION_TYPES } from '../constants/_constants';
+import { reduxState_logger as log } from '../../log/logHelper';
 
 //  Any user editable and saveable configurations are loaded here
 const initialConfigurationState = {
@@ -10,7 +11,7 @@ const initialConfigurationState = {
 }
 
 /* Modal Reducer */
-export default function conifigurationReducer(state = initialConfigurationState, action) {
+export default function configurationReducer(state = initialConfigurationState, action) {
 
     switch (action.type) {
 
@@ -39,7 +40,17 @@ export default function conifigurationReducer(state = initialConfigurationState,
                 registry_contract_address: action.payload
             });
 
-        default: return state;
+        case CONFIG_ACTION_TYPES.LOAD_DEFAULT_VALUES:
+            log.debug(["Loading configuration default values:"]);
+            return Object.assign({}, state, {
+                mad_net_chainID: initialConfigurationState.mad_net_chainID,
+                mad_net_provider: initialConfigurationState.mad_net_provider,
+                ethereum_provider: initialConfigurationState.ethereum_provider,
+                registry_contract_address: initialConfigurationState.registry_contract_address,
+            });
+
+        default:
+            return state;
 
     }
 

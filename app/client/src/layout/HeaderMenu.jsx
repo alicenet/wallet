@@ -52,7 +52,7 @@ function CreateVault({history, showTabs}) {
 
             <Container fluid className="flex flex-row content-center justify-end">
 
-                <Menu.Item as='a' header onClick={() => history.push('/')} className="mx-0">
+                <Menu.Item as='a' header onClick={() => history.push('/wallet/settings')} className="mx-0">
 
                     <Icon name="cog" size="large" className="mx-0 transform duration-300 hover:rotate-90"/>
 
