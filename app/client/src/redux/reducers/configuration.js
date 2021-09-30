@@ -2,7 +2,7 @@ import { CONFIG_ACTION_TYPES } from '../constants/_constants';
 import { reduxState_logger as log } from '../../log/logHelper';
 
 //  Any user editable and saveable configurations are loaded here
-const initialConfigurationState = {
+export const initialConfigurationState = {
     defaultCurve: "secp256k1", // User preferred curve to use when generating wallets
     ethereum_provider: "http://127.0.0.1:8545", // Ethereum RPC endpoint
     mad_net_chainID: "1", // Chain ID to use on MadNet
@@ -47,6 +47,15 @@ export default function configurationReducer(state = initialConfigurationState, 
                 mad_net_provider: initialConfigurationState.mad_net_provider,
                 ethereum_provider: initialConfigurationState.ethereum_provider,
                 registry_contract_address: initialConfigurationState.registry_contract_address,
+            });
+
+        case CONFIG_ACTION_TYPES.SAVE_CONFIGURATION:
+            log.debug("Saving new configuration values:", action.payload);
+            return Object.assign({}, state, {
+                mad_net_chainID: action.payload.mad_net_chainID,
+                mad_net_provider: action.payload.mad_net_provider,
+                ethereum_provider: action.payload.ethereum_provider,
+                registry_contract_address: action.payload.registry_contract_address,
             });
 
         default:

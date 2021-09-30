@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Page from '../../layout/Page';
 import { useFormState } from '../../hooks/_hooks';
 import { CONFIG_ACTIONS } from '../../redux/actions/_actions';
+import { initialConfigurationState } from '../../redux/reducers/configuration'; // <= We can import this to use as a local setter
 
 function AdvancedSettings() {
 
@@ -21,14 +22,24 @@ function AdvancedSettings() {
         registryContractAddress: state.config.registry_contract_address,
     }));
 
+    // This is a local state change, and is not propagated to the store
     const [formState, formSetter] = useFormState(["MadNetChainId", "MadNetProvider", "EthereumProvider", "RegistryContractAddress"]);
 
+    console.log({
+        madNetChainId: madNetChainId,
+        madNetProvider: madNetProvider,
+        ethereumProvider: ethereumProvider,
+        registryContractAddress: registryContractAddress,
+    })
+
+    // This actually won't run because the context equality check passes ( We never update it, it stays the same )
     React.useEffect(() => {
         formSetter.setMadNetChainId(madNetChainId);
         formSetter.setMadNetProvider(madNetProvider);
         formSetter.setEthereumProvider(ethereumProvider);
         formSetter.setRegistryContractAddress(registryContractAddress);
-    }, [madNetChainId, madNetProvider, ethereumProvider, registryContractAddress]);
+    }, [madNetChainId, madNetProvider, ethereumProvider, registryContractAddress]); // <= These didn't change so this effect didnt't run.
+    // Technically you could use [] here since you only care about the defaults on initial mount, but you would need to ignore the linter
 
     const handleFormSubmit = () => {
         if (!formState.MadNetChainId.value) {
@@ -37,11 +48,31 @@ function AdvancedSettings() {
         else {
             formSetter.clearMadNetChainIdError()
         }
+        // Propagate save to redux state
+        saveValues();
     }
 
-    const handleLoadDefaultValues = () => {
-        dispatch(CONFIG_ACTIONS.loadDefaultValues())
+    // In this function we can propagate the save upwards to the redux state -- Treat redux as truth and the local state as the editing playground
+    const saveValues = () => {
+        console.log("SAVE VALUES")
+        console.log(formState);
+        dispatch(CONFIG_ACTIONS.saveConfigurationValues(
+            formState.MadNetChainId.value, 
+            formState.MadNetProvider.value, 
+            formState.EthereumProvider.value, 
+            formState.RegistryContractAddress.value
+        ));
     }
+
+    // Instead we can pull in the default values from the context and use it as a local setter, and propagate those chnages upwards to redux
+    const handleLoadDefaultValues = () => {
+        dispatch(CONFIG_ACTIONS.loadDefaultValues()) // This call *does* update the redux state, but the local state isn't being bubbled to as we never update this state
+        formSetter.setMadNetChainId(initialConfigurationState.mad_net_chainID);
+        formSetter.setMadNetProvider(initialConfigurationState.mad_net_provider);
+        formSetter.setEthereumProvider(initialConfigurationState.ethereum_provider);
+        formSetter.setRegistryContractAddress(initialConfigurationState.registry_contract_address);
+    }
+
 
     return (
         <Page>
