@@ -1,7 +1,7 @@
-import { Header, Icon } from 'semantic-ui-react';
 import { toast } from "react-toastify";
 import { electronStoreCommonActions } from "store/electronStoreHelper";
 import { MODAL_ACTION_TYPES } from 'redux/constants/_constants';
+import { SyncToastMessageWarning, SyncToastMessageSuccess } from 'components/customToasts/CustomToasts';
 
 export const ACTION_ELECTRON_SYNC = "ELECTRON_SYNC"
 
@@ -41,7 +41,7 @@ function syncStateToStore(storeAPI, reason) {
     }
 
     // We need the password from the user to perform vault updates so create a wrap callback and wait until the user provides it.
-    toast.warn(<SyncToastMessage />, {
+    toast.warn(<SyncToastMessageWarning title="Vault Update Request" message="Password Needed -- Click Here" />, {
         position: "bottom-right",
         autoClose: false,
         hideProgressBar: true,
@@ -53,24 +53,20 @@ function syncStateToStore(storeAPI, reason) {
             storeAPI.dispatch({
                 type: MODAL_ACTION_TYPES.OPEN_PW_REQUEST, payload: {
                     reason: "Vault Syncronization -- " + reason,
-                    cb: (password) => { electronStoreCommonActions.updateVaultWallets(password, walletStorage) }
+                    cb: async (password) => {
+                        await electronStoreCommonActions.updateVaultWallets(password, walletStorage)
+                        toast.success(<SyncToastMessageSuccess title="Success" message={reason} />, {
+                            position: "bottom-right",
+                            autoClose: 2400,
+                            delay: 500,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                        });
+                    }
                 }
             })
         }
-    })
+    });
 
-}
-
-const SyncToastMessage = () => {
-    return (
-        <div className="w-full">
-            <Header color="orange" as="h5" textAlign="left">
-                <Icon size="small" name="warning" className="mt-1" />
-                <Header.Content>
-                    Vault Update Request
-                    <Header.Subheader >Password Needed -- Click Here</Header.Subheader>
-                </Header.Content>
-            </Header>
-        </div>
-    )
 }

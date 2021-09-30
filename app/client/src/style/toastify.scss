@@ -1,5 +1,9 @@
+.Toastify__toast-container {
+    width: 240px;
+}
 .Toastify__toast {
     min-height: 56px;
+    margin-bottom: 0rem;
 }
 .Toastify__toast--error {
     border: 1px solid #eb5757;
@@ -34,6 +38,7 @@
     width: 100%;
     font-weight: 400;
     margin: 0px !important;
+    
 }
 .Toastify__toast > button > svg {
     display: none;

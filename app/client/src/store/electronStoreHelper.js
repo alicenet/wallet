@@ -183,10 +183,9 @@ function unlockAndGetSecuredHDVault(password) {
  */
 function updateVaultWallets(password, newWalletState) {
     return new Promise(async res => {
-        let vault = JSON.parse( await readEncryptedValueFromStore("vault", password));
-        // We can unwrap the current vault for updates now. . .
-        let vaultObjectString = _genVaultObjectString(vault.mnemonic, vault.hd_wallet_curve, newWalletState.internal.length, newWalletState);
-        let written = await writeEncryptedValueToStore("vault", vaultObjectString, password);
+        let vault = JSON.parse( await readEncryptedValueFromStore("vault", password)); // Get current vault for settings
+        let vaultObjectString = _genVaultObjectString(vault.mnemonic, vault.hd_wallet_curve, newWalletState.internal.length, newWalletState); // Inject new wallets
+        let written = await writeEncryptedValueToStore("vault", vaultObjectString, password); // Write it
         res(written);
     })
 }

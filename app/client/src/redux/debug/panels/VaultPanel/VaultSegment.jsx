@@ -15,6 +15,8 @@ export default function VaultSegment() {
     const dispatch = useDispatch();
     const vault = useSelector(s => s.vault);
 
+    const [vaultLoading, setVaultLoading] = React.useState(false);
+
     ////////////////////////////
     /*          State         */
     ////////////////////////////
@@ -31,7 +33,9 @@ export default function VaultSegment() {
 
     const unlockVault = async () => {
         console.log("DEBUG:: Attempt unlock vault with password: " + password);
+        setVaultLoading(true);
         let [done, errors] = await dispatch(VAULT_ACTIONS.loadSecureHDVaultFromStorage(password));
+        setVaultLoading(false);
     }
 
     const lockVault = async () => {
@@ -82,7 +86,7 @@ export default function VaultSegment() {
             <Form className="max-w-md m-0" size="mini">
                 <Form.Group widths="equal" className="mt-2">
                     <Form.Input size='mini' value={password} onChange={e => setPassword(e.target.value)}
-                        action={{ content: vault.is_locked ? "Unlock" : "Lock", size: "mini", color: vault.is_locked ? "green" : "red", basic: true, onClick: vault.is_locked ? unlockVault : lockVault }} />
+                        action={{ loading: vaultLoading, content: vault.is_locked ? "Unlock" : "Lock", size: "mini", color: vault.is_locked ? "green" : "red", basic: true, onClick: vault.is_locked ? unlockVault : lockVault }} />
                     <Form.Button size='mini' basic content="Print Vault State" onClick={() => console.log(vault)} />
                 </Form.Group>
             </Form>
