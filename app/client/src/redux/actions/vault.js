@@ -31,8 +31,9 @@ export function generateNewSecureHDVault(mnemonic, password, curveType = util.wa
         let [preflightHash, firstWalletNode] = await electronStoreCommonActions.createNewSecureHDVault(mnemonic, password, curveType);
         electronStoreCommonActions.storePreflightHash(preflightHash); // Store preflight hash for pre-action auth checking
         const preInitPayload = { wallets: { internal: [{ privK: firstWalletNode.privateKey.toString('hex'), name: "Main Wallet", curve: curveType }], external: [] } }; // Payload needed by initMadWallet() in WalletManagerMiddleware
-        dispatch({ type: MIDDLEWARE_ACTION_TYPES.INIT_MAD_WALLET, payload: preInitPayload }); // Pass off to MadWalletMiddleware to finish state initiation
+        await dispatch({ type: MIDDLEWARE_ACTION_TYPES.INIT_MAD_WALLET, payload: preInitPayload }); // Pass off to MadWalletMiddleware to finish state initiation
         dispatch({ type: VAULT_ACTION_TYPES.SET_MNEMONIC, payload: mnemonic});
+        dispatch({ type: VAULT_ACTION_TYPES.MARK_EXISTS_AND_UNLOCKED });
     }
 }
 
@@ -118,7 +119,7 @@ export function addExternalWalletToState(keystore, password, walletName) {
         if (additions.error) { return additions }
         let added = await dispatch({ type: VAULT_ACTION_TYPES.ADD_EXTERNAL_WALLET, payload: additions.external[0] });
         // When a wallet is added, dispatch sync-store
-        dispatch({ type: ACTION_ELECTRON_SYNC });
+        dispatch({ type: ACTION_ELECTRON_SYNC, payload: {reason: "Adding External Wallet"} });
         return added;
     }
 }

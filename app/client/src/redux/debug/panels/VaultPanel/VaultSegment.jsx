@@ -60,7 +60,11 @@ export default function VaultSegment() {
     ////////////
 
     return (
-        <Segment>
+        <Segment disabled={!vault.exists} className={classNames({"pointer-events-none": !vault.exists})}>
+
+            {!vault.exists ? (
+                <Header color="red">No Vault Found</Header>
+            ) : null}
 
             <div className="flex justify-between">
                 <div>

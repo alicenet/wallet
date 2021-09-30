@@ -67,6 +67,12 @@ export default function vaultReducer(state = initialVaultState, action) {
                 is_locked: false,
             })
 
+        case VAULT_ACTION_TYPES.MARK_EXISTS:
+            log.debug("Marking Vault as existing");
+            return Object.assign({}, state, {
+                exists: true,
+            })
+
         case VAULT_ACTION_TYPES.SET_VAULT_TO_STATE:
             log.debug("Performing large object=>vault_state payload update with:", action.payload);
             return Object.assign({}, state, action.payload)

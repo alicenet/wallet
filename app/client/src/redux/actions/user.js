@@ -5,20 +5,6 @@ import { curveTypes } from 'util/wallet';
 import { default_log as log } from 'log/logHelper';
 import { electronStoreCommonActions } from 'store/electronStoreHelper';
 
-///////////////////////////
-/* Internal Action Calls */
-///////////////////////////
-
-/* Enable lock on user's account */
-function _lockAccount() {
-    return { type: USER_ACTION_TYPES.MARK_ACCOUNT_LOCKED };
-}
-
-/* Disable lock on user's account */
-function _unlockAccount() {
-    return { type: USER_ACTION_TYPES.MARK_ACCOUNT_UNLOCKED };
-}
-
 //////////////////////////////////
 /* External Async Action Calls */
 /////////////////////////////////
@@ -76,36 +62,19 @@ export function setDesiredCurveType(curveType) {
 }
 
 /**
- *  Check for existing user account files and set state accordingly
- * @returns { Boolean } - Does the user have a vault? 
+ *  Check for existing user account files and set state accordingly -- 
+ * @param { Boolean } initialCheck -- Is this the first check? First check will mark any found vault as locked -- if not, it will be left where redux state has determined.
+ * @returns { {vault: Boolean, optOut: Boolean} } - Vault/Optout status
  */
-export function checkForUserAccount() {
+export function checkForUserAccount(initialCheck) {
     return async function (dispatch) {
         let vaultExists = await electronStoreCommonActions.checkIfUserHasVault();
         if (vaultExists) {
-            dispatch({type: VAULT_ACTION_TYPES.MARK_EXISTS_AND_LOCKED}); // Mark the vault as existing & locked
-            return true;
-        } else { 
+            dispatch({ type: initialCheck ? VAULT_ACTION_TYPES.MARK_EXISTS_AND_LOCKED : VAULT_ACTION_TYPES.MARK_EXISTS });
+            return { vault: true, optOut: false };
+        } else {
             // CAT TODO: Check for keystore paths if no vault
-            return false 
+            return false
         }
-    }
-}
-
-export function lockAccount() {
-    return async function (dispatch) {
-        // .. Asynchronous logic to lock account if needed
-        // ... TBD: Remove state from store and require a new unlock cycle with deciphering
-        await utils.generic.waitFor(1000);
-        dispatch(_lockAccount());
-    }
-}
-
-export function unlockAccount() {
-    return async function (dispatch) {
-        // .. Asynchronous logic to unlock account if needed
-        // ... Decipher store back into redux state
-        await utils.generic.waitFor(1000);
-        dispatch(_unlockAccount());
     }
 }

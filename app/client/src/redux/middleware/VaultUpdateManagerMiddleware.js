@@ -17,7 +17,7 @@ export default function VaultUpdateManagerMiddleware(storeAPI) {
             if (storeAPI.getState().vault.exists && !storeAPI.getState().vault.is_locked) {
                 switch (action.type) {
                     case ACTION_ELECTRON_SYNC:
-                        syncStateToStore(storeAPI); break;
+                        syncStateToStore(storeAPI, action.payload.reason); break;
                     default: break;
                 }
             }
@@ -29,7 +29,7 @@ export default function VaultUpdateManagerMiddleware(storeAPI) {
     }
 }
 
-function syncStateToStore(storeAPI) {
+function syncStateToStore(storeAPI, reason) {
     let wallets = storeAPI.getState().vault.wallets;
     let walletStorage = { internal: [], external: [] }
     for (let w of wallets.internal) {
@@ -51,7 +51,7 @@ function syncStateToStore(storeAPI) {
         onClick: () => {
             storeAPI.dispatch({
                 type: MODAL_ACTION_TYPES.OPEN_PW_REQUEST, payload: {
-                    reason: "Vault Syncronization -- Wallet Addition.",
+                    reason: "Vault Syncronization -- " + reason,
                     cb: (password) => { electronStoreCommonActions.updateVaultWallets(password, walletStorage) }
                 }
             })
