@@ -1,7 +1,9 @@
 import { VAULT_ACTION_TYPES, MIDDLEWARE_ACTION_TYPES } from 'redux/constants/_constants';
 import { getMadWalletInstance } from 'redux/middleware/WalletManagerMiddleware'
 import { electronStoreCommonActions } from '../../store/electronStoreHelper';
+import { reduxState_logger as log } from 'log/logHelper';
 import util from 'util/_util';
+import { ACTION_ELECTRON_SYNC } from 'redux/middleware/VaultUpdateManagerMiddleware';
 
 /* !!!!!!! ____   ATTENTION: ______ !!!!!!!!  
 
@@ -30,6 +32,7 @@ export function generateNewSecureHDVault(mnemonic, password, curveType = util.wa
         electronStoreCommonActions.storePreflightHash(preflightHash); // Store preflight hash for pre-action auth checking
         const preInitPayload = { wallets: { internal: [{ privK: firstWalletNode.privateKey.toString('hex'), name: "Main Wallet", curve: curveType }], external: [] } }; // Payload needed by initMadWallet() in WalletManagerMiddleware
         dispatch({ type: MIDDLEWARE_ACTION_TYPES.INIT_MAD_WALLET, payload: preInitPayload }); // Pass off to MadWalletMiddleware to finish state initiation
+        dispatch({ type: VAULT_ACTION_TYPES.SET_MNEMONIC, payload: mnemonic});
     }
 }
 
@@ -47,7 +50,7 @@ export function loadSecureHDVaultFromStorage(password) {
         const hdCurve = unlockedVault.hd_wallet_curve;
         // Verify curve integrity
         if (hdCurve !== 1 && hdCurve !== 2) {
-            throw new Error("Vault state HD Curve is incoompatible. Should be int(1) or int(2). Curve read: " + hdCurve);
+            throw new Error("Vault state HD Curve is incompatible. Should be int(1) or int(2). Curve read: " + hdCurve);
         }
         // Extract internal wallets by using mnemonic
         let hdNodesToLoad = [];
@@ -66,9 +69,19 @@ export function loadSecureHDVaultFromStorage(password) {
             }
             preInitPayload.wallets.internal.push(internalWalletObj); // Add it to the wallet init
         })
-        // CAT - TODO: Add external wallet parsing support
-        dispatch({ type: MIDDLEWARE_ACTION_TYPES.INIT_MAD_WALLET, payload: preInitPayload }); // Pass off to MadWalletMiddleware to finish state initiation
-        return true;
+        // Add externals to preInit
+        unlockedVault.wallets.external.forEach(wallet => {
+            const internalWalletObj = {
+                name: wallet.name,
+                privK: wallet.privK,
+                curve: 1, // TODO: Update keystore gen for support of internal curveType -- 
+            }
+            preInitPayload.wallets.external.push(internalWalletObj); // Add it to the wallet init
+        })
+        let res = await dispatch({ type: MIDDLEWARE_ACTION_TYPES.INIT_MAD_WALLET, payload: preInitPayload }); // Pass off to MadWalletMiddleware to finish state initiation
+        dispatch({ type: VAULT_ACTION_TYPES.MARK_EXISTS_AND_UNLOCKED });
+        dispatch({ type: VAULT_ACTION_TYPES.SET_MNEMONIC, payload: mnemonic});
+        return res;
     }
 }
 
@@ -86,11 +99,50 @@ export function addInternalWalletToState(walletName, privKey) {
 }
 
 /**
+ * Adds an external wallet to state from a keystore -- A vault doesn't need to exist for this to be used.
+ * @param { JSON } keystore - The still ciphered keystore
+ * @param { String } password - The password to decipher the keystore
+ * @param { String } walletName - Name to be used to reference the external wallet
+ */
+export function addExternalWalletToState(keystore, password, walletName) {
+    return async function (dispatch) {
+        let ksString;
+        log.debug("Adding wallet with name ", walletName, " to external wallets from keystore: ", keystore);
+        try {
+            ksString = JSON.stringify(keystore);
+        } catch (ex) {
+            throw new Error("Must only pass valid JSON Keystore Object to addExternalWalletToState", ex)
+        }
+        let unlocked = { data: util.wallet.unlockKeystore(JSON.parse(ksString), password), name: walletName };
+        let additions = await dispatch({ type: MIDDLEWARE_ACTION_TYPES.ADD_WALLET_FROM_KEYSTORE, payload: unlocked }); // Pass off to MadWalletMiddleware to finish state balancing
+        if (additions.error) { return additions }
+        let added = await dispatch({ type: VAULT_ACTION_TYPES.ADD_EXTERNAL_WALLET, payload: additions.external[0] });
+        // When a wallet is added, dispatch sync-store
+        dispatch({ type: ACTION_ELECTRON_SYNC });
+        return added;
+    }
+}
+
+/**
  * Returns a reference to the mad wallet instance from WalletManagerMiddleware
  * @returns {Object<MadWallet-JS>}
  */
 export function getMadWallet() {
     return function (dispatch) {
         return getMadWalletInstance();
+    }
+}
+
+/**
+ * Dispatches actions to clear state and reinstance madWalletJs to prep it for garbage collection
+ * @returns 
+ */
+export function lockVault() {
+    return async function (dispatch) {
+        return new Promise(async res => {
+            await dispatch({ type: MIDDLEWARE_ACTION_TYPES.REINSTANCE_MAD_WALLET });
+            await dispatch({ type: VAULT_ACTION_TYPES.LOCK_VAULT });
+            res(true);
+        })
     }
 }

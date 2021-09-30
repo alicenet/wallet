@@ -61,7 +61,6 @@ export function getHDChainFromSeedBytes(seedBytes) {
 export function getHDWalletNodeFromHDChain(hdChain, nodeNum) {
     const derivationPath = "m/44'/60'/0'/0/" + String(nodeNum);
     const node = hdChain.derive(derivationPath);
-    console.log(nodeNum)
     log.debug(`A Wallet Node has been requested`, {
         nodeNumber: nodeNum,
         derivationPath: derivationPath,
@@ -180,6 +179,19 @@ export const constructWalletObject = (name, privK, address, curve, isInternal) =
     }
     return { name: name, privK: privK, address: address, curve: curve, isInternal: isInternal }
 };
+
+/**
+ * Strip 0x prefix from eth bases addresses and keys
+ * @param { String } pKeyOrAddress 
+ */
+export const strip0x = (pKeyOrAddress) => {
+    if (typeof pKeyOrAddress !== "string") { throw new Error("Only strings should be passed to strip0x(), handle this externally.")}
+    // Only proceed if has prefix
+    if (pKeyOrAddress[0] === "0" && pKeyOrAddress[1] === "x") {
+        return pKeyOrAddress.slice(2, pKeyOrAddress.length);
+    }
+    return pKeyOrAddress;
+}
 
 export const curveTypes = {
     SECP256K1: 1,

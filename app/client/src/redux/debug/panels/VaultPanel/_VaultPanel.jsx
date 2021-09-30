@@ -13,16 +13,6 @@ export default function VaultPanel() {
         const { index } = props;
         // Just toggle instead for now
         return setActiveBlocks([index])
-        //
-        const isActive = isActiveBlock(index);
-        let newActive = [...activeBlocks];
-        if (isActive) {
-            let removeIndex = newActive.indexOf(index);
-            newActive.splice(removeIndex, 1);
-        } else {
-            newActive.push(index);
-        }
-        setActiveBlocks(newActive);
     }
 
     const visibilityShim = (active, content) => active ? content : null;
