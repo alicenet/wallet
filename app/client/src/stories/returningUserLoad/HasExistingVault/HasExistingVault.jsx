@@ -43,7 +43,7 @@ function UnlockExistingVault() {
 
                 <Grid.Column width={16} className="p-0 self-center">
 
-                    <Header content=" Welcome Back" as="h3" className="m-0"/>
+                    <Header content="Welcome Back" as="h3" className="m-0"/>
 
                 </Grid.Column>
 

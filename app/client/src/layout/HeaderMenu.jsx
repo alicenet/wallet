@@ -1,12 +1,33 @@
 import React from 'react';
 
-import {Container, Header, Icon, Image, Menu, Tab} from 'semantic-ui-react';
+import { Container, Header, Icon, Image, Menu, Tab } from 'semantic-ui-react';
 
-import {withRouter} from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
+
+import { useDispatch, useSelector } from 'react-redux';
 
 import MadIcon from '../Assets/icon.png';
 
-function CreateVault({history, showTabs}) {
+import { USER_ACTIONS } from '../redux/actions/_actions';
+
+function CreateVault() {
+
+    const history = useHistory();
+    const dispatch = useDispatch();
+
+    const [existingAccount, setExistingAccount] = React.useState(false);
+
+    const { isLocked } = useSelector(state => ({
+        isLocked: state.vault.is_locked
+    }));
+
+    React.useEffect(() => {
+        const checkForAccount = async () => {
+            let hasAccount = await dispatch(USER_ACTIONS.checkForUserAccount());
+            setExistingAccount(hasAccount);
+        };
+        checkForAccount();
+    }, [dispatch]);
 
     return (
         <Menu secondary className="m-0">
@@ -33,7 +54,7 @@ function CreateVault({history, showTabs}) {
 
             <Container fluid className="flex flex-row content-center justify-center">
 
-                {showTabs && <Tab activeIndex={-1} menu={{secondary: true, pointing: true}} panes={[
+                {existingAccount && !isLocked && <Tab activeIndex={-1} menu={{ secondary: true, pointing: true }} panes={[
                     {
                         menuItem: 'Wallets'
                     },
@@ -52,11 +73,11 @@ function CreateVault({history, showTabs}) {
 
             <Container fluid className="flex flex-row content-center justify-end">
 
-                <Menu.Item as='a' header onClick={() => history.push('/wallet/settings')} className="mx-0">
+                {existingAccount && <Menu.Item as='a' header onClick={() => history.push('/wallet/settings')} className="mx-0">
 
                     <Icon name="cog" size="large" className="mx-0 transform duration-300 hover:rotate-90"/>
 
-                </Menu.Item>
+                </Menu.Item>}
 
             </Container>
 
@@ -65,4 +86,4 @@ function CreateVault({history, showTabs}) {
 
 }
 
-export default withRouter(CreateVault);
+export default CreateVault;
