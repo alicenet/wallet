@@ -2,16 +2,16 @@ import React from 'react';
 
 import PropTypes from 'prop-types';
 
-import {Container} from 'semantic-ui-react';
+import { Container } from 'semantic-ui-react';
 
 import HeaderMenu from './HeaderMenu';
 
-const Page = ({children}) => {
+const Page = ({ children }) => {
 
     return (
         <Container className="h-full flex flex-col" fluid>
 
-            <HeaderMenu showTabs={false}/>
+            <HeaderMenu/>
 
             <Container className="w-full h-full flex">
 

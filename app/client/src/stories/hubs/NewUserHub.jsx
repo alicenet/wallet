@@ -100,9 +100,9 @@ function NewUserHub() {
 
                     <Container fluid className="flex flex-auto flex-col items-center gap-3 w-72">
 
-                        <Button color="purple" basic content="Create a Vault*" fluid onClick={() => history.push('/newVault/createVault')}/>
+                        <Button color="purple" basic content="Create a Vault*" className="m-0" fluid onClick={() => history.push('/newVault/createVault')}/>
 
-                        <Button color="orange" basic content="I have a vault seed" fluid onClick={useRecoveryPhrase}/>
+                        <Button color="orange" basic content="I have a vault seed" className="m-0" fluid onClick={useRecoveryPhrase}/>
 
                     </Container>
 
