@@ -6,12 +6,12 @@ import { Container } from 'semantic-ui-react';
 
 import HeaderMenu from './HeaderMenu';
 
-const Page = ({ children }) => {
+const Page = ({ children, hideMenu }) => {
 
     return (
         <Container className="h-full flex flex-col" fluid>
 
-            <HeaderMenu/>
+            <HeaderMenu hideMenu={hideMenu}/>
 
             <Container className="w-full h-full flex">
 

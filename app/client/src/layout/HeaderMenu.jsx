@@ -10,7 +10,7 @@ import MadIcon from '../Assets/icon.png';
 
 import { USER_ACTIONS } from '../redux/actions/_actions';
 
-function CreateVault() {
+function HeaderMenu({ hideMenu }) {
 
     const history = useHistory();
     const dispatch = useDispatch();
@@ -54,7 +54,7 @@ function CreateVault() {
 
             <Container fluid className="flex flex-row content-center justify-center">
 
-                {existingAccount && !isLocked && <Tab activeIndex={-1} menu={{ secondary: true, pointing: true }} panes={[
+                {!hideMenu && existingAccount && <Tab activeIndex={-1} menu={{ secondary: true, pointing: true }} panes={[
                     {
                         menuItem: 'Wallets'
                     },
@@ -73,7 +73,7 @@ function CreateVault() {
 
             <Container fluid className="flex flex-row content-center justify-end">
 
-                {existingAccount && <Menu.Item as='a' header onClick={() => history.push('/wallet/settings')} className="mx-0">
+                {!hideMenu && existingAccount && <Menu.Item as='a' header onClick={() => history.push('/wallet/settings')} className="mx-0">
 
                     <Icon name="cog" size="large" className="mx-0 transform duration-300 hover:rotate-90"/>
 
@@ -86,4 +86,4 @@ function CreateVault() {
 
 }
 
-export default CreateVault;
+export default HeaderMenu;

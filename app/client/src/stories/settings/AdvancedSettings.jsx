@@ -67,7 +67,7 @@ function AdvancedSettings() {
     }
 
     return (
-        <Page>
+        <Page hideMenu>
 
             <Grid textAlign="center" className="m-0">
 
