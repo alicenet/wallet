@@ -4,7 +4,7 @@ import { Container, Header, Icon, Image, Menu, Tab } from 'semantic-ui-react';
 
 import { useHistory } from 'react-router-dom';
 
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import MadIcon from '../Assets/icon.png';
 
@@ -16,10 +16,6 @@ function HeaderMenu({ hideMenu }) {
     const dispatch = useDispatch();
 
     const [existingAccount, setExistingAccount] = React.useState(false);
-
-    const { isLocked } = useSelector(state => ({
-        isLocked: state.vault.is_locked
-    }));
 
     React.useEffect(() => {
         const checkForAccount = async () => {
@@ -54,7 +50,7 @@ function HeaderMenu({ hideMenu }) {
 
             <Container fluid className="flex flex-row content-center justify-center">
 
-                {!hideMenu && existingAccount && <Tab activeIndex={-1} menu={{ secondary: true, pointing: true }} panes={[
+                {false && <Tab activeIndex={-1} menu={{ secondary: true, pointing: true }} panes={[
                     {
                         menuItem: 'Wallets'
                     },
