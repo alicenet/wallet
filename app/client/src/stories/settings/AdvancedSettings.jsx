@@ -25,13 +25,6 @@ function AdvancedSettings() {
     // This is a local state change, and is not propagated to the store
     const [formState, formSetter] = useFormState(["MadNetChainId", "MadNetProvider", "EthereumProvider", "RegistryContractAddress"]);
 
-    console.log({
-        madNetChainId: madNetChainId,
-        madNetProvider: madNetProvider,
-        ethereumProvider: ethereumProvider,
-        registryContractAddress: registryContractAddress,
-    })
-
     // This actually won't run because the context equality check passes ( We never update it, it stays the same )
     React.useEffect(() => {
         formSetter.setMadNetChainId(madNetChainId);
@@ -57,9 +50,9 @@ function AdvancedSettings() {
         console.log("SAVE VALUES")
         console.log(formState);
         dispatch(CONFIG_ACTIONS.saveConfigurationValues(
-            formState.MadNetChainId.value, 
-            formState.MadNetProvider.value, 
-            formState.EthereumProvider.value, 
+            formState.MadNetChainId.value,
+            formState.MadNetProvider.value,
+            formState.EthereumProvider.value,
             formState.RegistryContractAddress.value
         ));
     }
@@ -73,9 +66,8 @@ function AdvancedSettings() {
         formSetter.setRegistryContractAddress(initialConfigurationState.registry_contract_address);
     }
 
-
     return (
-        <Page>
+        <Page hideMenu>
 
             <Grid textAlign="center" className="m-0">
 

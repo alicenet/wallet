@@ -13,7 +13,7 @@ function Settings() {
     const [showAdvancedFeatures, setShowAdvancedFeatures] = React.useState(false);
 
     return (
-        <Page>
+        <Page hideMenu>
 
             <Grid textAlign="center" className="m-0">
 
