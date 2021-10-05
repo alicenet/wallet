@@ -9,8 +9,9 @@ import { curveTypes } from 'util/wallet.js';
  * @prop { Boolean } inline -- Compact the form into a single line?
  * @prop { String } defaultPassword --Default password to use? ( Mainly for debugging )
  * @prop { Boolean } showPassword -- Show the password in plain text?
+ * @prop { String } customTitle -- Use a custom form title?
  */
-export default function GenerateKeystoreForm({ loadKeystoreCB, inline, defaultPassword = "", showPassword = false }) {
+export default function GenerateKeystoreForm({ loadKeystoreCB, inline, defaultPassword = "", showPassword = false, customTitle="Generate Keystore" }) {
 
     const [formState, formSetter] = useFormState(["password"])
     const [keystoreDL, setKeystoreDL] = React.useState(false);
@@ -61,7 +62,7 @@ export default function GenerateKeystoreForm({ loadKeystoreCB, inline, defaultPa
         return (
             <Form size="mini" className="max-w-lg" >
 
-                <Header as="h4">Generate Keystore</Header>
+                <Header as="h4">{customTitle}</Header>
 
                 <Form.Group widths="equal">
 
@@ -99,7 +100,7 @@ export default function GenerateKeystoreForm({ loadKeystoreCB, inline, defaultPa
 
         <Form size="mini" className="max-w-lg" >
 
-            <Header as="h4">Generate Keystore</Header>
+            <Header as="h4">{customTitle}</Header>
 
             <Form.Input
                 label="Keystore Password"

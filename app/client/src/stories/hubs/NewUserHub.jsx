@@ -17,8 +17,9 @@ function NewUserHub() {
     /* Check if user has a vault behind the scenes */
     React.useEffect(() => {
         const checkForAccount = async () => {
-            let hasAccount = await dispatch(USER_ACTIONS.checkForUserAccount(true));
+            let hasAccount = await dispatch(USER_ACTIONS.initialUserAccountCheck());
             if (hasAccount.vault === true) { history.push('/returningUserLoad/hasExistingVault') };
+            if (hasAccount.optOut === true) { history.push('/returningUserLoad/hasKeystores') };
         }
         checkForAccount();
     }, [history, dispatch]);
@@ -75,11 +76,11 @@ function NewUserHub() {
                                         keystore are secured by your passphrase in the vault file.</p>
 
                                     <p>Some users may not wish to subject to a single point of failure in wallet
-                                    storage. To recognize this you will get the final say over how your wallets are
+                                        storage. To recognize this you will get the final say over how your wallets are
                                         stored and will be given the option to opt out of vault storage.</p>
 
                                     <p>Please note that opting out of vault storage will make user flows more
-                                    complicated, and you will be asked for individual key-store passwords frequently
+                                        complicated, and you will be asked for individual key-store passwords frequently
                                         when loading and interacting with wallets.</p>
 
                                 </Container>

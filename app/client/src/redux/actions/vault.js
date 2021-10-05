@@ -33,7 +33,7 @@ export function generateNewSecureHDVault(mnemonic, password, curveType = util.wa
         electronStoreCommonActions.storePreflightHash(preflightHash); // Store preflight hash for pre-action auth checking
         const preInitPayload = { wallets: { internal: [{ privK: firstWalletNode.privateKey.toString('hex'), name: "Main Wallet", curve: curveType }], external: [] } }; // Payload needed by initMadWallet() in WalletManagerMiddleware
         await dispatch({ type: MIDDLEWARE_ACTION_TYPES.INIT_MAD_WALLET, payload: preInitPayload }); // Pass off to MadWalletMiddleware to finish state initiation
-        dispatch({ type: VAULT_ACTION_TYPES.SET_MNEMONIC, payload: mnemonic});
+        dispatch({ type: VAULT_ACTION_TYPES.SET_MNEMONIC, payload: mnemonic });
         dispatch({ type: VAULT_ACTION_TYPES.MARK_EXISTS_AND_UNLOCKED });
     }
 }
@@ -76,13 +76,13 @@ export function loadSecureHDVaultFromStorage(password) {
             const internalWalletObj = {
                 name: wallet.name,
                 privK: wallet.privK,
-                curve: wallet.curve, 
+                curve: wallet.curve,
             }
             preInitPayload.wallets.external.push(internalWalletObj); // Add it to the wallet init
         })
         let res = await dispatch({ type: MIDDLEWARE_ACTION_TYPES.INIT_MAD_WALLET, payload: preInitPayload }); // Pass off to MadWalletMiddleware to finish state initiation
         dispatch({ type: VAULT_ACTION_TYPES.MARK_EXISTS_AND_UNLOCKED });
-        dispatch({ type: VAULT_ACTION_TYPES.SET_MNEMONIC, payload: mnemonic});
+        dispatch({ type: VAULT_ACTION_TYPES.SET_MNEMONIC, payload: mnemonic });
         return res;
     }
 }
@@ -107,7 +107,7 @@ export function addInternalWalletToState(walletName, privKey) {
  * @param { String } walletName - Name to be used to reference the external wallet
  */
 export function addExternalWalletToState(keystore, password, walletName) {
-    return async function (dispatch) {
+    return async function (dispatch, getState) {
         let ksString;
         log.debug("Adding wallet with name ", walletName, " to external wallets from keystore: ", keystore);
         try {
@@ -116,12 +116,18 @@ export function addExternalWalletToState(keystore, password, walletName) {
             throw new Error("Must only pass valid JSON Keystore Object to addExternalWalletToState", ex)
         }
         let unlocked = { data: util.wallet.unlockKeystore(JSON.parse(ksString), password), name: walletName };
-        console.log(unlocked);
         let additions = await dispatch({ type: MIDDLEWARE_ACTION_TYPES.ADD_WALLET_FROM_KEYSTORE, payload: unlocked }); // Pass off to MadWalletMiddleware to finish state balancing
         if (additions.error) { return additions }
         let added = await dispatch({ type: VAULT_ACTION_TYPES.ADD_EXTERNAL_WALLET, payload: additions.external[0] });
-        // When a wallet is added, dispatch sync-store
-        dispatch({ type: ACTION_ELECTRON_SYNC, payload: {reason: "Adding External Wallet"} });
+        // When adding external wallets we need to check if this addition is to an existing vault -- If not, make sure we set optout as true.
+        let hasVault = getState().vault.exists;
+        let isOptout = getState().vault.optout;
+        // If the vault has not been determined as existing by the time a wallet addition happens, we can safely assume this is an opt out user and mark as such
+        if (!hasVault && !isOptout) { // We only need to dispatch this if the user isn't already marked as an optout
+            dispatch({ type: VAULT_ACTION_TYPES.MARK_OPTOUT__VAULT_NONEXIST_AND_UNLOCKED }); // Set as optout user
+        }
+        // When a wallet is added, dispatch sync-store -- Provide keystoreString for optout keystore additions where necessary
+        dispatch({ type: ACTION_ELECTRON_SYNC, payload: { reason: "Adding External Wallet", keystoreAdded: { string: ksString, name: walletName } } });
         return added;
     }
 }

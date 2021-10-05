@@ -2,6 +2,11 @@ import { VAULT_ACTION_TYPES } from '../constants/_constants';
 import { reduxState_logger as log } from 'log/logHelper'
 import { curveTypes } from '../../util/_util';
 
+/** 
+ * This vault reducer contains all state regarding user wallets
+ * Even if a user is an optOut user, their wallets will be stored in 'wallets'
+ */
+
 /**
  * Used to build complex updates to the vault state as a whole or the initial vault state
  * @param { Object  } options
@@ -11,12 +16,13 @@ import { curveTypes } from '../../util/_util';
  * @param { Array } options.externalWallets - Array of <ExternalWallets> -- Default []
  * @returns { Object } -- JSON Object for vault state
  */
-export const buildVaultStateObject = ({ exists = false, isLocked = null, internalWallets = [], externalWallets = [] } = {}, hdCurve = curveTypes.SECP256K1, mnemonic = "") => {
+export const buildVaultStateObject = ({ exists = null, isLocked = null, optout = null, internalWallets = [], externalWallets = [] } = {}, hdCurve = curveTypes.SECP256K1, mnemonic = "") => {
     return {
-        exists: exists, // Does the "vault" key exist in the electron store?
-        is_locked: isLocked, // Locking vault wipes current state :: Required user to re-enter password -- Vault is deciphered and reloaded
-        hd_curve: hdCurve, // Curve used for internal wallets
-        mnemonic: mnemonic, // Mnemonic for HD Chain
+        exists: exists, // Does the "vault" key exist in the electron store? -- Checked on load :: Default NULL for unknown
+        is_locked: isLocked, // Locking vault wipes current state :: Requires user to re-enter password -- Vault is deciphered and reloaded -- Determined on load :: Default NULL for unknown
+        hd_curve: hdCurve, // VAULT USERS ONLY -- Curve used for internal wallets :: Used to determine the default curve for HD wallet generation
+        mnemonic: mnemonic, // VAULT USERS ONLY -- Mnemonic for HD Chain --
+        optout: optout, // Is the user a vault optout user?
         wallets: {
             external: externalWallets, // Array of <WalletObject>s as defined below
             internal: internalWallets, // Array of <WalletObject>s as defined below
@@ -25,7 +31,7 @@ export const buildVaultStateObject = ({ exists = false, isLocked = null, interna
 }
 
 // The vault reducer contains all information regarding the user and their wallets state
-export const initialVaultState = buildVaultStateObject({ exists: false });
+export const initialVaultState = buildVaultStateObject();
 
 /* Vault Reducer */
 export default function vaultReducer(state = initialVaultState, action) {
@@ -36,6 +42,19 @@ export default function vaultReducer(state = initialVaultState, action) {
         case VAULT_ACTION_TYPES.LOCK_VAULT:
             log.debug("Redux Vault State Locked");
             return Object.assign({}, state, buildVaultStateObject({ exists: true, isLocked: true }));
+
+        case VAULT_ACTION_TYPES.SET_VAULT_TO_STATE:
+            log.debug("Performing large object=>vault_state payload update with:", action.payload);
+            return Object.assign({}, state, action.payload)
+
+        case VAULT_ACTION_TYPES.SET_WALLETS_STATE:
+            log.debug("Performing wallet state update:", action.payload);
+            return Object.assign({}, state, {
+                wallets: {
+                    internal: action.payload.internal,
+                    external: action.payload.external
+                },
+            });
 
         case VAULT_ACTION_TYPES.SET_MNEMONIC:
             log.debug("Setting Vault State Mnemonic to Redux State");
@@ -52,6 +71,10 @@ export default function vaultReducer(state = initialVaultState, action) {
             return Object.assign({}, state, {
                 wallets: { internal: [...state.wallets.internal, action.payload], external: state.wallets.external }
             })
+
+        ////////////////////
+        // State Markers // -- Vault State Marker Actions
+        ///////////////////
 
         case VAULT_ACTION_TYPES.MARK_EXISTS_AND_LOCKED:
             log.debug("Marking Vault as existing and locked");
@@ -73,17 +96,20 @@ export default function vaultReducer(state = initialVaultState, action) {
                 exists: true,
             })
 
-        case VAULT_ACTION_TYPES.SET_VAULT_TO_STATE:
-            log.debug("Performing large object=>vault_state payload update with:", action.payload);
-            return Object.assign({}, state, action.payload)
-
-        case VAULT_ACTION_TYPES.SET_WALLETS_STATE:
-            log.debug("Performing wallet state update:", action.payload);
+        case VAULT_ACTION_TYPES.MARK_OPTOUT__VAULT_NONEXIST_AND_UNLOCKED:
+            log.debug("Marking Vault as OPTOUT :: non-existing, non-locked");
             return Object.assign({}, state, {
-                wallets: {
-                    internal: action.payload.internal,
-                    external: action.payload.external
-                },
+                exists: false,
+                is_locked: false,
+                optout: true,
+            })
+
+        case VAULT_ACTION_TYPES.MARK_NONEXIST_NONLOCK_NONOPTOUT:
+            log.debug("Marking Vault as clear: NON_EXISTING, NON_LOCKED, NON_OPTOUT");
+            return Object.assign({}, state, {
+                exists: false,
+                is_locked: false,
+                optout: false,
             })
 
         default: return state;

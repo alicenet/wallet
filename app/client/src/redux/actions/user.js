@@ -2,7 +2,7 @@ import { USER_ACTION_TYPES } from '../constants/_constants';
 import { VAULT_ACTION_TYPES } from '../constants/_constants';
 import utils from 'util/_util';
 import { curveTypes } from 'util/wallet';
-import { default_log as log } from 'log/logHelper';
+import { reduxState_logger as log } from 'log/logHelper';
 import { electronStoreCommonActions } from 'store/electronStoreHelper';
 
 //////////////////////////////////
@@ -62,19 +62,32 @@ export function setDesiredCurveType(curveType) {
 }
 
 /**
- *  Check for existing user account files and set state accordingly -- 
- * @param { Boolean } initialCheck -- Is this the first check? First check will mark any found vault as locked -- if not, it will be left where redux state has determined.
- * @returns { {vault: Boolean, optOut: Boolean} } - Vault/Optout status
+ * This is the initial user account check for setting initial state.
+ * Once ran once, we prevent it from dispatching again via checking for state first
+ * @returns 
  */
-export function checkForUserAccount(initialCheck) {
-    return async function (dispatch) {
+export function initialUserAccountCheck() {
+    return async function (dispatch, getState) {
+        const vaultState = getState().vault;
+        // If initial state has been determined, these dispatches should not occur again
+        if (vaultState.is_locked !== null || vaultState.exists !== null) {
+            return log.warn("Attempting to run initialUserAccountCheck() again. Why? Isolate and remove duplicate calls to this function. ONLY IN DEBUG IS THIS NORMAL :: Opening debug will generate this warning.\n\nENV DEBUG MODE : " + utils.generic.isDebug);
+        }
+        // Initial Check . . . 
         let vaultExists = await electronStoreCommonActions.checkIfUserHasVault();
+        let optOutExists = await electronStoreCommonActions.checkForOptoutStores();
         if (vaultExists) {
-            dispatch({ type: initialCheck ? VAULT_ACTION_TYPES.MARK_EXISTS_AND_LOCKED : VAULT_ACTION_TYPES.MARK_EXISTS });
+            log.debug("Vault exists! Setting state to match.");
+            dispatch({ type: VAULT_ACTION_TYPES.MARK_EXISTS_AND_LOCKED });
             return { vault: true, optOut: false };
-        } else {
-            // CAT TODO: Check for keystore paths if no vault
-            return false
+        } else if (optOutExists) { // Check for opt out
+            log.debug("Optout collection exists! Setting state to match.");
+            dispatch({ type: VAULT_ACTION_TYPES.MARK_OPTOUT__VAULT_NONEXIST_AND_UNLOCKED });
+            return { vault: false, optOut: true };
+        } else { // Else set clear state
+            log.debug("Neither vault or optout collections exists! Setting state to match.");
+            dispatch({ type: VAULT_ACTION_TYPES.MARK_NONEXIST_NONLOCK_NONOPTOUT });
+            return { vault: false, optOut: false };
         }
     }
 }

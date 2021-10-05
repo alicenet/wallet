@@ -51,6 +51,7 @@ function App() {
 
                 {/* Returning User Load */}
                 <Route exact path="/returningUserLoad/hasExistingVault" component={ReturningUserLoadFlows.HasExistingVault}/>
+                <Route exact path="/returningUserLoad/hasKeystores" component={ReturningUserLoadFlows.HasExistingKeystores}/>
 
                 {/* Wallet Hub -- Send here if vault exists */}
                 <Route exact path="/hub" component={Hubs.ReturningUserHub}/>

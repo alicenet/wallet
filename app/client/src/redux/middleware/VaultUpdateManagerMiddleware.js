@@ -15,11 +15,17 @@ export default function VaultUpdateManagerMiddleware(storeAPI) {
     return function wrapDispatch(next) {
         return function handleAction(action) {
             let state = storeAPI.getState();
-            if (state.vault.exists && !state.vault.is_locked && state.vault.is_locked !== null) {
-                switch (action.type) {
-                    case ACTION_ELECTRON_SYNC:
-                        syncStateToStore(storeAPI, action.payload.reason); break;
-                    default: break;
+            if (state.vault.is_locked !== null && state.vault.exists !== null) { // Don't update on unknown vault states
+                // Only sync on store sync actions
+                if (action.type === ACTION_ELECTRON_SYNC) {
+                    // Vault Syncing
+                    if (state.vault.exists && !state.vault.is_locked) { // Only update electron store of an existing, unlocked vault
+                        syncStateToStore(storeAPI, action.payload.reason);
+                    }
+                    // Optout Syncing
+                    else if (state.vault.optout) { // Only update electron store of an existing, unlocked vault
+                        syncOptoutStore(storeAPI, action.payload.reason, action.payload.keystoreAdded);
+                    }
                 }
             }
             // Do anything here: pass the action onwards with next(action),
@@ -30,7 +36,7 @@ export default function VaultUpdateManagerMiddleware(storeAPI) {
     }
 }
 
-function syncStateToStore(storeAPI, reason) {
+function _getStateWallets(storeAPI) {
     let wallets = storeAPI.getState().vault.wallets;
     let walletStorage = { internal: [], external: [] }
     for (let w of wallets.internal) {
@@ -39,7 +45,11 @@ function syncStateToStore(storeAPI, reason) {
     for (let w of wallets.external) {
         walletStorage.external.push({ name: w.name, privK: w.privK, curve: w.curve })
     }
+    return walletStorage;
+}
 
+function syncStateToStore(storeAPI, reason) {
+    let stateWallets = _getStateWallets(storeAPI);
     // We need the password from the user to perform vault updates so create a wrap callback and wait until the user provides it.
     toast.warn(<SyncToastMessageWarning title="Vault Update Request" message="Password Needed -- Click Here" />, {
         position: "bottom-right",
@@ -54,7 +64,7 @@ function syncStateToStore(storeAPI, reason) {
                 type: MODAL_ACTION_TYPES.OPEN_PW_REQUEST, payload: {
                     reason: "Vault Syncronization -- " + reason,
                     cb: async (password) => {
-                        await electronStoreCommonActions.updateVaultWallets(password, walletStorage)
+                        await electronStoreCommonActions.updateVaultWallets(password, stateWallets)
                         toast.success(<SyncToastMessageSuccess title="Success" message={reason} />, {
                             position: "bottom-right",
                             autoClose: 2400,
@@ -69,4 +79,10 @@ function syncStateToStore(storeAPI, reason) {
         }
     });
 
+}
+
+async function syncOptoutStore(storeAPI, reason, keystoreAdded) {
+    let ksString = keystoreAdded.string;
+    let walletName = keystoreAdded.name;
+    let updated = await electronStoreCommonActions.addOptOutKeystore(ksString, walletName);
 }

@@ -91,11 +91,11 @@ export default function VaultSegment() {
                 </Form.Group>
             </Form>
 
-            {vault.is_locked ? (
+            {vault.is_locked && (
                 <div className="text-xs mb-3 text-red-600 ml-1 -mt-1">
                     Unlocking a vault overwrites the current wallet/vault state as it is a core initial action that doesn't happen frequently
                 </div>
-            ) : null}
+            )}
 
             <GenerateKeystoreForm inline defaultPassword="testing" showPassword loadKeystoreCB={addWalletFromKeystore} />
             <Form size="mini" className="max-w-sm">

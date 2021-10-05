@@ -1,8 +1,12 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
+import { USER_ACTIONS } from 'redux/actions/_actions';
 import { Segment, Form, Header, Button, TextArea } from 'semantic-ui-react';
 import { electronStoreUtilityActons } from 'store/electronStoreHelper.js';
 
 export default function ElectronStorePanel() {
+
+    const dispatch = useDispatch();
 
     // State
 
@@ -19,8 +23,9 @@ export default function ElectronStorePanel() {
     //////////////////////
     // Store Operations //
     //////////////////////
-    const deleteStore = () => {
-        electronStoreUtilityActons.completelyDeleteElectronStore();
+    const deleteStore = async () => {
+        await electronStoreUtilityActons.completelyDeleteElectronStore();
+        window.location.reload(true);
     }
 
     const readValue = async () => {
@@ -63,7 +68,7 @@ export default function ElectronStorePanel() {
 
                 </Form>
 
-                <Button size="mini" fluid content="electron_DELETE_STORE_NO_CONFIRM" onClick={deleteStore} color="red" className="mt-4" />
+                <Button size="mini" fluid content="electron_DELETE_STORE_NO_CONFIRM__WITH_HARD_REFRESH" onClick={deleteStore} color="red" className="mt-4" />
 
                 <Header as="h5">Custom Store Write/Reads</Header>
 
