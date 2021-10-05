@@ -16,7 +16,7 @@ function HeaderMenu({ hideMenu }) {
     const history = useHistory();
 
     const {exists, optout } = useSelector(s => ({exists: s.vault.exists, optout: s.vault.optout}));
-    const existingAccount = (exists || optout);
+    const existingAccount = exists || optout;
 
     return (
         <Menu secondary className="m-0">
