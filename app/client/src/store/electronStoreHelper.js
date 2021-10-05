@@ -2,6 +2,7 @@ import electronStoreMessenger from './electronStoreMessenger';
 import { electronStoreHelper_logger as log } from 'log/logHelper';
 import utils from 'util/_util';
 import { utils as web3Utils } from 'web3'
+import { v4 as uuidv4, v4 } from 'uuid';
 
 /** A utility module to assist in reading and writing from the secure-electron-store using the elctronStoreMessenger 
  * without directly utilizing the pub/sub interface provided by it, but rather it's sync-mimicking abstractions
@@ -119,6 +120,21 @@ export const electronStoreUtilityActons = {
 /* Abstracted Common Store Actions  */ // Functions thats remove the need to know the keys for common stored items
 /////////////////////////////////////
 
+/**
+ * 
+ * @param { Object } walletsAsObject
+ * @property { Array } walletsAsObject.internal - Array of internal wallets with {name:} only
+ * @property { Array } walletsAsObject.external - Array of externak wallets with {name: , privK:, curve:  }   
+ */
+function _genVaultObjectString(mnemonic, hdCurveType, hdWalletCount = 1, walletsAsObject) {
+    return JSON.stringify({
+        mnemonic: mnemonic,
+        hd_wallet_count: hdWalletCount,
+        hd_wallet_curve: hdCurveType,
+        wallets: walletsAsObject
+    });
+}
+
 /** Full abstraction of vault generation -- Returns mnemonic
  * @param { String } mnemonic - Mnemonic to generate the vault based off of :: Should be a mnemonic that has been verified by the vault owner,
  * @param { String } password - Passphrase to cipher the vault with :: A hash will also be stored for pre-flights and admin actions as "preflightHash",    
@@ -135,16 +151,14 @@ function createNewSecureHDVault(mnemonic, password, curveType = "secp256k1") {
         let hdChain = wu.getHDChainFromSeedBytes(seedBytes);
         let firstWalletNode = wu.getHDWalletNodeFromHDChain(hdChain, 0);
 
+        let wallets = {
+            internal: [{ name: "Main Wallet" }], // When storing internal wallets the only key we need to store in their name
+            external: [],
+        }
+
         // Create the vault object string
-        const vaultObjectString = JSON.stringify({
-            mnemonic: mnemonic,
-            hd_wallet_count: 1,
-            hd_wallet_curve: curveType,
-            wallets: {
-                internal: [{name: "Main Wallet"}], // When storing internal wallets the only key we need to store in their name
-                external: [],
-            }
-        });
+        const vaultObjectString = _genVaultObjectString(mnemonic, curveType, 1, wallets);
+
         await writeEncryptedValueToStore("vault", vaultObjectString, password);
         log.debug('A new secure vault as key "vault" has been saved to the store.')
         res([passwordHash, firstWalletNode]);
@@ -164,6 +178,20 @@ function unlockAndGetSecuredHDVault(password) {
 }
 
 /**
+ * Updates the current vault wallets against current redux state
+ * @param { Object } vaultState 
+ * @returns 
+ */
+function updateVaultWallets(password, newWalletState) {
+    return new Promise(async res => {
+        let vault = JSON.parse(await readEncryptedValueFromStore("vault", password)); // Get current vault for settings
+        let vaultObjectString = _genVaultObjectString(vault.mnemonic, vault.hd_wallet_curve, newWalletState.internal.length, newWalletState); // Inject new wallets
+        let written = await writeEncryptedValueToStore("vault", vaultObjectString, password); // Write it
+        res(written);
+    })
+}
+
+/**
  * Store preflight hash as plain value to the electron-store
  * @param { String } hashAsString - Hash to be stored as a string
  * @returns { Boolean }
@@ -171,6 +199,43 @@ function unlockAndGetSecuredHDVault(password) {
 function storePreflightHash(hashAsString) {
     writePlainValueToStore("preflightHash", hashAsString);
     return true;
+}
+
+/**
+ * Opt out users store keystores under the key "optOutStores" as an array of  Objects with name and keystore, and optionally curve as values
+ * This adds an optout keystore to the list of keystores in the electron state
+ * Opt out keystores are given a UUID so that they can be acted on within the UI, eg for removal.
+ * @param {Object} walletsToSync - Collection of wallet objects to write to "optOutStores" 
+ */
+async function addOptOutKeystore(ksString, walletName) {
+    // First see if optOuts exist, if not make them
+    let currentKeystores = await readPlainValueFromStore("optOutStores");
+    // If not existant, set as empty array and add to it
+    if (currentKeystores.error && currentKeystores.error == "Key is not in secure-electron-storage!") {
+        currentKeystores = [];
+    }
+    // Add new keystore with a uid
+    currentKeystores.push({ name: walletName, keystore: ksString, id: v4() })
+    // Write the updated keystores
+    writePlainValueToStore("optOutStores", currentKeystores);
+}
+
+/**
+ * Returns an array of all optout keystores 
+ */
+function checkForOptoutStores() {
+    return new Promise(async res => {
+        let keystores = await readPlainValueFromStore("optOutStores")
+        if (keystores.error && keystores.error == "Key is not in secure-electron-storage!") {
+            res(false);
+        }
+        else if (keystores.error) {
+            throw new Error(keystores.error);
+        }
+        else {
+            res(keystores);
+        }
+    })
 }
 
 /**
@@ -216,6 +281,9 @@ export const electronStoreCommonActions = {
     storePreflightHash: storePreflightHash,
     getPreflightHash: getPreflightHash,
     checkIfUserHasVault: checkIfUserHasVault,
+    checkForOptoutStores: checkForOptoutStores,
     checkPasswordAgainstPreflightHash: checkPasswordAgainstPreflightHash,
     unlockAndGetSecuredHDVault: unlockAndGetSecuredHDVault,
+    updateVaultWallets: updateVaultWallets,
+    addOptOutKeystore: addOptOutKeystore,
 }

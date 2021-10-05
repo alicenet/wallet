@@ -17,10 +17,9 @@ function NewUserHub() {
     /* Check if user has a vault behind the scenes */
     React.useEffect(() => {
         const checkForAccount = async () => {
-            let hasAccount = await dispatch(USER_ACTIONS.checkForUserAccount());
-            if (hasAccount) {
-                history.push('/returningUserLoad/hasExistingVault');
-            }
+            let hasAccount = await dispatch(USER_ACTIONS.initialUserAccountCheck());
+            if (hasAccount.vault === true) { history.push('/returningUserLoad/hasExistingVault'); }
+            if (hasAccount.optOut === true) { history.push('/returningUserLoad/hasKeystores'); }
         }
         checkForAccount();
     }, [history, dispatch]);

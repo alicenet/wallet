@@ -4,8 +4,8 @@ import { reduxState_logger as log } from '../../log/logHelper.js'
 
 // The user reducer contains all information regarding the user and their wallets state
 const initialUserState = {
-    potential_seed_phrase: "",
-    desired_hd_curve: curveTypes.SECP256K1,
+    potential_seed_phrase: "", // Used during seed generation for vault
+    desired_hd_curve: curveTypes.SECP256K1, // Used to dertemine which curve the user would like to use on their HD Vault
 }
 
 /* User Reducer */

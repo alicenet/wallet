@@ -10,6 +10,8 @@ import * as Settings from './stories/settings/_settings';
 import * as NewVaultFlows from './stories/newVault/_newVault';
 import * as OptOutFlow from './stories/optOut/_optOut';
 import * as ReturningUserLoadFlows from './stories/returningUserLoad/_returnUserLoad';
+import { ToastContainer } from 'react-toastify';
+import PasswordRequestModal from 'components/modals/PasswordRequestModal';
 
 /**
  * Main App Entrypoint
@@ -49,6 +51,7 @@ function App() {
 
                 {/* Returning User Load */}
                 <Route exact path="/returningUserLoad/hasExistingVault" component={ReturningUserLoadFlows.HasExistingVault}/>
+                <Route exact path="/returningUserLoad/hasKeystores" component={ReturningUserLoadFlows.HasExistingKeystores}/>
 
                 {/* Wallet Hub -- Send here if vault exists */}
                 <Route exact path="/hub" component={Hubs.ReturningUserHub}/>
@@ -76,7 +79,11 @@ function App() {
                 <Switch>
                     <DefaultRoutes/>
                 </Switch>
+
                 <DebugTools/>
+                <ToastContainer/>
+                <PasswordRequestModal/>
+
             </Router>
         </Container>
     );
