@@ -71,7 +71,8 @@ export function initialUserAccountCheck() {
         const vaultState = getState().vault;
         // If initial state has been determined, these dispatches should not occur again
         if (vaultState.is_locked !== null || vaultState.exists !== null) {
-            return log.warn("Attempting to run initialUserAccountCheck() again. Why? Isolate and remove duplicate calls to this function. ONLY IN DEBUG IS THIS NORMAL :: Opening debug will generate this warning.\n\nENV DEBUG MODE : " + utils.generic.isDebug);
+            log.warn("Attempting to run initialUserAccountCheck() again. Why? Isolate and remove duplicate calls to this function. ONLY IN DEBUG IS THIS NORMAL :: Opening debug will generate this warning.\n\nENV DEBUG MODE : " + utils.generic.isDebug);
+            return { vault: vaultState.exists, optout: vaultState.optout }
         }
         // Initial Check . . . 
         let vaultExists = await electronStoreCommonActions.checkIfUserHasVault();

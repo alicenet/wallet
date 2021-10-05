@@ -9,21 +9,14 @@ import { useDispatch } from 'react-redux';
 import MadIcon from '../Assets/icon.png';
 
 import { USER_ACTIONS } from '../redux/actions/_actions';
+import { useSelector } from 'react-redux';
 
 function HeaderMenu({ hideMenu }) {
 
     const history = useHistory();
-    const dispatch = useDispatch();
 
-    const [existingAccount, setExistingAccount] = React.useState(false);
-
-    React.useEffect(() => {
-        const checkForAccount = async () => {
-            let hasAccount = await dispatch(USER_ACTIONS.checkForUserAccount());
-            setExistingAccount(hasAccount);
-        };
-        checkForAccount();
-    }, [dispatch]);
+    const {exists, optout } = useSelector(s => ({exists: s.vault.exists, optout: s.vault.optout}));
+    const existingAccount = (exists || optout);
 
     return (
         <Menu secondary className="m-0">
