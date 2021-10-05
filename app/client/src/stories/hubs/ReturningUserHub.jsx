@@ -1,14 +1,24 @@
 import React from 'react';
 
-import { Header } from 'semantic-ui-react'
+import { Header, Container, Button } from 'semantic-ui-react'
 
-export default function Hub() {
+import withWalletDrawer from 'hocs/withWalletDrawer/withWalletDrawer';
+
+function Hub({ toggleWalletDrawer }) {
 
     return (
 
-        <Header>Not much yet -- Wallet Overview TOBE </Header>
+        <Container>
+
+
+            <Header>Not much yet -- Wallet Overview TOBE </Header>
+
+            <Button onClick={toggleWalletDrawer} content="toggleDrawer" />
+        
+        </Container>
 
     )
 
 }
 
+export default withWalletDrawer(Hub);
