@@ -9,6 +9,7 @@ import { useFormState } from 'hooks/_hooks';
 
 import { VAULT_ACTIONS } from 'redux/actions/_actions'
 import { electronStoreCommonActions } from '../../../store/electronStoreHelper'
+import utils from 'util/_util';
 
 import Page from '../../../layout/Page';
 
@@ -22,8 +23,9 @@ function HasExistingKeystores() {
     const incorrectPwEntered = formState.password.error === incorrectPasswordError;
     const [showPassword, setShowPassword] = React.useState(false);
 
-    const [keystores, setKeystores] = React.useState([]);
+    const [keystoreData, setKeystoreData] = React.useState([]); // Collection of stores 
     const [activeKeystore, setActiveKeystore] = React.useState(0);
+    const [activeAddress, setActiveAddress] = React.useState("");
 
     const [parsedKeystores, setParsedKeystores] = React.useState(false);
 
@@ -31,28 +33,43 @@ function HasExistingKeystores() {
     React.useEffect(() => {
         formSetter.setPassword("testing");
         const checkForKeystores = async () => {
-            let keystores = await electronStoreCommonActions.checkForOptoutStores();
-            setKeystores(keystores);
+            let keystoreData = await electronStoreCommonActions.checkForOptoutStores();
+            setKeystoreData(keystoreData);
         }
         checkForKeystores();
     }, [])
 
-    console.log(keystores);
+    // Parse active address
+    React.useEffect(() => {
+        try {
+            let aAddress = utils.string.splitStringWithEllipsis(JSON.parse(keystoreData[activeKeystore]?.keystore).address, false, 5);
+            setActiveAddress(aAddress);
+        } catch (ex) {
+            setActiveAddress("");
+        }
+    }, [activeKeystore])
 
     const handleFormSubmit = async () => {
-        // Check password against preflight hash
-        const pw = formState.password.value;
-        const isCorrectPassword = await electronStoreCommonActions.checkPasswordAgainstPreflightHash(pw);
-        if (!isCorrectPassword) {
-            return formSetter.setPasswordError(incorrectPasswordError)
-        }
-        else { formSetter.clearPasswordError(); }
-        // Dispatch the vault generation action and. . .
-        let loaded = await dispatch(VAULT_ACTIONS.loadSecureHDVaultFromStorage(pw))
-        if (loaded) {
+        // Try to unlock active keystore
+        let ksData = keystoreData[activeKeystore];
+        let ks = JSON.parse(ksData.keystore);
+        let unlocked = utils.wallet.unlockKeystore(ks, formState.password.value);
+        if (unlocked.error) {
+            if (unlocked.error.message.indexOf("possibly wrong password")) {
+                return formSetter.setPasswordError("Incorrect keystore password. Try again.");
+            }
+            throw new Error("Error trying to unlock wallet", unlocked.error)
+        };
+        formSetter.clearPasswordError();
+        dispatch(VAULT_ACTIONS.addExternalWalletToState(ks, formState.password.value, ksData.name))
+        setActiveKeystore(s => s + 1); // Go to next keystore
+        // +1 to adjust for state change that hasn't happened yet
+        if (keystoreData.length - (activeKeystore + 1) === 0) {
             history.push('/hub')
         }
+
     }
+
 
     const skipStore = () => {
         console.log("SKIP");
@@ -71,7 +88,7 @@ function HasExistingKeystores() {
 
                 <Grid.Column width={16} className="p-0 self-center text-sm">
 
-                    <p>Your keystores will be loaded in sequence</p>
+                    <p>As a vault optout, your keystores will be loaded in sequence</p>
 
                     <p>Please enter your password for each requested keystore to unlock your wallets.</p>
 
@@ -86,7 +103,7 @@ function HasExistingKeystores() {
                             <Form.Input
                                 className="w-80"
                                 id='password'
-                                label={'Password for keystore: ' + keystores[activeKeystore]?.name}
+                                label={'Password for: ' + keystoreData[activeKeystore]?.name + " (" + activeAddress + ")"}
                                 placeholder='Enter Password'
                                 type={showPassword ? "text" : "password"}
                                 onChange={e => {
@@ -123,8 +140,8 @@ function HasExistingKeystores() {
                 </Grid.Column>
 
                 <Grid.Column width={16}>
-                    <Header as="h4">Keystores To Unlock: {keystores.length} </Header>
-                    <Header as="h4">Keystores Unlocked:</Header>
+                    <Header as="h4">Keystores To Unlock: {keystoreData.length - activeKeystore} </Header>
+                    <Header as="h4">Keystores Unlocked: {activeKeystore} </Header>
                 </Grid.Column>
 
             </Grid>

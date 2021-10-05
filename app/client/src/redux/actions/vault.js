@@ -117,6 +117,7 @@ export function addExternalWalletToState(keystore, password, walletName) {
         }
         let unlocked = { data: util.wallet.unlockKeystore(JSON.parse(ksString), password), name: walletName };
         let additions = await dispatch({ type: MIDDLEWARE_ACTION_TYPES.ADD_WALLET_FROM_KEYSTORE, payload: unlocked }); // Pass off to MadWalletMiddleware to finish state balancing
+        // Waiting for the above to dispatch will prevent doubles from being added -- MadWalletJS will catch them
         if (additions.error) { return additions }
         let added = await dispatch({ type: VAULT_ACTION_TYPES.ADD_EXTERNAL_WALLET, payload: additions.external[0] });
         // When adding external wallets we need to check if this addition is to an existing vault -- If not, make sure we set optout as true.

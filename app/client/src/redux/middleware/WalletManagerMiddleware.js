@@ -125,7 +125,6 @@ function addWalletFromKeystore(keystore, walletName, dispatch) {
     return new Promise(async res => {
         // Extract pkey from keystore
         let pKey = keystore.privateKey;
-        console.log(keystore);
         // Extract the curve if viable -- Will only be present on MadWalletJS Generated Stores :: Fallback to SECP256k1
         let curve = keystore.curve ? keystore.curve : 1;
         // Verify curve
