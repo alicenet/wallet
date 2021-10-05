@@ -2,22 +2,8 @@ import { USER_ACTION_TYPES } from '../constants/_constants';
 import { VAULT_ACTION_TYPES } from '../constants/_constants';
 import utils from 'util/_util';
 import { curveTypes } from 'util/wallet';
-import { default_log as log } from 'log/logHelper';
+import { reduxState_logger as log } from 'log/logHelper';
 import { electronStoreCommonActions } from 'store/electronStoreHelper';
-
-///////////////////////////
-/* Internal Action Calls */
-///////////////////////////
-
-/* Enable lock on user's account */
-function _lockAccount() {
-    return { type: USER_ACTION_TYPES.MARK_ACCOUNT_LOCKED };
-}
-
-/* Disable lock on user's account */
-function _unlockAccount() {
-    return { type: USER_ACTION_TYPES.MARK_ACCOUNT_UNLOCKED };
-}
 
 //////////////////////////////////
 /* External Async Action Calls */
@@ -76,36 +62,33 @@ export function setDesiredCurveType(curveType) {
 }
 
 /**
- *  Check for existing user account files and set state accordingly
- * @returns { Boolean } - Does the user have a vault? 
+ * This is the initial user account check for setting initial state.
+ * Once ran once, we prevent it from dispatching again via checking for state first
+ * @returns 
  */
-export function checkForUserAccount() {
-    return async function (dispatch) {
-        let vaultExists = await electronStoreCommonActions.checkIfUserHasVault();
-        if (vaultExists) {
-            dispatch({type: VAULT_ACTION_TYPES.MARK_EXISTS_AND_LOCKED}); // Mark the vault as existing & locked
-            return true;
-        } else { 
-            // CAT TODO: Check for keystore paths if no vault
-            return false 
+export function initialUserAccountCheck() {
+    return async function (dispatch, getState) {
+        const vaultState = getState().vault;
+        // If initial state has been determined, these dispatches should not occur again
+        if (vaultState.is_locked !== null || vaultState.exists !== null) {
+            log.warn("Attempting to run initialUserAccountCheck() again. Why? Isolate and remove duplicate calls to this function. ONLY IN DEBUG IS THIS NORMAL :: Opening debug will generate this warning.\n\nENV DEBUG MODE : " + utils.generic.isDebug);
+            return { vault: vaultState.exists, optout: vaultState.optout }
         }
-    }
-}
-
-export function lockAccount() {
-    return async function (dispatch) {
-        // .. Asynchronous logic to lock account if needed
-        // ... TBD: Remove state from store and require a new unlock cycle with deciphering
-        await utils.generic.waitFor(1000);
-        dispatch(_lockAccount());
-    }
-}
-
-export function unlockAccount() {
-    return async function (dispatch) {
-        // .. Asynchronous logic to unlock account if needed
-        // ... Decipher store back into redux state
-        await utils.generic.waitFor(1000);
-        dispatch(_unlockAccount());
+        // Initial Check . . . 
+        let vaultExists = await electronStoreCommonActions.checkIfUserHasVault();
+        let optOutExists = await electronStoreCommonActions.checkForOptoutStores();
+        if (vaultExists) {
+            log.debug("Vault exists! Setting state to match.");
+            dispatch({ type: VAULT_ACTION_TYPES.MARK_EXISTS_AND_LOCKED });
+            return { vault: true, optOut: false };
+        } else if (optOutExists) { // Check for opt out
+            log.debug("Optout collection exists! Setting state to match.");
+            dispatch({ type: VAULT_ACTION_TYPES.MARK_OPTOUT__VAULT_NONEXIST_AND_UNLOCKED });
+            return { vault: false, optOut: true };
+        } else { // Else set clear state
+            log.debug("Neither vault or optout collections exists! Setting state to match.");
+            dispatch({ type: VAULT_ACTION_TYPES.MARK_NONEXIST_NONLOCK_NONOPTOUT });
+            return { vault: false, optOut: false };
+        }
     }
 }

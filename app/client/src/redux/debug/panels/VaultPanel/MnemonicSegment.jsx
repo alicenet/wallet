@@ -1,5 +1,5 @@
 import React from 'react';
-import { Segment, Accordion, Form, Header, Grid, TextArea, Icon } from 'semantic-ui-react';
+import { Segment, Form, Header, Grid, TextArea, Icon } from 'semantic-ui-react';
 import { DButton } from '../../DebugPanel';
 import util from 'util/_util';
 import { VAULT_ACTIONS } from 'redux/actions/_actions';
@@ -60,7 +60,7 @@ export default function MnemonicSegment() {
     return (
         <Segment>
 
-            <Header as="h3" className="m-0" content="Mnemonic Tools" className="inline" />
+            <Header as="h3" className="m-0" content="Mnemonic Tools" />
 
             <Grid>
                 <Grid.Column width={16} className="pb-0">
@@ -90,7 +90,7 @@ export default function MnemonicSegment() {
                             <Form.Button {...basPriMini} disabled={!hdChain || !!walletNode} content="getWalletNodeFromHdChain)" fluid onClick={getNodeFromHDChain} />
                             <Form.Button {...basMini} color={derivationChainComplete ? "green" : "orange"} content={derivationChainComplete ? "Pass" : "Waiting"} labelPosition="left" icon={<Icon name={derivationChainComplete ? "checkmark" : "close"} />} />
                         </Form.Group>
-                        <Form.Button {...basMini} fluid color="purple" className="mt-1" content="Log SeedBytes, Chain, and Wallet" fluid onClick={() => console.log({ seedBytes: seedBytes, hdChain: hdChain, walletNode: walletNode })} />
+                        <Form.Button {...basMini} fluid color="purple" className="mt-1" content="Log SeedBytes, Chain, and Wallet" onClick={() => console.log({ seedBytes: seedBytes, hdChain: hdChain, walletNode: walletNode })} />
                     </Form>
                 </Grid.Column>
             </Grid>

@@ -44,6 +44,7 @@ module.exports = {
         'overscrollBehavior',
         'padding',
         'position',
+        'pointerEvents',
         'resize',
         'rotate',
         'textAlign',

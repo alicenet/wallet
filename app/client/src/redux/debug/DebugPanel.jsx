@@ -47,7 +47,7 @@ function DebugPanel() {
     /* Check if user has a vault behind the scenes */
     React.useEffect(() => {
         const checkForAccount = async () => {
-            await dispatch(USER_ACTIONS.checkForUserAccount());
+            await dispatch(USER_ACTIONS.initialUserAccountCheck());
         }
         checkForAccount();
     }, [dispatch]);
