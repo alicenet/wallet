@@ -11,9 +11,9 @@ export default function Hub() {
     return (
         <Page>
 
-            <Segment className="border-0 h-full" style={{background: '#eff0f1'}}>
+            <div className="relative">
 
-                <Grid columns={2} className="h-full">
+                <Grid columns={2} className="m-0 h-full">
 
                     <Grid.Column className={`duration-300 transition-transform transition-width w-1/${openDrawer ? '3' : '6'}`}>
 
@@ -23,7 +23,7 @@ export default function Hub() {
 
                                 <Button circular size="mini" className="m-0" icon="add" onClick={() => setOpenDrawer(prevState => !prevState)}/>
 
-                                <Header as='h3' className="m-0">Wallets</Header>
+                                {openDrawer && <Header as='h3' className="m-0">Wallets</Header>}
 
                             </Container>
 
@@ -62,7 +62,7 @@ export default function Hub() {
 
                 </Divider>
 
-            </Segment>
+            </div>
 
         </Page>
     )

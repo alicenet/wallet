@@ -4,18 +4,15 @@ import { Container, Header, Icon, Image, Menu, Tab } from 'semantic-ui-react';
 
 import { useHistory } from 'react-router-dom';
 
-import { useDispatch } from 'react-redux';
-
 import MadIcon from '../Assets/icon.png';
 
-import { USER_ACTIONS } from '../redux/actions/_actions';
 import { useSelector } from 'react-redux';
 
 function HeaderMenu({ hideMenu }) {
 
     const history = useHistory();
 
-    const {exists, optout } = useSelector(s => ({exists: s.vault.exists, optout: s.vault.optout}));
+    const { exists, optout } = useSelector(s => ({ exists: s.vault.exists, optout: s.vault.optout }));
     const existingAccount = exists || optout;
 
     return (
@@ -23,15 +20,15 @@ function HeaderMenu({ hideMenu }) {
 
             <Container fluid className="flex flex-row content-center justify-start">
 
-                <Menu.Item as='a' header className='p-0' onClick={() => history.push('/')}>
+                <Menu.Item as='a' header className='p-0 mx-2' onClick={() => history.push('/')}>
 
-                    <Container fluid className="flex flex-row items-center">
+                    <Container fluid className="flex flex-row items-center gap-4">
 
-                        <Image src={MadIcon} size="mini" className="mx-1"/>
+                        <Image src={MadIcon} size="mini"/>
 
                         <Container fluid>
 
-                            <Header content="MadWallet" as="h4" className="mx-2"/>
+                            <Header content="MadWallet" as="h4"/>
 
                         </Container>
 
@@ -43,7 +40,7 @@ function HeaderMenu({ hideMenu }) {
 
             <Container fluid className="flex flex-row content-center justify-center">
 
-                {false && <Tab activeIndex={-1} menu={{ secondary: true, pointing: true }} panes={[
+                {!hideMenu && existingAccount && <Tab activeIndex={-1} menu={{ secondary: true, pointing: true }} panes={[
                     {
                         menuItem: 'Wallets'
                     },
