@@ -15,6 +15,7 @@ html, body, #root {
 /////////////////////////////////////////////////////////
 /* Semantic Very Specific Additional Class Overwrites */
 ////////////////////////////////////////////////////////
+
 /* To be used as custom label class within a checkbox */
 .labelCheckbox  {
     display: flex !important;
@@ -33,6 +34,18 @@ html, body, #root {
         top:2px !important;
     }
 } 
+
+/* To be used as customization for tab panes */
+.overwrite-tab {
+    div {
+        border: 0 !important;
+        justify-content: space-around !important;
+        .active {
+            color: #A333C8 !important;
+            border-color: #A333C8 !important;
+        }
+    }
+}
 
 
 //////////////////

@@ -70,7 +70,7 @@ export default function Hub() {
                                         key={wallet.address}
                                         color="purple"
                                         content={openDrawer ? wallet.name : index + 1}
-                                        className={classNames("flex-shrink-0", { 'm-0': openDrawer })}
+                                        className={classNames("flex-shrink-0 m-0")}
                                         basic={selectedWallet && wallet.address !== selectedWallet.address}
                                         onClick={() => setSelectedWallet(wallet)}
                                     />
@@ -86,7 +86,7 @@ export default function Hub() {
 
                         <Container className="p-4">
 
-                            {selectedWallet && <Tab menu={{ secondary: true, pointing: true }} panes={panes}/>}
+                            {selectedWallet && <Tab className="overwrite-tab" menu={{ secondary: true, pointing: true }} panes={panes}/>}
 
                         </Container>
 

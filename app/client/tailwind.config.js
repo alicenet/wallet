@@ -10,6 +10,7 @@ module.exports = {
             },
             width: {
                 '1/8': '12.5%',
+                '7/8': '87.5%',
             },
             maxHeight: {
                 '104': '31rem',
