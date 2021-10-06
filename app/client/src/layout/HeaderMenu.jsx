@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Container, Header, Icon, Image, Menu, Tab } from 'semantic-ui-react';
+import { Container, Header, Icon, Image, Menu } from 'semantic-ui-react';
 
 import { useHistory } from 'react-router-dom';
 
@@ -13,10 +13,11 @@ function HeaderMenu({ hideMenu }) {
     const history = useHistory();
 
     const { exists, optout } = useSelector(s => ({ exists: s.vault.exists, optout: s.vault.optout }));
+
     const existingAccount = exists || optout;
 
     return (
-        <Menu secondary className="m-0">
+        <Menu secondary className="m-0 my-1">
 
             <Container fluid className="flex flex-row content-center justify-start">
 
@@ -38,24 +39,7 @@ function HeaderMenu({ hideMenu }) {
 
             </Container>
 
-            <Container fluid className="flex flex-row content-center justify-center">
-
-                {!hideMenu && existingAccount && <Tab activeIndex={-1} menu={{ secondary: true, pointing: true }} panes={[
-                    {
-                        menuItem: 'Wallets'
-                    },
-                    {
-                        menuItem: 'Transactions'
-                    },
-                    {
-                        menuItem: 'MadNet'
-                    },
-                    {
-                        menuItem: 'Ethereum'
-                    },
-                ]}/>}
-
-            </Container>
+            <Container fluid className="flex flex-row content-center justify-center"/>
 
             <Container fluid className="flex flex-row content-center justify-end">
 

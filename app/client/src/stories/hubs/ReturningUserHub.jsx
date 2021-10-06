@@ -1,18 +1,48 @@
 import React from 'react';
 
-import { Button, Container, Divider, Grid, Header, Image, Segment } from 'semantic-ui-react'
+import { useSelector } from 'react-redux';
+
+import head from 'lodash/head';
+
+import { Button, Container, Divider, Grid, Header, Tab } from 'semantic-ui-react'
 
 import Page from '../../layout/Page';
 
+import { classNames } from '../../util/generic';
+
+import OverviewTabPane from './OverviewTabPane';
+
 export default function Hub() {
 
-    const wallets = [
-        { name: 'Main Wallet', address: '0x111111' },
-        { name: 'Another wallet', address: '0x222222' },
-    ];
+    const { internal, external } = useSelector(state => (
+        { internal: state.vault.wallets.internal, external: state.vault.wallets.external }
+    ));
+
+    const wallets = internal.concat(external) || [];
 
     const [openDrawer, setOpenDrawer] = React.useState(true);
-    const [selectedWallet, setSelectedWallet] = React.useState(wallets[0].address);
+    const [selectedWallet, setSelectedWallet] = React.useState(null);
+
+    React.useEffect(() => {
+        if (wallets.length > 0) {
+            setSelectedWallet(head(wallets));
+        }
+    }, [wallets])
+
+    const panes = [
+        {
+            menuItem: 'Overview',
+            render: () => <OverviewTabPane wallet={selectedWallet}/>,
+        },
+        {
+            menuItem: 'Recent TXs',
+            render: () => {},
+        },
+        {
+            menuItem: 'Datastores',
+            render: () => {},
+        },
+    ];
 
     return (
         <Page>
@@ -27,22 +57,22 @@ export default function Hub() {
 
                             <Container className="gap-3 flex flex-row justify-center items-center text-justify">
 
-                                <Button circular size={openDrawer ? 'mini' : 'tiny'} className="m-0" icon="add" onClick={() => setOpenDrawer(prevState => !prevState)}/>
+                                <Button circular size={openDrawer ? 'mini' : 'small'} className="m-0" icon="add" onClick={() => setOpenDrawer(prevState => !prevState)}/>
 
                                 {openDrawer && <Header as='h3' className="m-0">Wallets</Header>}
 
                             </Container>
 
-                            <Container className="flex flex-col gap-3 px-3 max-h-104 overflow-y-auto overscroll-contain no-scrollbar">
+                            <Container className="flex flex-col gap-3 px-3 max-h-104 overflow-y-auto overscroll-contain no-scrollbar items-stretch">
 
                                 {wallets.map((wallet, index) =>
                                     <Button
                                         key={wallet.address}
                                         color="purple"
-                                        content={openDrawer ? wallet.name : index}
-                                        className="m-0 flex-shrink-0"
-                                        basic={wallet.address !== selectedWallet}
-                                        onClick={() => setSelectedWallet(wallet.address)}
+                                        content={openDrawer ? wallet.name : index + 1}
+                                        className={classNames("flex-shrink-0", { 'm-0': openDrawer })}
+                                        basic={selectedWallet && wallet.address !== selectedWallet.address}
+                                        onClick={() => setSelectedWallet(wallet)}
                                     />
                                 )}
 
@@ -54,11 +84,11 @@ export default function Hub() {
 
                     <Grid.Column className={`p-0 duration-300 transition-transform transition-width w-${openDrawer ? '2/3' : '7/8'}`}>
 
-                        <Segment basic onClick={() => setOpenDrawer(prevState => !prevState)}>
+                        <Container className="p-4">
 
-                            <Image src='https://react.semantic-ui.com/images/wireframe/paragraph.png'/>
+                            {selectedWallet && <Tab menu={{ secondary: true, pointing: true }} panes={panes}/>}
 
-                        </Segment>
+                        </Container>
 
                     </Grid.Column>
 
