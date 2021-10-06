@@ -6,7 +6,13 @@ module.exports = {
         extend: {
             inset: {
                 '1/3': '33.333333%',
-                '1/6': '16.666667%',
+                '1/8': '12.5%',
+            },
+            width: {
+                '1/8': '12.5%',
+            },
+            maxHeight: {
+                '104': '31rem',
             },
             transitionProperty: {
                 'left': 'left',

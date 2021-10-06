@@ -6,7 +6,13 @@ import Page from '../../layout/Page';
 
 export default function Hub() {
 
-    const [openDrawer, setOpenDrawer] = React.useState(true)
+    const wallets = [
+        { name: 'Main Wallet', address: '0x111111' },
+        { name: 'Another wallet', address: '0x222222' },
+    ];
+
+    const [openDrawer, setOpenDrawer] = React.useState(true);
+    const [selectedWallet, setSelectedWallet] = React.useState(wallets[0].address);
 
     return (
         <Page>
@@ -15,23 +21,30 @@ export default function Hub() {
 
                 <Grid columns={2} className="m-0 h-full">
 
-                    <Grid.Column className={`duration-300 transition-transform transition-width w-1/${openDrawer ? '3' : '6'}`}>
+                    <Grid.Column className={`duration-300 transition-transform transition-width w-1/${openDrawer ? '3' : '8'}`}>
 
-                        <Container className="flex flex-col gap-10 h-full justify-center">
+                        <Container className="flex flex-col gap-10 h-full">
 
                             <Container className="gap-3 flex flex-row justify-center items-center text-justify">
 
-                                <Button circular size="mini" className="m-0" icon="add" onClick={() => setOpenDrawer(prevState => !prevState)}/>
+                                <Button circular size={openDrawer ? 'mini' : 'tiny'} className="m-0" icon="add" onClick={() => setOpenDrawer(prevState => !prevState)}/>
 
                                 {openDrawer && <Header as='h3' className="m-0">Wallets</Header>}
 
                             </Container>
 
-                            <Container className="flex flex-col gap-3 px-3 max-h-96 overflow-y-auto overscroll-contain no-scrollbar">
+                            <Container className="flex flex-col gap-3 px-3 max-h-104 overflow-y-auto overscroll-contain no-scrollbar">
 
-                                <Button color="purple" basic content="Main Wallet" className="m-0 flex-shrink-0" disabled/>
-
-                                <Button color="purple" basic content="Another Wallet" className="m-0 flex-shrink-0"/>
+                                {wallets.map((wallet, index) =>
+                                    <Button
+                                        key={wallet.address}
+                                        color="purple"
+                                        content={openDrawer ? wallet.name : index}
+                                        className="m-0 flex-shrink-0"
+                                        basic={wallet.address !== selectedWallet}
+                                        onClick={() => setSelectedWallet(wallet.address)}
+                                    />
+                                )}
 
                             </Container>
 
@@ -39,7 +52,7 @@ export default function Hub() {
 
                     </Grid.Column>
 
-                    <Grid.Column className={`p-0 duration-300 transition-transform transition-width w-${openDrawer ? '2/3' : '5/6'}`}>
+                    <Grid.Column className={`p-0 duration-300 transition-transform transition-width w-${openDrawer ? '2/3' : '7/8'}`}>
 
                         <Segment basic onClick={() => setOpenDrawer(prevState => !prevState)}>
 
@@ -51,7 +64,7 @@ export default function Hub() {
 
                 </Grid>
 
-                <Divider vertical className={`duration-300 transition-transform transition-left left-1/${openDrawer ? 3 : 6}`}>
+                <Divider vertical className={`duration-300 transition-transform transition-left left-1/${openDrawer ? 3 : 8}`}>
 
                     <div className="flex">
 
