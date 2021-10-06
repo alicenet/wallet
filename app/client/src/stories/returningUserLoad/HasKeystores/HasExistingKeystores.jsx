@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Button, Container, Form, Grid, Header, Icon } from 'semantic-ui-react';
+import { Button, Container, Form, Grid, Header, Icon, Message } from 'semantic-ui-react';
 import ForgottenKeystorePasswordModal from './ForgottenKeystorePasswordModal';
 
 import { useHistory } from 'react-router-dom';
@@ -27,7 +27,8 @@ function HasExistingKeystores() {
     const [activeKeystore, setActiveKeystore] = React.useState(0);
     const [activeAddress, setActiveAddress] = React.useState("");
 
-    const [parsedKeystores, setParsedKeystores] = React.useState(false);
+    const [keystoresUnlocked, setKeystoresUnlocked] = React.useState(0);
+    const [notEnoughKeystoresError, setNotEnoughKeystoresError] = React.useState(false);
 
     // Onload, check for existing keystores and, in sequence request the passwords for them
     React.useEffect(() => {
@@ -47,7 +48,7 @@ function HasExistingKeystores() {
         } catch (ex) {
             setActiveAddress("");
         }
-    }, [activeKeystore])
+    }, [activeKeystore, keystoreData])
 
     const handleFormSubmit = async () => {
         // Try to unlock active keystore
@@ -61,18 +62,23 @@ function HasExistingKeystores() {
             throw new Error("Error trying to unlock wallet", unlocked.error)
         };
         formSetter.clearPasswordError();
+        // Add the keystore to external wallets state
         dispatch(VAULT_ACTIONS.addExternalWalletToState(ks, formState.password.value, ksData.name))
         setActiveKeystore(s => s + 1); // Go to next keystore
-        // +1 to adjust for state change that hasn't happened yet
+        // +1 to adjust for state change above that hasn't happened yet -- Checking if anymore keystores remain to look at
         if (keystoreData.length - (activeKeystore + 1) === 0) {
             history.push('/hub')
         }
-
     }
 
 
     const skipStore = () => {
-        console.log("SKIP");
+        // If this is the last keystore and no keystores have been loaded show error
+        if ( (keystoreData.length - (activeKeystore + 1 === 0) ) && keystoresUnlocked === 0) {
+            return setNotEnoughKeystoresError(true);
+        } else {
+            setActiveKeystore(s => s + 1);
+        }
     }
 
     return (
@@ -105,6 +111,7 @@ function HasExistingKeystores() {
                                 id='password'
                                 label={'Password for: ' + keystoreData[activeKeystore]?.name + " (" + activeAddress + ")"}
                                 placeholder='Enter Password'
+                                value={formState.password.value}
                                 type={showPassword ? "text" : "password"}
                                 onChange={e => {
                                     formSetter.setPassword(e.target.value)
@@ -122,6 +129,10 @@ function HasExistingKeystores() {
 
                             <ForgottenKeystorePasswordModal incorrectPwEntered={incorrectPwEntered} />
 
+                            <div className="font-xs">
+                                {activeKeystore} / {keystoreData.length - activeKeystore} keystores examined
+                            </div>
+
                         </Form.Group>
 
                     </Form>
@@ -130,18 +141,16 @@ function HasExistingKeystores() {
 
                 <Grid.Column width={16} className="p-0 self-center">
 
-                    <Container className="flex justify-center">
+                    <Container className="flex justify-between gap-2">
 
-                        <Button color="orange" basic content='Skip Store' className="m-0" onClick={skipStore} />
-                        <Button color="teal" basic content='Unlock Store' disabled={!formState.password.value} className="m-0 ml-4" onClick={handleFormSubmit} />
+                        <Button color="orange" basic content='Skip This Store' onClick={skipStore} />
+                        { notEnoughKeystoresError && (
+                            <Message visible={notEnoughKeystoresError} error size="mini" className="m-0">Atleast one keystore must be loaded.</Message>
+                        )}
+                        <Button color="teal" basic content='Unlock Store' disabled={!formState.password.value} onClick={handleFormSubmit} />
 
                     </Container>
 
-                </Grid.Column>
-
-                <Grid.Column width={16}>
-                    <Header as="h4">Keystores To Unlock: {keystoreData.length - activeKeystore} </Header>
-                    <Header as="h4">Keystores Unlocked: {activeKeystore} </Header>
                 </Grid.Column>
 
             </Grid>

@@ -6,7 +6,7 @@ import OptOutSegment from './OptOutSegment.jsx';
 
 export default function VaultPanel() {
 
-    const [activeBlocks, setActiveBlocks] = React.useState([2]);
+    const [activeBlocks, setActiveBlocks] = React.useState([1]);
 
     const isActiveBlock = (index) => activeBlocks.filter(e => e === index).length > 0;
 

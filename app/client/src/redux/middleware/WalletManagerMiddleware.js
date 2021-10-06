@@ -3,6 +3,7 @@ import { MIDDLEWARE_ACTION_TYPES, VAULT_ACTION_TYPES } from '../constants/_const
 import util from 'util/_util';
 import { walletManMiddleware_logger as log } from '../../log/logHelper.js'
 import { curveTypes } from 'util/wallet';
+import utils from 'util/_util';
 
 let madWallet = new MadWallet();
 
@@ -20,7 +21,7 @@ export default function WalletManagerMiddleware(storeAPI) {
                 case MIDDLEWARE_ACTION_TYPES.ADD_WALLET_FROM_KEYSTORE:
                     return addWalletFromKeystore(action.payload.data, action.payload.name, storeAPI.dispatch);
                 case MIDDLEWARE_ACTION_TYPES.ADD_NEXT_HD_WALLET:
-                    addNextHDWallet(storeAPI.dipatch); break;
+                    return addNextHDWallet(storeAPI, action.payload.name); break;
                 case MIDDLEWARE_ACTION_TYPES.REINSTANCE_MAD_WALLET:
                     reinstanceMadWallet(); break;
                 default: break;
@@ -54,6 +55,7 @@ function _walletArrayStructure(pKey, curve, name) {
 /**
  * WalletManagerMiddleware parsing of SET_VAUL_TO_STATE action
  * @param { Object } initPayload - Payload called from SET_VAULT_TO_STATE
+ * @returns { Array } [isDone?, [array of errors] ]
  */
 function initMadWallet(initPayload, dispatch) {
     return new Promise(res => {
@@ -86,9 +88,9 @@ function initMadWallet(initPayload, dispatch) {
                                 await madWallet.Account.addAccount(addition[0], addition[1])
                                 res(true);
                             } catch (ex) {
-                                if (ex.message === "Account.addAccount: Account already added") { 
+                                if (ex.message === "Account.addAccount: Account already added") {
                                     log.warn("Wallet " + addition[2] + " already exists in the MadWalletJS Instance.")
-                                    res({ error: "Wallet " + addition[2] + " already exists." }) 
+                                    res({ error: "Wallet " + addition[2] + " already exists." })
                                 }
                                 res({ error: ex })
                             }
@@ -139,17 +141,49 @@ function addWalletFromKeystore(keystore, walletName, dispatch) {
             let balancedState = await buildBalancedWalletState([], externalAdds);
             res(balancedState)
         } catch (ex) {
-            if (ex.message === "Account.addAccount: Account already added") { 
+            if (ex.message === "Account.addAccount: Account already added") {
                 log.warn("Wallet " + walletName + " already exists in the MadWalletJS Instance.")
-                res({ error: "Wallet " + walletName + " already exists." }) 
+                res({ error: "Wallet " + walletName + " already exists." })
             }
             res({ error: ex });
         }
     })
 }
 
-function addNextHDWallet() {
-
+/**
+ * Determine next HD Wallet to add, and subsequently add it to MadWalletJS and return any additions that have been made
+ * @param { Object } storeAPI  - Redux store api -- Notabley has dispatch and getState as needed
+ * @param { String } walletName - Name for the new HD Wallet
+ */
+function addNextHDWallet(storeAPI, walletName) {
+    return new Promise(async res => {
+        let vaultState = storeAPI.getState().vault;
+        // Get the next HD Wallet in order of derrivation
+        let internalWallets = vaultState.wallets.internal;
+        // Note the mnemonic and curve
+        let mnemonic = vaultState.mnemonic;
+        let desiredCurve = vaultState.hd_curve;
+        // Determine the next HD Wallet path, Main is at /0 for refernece :: We can use length of internal wallets for the next path
+        let nextDerrivationPath = internalWallets.length;
+        // Derrive the next path from the HD Chain retrieved from the mnemonic
+        let nextHdWallet = await utils.wallet.streamLineHDWalletNodeFromMnemonic(mnemonic, nextDerrivationPath);
+        // Generate internal wallet object
+        let walletObj = utils.wallet.generateBasicWalletObject(walletName, nextHdWallet.privateKey.toString('hex'), desiredCurve);
+        // Add the private key to the MadWalletJS instance
+        try {
+            await madWallet.Account.addAccount(walletObj.privK, walletObj.curve);
+            // Balance the wallet state to redux with the wallet name
+            let internalAdds = [_walletArrayStructure(util.wallet.strip0x(walletObj.privK), walletObj.curve, walletObj.name)];
+            let balancedState = await buildBalancedWalletState(internalAdds, []);
+            res(balancedState)
+        } catch (ex) {
+            if (ex.message === "Account.addAccount: Account already added") {
+                log.warn("Wallet " + walletName + " already exists in the MadWalletJS Instance.")
+                res({ error: "Wallet " + walletName + " already exists." })
+            }
+            res({ error: ex });
+        }
+    })
 }
 
 /**

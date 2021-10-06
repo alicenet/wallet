@@ -88,6 +88,8 @@ async function syncOptoutStore(storeAPI, reason, keystoreAdded) {
     let walletName = keystoreAdded.name;
     // Verify that the keystore to be added does not exist in the store
     let storeWallets = await electronStoreCommonActions.checkForOptoutStores();
+    // If none are found, let it be an empty array
+    if (!storeWallets) { storeWallets = [] }
     // Check newest id against current ids added 
     let existingAddresses = [];
     // Gather existing addresses
@@ -97,7 +99,7 @@ async function syncOptoutStore(storeAPI, reason, keystoreAdded) {
     }
     let exists = existingAddresses.filter(address => address === addedKsJson.address);
     // Don't add to the store collection if it already exists
-    if (exists.length > 1) {
+    if (exists.length >= 1) {
         log.debug("Skipping an existing wallet during store sync. -- Normal Behavior")
         return false;
     }
