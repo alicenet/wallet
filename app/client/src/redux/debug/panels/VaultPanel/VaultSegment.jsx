@@ -5,7 +5,7 @@ import { VAULT_ACTIONS } from 'redux/actions/_actions';
 import { DButton } from '../../DebugPanel.jsx';
 import { classNames } from 'util/_util';
 import { } from 'store/electronStoreHelper';
-import GenerateKeystoreForm from 'components/keystore/GenerateKeystoreForm.jsx';
+import GenerateKeystoreForm from '../../../../Components/keystore/GenerateKeystoreForm';
 
 /** 
  * @prop {Boolean} isActive - Is this an open accordion segment? 

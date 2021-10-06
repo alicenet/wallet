@@ -3,7 +3,16 @@ module.exports = {
     important: true,
     darkMode: false, // or 'media' or 'class'
     theme: {
-        extend: {},
+        extend: {
+            inset: {
+                '1/3': '33.333333%',
+                '1/6': '16.666667%',
+            },
+            transitionProperty: {
+                'left': 'left',
+                'width': 'width',
+            },
+        },
     },
     variants: {
         extend: {
@@ -35,6 +44,7 @@ module.exports = {
         'justifyContent',
         'justifyItems',
         'justifySelf',
+        'inset',
         'margin',
         'maxHeight',
         'maxWidth',
@@ -51,7 +61,9 @@ module.exports = {
         'textColor',
         'textTransform',
         'transform',
+        'transitionProperty',
         'transitionDuration',
         'width',
+        'zIndex',
     ]
 }

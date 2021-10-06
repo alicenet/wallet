@@ -2,6 +2,8 @@ import React from 'react';
 import { Container } from 'semantic-ui-react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import DebugPanel, { handleDebugListener } from 'redux/debug/DebugPanel';
+import { ToastContainer } from 'react-toastify';
+
 import util from 'util/_util';
 
 // User Story Components
@@ -10,8 +12,7 @@ import * as Settings from './stories/settings/_settings';
 import * as NewVaultFlows from './stories/newVault/_newVault';
 import * as OptOutFlow from './stories/optOut/_optOut';
 import * as ReturningUserLoadFlows from './stories/returningUserLoad/_returnUserLoad';
-import { ToastContainer } from 'react-toastify';
-import PasswordRequestModal from 'components/modals/PasswordRequestModal';
+import PasswordRequestModal from './Components/modals/PasswordRequestModal';
 
 /**
  * Main App Entrypoint

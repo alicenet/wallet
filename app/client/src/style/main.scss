@@ -35,33 +35,17 @@ html, body, #root {
 } 
 
 
-///////////////////////////
-// Half Sidebar Override // -- Can set this up as a non-override if necessary -- I don't forsee other left drawers at the moment though
-///////////////////////////
-.ui.left.sidebar.half {
-    right: auto;
-    left: 0px;
-    transform: translate3d(-80%, 0, 0);
+//////////////////
+// No scrollbar //
+//////////////////
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
 }
 
-/* Set-up */
-.overlay.sidebar {
-    z-index: 102 !important;
-    visibility: visible !important;
-}
-
-/* Initial */
-.left.overlay.sidebar {
-    transform: translate3d(-80%, 0%, 0) !important;
-  }
-
-  /* Animation */
-.animating.overlay.sidebar,
-.visible.overlay.sidebar {
-  transition: transform 0.55s ease-in-out !important;
-}
-
-/* End - Sidebar */
-.visible.left.overlay.sidebar {
-    transform: translate3d(0%, 0%, 0) !important;
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
 }

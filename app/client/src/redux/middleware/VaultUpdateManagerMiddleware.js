@@ -1,7 +1,7 @@
-import { toast } from "react-toastify";
-import { electronStoreCommonActions } from "store/electronStoreHelper";
+import { toast } from 'react-toastify';
+import { electronStoreCommonActions } from 'store/electronStoreHelper';
 import { MODAL_ACTION_TYPES } from 'redux/constants/_constants';
-import { SyncToastMessageWarning, SyncToastMessageSuccess } from 'components/customToasts/CustomToasts';
+import { SyncToastMessageSuccess, SyncToastMessageWarning } from '../../Components/customToasts/CustomToasts';
 
 export const ACTION_ELECTRON_SYNC = "ELECTRON_SYNC"
 
@@ -51,7 +51,7 @@ function _getStateWallets(storeAPI) {
 function syncStateToStore(storeAPI, reason) {
     let stateWallets = _getStateWallets(storeAPI);
     // We need the password from the user to perform vault updates so create a wrap callback and wait until the user provides it.
-    toast.warn(<SyncToastMessageWarning title="Vault Update Request" message="Password Needed -- Click Here" />, {
+    toast.warn(<SyncToastMessageWarning title="Vault Update Request" message="Password Needed -- Click Here"/>, {
         position: "bottom-right",
         autoClose: false,
         hideProgressBar: true,
@@ -65,7 +65,7 @@ function syncStateToStore(storeAPI, reason) {
                     reason: "Vault Syncronization -- " + reason,
                     cb: async (password) => {
                         await electronStoreCommonActions.updateVaultWallets(password, stateWallets)
-                        toast.success(<SyncToastMessageSuccess title="Success" message={reason} />, {
+                        toast.success(<SyncToastMessageSuccess title="Success" message={reason}/>, {
                             position: "bottom-right",
                             autoClose: 2400,
                             delay: 500,
