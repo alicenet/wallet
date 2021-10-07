@@ -7,16 +7,18 @@ var HDKey = require('hdkey');
 /** Creates a raw state wallet object from a wallet_name and private key
  * Internal keyring wallets are validated for existence and stored inside the vault
  * @param { String } walletName - The name of the wallet - extracted from the vault
- * @param { String } privKey - The private key of this wallet - extracted from the vault 
+ * @param { String } privK - The private key of this wallet - extracted from the vault
+ * @param { Int } curve - Curve type  
  */
-export function generateRawStateWalletObject(walletName, privKey) {
+export function generateBasicWalletObject(walletName, privK, curve) {
     // Derrive public key and public address to state for ease of use
     return {
         name: walletName,
-        pubAdd: "PUBLIC_ADDRESS_DERRIVE",
-        pubKey: "PUBLIC_KEY_DERRIVE",
-        privkey: privKey,
-        stateId: uuidv4(), // Initialized State ID for quick client side identification -- Not stored elsewhere, can be used as key in map()
+        // pubAdd: "PUBLIC_ADDRESS_DERRIVE", // TBD if needed
+        // pubKey: "PUBLIC_KEY_DERRIVE", // TBD if neede
+        curve: curve,
+        privK: privK,
+        stateId: uuidv4(), // Initialized State ID for quick client side identification -- Not stored elsewhere, can be used as key in map() if needed
     }
 }
 
@@ -165,7 +167,6 @@ export function generateKeystore(asBlob, password, curve = curveTypes.SECP256K1)
     let keystore = ks[0];
     if (curve === 2) { keystore["curve"] = 2 } // Note the curve if BN -- This gets removed on reads
     let ksJSONBlob = new Blob([JSON.stringify(keystore, null, 2)]);
-    console.log(keystore);
     return asBlob ? ksJSONBlob : keystore;
 }
 

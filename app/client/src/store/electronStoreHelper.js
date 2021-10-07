@@ -97,7 +97,7 @@ function readEncryptedValueFromStore(key, password) {
     _requireKeyPassword("readEncryptedValueFromStore", key, password);
     return new Promise(res => {
         electronStoreMessenger.readEncryptedFromStore(key, password, async (err, keyOfValue, value) => {
-            if (err) { log.error(err); return { error: err }; }
+            if (err) { log.error(err); res({ error: err }) };
             log.debug("Plain K:V decrypted from electron store => " + keyOfValue + " : " + value);
             res(value);
         })
@@ -168,12 +168,17 @@ function createNewSecureHDVault(mnemonic, password, curveType = "secp256k1") {
 /**
  * Unlocks and returns the current Vault object -- Should be called after a preflightHash check has been done
  * @param { String } password -- Password used to secure vault -- Should be verified with preflightHash check first
- * @returns { Object } - JSON Vault Object 
+ * @returns { Object } - JSON Vault Object or .error if error occurs
  */
 function unlockAndGetSecuredHDVault(password) {
     return new Promise(async res => {
-        let vault = await readEncryptedValueFromStore("vault", password);
-        res(JSON.parse(vault));
+        try {
+            let vault = await readEncryptedValueFromStore("vault", password);
+            if (vault.error) { res({ error: vault.error }) }
+            res(JSON.parse(vault));
+        } catch (ex) {
+            res({ error: ex });
+        }
     })
 }
 

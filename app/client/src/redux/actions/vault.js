@@ -5,6 +5,7 @@ import { reduxState_logger as log } from 'log/logHelper';
 import util from 'util/_util';
 import { ACTION_ELECTRON_SYNC } from 'redux/middleware/VaultUpdateManagerMiddleware';
 import { curveTypes } from 'util/wallet';
+import utils from 'util/_util';
 
 /* !!!!!!! ____   ATTENTION: ______ !!!!!!!!  
 
@@ -31,7 +32,8 @@ export function generateNewSecureHDVault(mnemonic, password, curveType = util.wa
     return async function (dispatch) {
         let [preflightHash, firstWalletNode] = await electronStoreCommonActions.createNewSecureHDVault(mnemonic, password, curveType);
         electronStoreCommonActions.storePreflightHash(preflightHash); // Store preflight hash for pre-action auth checking
-        const preInitPayload = { wallets: { internal: [{ privK: firstWalletNode.privateKey.toString('hex'), name: "Main Wallet", curve: curveType }], external: [] } }; // Payload needed by initMadWallet() in WalletManagerMiddleware
+        let firstWallet = utils.wallet.generateBasicWalletObject("Main Wallet", firstWalletNode.privateKey.toString('hex'), curveType)
+        const preInitPayload = { wallets: { internal: [firstWallet], external: [] } }; // Payload needed by initMadWallet() in WalletManagerMiddleware
         await dispatch({ type: MIDDLEWARE_ACTION_TYPES.INIT_MAD_WALLET, payload: preInitPayload }); // Pass off to MadWalletMiddleware to finish state initiation
         dispatch({ type: VAULT_ACTION_TYPES.SET_MNEMONIC, payload: mnemonic });
         dispatch({ type: VAULT_ACTION_TYPES.MARK_EXISTS_AND_UNLOCKED });
@@ -41,12 +43,14 @@ export function generateNewSecureHDVault(mnemonic, password, curveType = util.wa
 /**
  * Used to load a secure HD vault from storage -- Passes to WalletMiddleware to sync MadWallet state.
  * @param { String } password - The password used to initially encrypt the vault 
+ * @returns { Array } [done<Bool>, errorArray<Array>]
  */
 export function loadSecureHDVaultFromStorage(password) {
     return async function (dispatch) {
         let wu = util.wallet;
-        // Unlock vault for parsing and note the mnemonic for HD wallets 
+        // Unlock vault for parsing and note the mnemonic for HD wallets
         const unlockedVault = await electronStoreCommonActions.unlockAndGetSecuredHDVault(password);
+        if (unlockedVault.error) { return [false, [unlockedVault] ] }; // Bubble the done/error upwards
         const mnemonic = unlockedVault.mnemonic;
         const hdLoadCount = unlockedVault.hd_wallet_count;
         const hdCurve = unlockedVault.hd_wallet_curve;
@@ -64,11 +68,7 @@ export function loadSecureHDVaultFromStorage(password) {
         internalHDWallets.forEach((walletNode, nodeIdx) => {
             const walletName = unlockedVault.wallets.internal[nodeIdx].name; // Pair walletNode IDX with it's name
             // Construct the wallet Object
-            const internalWalletObj = {
-                name: walletName,
-                privK: walletNode.privateKey.toString('hex'),
-                curve: hdCurve,
-            }
+            const internalWalletObj = utils.wallet.generateBasicWalletObject(walletName, walletNode.privateKey.toString('hex'), hdCurve);
             preInitPayload.wallets.internal.push(internalWalletObj); // Add it to the wallet init
         })
         // Add externals to preInit
@@ -90,13 +90,17 @@ export function loadSecureHDVaultFromStorage(password) {
 /** After a vault has been decrypted call this actions for any wallets to be added to the internal keyring and to the MadWallet object within state
  * Internal keyring wallets are validated for existence and stored inside the vault
  * @param {String} walletName - The name of the wallet - extracted from the vault
- * @param {String} privKey - The private key of this wallet - extracted from the vault 
 */
-export function addInternalWalletToState(walletName, privKey) {
-    return async function (dispatch) {
-        // Generate the wallet object
-        const walletToAdd = util.wallet.generateStateWalletObject(walletName, privKey);
-        dispatch({ type: VAULT_ACTION_TYPES.ADD_INTERNAL_WALLET, payload: walletToAdd });
+export function addInternalWalletToState(walletName) {
+    return async function (dispatch, getState) {
+        // Let the middleware handle wallet addition -- Await for any addition.errors
+        let additions = await dispatch({ type: MIDDLEWARE_ACTION_TYPES.ADD_NEXT_HD_WALLET, payload: { name: walletName } });
+        if (additions.error) { return additions }
+        // Add the internal wallet to redux state
+        let added = await dispatch({ type: VAULT_ACTION_TYPES.ADD_INTERNAL_WALLET, payload: additions.internal[0] });
+        // When a wallet is added, dispatch sync-store -- Provide keystoreString for optout keystore additions where necessary
+        dispatch({ type: ACTION_ELECTRON_SYNC, payload: { reason: "Adding Internal Wallet" } });
+        return added;
     }
 }
 
@@ -117,6 +121,7 @@ export function addExternalWalletToState(keystore, password, walletName) {
         }
         let unlocked = { data: util.wallet.unlockKeystore(JSON.parse(ksString), password), name: walletName };
         let additions = await dispatch({ type: MIDDLEWARE_ACTION_TYPES.ADD_WALLET_FROM_KEYSTORE, payload: unlocked }); // Pass off to MadWalletMiddleware to finish state balancing
+        // Waiting for the above to dispatch will prevent doubles from being added -- MadWalletJS will catch them
         if (additions.error) { return additions }
         let added = await dispatch({ type: VAULT_ACTION_TYPES.ADD_EXTERNAL_WALLET, payload: additions.external[0] });
         // When adding external wallets we need to check if this addition is to an existing vault -- If not, make sure we set optout as true.

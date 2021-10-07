@@ -5,8 +5,6 @@ export default function ReduxState() {
 
     const redux = useSelector(s => s);
 
-    console.log(redux);
-
     const mapReduxStateToTable = () => {
 
         // Create array of all reducers as a table

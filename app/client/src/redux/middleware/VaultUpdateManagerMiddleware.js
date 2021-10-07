@@ -1,7 +1,8 @@
-import { toast } from 'react-toastify';
-import { electronStoreCommonActions } from 'store/electronStoreHelper';
+import { toast } from "react-toastify";
+import { electronStoreCommonActions } from "store/electronStoreHelper";
 import { MODAL_ACTION_TYPES } from 'redux/constants/_constants';
-import { SyncToastMessageSuccess, SyncToastMessageWarning } from '../../Components/customToasts/CustomToasts';
+import { SyncToastMessageWarning, SyncToastMessageSuccess } from 'components/customToasts/CustomToasts';
+import { reduxState_logger as log } from 'log/logHelper';
 
 export const ACTION_ELECTRON_SYNC = "ELECTRON_SYNC"
 
@@ -51,7 +52,7 @@ function _getStateWallets(storeAPI) {
 function syncStateToStore(storeAPI, reason) {
     let stateWallets = _getStateWallets(storeAPI);
     // We need the password from the user to perform vault updates so create a wrap callback and wait until the user provides it.
-    toast.warn(<SyncToastMessageWarning title="Vault Update Request" message="Password Needed -- Click Here"/>, {
+    toast.warn(<SyncToastMessageWarning title="Vault Update Request" message="Password Needed -- Click Here" />, {
         position: "bottom-right",
         autoClose: false,
         hideProgressBar: true,
@@ -65,7 +66,7 @@ function syncStateToStore(storeAPI, reason) {
                     reason: "Vault Syncronization -- " + reason,
                     cb: async (password) => {
                         await electronStoreCommonActions.updateVaultWallets(password, stateWallets)
-                        toast.success(<SyncToastMessageSuccess title="Success" message={reason}/>, {
+                        toast.success(<SyncToastMessageSuccess title="Success" message={reason} />, {
                             position: "bottom-right",
                             autoClose: 2400,
                             delay: 500,
@@ -82,7 +83,29 @@ function syncStateToStore(storeAPI, reason) {
 }
 
 async function syncOptoutStore(storeAPI, reason, keystoreAdded) {
-    let ksString = keystoreAdded.string;
+    let addedKsString = keystoreAdded.string;
+    let addedKsJson = JSON.parse(keystoreAdded.string); // Create Json instance to easily check address
     let walletName = keystoreAdded.name;
-    let updated = await electronStoreCommonActions.addOptOutKeystore(ksString, walletName);
+    // Verify that the keystore to be added does not exist in the store
+    let storeWallets = await electronStoreCommonActions.checkForOptoutStores();
+    // If none are found, let it be an empty array
+    if (!storeWallets) { storeWallets = [] }
+    // Check newest id against current ids added 
+    let existingAddresses = [];
+    // Gather existing addresses
+    for (let wallet of storeWallets) {
+        let asJson = JSON.parse(wallet.keystore);
+        existingAddresses.push(asJson.address)
+    }
+    let exists = existingAddresses.filter(address => address === addedKsJson.address);
+    // Don't add to the store collection if it already exists
+    if (exists.length >= 1) {
+        log.debug("Skipping an existing wallet during store sync. -- Normal Behavior")
+        return false;
+    }
+    // Add it if it doesn't
+    else {
+        await electronStoreCommonActions.addOptOutKeystore(addedKsString, walletName);
+        return true;
+    }
 }
