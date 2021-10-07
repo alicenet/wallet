@@ -59,7 +59,7 @@ export default function PasswordRequestModal() {
 
             <Modal.Actions className={classNames({"flex justify-between": !!formState.password.error})} >
                 {!!formState.password.error ? (
-                    <Button size="mini" content="Can't Remember Password" basic color="orange" onClick={() => console.log("TODO!")} />
+                    <Button size="mini" content="Can't Remember Password" basic color="orange" onClick={() => console.log("CAT TODO!")} />
                 ) : null}
                 <Button size="mini" content={formState.password.error ? "Try Again" : "Submit"} basic color={formState.password.error ? "red" : "green"} onClick={tryPassword} />
             </Modal.Actions>

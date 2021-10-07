@@ -21,6 +21,7 @@ export default function VaultSegment() {
     /*          State         */
     ////////////////////////////
     const [password, setPassword] = React.useState("testing");
+    const [pErr, setPerr] = React.useState(false);
     const [newWalletName, setNewWalletName] = React.useState("test_wallet");
 
     ////////////////////////////
@@ -35,7 +36,11 @@ export default function VaultSegment() {
         console.log("DEBUG:: Attempt unlock vault with password: " + password);
         setVaultLoading(true);
         let [done, errors] = await dispatch(VAULT_ACTIONS.loadSecureHDVaultFromStorage(password));
-        setVaultLoading(false);
+        setVaultLoading(false)
+        if (errors.length > 0) {
+            return setPerr(true);
+        }
+        setPerr(false);
     }
 
     const lockVault = async () => {
@@ -46,8 +51,12 @@ export default function VaultSegment() {
         let success = await dispatch(VAULT_ACTIONS.addExternalWalletToState(keystoreJson, password, newWalletName));
     }
 
+    const addNextHdWallet = async () => {
+        let success = await dispatch(VAULT_ACTIONS.addInternalWalletToState(newWalletName));
+    }
+
     const deleteVault = () => {
-        console.log('TBD')
+        console.log('TBD: DELETE VAULT')
     }
 
     //////////////////////
@@ -64,7 +73,7 @@ export default function VaultSegment() {
     ////////////
 
     return (
-        <Segment disabled={!vault.exists} className={classNames({"pointer-events-none": !vault.exists})}>
+        <Segment disabled={!vault.exists} className={classNames({ "pointer-events-none": !vault.exists })}>
 
             {!vault.exists ? (
                 <Header color="red">No Vault Found</Header>
@@ -83,11 +92,12 @@ export default function VaultSegment() {
             </div>
 
             <Header as="h6" className="m-0 mt-2">Vault Instance</Header>
-            <Form className="max-w-md m-0" size="mini">
-                <Form.Group widths="equal" className="mt-2">
-                    <Form.Input size='mini' value={password} onChange={e => setPassword(e.target.value)}
+            <Form className="m-0" size="mini">
+                <Form.Group className="mt-2">
+                    <Form.Input error={!!pErr} size='mini' value={password} onChange={e => setPassword(e.target.value)}
                         action={{ loading: vaultLoading, content: vault.is_locked ? "Unlock" : "Lock", size: "mini", color: vault.is_locked ? "green" : "red", basic: true, onClick: vault.is_locked ? unlockVault : lockVault }} />
                     <Form.Button size='mini' basic content="Print Vault State" onClick={() => console.log(vault)} />
+                    <Form.Button disabled={vault.is_locked} size='mini' basic color="pink" content="Add Next HD Wallet" onClick={addNextHdWallet} />
                 </Form.Group>
             </Form>
 

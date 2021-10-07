@@ -2,6 +2,7 @@ import { toast } from "react-toastify";
 import { electronStoreCommonActions } from "store/electronStoreHelper";
 import { MODAL_ACTION_TYPES } from 'redux/constants/_constants';
 import { SyncToastMessageWarning, SyncToastMessageSuccess } from 'components/customToasts/CustomToasts';
+import { reduxState_logger as log } from 'log/logHelper';
 
 export const ACTION_ELECTRON_SYNC = "ELECTRON_SYNC"
 
@@ -82,7 +83,29 @@ function syncStateToStore(storeAPI, reason) {
 }
 
 async function syncOptoutStore(storeAPI, reason, keystoreAdded) {
-    let ksString = keystoreAdded.string;
+    let addedKsString = keystoreAdded.string;
+    let addedKsJson = JSON.parse(keystoreAdded.string); // Create Json instance to easily check address
     let walletName = keystoreAdded.name;
-    let updated = await electronStoreCommonActions.addOptOutKeystore(ksString, walletName);
+    // Verify that the keystore to be added does not exist in the store
+    let storeWallets = await electronStoreCommonActions.checkForOptoutStores();
+    // If none are found, let it be an empty array
+    if (!storeWallets) { storeWallets = [] }
+    // Check newest id against current ids added 
+    let existingAddresses = [];
+    // Gather existing addresses
+    for (let wallet of storeWallets) {
+        let asJson = JSON.parse(wallet.keystore);
+        existingAddresses.push(asJson.address)
+    }
+    let exists = existingAddresses.filter(address => address === addedKsJson.address);
+    // Don't add to the store collection if it already exists
+    if (exists.length >= 1) {
+        log.debug("Skipping an existing wallet during store sync. -- Normal Behavior")
+        return false;
+    }
+    // Add it if it doesn't
+    else {
+        await electronStoreCommonActions.addOptOutKeystore(addedKsString, walletName);
+        return true;
+    }
 }

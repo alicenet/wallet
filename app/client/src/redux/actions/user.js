@@ -80,15 +80,15 @@ export function initialUserAccountCheck() {
         if (vaultExists) {
             log.debug("Vault exists! Setting state to match.");
             dispatch({ type: VAULT_ACTION_TYPES.MARK_EXISTS_AND_LOCKED });
-            return { vault: true, optOut: false };
+            return { vault: true, optout: false };
         } else if (optOutExists) { // Check for opt out
             log.debug("Optout collection exists! Setting state to match.");
             dispatch({ type: VAULT_ACTION_TYPES.MARK_OPTOUT__VAULT_NONEXIST_AND_UNLOCKED });
-            return { vault: false, optOut: true };
+            return { vault: false, optout: true };
         } else { // Else set clear state
             log.debug("Neither vault or optout collections exists! Setting state to match.");
             dispatch({ type: VAULT_ACTION_TYPES.MARK_NONEXIST_NONLOCK_NONOPTOUT });
-            return { vault: false, optOut: false };
+            return { vault: false, optout: false };
         }
     }
 }
