@@ -1,7 +1,7 @@
 import React from 'react'
 import { useFormState } from 'hooks/_hooks';
 import { Header, Form, Button, Checkbox } from 'semantic-ui-react';
-import utils from '../../util/_util.js';
+import utils from 'util/_util.js';
 import { curveTypes } from 'util/wallet.js';
 
 /**

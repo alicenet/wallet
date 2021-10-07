@@ -1,7 +1,6 @@
-import { useFormState } from 'hooks/_hooks';
 import React from 'react'
-import { useDispatch } from 'react-redux';
-import { Container, Grid, Header, Form, Message } from 'semantic-ui-react';
+import { useFormState } from 'hooks/_hooks';
+import { Header, Form, Message } from 'semantic-ui-react';
 import { walletUtils } from 'util/_util';
 
 export default function LoadKeystoreForm() {
@@ -10,8 +9,6 @@ export default function LoadKeystoreForm() {
 
     const [keystore, setKeystore] = React.useState(false);
     const [error, setError] = React.useState(false);
-
-    const dispatch = useDispatch();
 
     const fileChange = (e) => {
         let file = e.target.files[0];

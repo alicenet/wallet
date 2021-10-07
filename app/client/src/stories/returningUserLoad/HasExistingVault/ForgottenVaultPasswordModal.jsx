@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Button, Checkbox, Header, Modal } from 'semantic-ui-react';
 
-import { classNames } from '../../../util/_util';
+import { classNames } from 'util/_util';
 
 /**
  * Shows a prompt to open a modal regarding forgotten vault password
