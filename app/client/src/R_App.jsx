@@ -7,12 +7,12 @@ import { ToastContainer } from 'react-toastify';
 import util from 'util/_util';
 
 // User Story Components
-import * as Hubs from './stories/hubs/_hubs';
-import * as Settings from './stories/settings/_settings';
-import * as NewVaultFlows from './stories/newVault/_newVault';
-import * as OptOutFlow from './stories/optOut/_optOut';
-import * as ReturningUserLoadFlows from './stories/returningUserLoad/_returnUserLoad';
-import PasswordRequestModal from './components/modals/PasswordRequestModal';
+import * as Hubs from 'stories/hubs/_hubs';
+import * as Settings from 'stories/settings/_settings';
+import * as NewVaultFlows from 'stories/newVault/_newVault';
+import * as OptOutFlow from 'stories/optOut/_optOut';
+import * as ReturningUserLoadFlows from 'stories/returningUserLoad/_returnUserLoad';
+import PasswordRequestModal from 'components/modals/PasswordRequestModal';
 
 /**
  * Main App Entrypoint
