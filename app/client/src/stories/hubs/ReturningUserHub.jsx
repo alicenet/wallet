@@ -6,9 +6,9 @@ import head from 'lodash/head';
 
 import { Button, Container, Divider, Grid, Header, Tab } from 'semantic-ui-react'
 
-import Page from '../../layout/Page';
+import Page from 'layout/Page';
 
-import { classNames } from '../../util/generic';
+import { classNames } from 'util/generic';
 
 import OverviewTabPane from './OverviewTabPane';
 
