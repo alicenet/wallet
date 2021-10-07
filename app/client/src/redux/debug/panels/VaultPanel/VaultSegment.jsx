@@ -1,11 +1,12 @@
 import React from 'react';
 import { Segment, Form, Header } from 'semantic-ui-react';
 import { useSelector, useDispatch } from 'react-redux';
+
 import { VAULT_ACTIONS } from 'redux/actions/_actions';
 import { DButton } from '../../DebugPanel.jsx';
 import { classNames } from 'util/_util';
 import { } from 'store/electronStoreHelper';
-import GenerateKeystoreForm from "../../../../Components/keystore/GenerateKeystoreForm";
+import GenerateKeystoreForm from 'components/keystore/GenerateKeystoreForm';
 
 /** 
  * @prop {Boolean} isActive - Is this an open accordion segment? 

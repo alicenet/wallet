@@ -1,8 +1,8 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { Grid, Header, Button } from 'semantic-ui-react';
-import GenerateKeystoreForm from '../components/keystore/GenerateKeystoreForm.jsx';
-import LoadKeystoreForm from '../components/keystore/LoadKeystoreForm.jsx';
+import GenerateKeystoreForm from 'components/keystore/GenerateKeystoreForm.jsx';
+import LoadKeystoreForm from 'components/keystore/LoadKeystoreForm.jsx';
 
 export default function TestingBay() {
 
