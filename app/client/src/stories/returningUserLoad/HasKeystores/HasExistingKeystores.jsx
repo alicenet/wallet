@@ -145,7 +145,7 @@ function HasExistingKeystores() {
 
                         <Button color="orange" basic content='Skip This Store' onClick={skipStore} />
                         { notEnoughKeystoresError && (
-                            <Message visible={notEnoughKeystoresError} error size="mini" className="m-0">Atleast one keystore must be loaded.</Message>
+                            <Message visible={notEnoughKeystoresError} error size="mini" className="m-0">At least one keystore must be loaded.</Message>
                         )}
                         <Button color="teal" basic content='Unlock Store' disabled={!formState.password.value} onClick={handleFormSubmit} />
 

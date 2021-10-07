@@ -18,9 +18,8 @@ function NewUserHub() {
     React.useEffect(() => {
         const checkForAccount = async () => {
             let hasAccount = await dispatch(USER_ACTIONS.initialUserAccountCheck());
-            console.log(hasAccount)
-            if (hasAccount.vault === true) { return history.push('/returningUserLoad/hasExistingVault'); }
-            if (hasAccount.optout === true) { return history.push('/returningUserLoad/hasKeystores'); }
+            if (hasAccount.vault) { return history.push('/returningUserLoad/hasExistingVault'); }
+            if (hasAccount.optout) { return history.push('/returningUserLoad/hasKeystores'); }
         }
         checkForAccount();
     }, [history, dispatch]);

@@ -93,8 +93,8 @@ async function syncOptoutStore(storeAPI, reason, keystoreAdded) {
     // Check newest id against current ids added 
     let existingAddresses = [];
     // Gather existing addresses
-    for (let w of storeWallets) {
-        let asJson = JSON.parse(w.keystore);
+    for (let wallet of storeWallets) {
+        let asJson = JSON.parse(wallet.keystore);
         existingAddresses.push(asJson.address)
     }
     let exists = existingAddresses.filter(address => address === addedKsJson.address);

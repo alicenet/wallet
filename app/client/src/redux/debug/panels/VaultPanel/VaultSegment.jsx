@@ -56,7 +56,7 @@ export default function VaultSegment() {
     }
 
     const deleteVault = () => {
-        console.log('TBD: DELETE VAULT)
+        console.log('TBD: DELETE VAULT')
     }
 
     //////////////////////
