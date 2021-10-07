@@ -70,7 +70,7 @@ export default function Hub() {
                                         key={wallet.address}
                                         color="purple"
                                         content={openDrawer ? wallet.name : index + 1}
-                                        className={classNames("flex-shrink-0 m-0")}
+                                        className={classNames("flex-shrink-0 m-0 p-2.5")}
                                         basic={selectedWallet && wallet.address !== selectedWallet.address}
                                         onClick={() => setSelectedWallet(wallet)}
                                     />
