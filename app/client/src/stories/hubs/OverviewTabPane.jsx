@@ -2,6 +2,8 @@ import React from 'react';
 
 import { Button, Container, Grid, Label, Segment } from 'semantic-ui-react'
 
+import { curveTypes } from '../../util/wallet';
+
 export default function OverviewTabPane({ wallet }) {
 
     return (
@@ -13,7 +15,7 @@ export default function OverviewTabPane({ wallet }) {
 
                     <Segment>
 
-                        <Label attached='top'>Public Address</Label>
+                        <Label attached='top'>{`Public Address (${wallet.curve === curveTypes.SECP256K1 ? 'Secp256k1' : 'Barreto-Naehrig'} curve)`}</Label>
                         <div>{`0x${wallet.address}`}</div>
 
                     </Segment>
@@ -43,8 +45,8 @@ export default function OverviewTabPane({ wallet }) {
 
                     <Segment>
 
-                        <Label attached='top'>Allowances</Label>
-                        <div>{'0.0 STAKE'}</div>
+                        <Label attached='top'>MadNet Balances</Label>
+                        <div>{'0.00 Mad Bytes'}</div>
 
                     </Segment>
 
