@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import { electronStoreCommonActions } from 'store/electronStoreHelper';
 import { MODAL_ACTION_TYPES } from 'redux/constants/_constants';
 import { reduxState_logger as log } from 'log/logHelper';
-import { SyncToastMessageSuccess, SyncToastMessageWarning } from '../../components/customToasts/CustomToasts';
+import { SyncToastMessageSuccess, SyncToastMessageWarning } from 'components/customToasts/CustomToasts';
 
 export const ACTION_ELECTRON_SYNC = "ELECTRON_SYNC"
 
