@@ -18,7 +18,7 @@ export default function Hub() {
         { internal: state.vault.wallets.internal, external: state.vault.wallets.external }
     ));
 
-    const wallets = internal.concat(external) || [];
+    const wallets = React.useMemo(() => internal.concat(external) || [], [internal, external]);
 
     const [openDrawer, setOpenDrawer] = React.useState(true);
     const [selectedWallet, setSelectedWallet] = React.useState(null);
