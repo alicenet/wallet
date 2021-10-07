@@ -66,11 +66,13 @@ module.exports = {
         'rotate',
         'textAlign',
         'textColor',
+        'textDecoration',
         'textTransform',
         'transform',
         'transitionProperty',
         'transitionDuration',
         'width',
+        'wordBreak',
         'zIndex',
     ]
 }
