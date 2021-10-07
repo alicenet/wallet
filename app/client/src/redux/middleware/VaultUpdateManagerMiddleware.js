@@ -1,13 +1,16 @@
-import { toast } from "react-toastify";
-import { electronStoreCommonActions } from "store/electronStoreHelper";
+import React from 'react';
+import { toast } from 'react-toastify';
+
+import { electronStoreCommonActions } from 'store/electronStoreHelper';
 import { MODAL_ACTION_TYPES } from 'redux/constants/_constants';
-import { SyncToastMessageWarning, SyncToastMessageSuccess } from 'components/customToasts/CustomToasts';
 import { reduxState_logger as log } from 'log/logHelper';
+
+import { SyncToastMessageSuccess, SyncToastMessageWarning } from '../../Components/customToasts/CustomToasts';
 
 export const ACTION_ELECTRON_SYNC = "ELECTRON_SYNC"
 
 /**
- * Syncronoizes state between redux and the stored electron state
+ * Synchronizes state between redux and the stored electron state
  * Catches all wallet updates and reflects them onto the electron store if the user has a vault
  * @param {*} storeAPI
  * @returns
