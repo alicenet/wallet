@@ -12,7 +12,7 @@ import * as Settings from './stories/settings/_settings';
 import * as NewVaultFlows from './stories/newVault/_newVault';
 import * as OptOutFlow from './stories/optOut/_optOut';
 import * as ReturningUserLoadFlows from './stories/returningUserLoad/_returnUserLoad';
-import PasswordRequestModal from './Components/modals/PasswordRequestModal';
+import PasswordRequestModal from './components/modals/PasswordRequestModal';
 
 /**
  * Main App Entrypoint

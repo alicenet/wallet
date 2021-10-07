@@ -3,12 +3,12 @@ import { StoreContext } from "./oldStore/store.js";
 
 import { Dimmer, Loader, Container, Grid, Menu, Image } from "semantic-ui-react";
 
-import MadNet from "./Components/madnet.js";
-import Ethereum from "./Components/ethereum.js";
-import Accounts from "./Components/accounts.js";
-import Settings from "./Components/settings.js";
-import Errors from "./Components/errors.js";
-import Notify from "./Components/notify.js"
+import MadNet from "./oldComponents/madnet.js";
+import Ethereum from "./oldComponents/ethereum.js";
+import Accounts from "./oldComponents/accounts.js";
+import Settings from "./oldComponents/settings.js";
+import Errors from "./oldComponents/errors.js";
+import Notify from "./oldComponents/notify.js"
 
 import Logo from "./Assets/MadNetwork Logo Horizontal GRAYSCALE.png"
 

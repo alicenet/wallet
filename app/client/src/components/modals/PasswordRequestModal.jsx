@@ -1,13 +1,13 @@
-import useFormState from "hooks/useFormState";
-import { useDispatch, useSelector } from "react-redux"
-import { MODAL_ACTION_TYPES } from "redux/constants/_constants";
-import { Button, Form, Header, Modal } from "semantic-ui-react"
-import { electronStoreCommonActions } from "store/electronStoreHelper";
-import { classNames } from "util/_util";
+import useFormState from 'hooks/useFormState';
+import { useDispatch, useSelector } from 'react-redux';
+import { MODAL_ACTION_TYPES } from 'redux/constants/_constants';
+import { Button, Form, Header, Modal } from 'semantic-ui-react';
+import { electronStoreCommonActions } from 'store/electronStoreHelper';
+import { classNames } from 'util/_util';
 
 /**
  * Password request modal -- Redux state handles open/close as well as the success-submit callback.
- * @returns 
+ * @returns
  */
 export default function PasswordRequestModal() {
 
@@ -19,7 +19,8 @@ export default function PasswordRequestModal() {
         let success = await electronStoreCommonActions.checkPasswordAgainstPreflightHash(formState.password.value);
         if (!success) {
             return formSetter.setPasswordError("Incorrect Password!");
-        } else {
+        }
+        else {
             formSetter.clearPasswordError();
             formSetter.setPassword("");
             callback(formState.password.value);
@@ -52,16 +53,16 @@ export default function PasswordRequestModal() {
                 </div>
 
                 <Form size="small" className="mt-4" onSubmit={tryPassword} error={!!formState.password.error}>
-                    <Form.Input error={!!formState.password.error} icon="key" value={formState.password.value} onChange={e => formSetter.setPassword(e.target.value)} />
+                    <Form.Input error={!!formState.password.error} icon="key" value={formState.password.value} onChange={e => formSetter.setPassword(e.target.value)}/>
                 </Form>
 
             </Modal.Content>
 
-            <Modal.Actions className={classNames({"flex justify-between": !!formState.password.error})} >
+            <Modal.Actions className={classNames({ "flex justify-between": !!formState.password.error })}>
                 {!!formState.password.error ? (
-                    <Button size="mini" content="Can't Remember Password" basic color="orange" onClick={() => console.log("CAT TODO!")} />
+                    <Button size="mini" content="Can't Remember Password" basic color="orange" onClick={() => console.log("CAT TODO!")}/>
                 ) : null}
-                <Button size="mini" content={formState.password.error ? "Try Again" : "Submit"} basic color={formState.password.error ? "red" : "green"} onClick={tryPassword} />
+                <Button size="mini" content={formState.password.error ? "Try Again" : "Submit"} basic color={formState.password.error ? "red" : "green"} onClick={tryPassword}/>
             </Modal.Actions>
 
         </Modal>

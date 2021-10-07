@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { DButton } from '../../DebugPanel';
 import { classNames } from 'util/generic';
 import { VAULT_ACTIONS } from 'redux/actions/_actions';
-import GenerateKeystoreForm from '../../../../Components/keystore/GenerateKeystoreForm';
+import GenerateKeystoreForm from '../../../../components/keystore/GenerateKeystoreForm';
 
 export default function OptOutSegment() {
 
