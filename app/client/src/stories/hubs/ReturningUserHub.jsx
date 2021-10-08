@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 
 import head from 'lodash/head';
 
-import { Button, Container, Divider, Grid, Header, Tab } from 'semantic-ui-react'
+import { Button, Container, Divider, Grid, Header, Loader, Tab } from 'semantic-ui-react'
 
 import Page from 'layout/Page';
 
@@ -86,7 +86,7 @@ export default function Hub() {
 
                         <Container className="p-4">
 
-                            {selectedWallet && <Tab className="overwrite-tab" menu={{ secondary: true, pointing: true }} panes={panes}/>}
+                            {selectedWallet ? <Tab className="overwrite-tab" menu={{ secondary: true, pointing: true }} panes={panes}/> : <Loader active/>}
 
                         </Container>
 
