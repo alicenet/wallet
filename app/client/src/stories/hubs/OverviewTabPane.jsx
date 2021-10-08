@@ -1,24 +1,24 @@
 import React from 'react';
 
-import { Button, Container, Grid, Label, Segment } from 'semantic-ui-react'
+import { Button, Container, Grid } from 'semantic-ui-react'
 
 import { curveTypes } from '../../util/wallet';
 
 export default function OverviewTabPane({ wallet }) {
 
     return (
-        <Grid className="break-all text-sm p-1">
+        <Grid className="break-all text-sm p-3">
 
             <Grid.Row>
 
                 <Grid.Column>
 
-                    <Segment>
+                    <Container>
 
-                        <Label attached='top'>{`Public Address (${wallet.curve === curveTypes.SECP256K1 ? 'Secp256k1' : 'Barreto-Naehrig'} curve)`}</Label>
-                        <div>{`0x${wallet.address}`}</div>
+                        <label className="font-semibold">{`Public Address (${wallet.curve === curveTypes.SECP256K1 ? 'Secp256k1' : 'Barreto-Naehrig'} curve)`}</label>
+                        <div className="py-1">{`0x${wallet.address}`}</div>
 
-                    </Segment>
+                    </Container>
 
                 </Grid.Column>
 
@@ -28,27 +28,27 @@ export default function OverviewTabPane({ wallet }) {
 
                 <Grid.Column width={8}>
 
-                    <Segment>
+                    <Container>
 
-                        <Label attached='top'>Ethereum Balances</Label>
-                        <div>
+                        <label className="font-semibold">Ethereum Balances</label>
+                        <div className="py-1">
                             <div>{'0.0 ETH'}</div>
                             <div>{'0.0 STAKE'}</div>
                             <div>{'0.0 UTIL'}</div>
                         </div>
 
-                    </Segment>
+                    </Container>
 
                 </Grid.Column>
 
                 <Grid.Column width={8}>
 
-                    <Segment>
+                    <Container>
 
-                        <Label attached='top'>MadNet Balances</Label>
-                        <div>{'0.00 Mad Bytes'}</div>
+                        <label className="font-semibold">MadNet Balances</label>
+                        <div className="py-1">{'0.00 Mad Bytes'}</div>
 
-                    </Segment>
+                    </Container>
 
                 </Grid.Column>
 
@@ -58,27 +58,27 @@ export default function OverviewTabPane({ wallet }) {
 
                 <Grid.Column width={8}>
 
-                    <Segment>
+                    <Container>
 
-                        <Label attached='top'>Origin</Label>
-                        <div>{wallet.isInternal ? 'Internal (From Seed)' : 'External'}</div>
+                        <label className="font-semibold">Origin</label>
+                        <div className="py-1">{wallet.isInternal ? 'Internal (From Seed)' : 'External'}</div>
 
-                    </Segment>
+                    </Container>
 
                 </Grid.Column>
 
                 <Grid.Column width={8}>
 
-                    <Segment>
+                    <Container>
 
-                        <Label attached='top'>Actions</Label>
-                        <Container className="flex flex-col items-baseline underline">
+                        <label className="font-semibold">Actions</label>
+                        <Container className="flex flex-col items-baseline underline py-1">
                             <Button className="text-purple-700 text-sm bg-transparent p-0.5">Rename Wallet</Button>
                             <Button className="text-purple-700 text-sm bg-transparent p-0.5">Export Private Key</Button>
                             <Button className="text-red-700 text-sm bg-transparent p-0.5">Remove Wallet</Button>
                         </Container>
 
-                    </Segment>
+                    </Container>
 
                 </Grid.Column>
 
