@@ -199,6 +199,17 @@ export const strip0x = (pKeyOrAddress) => {
     return pKeyOrAddress;
 }
 
+/**
+ * Accepts two strings of eth addresses, strips them of 0x prefix, and lowercases them
+ * Returns true if both strings match
+ */
+ export function compareAddresses(address1, address2) {
+    if (typeof address1 !== "string" || typeof address2 !== "string") { log.warn("Only strings should be passed to compareAddresses()."); return false; }
+    let stripped1 = strip0x(address1).toLowerCase();
+    let stripped2 = strip0x(address2).toLowerCase();
+    return stripped1 === stripped2;
+}
+
 export const curveTypes = {
     SECP256K1: 1,
     BARRETO_NAEHRIG: 2,

@@ -22,6 +22,7 @@ class Web3Adapter {
         // Set initial instance state
         this.selectedAddress = false; // Currently selected address
         this.account = { // Account information from the contracts
+            "address": "",
             "balances": {
                 "token": {}
             },
@@ -120,20 +121,28 @@ class Web3Adapter {
         }
     }
 
-    // Add account to the web3, set as selectedAddress, retrieve address information from contracts
+    /**
+     * Add an account to the adapter/web3 instance and retrieve latest info for it.
+     * Upon getting the latest information, return that as well.
+     * @param { String } privK - Private key for the account to add. 
+     * @returns 
+     */
     async useAccount(privK) {
         try {
             let account = await this.web3.eth.accounts.privateKeyToAccount("0x" + privK);
             await this.web3.eth.accounts.wallet.add(account);
             this.selectedAddress = account["address"];
-            await this.updateAccount()
-            return true;
+            let accountInfo = await this.updateAccount()
+            return accountInfo;
         } catch (ex) {
             return { error: ex }
         }
     }
 
-    // retrieve address information from contracts, Can force update without callbacks
+    /**
+     * Retrieve account information from contracts
+     * @returns { Object } - Returns object with balances and validatorInfo
+     */
     async updateAccount() {
         try {
             let ethBalance = await this.getEthBalance(this.selectedAddress);
@@ -152,10 +161,11 @@ class Web3Adapter {
                 }
             };
             this.account = {
+                address: this.selectedAddress,
                 balances,
                 "validatorInfo": validatorInfo
             };
-            return true;
+            return this.account;
         } catch (ex) {
             return { error: ex }
         }
