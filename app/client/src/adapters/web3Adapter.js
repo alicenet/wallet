@@ -1,38 +1,41 @@
 import store from '../redux/store/store';
 import Web3 from 'web3';
-import ABI from './ABI.js';
+import ABI from './abi.js';
+import { ADAPTER_ACTIONS } from 'redux/actions/_actions';
 
 const reqContracts = ["staking", "validators", "deposit", "stakingToken", "utilityToken"]
 const REGISTRY_VERSION = "/v1"; // CHANGE OR PUT IN SETTINGS
 
+/**
+ * Web3Adapter that provides ethereum access acrosss the application 
+ * Note: Core state that may need to propagate UI changes has been moved to the redux state 
+ * It is advised to export a singleton instance of this class, as it will monitor for state updates and adjust accordingly after initiation
+ * 
+ * After instancing the Web3Adapter it must be initiated prior to use -- Once initiated it will remain available until close
+*/
 class Web3Adapter {
 
     constructor() {
-        
-        // Poll for latest contract info.
         this.web3 = [];
         this.contracts = [];
         this.info = {};
-        
-        // Init instance
-        this.__init()
-
-         // -- TBD -- BELOW REFACTOR
-        // Connection status of the provider
-        this.connected = false;
-        this.failed = false;
-        // Currently selected address
-        this.selectedAddress = false;
-        // Account information from the contracts
-        this.account = {
+        // Set initial instance state
+        this.selectedAddress = false; // Currently selected address
+        this.account = { // Account information from the contracts
             "balances": {
                 "token": {}
             },
             "validatorInfo": {}
         };
+
+        // Init instance -- Let this happen externally and keep one instance as a singleton
+        // this.__init()
     }
 
-    __init() {
+    /**
+     * Initialize the current instance by setting up store listen and getting uptoDateContracts and information
+     */
+    async __init() {
         // Set up subscribe and listen to store events
         await this._listenToStore();
         // Set the latest contracts
@@ -46,16 +49,18 @@ class Web3Adapter {
         if (!this._getRegistryContractFromStore()) {
             throw new Error("No registry contract found in state.");
         }
-
+        // If all of this passes, note that the instance is connected
+        store.dispatch(ADAPTER_ACTIONS.setWeb3Connected(true));
+        return true;
     }
 
     /**
-     * Setup listeners on the redux store for configuration changes
+     * Setup listeners on the redux store for configuration changes -- This may not be needed at the moment 
      */
     async _listenToStore() {
         // TBD: On store changes for any configuration settings rerun:
-        await this._setAndGetUptoDateContracts();
-        await this._setAndGetInfo();
+        // await this._setAndGetUptoDateContracts();
+        // await this._setAndGetInfo();
     }
 
     /**
@@ -92,7 +97,7 @@ class Web3Adapter {
         let contractList = []; // Array to push contracts to and return
         for await (let contract of reqContracts) {
             let contractAddr = await registryContract.methods.lookup(contract + REGISTRY_VERSION).call();
-            let newContract = new this.web3.eth.Contract(this.ABIs[contract], contractAddr);
+            let newContract = new this.web3.eth.Contract(ABI[contract], contractAddr);
             let info = {}
             info["name"] = contract;
             info["instance"] = newContract;
@@ -102,36 +107,17 @@ class Web3Adapter {
         return this.contracts;
     }
 
+    /** Sets the current information to redux state regarding validators and epoch time */
     async _setAndGetInfo() {
         try {
             let validatorCount = await this.internalMethod("validators", "validatorCount");
             let validatorMax = await this.internalMethod("validators", "validatorMaxCount");
-            await this.getEpoch();
-            this.info = {
-                "validators": String(validatorCount) + "/" + String(validatorMax),
-                "epoch": String(this.currentEpoch)
-            }
+            let epoch = await this.getEpoch();
+            store.dispatch(ADAPTER_ACTIONS.setWeb3Info(epoch, validatorCount, validatorMax));
         } catch (ex) {
-            throw new Error("Could not get validator info.");
+            console.error("Could not get validator info.", ex);
+            throw new Error(ex);
         }
-    }
-
-    /**
-     * Connect Web3 to this.provider
-     * Call registry contract to get other contract addresses
-     * Create Web3 instances of the other contracts
-     * Attempt this process twice, afterwards fail
-     */
-    async init() {
-        try {
-            await this.getInfo()
-            this.failed = false
-            this.connected = true;
-        } catch (ex) {
-            this.failed = true
-            this.cb.call(this, "error", String("Could not connect. Check your Registry Address or RPC provider in the settings."))
-        }
-        this.cb.call(this, "success");
     }
 
     // Add account to the web3, set as selectedAddress, retrieve address information from contracts
@@ -141,17 +127,14 @@ class Web3Adapter {
             await this.web3.eth.accounts.wallet.add(account);
             this.selectedAddress = account["address"];
             await this.updateAccount()
-            await this.cb.call(this, "success")
+            return true;
         } catch (ex) {
-            await this.cb.call(this, "error", String(ex))
+            return { error: ex }
         }
     }
 
     // retrieve address information from contracts, Can force update without callbacks
-    async updateAccount(force) {
-        if (force) {
-            await this.cb.call(this, "wait", "Updating account");
-        }
+    async updateAccount() {
         try {
             let ethBalance = await this.getEthBalance(this.selectedAddress);
             let [stakingBalance, stakingAllowance, utilityBalance, utilityAllowance] = await this.getTokenBalances(this.selectedAddress);
@@ -172,15 +155,9 @@ class Web3Adapter {
                 balances,
                 "validatorInfo": validatorInfo
             };
-            if (force) {
-                await this.cb.call(this, "success");
-            }
+            return true;
         } catch (ex) {
-            if (force) {
-                await this.cb.call(this, "error", String(ex));
-            } else {
-                throw ex;
-            }
+            return { error: ex }
         }
     }
 
@@ -202,7 +179,7 @@ class Web3Adapter {
     // Get the abi method object from contract and method name
     async getMethod(contract, fn) {
         try {
-            let method = await this.ABIs[contract].find(e => e["name"] === fn);
+            let method = await ABI[contract].find(e => e["name"] === fn);
             if (!method) {
                 throw new Error({
                     "arguemnt": "Invalid Method"
@@ -286,8 +263,7 @@ class Web3Adapter {
                 }
             }
             if (args.length !== method.inputs.length) {
-                this.cb.call(this, "error", "Arguments given do not match contract method arguments")
-                return;
+                return { error: "Arguments given do not match contract method arguments" }
             }
             if (method.stateMutability === 'view') {
                 await this.call(contract, method, args);
@@ -295,7 +271,7 @@ class Web3Adapter {
                 await this.send(contract, method, args);
             }
         } catch (ex) {
-            this.cb.call(this, "error", String(ex));
+            return { error: ex }
         }
     }
 
@@ -318,13 +294,12 @@ class Web3Adapter {
                 });
             }
         } catch (ex) {
-            await this.cb.call(this, "error", String(ex))
-            return;
+            return { error: ex };
         }
-        await this.cb.call(this, "success");
+        return true;
     }
 
-    // Send a transaction to a coontract method
+    // Send a transaction to a contract method
     async send(contract, fn, args) {
         await this.cb.call(this, "wait", "Sending transaction to " + contract["_address"].substring(0, 6) + "..." + contract["_address"].substring(contract["_address"].length - 6));
         let tx;
@@ -352,20 +327,6 @@ class Web3Adapter {
             "msg": "Tx Hash: " + this.trimTxHash(tx.transactionHash),
             "type": "success"
         });
-    }
-
-    async getInfo() {
-        try {
-            let validatorCount = await this.internalMethod("validators", "validatorCount");
-            let validatorMax = await this.internalMethod("validators", "validatorMaxCount");
-            await this.getEpoch();
-            this.info = {
-                "validators": String(validatorCount) + "/" + String(validatorMax),
-                "epoch": String(this.currentEpoch)
-            }
-        } catch (ex) {
-            await this.cb.call(this, "error", String("Could not get validator info."));
-        }
     }
 
     // Get Staking and Validator information for the selectedAddress
@@ -512,13 +473,15 @@ class Web3Adapter {
         }
     }
 
-    // Get the current validator epoch
+    /**
+     * Get the current validator epoch and set to redux store -- Set to "" if not available
+     */
     async getEpoch() {
         try {
             let epoch = await this.internalMethod("staking", "currentEpoch");
-            this.currentEpoch = epoch;
+            return epoch;
         } catch (ex) {
-            this.currentEpoch = false;
+            return ""
         }
     }
 
@@ -532,4 +495,8 @@ class Web3Adapter {
         }
     }
 }
-export default Web3Adapter;
+
+// Singleton Adapter to use throughout the application
+const web3Adapter = new Web3Adapter();
+
+export default web3Adapter;

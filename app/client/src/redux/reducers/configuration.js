@@ -4,7 +4,7 @@ import { reduxState_logger as log } from '../../log/logHelper';
 //  Any user editable and saveable configurations are loaded here
 export const initialConfigurationState = {
     defaultCurve: "secp256k1", // User preferred curve to use when generating wallets
-    ethereum_provider: "testnet.eth.mnexplore.com", // Ethereum RPC endpoint
+    ethereum_provider: "https://testnet.eth.mnexplore.com", // Ethereum RPC endpoint
     mad_net_chainID: "66", // Chain ID to use on MadNet
     mad_net_provider: "https://testnet.edge.mnexplore.com/v1/", // MadNet API endpoint
     registry_contract_address: "0x70c43ed0989fc0f50772d6a949cb0470753ae486", // Contract address for Registry Contract

@@ -5,10 +5,11 @@ export const views = {
     USER_STORIES: "User Stories",
     ELECTRON_STORE: "Electron Store",
     VAULT_WALLETS: "Vault & Wallets",
+    WEB3: "Web3 Provider",
 }
 
 const defaultContextState = {
-    currentView: views.VAULT_WALLETS,
+    currentView: views.WEB3,
 }
 
 export const DebugContext = React.createContext();
