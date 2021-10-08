@@ -3,7 +3,23 @@ module.exports = {
     important: true,
     darkMode: false, // or 'media' or 'class'
     theme: {
-        extend: {},
+        extend: {
+            inset: {
+                '1/3': '33.333333%',
+                '1/8': '12.5%',
+            },
+            width: {
+                '1/8': '12.5%',
+                '7/8': '87.5%',
+            },
+            maxHeight: {
+                '104': '31rem',
+            },
+            transitionProperty: {
+                'left': 'left',
+                'width': 'width',
+            },
+        },
     },
     variants: {
         extend: {
@@ -35,6 +51,7 @@ module.exports = {
         'justifyContent',
         'justifyItems',
         'justifySelf',
+        'inset',
         'margin',
         'maxHeight',
         'maxWidth',
@@ -49,9 +66,13 @@ module.exports = {
         'rotate',
         'textAlign',
         'textColor',
+        'textDecoration',
         'textTransform',
         'transform',
+        'transitionProperty',
         'transitionDuration',
         'width',
+        'wordBreak',
+        'zIndex',
     ]
 }
