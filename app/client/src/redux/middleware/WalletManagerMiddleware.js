@@ -21,9 +21,9 @@ export default function WalletManagerMiddleware(storeAPI) {
                 case MIDDLEWARE_ACTION_TYPES.ADD_WALLET_FROM_KEYSTORE:
                     return addWalletFromKeystore(action.payload.data, action.payload.name, storeAPI.dispatch);
                 case MIDDLEWARE_ACTION_TYPES.ADD_NEXT_HD_WALLET:
-                    return addNextHDWallet(storeAPI, action.payload.name); break;
+                    return addNextHDWallet(storeAPI, action.payload.name);
                 case MIDDLEWARE_ACTION_TYPES.REINSTANCE_MAD_WALLET:
-                    reinstanceMadWallet(); break;
+                    return reinstanceMadWallet();
                 default: break;
             }
             // Do anything here: pass the action onwards with next(action),

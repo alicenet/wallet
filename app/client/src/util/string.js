@@ -1,3 +1,4 @@
+import { strip0x } from "./wallet";
 
 /**
  * Limit string length to limit, return as full limit length, where length through length -3 are ellipses
@@ -10,17 +11,16 @@ export function limitStringLength(str, limit) {
 }
 
 /**
- * Splits a string with an ellipses, leaving designated length on right side
+ * Splits a string with an ellipses, leaving designated length on both sides
  * @param {string} str - String to split
- * @param {int} lengthOnSides - How many characters to leave on right side of ellipses
- * @param {bool} isPubAddress - If public address split first 2 characters of 0x off
+ * @param {int} lengthOnSides - How many characters to leave on sides of the ellipses
  */
- export function splitStringWithEllipsis(str, isEthAddress=false, lengthOnSides = 3) {
+export function splitStringWithEllipsis(str, lengthOnSides = 3) {
     if (typeof str !== "string") {
-      console.warn('Non string passed to splitStringWithEllipses(), returning "" ');
-      return "";
+        console.warn('Non string passed to splitStringWithEllipses(), returning "" ');
+        return "";
     }
-    return str.slice( isEthAddress ? 2:0, lengthOnSides + isEthAddress ? 3:0 )
-      + "..."
-      + str.slice(str.length - lengthOnSides, str.length);
-  }
+    return str.slice(0, lengthOnSides)
+        + "..."
+        + str.slice(str.length - lengthOnSides, str.length);
+}
