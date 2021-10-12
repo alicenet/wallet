@@ -258,10 +258,8 @@ class Web3Adapter {
 
     // Do a contract method based on contract name, method name, and method argument data {argument: data}
     async method(c, m, data) {
-        await this.cb.call(this, "wait", "Preparing transaction");
         if (!c || !m) {
-            this.cb.call(this, "error", "Missing contract or method")
-            return;
+            return { error: "Missing contract or method" }
         }
         try {
             let contract = await this.getContract(c);
@@ -287,7 +285,6 @@ class Web3Adapter {
 
     // Call a contract method
     async call(contract, fn, args) {
-        await this.cb.call(this, "wait", "Calling " + contract["_address"].substring(0, 6) + "..." + contract["_address"].substring(contract["_address"].length - 6));
         try {
             let [gasPrice, gasEst] = await this.getGas(contract, fn, args);
             if (args && args.length > 0) {
@@ -311,7 +308,6 @@ class Web3Adapter {
 
     // Send a transaction to a contract method
     async send(contract, fn, args) {
-        await this.cb.call(this, "wait", "Sending transaction to " + contract["_address"].substring(0, 6) + "..." + contract["_address"].substring(contract["_address"].length - 6));
         let tx;
         try {
             let [gasPrice, gasEst] = await this.getGas(contract, fn, args);
@@ -330,13 +326,12 @@ class Web3Adapter {
             }
             await this.updateAccount();
         } catch (ex) {
-            await this.cb.call(this, "error", String(ex));
-            return;
+            return { error: ex.message }
         }
-        await this.cb.call(this, "success", {
+        return {
             "msg": "Tx Hash: " + this.trimTxHash(tx.transactionHash),
             "type": "success"
-        });
+        }
     }
 
     // Get Staking and Validator information for the selectedAddress
@@ -428,7 +423,7 @@ class Web3Adapter {
                 "amount": amount
             });
         } catch (ex) {
-            await this.cb.call(this, "error", String(ex))
+            return ({ error: ex.message })
         }
     }
 
@@ -441,7 +436,7 @@ class Web3Adapter {
             data["wad"] = amount;
             await this.method("stakingToken", "approve", data);
         } catch (ex) {
-            await this.cb.call(this, "error", String(ex))
+            return { error: ex.message }
         }
     }
 
@@ -454,7 +449,7 @@ class Web3Adapter {
             data["wad"] = amount;
             await this.method("utilityToken", "approve", data);
         } catch (ex) {
-            await this.cb.call(this, "error", String(ex))
+            return ({ error: ex.message })
         }
     }
 
@@ -468,7 +463,7 @@ class Web3Adapter {
             data["_madID"].push(String("2"));
             await this.method("validators", fn, data);
         } catch (ex) {
-            await this.cb.call(this, "error", String(ex))
+            return ({ error: ex.message })
         }
     }
 
@@ -479,7 +474,7 @@ class Web3Adapter {
             data["amount"] = amount;
             await this.method("staking", fn, data);
         } catch (ex) {
-            await this.cb.call(this, "error", String(ex))
+            return ({ error: ex.message })
         }
     }
 
