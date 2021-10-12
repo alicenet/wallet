@@ -25,7 +25,7 @@ export default function Web3Panel() {
 
     const walletArrayToButtons = (walletArray, actionFunction) => {
         return walletArray.map(wallet => {
-            let isDisabled = wallet && wallet.address && activeWallet && activeWallet.address ? utils.wallet.compareAddresses(wallet.address, activeWallet.address) : false;
+            let isDisabled = utils.wallet.compareAddresses(wallet?.address, activeWallet?.address);
             return (
                 <DButton disabled={isDisabled} key={wallet.address} content={wallet.name} onClick={() => actionFunction(wallet)} />
             )
