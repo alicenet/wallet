@@ -4,7 +4,7 @@ import { Button, Container, Form, Grid, Header } from 'semantic-ui-react';
 import ForgottenVaultPasswordModal from './ForgottenVaultPasswordModal';
 
 import { useHistory } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useFormState } from 'hooks/_hooks';
 
 import { VAULT_ACTIONS } from 'redux/actions/_actions'
@@ -20,6 +20,15 @@ function UnlockExistingVault() {
     const [formState, formSetter] = useFormState(["password"]);
     const incorrectPasswordError = "Vault password incorrect. Please try again.";
     const incorrectPwEntered = formState.password.error === incorrectPasswordError;
+
+    const { vaultLocked } = useSelector(state => ({ vaultLocked: state.vault.is_locked }));
+
+    // Make sure vault is actually locked
+    React.useEffect(() => {
+        if (!vaultLocked) {
+            history.push('/hub');
+        }
+    });
 
     const handleFormSubmit = async () => {
         // Check password against preflight hash
@@ -43,7 +52,7 @@ function UnlockExistingVault() {
 
                 <Grid.Column width={16} className="p-0 self-center">
 
-                    <Header content="Welcome Back" as="h3" className="m-0"/>
+                    <Header content="Welcome Back" as="h3" className="m-0" />
 
                 </Grid.Column>
 
@@ -74,7 +83,7 @@ function UnlockExistingVault() {
                                 }}
                             />
 
-                            <ForgottenVaultPasswordModal incorrectPwEntered={incorrectPwEntered}/>
+                            <ForgottenVaultPasswordModal incorrectPwEntered={incorrectPwEntered} />
 
                         </Form.Group>
 
@@ -86,7 +95,7 @@ function UnlockExistingVault() {
 
                     <Container className="flex justify-center">
 
-                        <Button color="teal" basic content='Unlock Vault' disabled={!formState.password.value} className="m-0" onClick={handleFormSubmit}/>
+                        <Button color="teal" basic content='Unlock Vault' disabled={!formState.password.value} className="m-0" onClick={handleFormSubmit} />
 
                     </Container>
 
