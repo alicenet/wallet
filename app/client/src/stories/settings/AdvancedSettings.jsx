@@ -5,10 +5,10 @@ import { Button, Container, Form, Grid, Header } from 'semantic-ui-react';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
-import Page from '../../layout/Page';
-import { useFormState } from '../../hooks/_hooks';
-import { CONFIG_ACTIONS } from '../../redux/actions/_actions';
-import { initialConfigurationState } from '../../redux/reducers/configuration'; // <= We can import this to use as a local setter
+import Page from 'layout/Page';
+import { useFormState } from 'hooks/_hooks';
+import { CONFIG_ACTIONS } from 'redux/actions/_actions';
+import { initialConfigurationState } from 'redux/reducers/configuration'; // <= We can import this to use as a local setter
 
 function AdvancedSettings() {
 
@@ -157,7 +157,7 @@ function AdvancedSettings() {
 
                         <div className="flex flex-col gap-2">
 
-                            <Button.Group size='large'>
+                            <Button.Group>
 
                                 <Button color="purple" icon="save" basic content="Save" className="m-0" onClick={handleFormSubmit}/>
 
