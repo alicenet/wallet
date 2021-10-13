@@ -96,7 +96,7 @@ function AdvancedSettings() {
     return (
         <Page hideMenu>
 
-            <Grid textAlign="center" className="m-0">
+            <Grid textAlign="center" className="m-0 content-evenly">
 
                 <Grid.Column width={16} className="p-0 self-center">
 
@@ -104,69 +104,55 @@ function AdvancedSettings() {
 
                 </Grid.Column>
 
-                <Grid.Column width={8} className="p-0 self-center">
+                <Grid.Column width={12} className="self-center p-0 m-0 text-left">
 
-                    <Form onSubmit={(event => handleFormSubmit(event))}>
+                    <Form onSubmit={(event => handleFormSubmit(event))} className="text-sm">
 
-                        <Form.Group className="flex flex-auto flex-col m-0 text-left text-sm gap-5">
+                        <Form.Input
+                            id='madNetChainId'
+                            label='MadNet ChainID'
+                            placeholder='Enter MadNet ChainID'
+                            required
+                            value={formState.MadNetChainId.value}
+                            onChange={e => formSetter.setMadNetChainId(e.target.value)}
+                            error={!!formState.MadNetChainId.error && {content: formState.MadNetChainId.error}}
+                        />
 
-                            <Form.Input
-                                id='madNetChainId'
-                                label='MadNet ChainID'
-                                placeholder='Enter MadNet ChainID'
-                                required
-                                value={formState.MadNetChainId.value}
-                                onChange={e => {
-                                    formSetter.setMadNetChainId(e.target.value)
-                                }}
-                                error={!!formState.MadNetChainId.error && {
-                                    content: formState.MadNetChainId.error
-                                }}
-                            />
+                        <Form.Input
+                            id='madNetProvider'
+                            label='MadNet Provider'
+                            placeholder='Enter MadNet Provider'
+                            required
+                            value={formState.MadNetProvider.value}
+                            onChange={e => formSetter.setMadNetProvider(e.target.value)}
+                            error={!!formState.MadNetProvider.error && {
+                                content: formState.MadNetProvider.error
+                            }}
+                        />
 
-                            <Form.Input
-                                id='madNetProvider'
-                                label='MadNet Provider'
-                                placeholder='Enter MadNet Provider'
-                                required
-                                value={formState.MadNetProvider.value}
-                                onChange={e => {
-                                    formSetter.setMadNetProvider(e.target.value)
-                                }}
-                                error={!!formState.MadNetProvider.error && {
-                                    content: formState.MadNetProvider.error
-                                }}
-                            />
+                        <Form.Input
+                            id='ethereumProvider'
+                            label='Ethereum Provider'
+                            placeholder='Enter Ethereum Provider'
+                            required
+                            value={formState.EthereumProvider.value}
+                            onChange={e => formSetter.setEthereumProvider(e.target.value)}
+                            error={!!formState.EthereumProvider.error && {
+                                content: formState.EthereumProvider.error
+                            }}
+                        />
 
-                            <Form.Input
-                                id='ethereumProvider'
-                                label='Ethereum Provider'
-                                placeholder='Enter Ethereum Provider'
-                                required
-                                value={formState.EthereumProvider.value}
-                                onChange={e => {
-                                    formSetter.setEthereumProvider(e.target.value)
-                                }}
-                                error={!!formState.EthereumProvider.error && {
-                                    content: formState.EthereumProvider.error
-                                }}
-                            />
-
-                            <Form.Input
-                                id='registryContractAddress'
-                                label='Registry Contract Address'
-                                placeholder='Enter Address'
-                                required
-                                value={formState.RegistryContractAddress.value}
-                                onChange={e => {
-                                    formSetter.setRegistryContractAddress(e.target.value)
-                                }}
-                                error={!!formState.RegistryContractAddress.error && {
-                                    content: formState.RegistryContractAddress.error
-                                }}
-                            />
-
-                        </Form.Group>
+                        <Form.Input
+                            id='registryContractAddress'
+                            label='Registry Contract Address'
+                            placeholder='Enter Address'
+                            required
+                            value={formState.RegistryContractAddress.value}
+                            onChange={e => formSetter.setRegistryContractAddress(e.target.value)}
+                            error={!!formState.RegistryContractAddress.error && {
+                                content: formState.RegistryContractAddress.error
+                            }}
+                        />
 
                     </Form>
 
