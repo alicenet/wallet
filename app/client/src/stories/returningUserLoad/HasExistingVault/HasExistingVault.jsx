@@ -21,11 +21,11 @@ function UnlockExistingVault() {
     const incorrectPasswordError = "Vault password incorrect. Please try again.";
     const incorrectPwEntered = formState.password.error === incorrectPasswordError;
 
-    const { vaultLocked } = useSelector(state => ({ vaultLocked: state.vault.is_locked }));
+    const { vaultLocked, vaultExists} = useSelector(state => ({ vaultLocked: state.vault.is_locked, vaultExists: state.vault.exists }));
 
     // Make sure vault is actually locked
     React.useEffect(() => {
-        if (!vaultLocked) {
+        if (!vaultLocked && vaultExists) {
             history.push('/hub');
         }
     });
