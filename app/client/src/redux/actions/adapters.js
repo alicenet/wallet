@@ -35,3 +35,9 @@ export const setMadNetError = (error) => {
         dispatch({ type: ADAPTER_ACTION_TYPES.SET_MADNET_ERROR, payload: error })
     }
 }
+
+export const setMadNetKeyChainValue = (keyChain, value) => {
+    return dispatch => {
+        dispatch({ type: ADAPTER_ACTION_TYPES.SET_MADNET_KEYCHAIN_VALUE, payload: { keyChain: keyChain, value: value } })
+    }
+}
