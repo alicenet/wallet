@@ -4,11 +4,13 @@ import { Button, Container, Form, Grid, Header } from 'semantic-ui-react';
 
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import Web3 from 'web3';
 
 import Page from 'layout/Page';
 import { useFormState } from 'hooks/_hooks';
 import { CONFIG_ACTIONS } from 'redux/actions/_actions';
 import { initialConfigurationState } from 'redux/reducers/configuration'; // <= We can import this to use as a local setter
+import utils from 'util/_util';
 
 function AdvancedSettings() {
 
@@ -35,8 +37,12 @@ function AdvancedSettings() {
     // Technically you could use [] here since you only care about the defaults on initial mount, but you would need to ignore the linter
 
     const handleFormSubmit = () => {
-        if (!formState.MadNetChainId.value) {
+
+        if (!formState.MadNetChainId.value || (formState.MadNetChainId.value.trim && formState.MadNetChainId.value.trim() === "")) {
             formSetter.setMadNetChainIdError("MadNet ChainID is required");
+        }
+        else if (isNaN(formState.MadNetChainId.value)) {
+            formSetter.setMadNetChainIdError("MadNet ChainID is not a valid number");
         }
         else {
             formSetter.clearMadNetChainIdError();
@@ -45,6 +51,9 @@ function AdvancedSettings() {
         if (!formState.MadNetProvider.value) {
             formSetter.setMadNetProviderError("MadNet Provider is required");
         }
+        else if (!utils.string.isValidHttpUrl(formState.MadNetProvider.value)) {
+            formSetter.setMadNetProviderError("MadNet Provider is not a valid HTTP url");
+        }
         else {
             formSetter.clearMadNetProviderError();
         }
@@ -52,12 +61,18 @@ function AdvancedSettings() {
         if (!formState.EthereumProvider.value) {
             formSetter.setEthereumProviderError("Ethereum Provider is required");
         }
+        else if (!utils.string.isValidHttpUrl(formState.EthereumProvider.value)) {
+            formSetter.setEthereumProviderError("Ethereum Provider is not a valid HTTP url");
+        }
         else {
             formSetter.clearEthereumProviderError();
         }
 
         if (!formState.RegistryContractAddress.value) {
             formSetter.setRegistryContractAddressError("Registry Contract Address is required");
+        }
+        else if (!Web3.utils.isAddress(formState.RegistryContractAddress.value)) {
+            formSetter.setRegistryContractAddressError("Registry Contract Address is not a valid address");
         }
         else {
             formSetter.clearRegistryContractAddressError();
@@ -115,7 +130,7 @@ function AdvancedSettings() {
                             required
                             value={formState.MadNetChainId.value}
                             onChange={e => formSetter.setMadNetChainId(e.target.value)}
-                            error={!!formState.MadNetChainId.error && {content: formState.MadNetChainId.error}}
+                            error={!!formState.MadNetChainId.error && { content: formState.MadNetChainId.error }}
                         />
 
                         <Form.Input
