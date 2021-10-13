@@ -36,13 +36,40 @@ function AdvancedSettings() {
 
     const handleFormSubmit = () => {
         if (!formState.MadNetChainId.value) {
-            return formSetter.setMadNetChainIdError("MadNet ChainID is required");
+            formSetter.setMadNetChainIdError("MadNet ChainID is required");
         }
         else {
-            formSetter.clearMadNetChainIdError()
+            formSetter.clearMadNetChainIdError();
         }
-        // Propagate save to redux state
-        saveValues();
+
+        if (!formState.MadNetProvider.value) {
+            formSetter.setMadNetProviderError("MadNet Provider is required");
+        }
+        else {
+            formSetter.clearMadNetProviderError();
+        }
+
+        if (!formState.EthereumProvider.value) {
+            formSetter.setEthereumProviderError("Ethereum Provider is required");
+        }
+        else {
+            formSetter.clearEthereumProviderError();
+        }
+
+        if (!formState.RegistryContractAddress.value) {
+            formSetter.setRegistryContractAddressError("Registry Contract Address is required");
+        }
+        else {
+            formSetter.clearRegistryContractAddressError();
+        }
+
+        if (!formState.MadNetChainId.error
+            && !formState.MadNetProvider.error
+            && !formState.EthereumProvider.error
+            && !formState.RegistryContractAddress.error) {
+            // Propagate save to redux state
+            saveValues();
+        }
     }
 
     // In this function we can propagate the save upwards to the redux state -- Treat redux as truth and the local state as the editing playground
