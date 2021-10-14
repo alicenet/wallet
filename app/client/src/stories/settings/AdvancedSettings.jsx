@@ -9,7 +9,6 @@ import { toast } from 'react-toastify';
 import isEmpty from 'validator/lib/isEmpty';
 import isURL from 'validator/lib/isURL';
 
-import utils from 'util/_util';
 import Page from 'layout/Page';
 import { useFormState } from 'hooks/_hooks';
 import { CONFIG_ACTIONS, INTERFACE_ACTIONS } from 'redux/actions/_actions';
@@ -109,12 +108,18 @@ function AdvancedSettings() {
 
     // Instead we can pull in the default values from the context and use it as a local setter, and propagate those changes upwards to redux
     const handleLoadDefaultValues = () => {
+        formSetter.setMadNetChainId(initialConfigurationState.mad_net_chainID);
+        formSetter.clearMadNetChainIdError();
+        formSetter.setMadNetProvider(initialConfigurationState.mad_net_provider);
+        formSetter.clearMadNetProviderError();
+        formSetter.setEthereumProvider(initialConfigurationState.ethereum_provider);
+        formSetter.clearEthereumProviderError();
+        formSetter.setRegistryContractAddress(initialConfigurationState.registry_contract_address);
+        formSetter.clearRegistryContractAddressError();
+
         dispatch(INTERFACE_ACTIONS.toggleGlobalLoadingBool(true));
         dispatch(CONFIG_ACTIONS.loadDefaultValues());
-        formSetter.setMadNetChainId(initialConfigurationState.mad_net_chainID);
-        formSetter.setMadNetProvider(initialConfigurationState.mad_net_provider);
-        formSetter.setEthereumProvider(initialConfigurationState.ethereum_provider);
-        formSetter.setRegistryContractAddress(initialConfigurationState.registry_contract_address);
+
         notifySuccess('Default values loaded');
     }
 
@@ -149,7 +154,6 @@ function AdvancedSettings() {
                             label='MadNet Provider'
                             placeholder='Enter MadNet Provider'
                             required
-                            disabled={loading}
                             value={formState.MadNetProvider.value}
                             onChange={e => formSetter.setMadNetProvider(e.target.value)}
                             error={!!formState.MadNetProvider.error && { content: formState.MadNetProvider.error }}
@@ -160,7 +164,6 @@ function AdvancedSettings() {
                             label='Ethereum Provider'
                             placeholder='Enter Ethereum Provider'
                             required
-                            disabled={loading}
                             value={formState.EthereumProvider.value}
                             onChange={e => formSetter.setEthereumProvider(e.target.value)}
                             error={!!formState.EthereumProvider.error && { content: formState.EthereumProvider.error }}
@@ -171,7 +174,6 @@ function AdvancedSettings() {
                             label='Registry Contract Address'
                             placeholder='Enter Address'
                             required
-                            disabled={loading}
                             value={formState.RegistryContractAddress.value}
                             onChange={e => formSetter.setRegistryContractAddress(e.target.value)}
                             error={!!formState.RegistryContractAddress.error && { content: formState.RegistryContractAddress.error }}
@@ -195,11 +197,11 @@ function AdvancedSettings() {
 
                             <Button.Group>
 
-                                <Button color="purple" icon="save" basic content="Save" className="m-0" onClick={handleFormSubmit}/>
+                                <Button disabled={loading} color="purple" icon="save" basic content="Save" className="m-0" onClick={handleFormSubmit}/>
 
                                 <Button.Or className="w-0 self-center text-sm"/>
 
-                                <Button color="purple" icon="undo alternate" basic content="Load Defaults" className="m-0"
+                                <Button disabled={loading} color="purple" icon="undo alternate" basic content="Load Defaults" className="m-0"
                                         onClick={handleLoadDefaultValues}/>
 
                             </Button.Group>

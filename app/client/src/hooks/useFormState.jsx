@@ -12,17 +12,36 @@ export default function useFormState(initialStateKeysArray) {
         initialState[key] = { error: "", value: "" }
     })
     // Setup state blob
-    const [formState, setFormState] = React.useState(initialState)
+    const [formState, setFormState] = useStateCallback(initialState)
     // Build setters for each key and return as set[KEY]Value && set[KEY]error
     let setters = {};
     initialStateKeysArray.forEach(key => {
         // Capitalize first name of function key 
         let keyCap = key.split('')[0].toUpperCase();
         let restOfKey = key.slice(1, key.length);
-        setters["set" + keyCap + restOfKey] = (value) => setFormState(prevState => ({ ...prevState, [key]: { ...prevState[key], value: value } }));
+        setters["set" + keyCap + restOfKey] = (value, callback) => setFormState(prevState => ({ ...prevState, [key]: { ...prevState[key], value: value } }), (state) => callback && callback(state));
         setters["set" + keyCap + restOfKey + "Error"] = (value) => setFormState(prevState => ({ ...prevState, [key]: { ...prevState[key], error: value } }));
-        setters["clear"+ keyCap + restOfKey + "Error"] = () => setFormState(prevState => ({ ...prevState, [key]: { ...prevState[key], error: "" } }));
+        setters["clear" + keyCap + restOfKey + "Error"] = () => setFormState(prevState => ({ ...prevState, [key]: { ...prevState[key], error: "" } }));
     });
     // Return it all
     return [formState, setters];
+}
+
+function useStateCallback(initialState) {
+    const [state, setState] = React.useState(initialState);
+    const cbRef = React.useRef(null);
+
+    const setStateCallback = React.useCallback((state, cb) => {
+        cbRef.current = cb;
+        setState(state);
+    }, []);
+
+    React.useEffect(() => {
+        if (cbRef.current) {
+            cbRef.current(state);
+            cbRef.current = null;
+        }
+    }, [state]);
+
+    return [state, setStateCallback];
 }
