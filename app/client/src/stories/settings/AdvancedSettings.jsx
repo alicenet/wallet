@@ -6,6 +6,8 @@ import Web3 from 'web3';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import isEmpty from 'validator/lib/isEmpty';
+import isURL from 'validator/lib/isURL';
 
 import utils from 'util/_util';
 import Page from 'layout/Page';
@@ -40,7 +42,7 @@ function AdvancedSettings() {
 
     const handleFormSubmit = () => {
 
-        if (!formState.MadNetChainId.value || (formState.MadNetChainId.value.trim && formState.MadNetChainId.value.trim() === "")) {
+        if (!formState.MadNetChainId.value || isEmpty(formState.MadNetChainId.value)) {
             formSetter.setMadNetChainIdError("MadNet ChainID is required");
         }
         else if (isNaN(formState.MadNetChainId.value)) {
@@ -63,7 +65,7 @@ function AdvancedSettings() {
         if (!formState.EthereumProvider.value) {
             formSetter.setEthereumProviderError("Ethereum Provider is required");
         }
-        else if (!utils.string.isValidHttpUrl(formState.EthereumProvider.value)) {
+        else if (!isURL(formState.EthereumProvider.value, { protocols: ['http', 'https'] })) {
             formSetter.setEthereumProviderError("Ethereum Provider is not a valid HTTP url");
         }
         else {
