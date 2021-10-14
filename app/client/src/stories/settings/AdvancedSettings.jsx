@@ -91,7 +91,7 @@ function AdvancedSettings() {
 
     const notifySuccess = message =>
         toast.success(<SyncToastMessageSuccess title="Success" message={message}/>, {
-            onClose: () => dispatch(INTERFACE_ACTIONS.toggleGlobalLoadingBool(false))
+            autoClose: 1000, onClose: () => dispatch(INTERFACE_ACTIONS.toggleGlobalLoadingBool(false))
         });
 
     const saveValues = () => {
