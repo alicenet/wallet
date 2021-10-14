@@ -133,6 +133,7 @@ class MadNetAdapter {
      */
     async getPrevTransactions(addresses) {
         try {
+            let madWallet = this.wallet();
             let blockRange = 256;
             let currentBlock = await madWallet.Rpc.getBlockNumber()
             let pTx = [];
