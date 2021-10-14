@@ -54,7 +54,7 @@ function AdvancedSettings() {
         if (!formState.MadNetProvider.value) {
             formSetter.setMadNetProviderError("MadNet Provider is required");
         }
-        else if (!utils.string.isValidHttpUrl(formState.MadNetProvider.value)) {
+        else if (!isURL(formState.MadNetProvider.value, { protocols: ['http', 'https'] })) {
             formSetter.setMadNetProviderError("MadNet Provider is not a valid HTTP url");
         }
         else {
@@ -143,7 +143,6 @@ function AdvancedSettings() {
                             label='MadNet ChainID'
                             placeholder='Enter MadNet ChainID'
                             required
-                            disabled={loading}
                             value={formState.MadNetChainId.value}
                             onChange={e => formSetter.setMadNetChainId(e.target.value)}
                             error={!!formState.MadNetChainId.error && { content: formState.MadNetChainId.error }}
