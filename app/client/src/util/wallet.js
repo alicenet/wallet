@@ -204,6 +204,7 @@ export const strip0x = (pKeyOrAddress) => {
  * Returns true if both strings match
  */
  export function compareAddresses(address1, address2) {
+     console.log(address2, address1)
     if (typeof address1 !== "string" || typeof address2 !== "string") { log.warn("Only strings should be passed to compareAddresses()."); return false; }
     let stripped1 = strip0x(address1).toLowerCase();
     let stripped2 = strip0x(address2).toLowerCase();
