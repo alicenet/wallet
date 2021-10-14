@@ -2,26 +2,29 @@ import React from 'react';
 
 import { Button, Container, Form, Grid, Header } from 'semantic-ui-react';
 
-import { useHistory } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
 import Web3 from 'web3';
+import { useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
+import utils from 'util/_util';
 import Page from 'layout/Page';
 import { useFormState } from 'hooks/_hooks';
-import { CONFIG_ACTIONS } from 'redux/actions/_actions';
+import { CONFIG_ACTIONS, INTERFACE_ACTIONS } from 'redux/actions/_actions';
 import { initialConfigurationState } from 'redux/reducers/configuration'; // <= We can import this to use as a local setter
-import utils from 'util/_util';
+import { SyncToastMessageSuccess } from 'components/customToasts/CustomToasts';
 
 function AdvancedSettings() {
 
     const history = useHistory();
     const dispatch = useDispatch();
 
-    const { madNetChainId, madNetProvider, ethereumProvider, registryContractAddress } = useSelector(state => ({
+    const { madNetChainId, madNetProvider, ethereumProvider, registryContractAddress, loading } = useSelector(state => ({
         madNetChainId: state.config.mad_net_chainID,
         madNetProvider: state.config.mad_net_provider,
         ethereumProvider: state.config.ethereum_provider,
         registryContractAddress: state.config.registry_contract_address,
+        loading: state.interface.globalLoading,
     }));
 
     // This is a local state change, and is not propagated to the store
@@ -33,8 +36,7 @@ function AdvancedSettings() {
         formSetter.setMadNetProvider(madNetProvider);
         formSetter.setEthereumProvider(ethereumProvider);
         formSetter.setRegistryContractAddress(registryContractAddress);
-    }, [madNetChainId, madNetProvider, ethereumProvider, registryContractAddress]); // <= These didn't change so this effect didnt't run.
-    // Technically you could use [] here since you only care about the defaults on initial mount, but you would need to ignore the linter
+    }, []);
 
     const handleFormSubmit = () => {
 
@@ -78,34 +80,40 @@ function AdvancedSettings() {
             formSetter.clearRegistryContractAddressError();
         }
 
+        // Propagate save to redux state
         if (!formState.MadNetChainId.error
             && !formState.MadNetProvider.error
             && !formState.EthereumProvider.error
             && !formState.RegistryContractAddress.error) {
-            // Propagate save to redux state
             saveValues();
         }
     }
 
-    // In this function we can propagate the save upwards to the redux state -- Treat redux as truth and the local state as the editing playground
+    const notifySuccess = message =>
+        toast.success(<SyncToastMessageSuccess title="Success" message={message}/>, {
+            onClose: () => dispatch(INTERFACE_ACTIONS.toggleGlobalLoadingBool(false))
+        });
+
     const saveValues = () => {
-        console.log("SAVE VALUES")
-        console.log(formState);
+        dispatch(INTERFACE_ACTIONS.toggleGlobalLoadingBool(true));
         dispatch(CONFIG_ACTIONS.saveConfigurationValues(
             formState.MadNetChainId.value,
             formState.MadNetProvider.value,
             formState.EthereumProvider.value,
             formState.RegistryContractAddress.value
         ));
+        notifySuccess('Settings were updated');
     }
 
-    // Instead we can pull in the default values from the context and use it as a local setter, and propagate those chnages upwards to redux
+    // Instead we can pull in the default values from the context and use it as a local setter, and propagate those changes upwards to redux
     const handleLoadDefaultValues = () => {
-        dispatch(CONFIG_ACTIONS.loadDefaultValues()) // This call *does* update the redux state, but the local state isn't being bubbled to as we never update this state
+        dispatch(INTERFACE_ACTIONS.toggleGlobalLoadingBool(true));
+        dispatch(CONFIG_ACTIONS.loadDefaultValues());
         formSetter.setMadNetChainId(initialConfigurationState.mad_net_chainID);
         formSetter.setMadNetProvider(initialConfigurationState.mad_net_provider);
         formSetter.setEthereumProvider(initialConfigurationState.ethereum_provider);
         formSetter.setRegistryContractAddress(initialConfigurationState.registry_contract_address);
+        notifySuccess('Default values loaded');
     }
 
     return (
@@ -128,6 +136,7 @@ function AdvancedSettings() {
                             label='MadNet ChainID'
                             placeholder='Enter MadNet ChainID'
                             required
+                            disabled={loading}
                             value={formState.MadNetChainId.value}
                             onChange={e => formSetter.setMadNetChainId(e.target.value)}
                             error={!!formState.MadNetChainId.error && { content: formState.MadNetChainId.error }}
@@ -138,11 +147,10 @@ function AdvancedSettings() {
                             label='MadNet Provider'
                             placeholder='Enter MadNet Provider'
                             required
+                            disabled={loading}
                             value={formState.MadNetProvider.value}
                             onChange={e => formSetter.setMadNetProvider(e.target.value)}
-                            error={!!formState.MadNetProvider.error && {
-                                content: formState.MadNetProvider.error
-                            }}
+                            error={!!formState.MadNetProvider.error && { content: formState.MadNetProvider.error }}
                         />
 
                         <Form.Input
@@ -150,11 +158,10 @@ function AdvancedSettings() {
                             label='Ethereum Provider'
                             placeholder='Enter Ethereum Provider'
                             required
+                            disabled={loading}
                             value={formState.EthereumProvider.value}
                             onChange={e => formSetter.setEthereumProvider(e.target.value)}
-                            error={!!formState.EthereumProvider.error && {
-                                content: formState.EthereumProvider.error
-                            }}
+                            error={!!formState.EthereumProvider.error && { content: formState.EthereumProvider.error }}
                         />
 
                         <Form.Input
@@ -162,11 +169,10 @@ function AdvancedSettings() {
                             label='Registry Contract Address'
                             placeholder='Enter Address'
                             required
+                            disabled={loading}
                             value={formState.RegistryContractAddress.value}
                             onChange={e => formSetter.setRegistryContractAddress(e.target.value)}
-                            error={!!formState.RegistryContractAddress.error && {
-                                content: formState.RegistryContractAddress.error
-                            }}
+                            error={!!formState.RegistryContractAddress.error && { content: formState.RegistryContractAddress.error }}
                         />
 
                     </Form>
