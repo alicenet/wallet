@@ -27,6 +27,7 @@ export const buildVaultStateObject = ({ exists = null, isLocked = null, optout =
             external: externalWallets, // Array of <WalletObject>s as defined below
             internal: internalWallets, // Array of <WalletObject>s as defined below
         },
+        balances: {} // K:V store of address:balances,utxos -- Updated via madNetWallet and web3Wallet actions
     }
 }
 

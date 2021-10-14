@@ -3,6 +3,8 @@ import { ADAPTER_ACTIONS } from 'redux/actions/_actions';
 import BigInt from "big-integer";
 import { ADAPTER_ACTION_TYPES } from 'redux/constants/_constants';
 import { getMadWalletInstance } from 'redux/middleware/WalletManagerMiddleware'
+import { SyncToastMessageWarning, SyncToastMessageSuccess } from 'components/customToasts/CustomToasts'
+import { toast } from 'react-toastify';
 
 class MadNetAdapter {
 
@@ -47,16 +49,80 @@ class MadNetAdapter {
 
     }
 
+    // Return state of connected
+    _isReady() {
+        return this.connected;
+    }
+
     async __init() {
         try {
             await this.wallet().Rpc.setProvider(this.provider)
             this.connected.set(true);
             this.failed.set(false);
+            toast.success(<SyncToastMessageSuccess basic title="Success" message="MadNet Connected" />, { className: "basic", "autoClose": 2400 })
             return true;
         }
         catch (ex) {
             this.failed.set(ex.message);
+            toast.error(<SyncToastMessageWarning title="Error Connecting To Madnet!" />)
             return ({ error: ex })
+        }
+    }
+
+    /**
+     * Setup listeners on the redux store for configuration changes -- This may not be needed at the moment 
+     */
+    async _listenToStore() {
+        // TBD: On store changes for any configuration settings rerun:
+        // await this._setAndGetUptoDateContracts();
+        // await this._setAndGetInfo();
+    }
+
+    /** Fetch upto date balances for MadNetWallets , return data and set to state accordingly 
+     * @returns { Object } -- Returns latest balances state
+    */
+    async getAllMadWalletBalancesWithUTXOs() {
+        let madWallet = this.wallet();
+        let balancesAndUtxos = {};
+        for (let wallet of madWallet.Account.accounts) {
+            let [balance, utxos] = await this.getMadNetWalletBalanceAndUTXOs(wallet.address, wallet.curve);
+            if (balance.error) {
+                return { error: balance.error }
+            }
+            balancesAndUtxos[wallet.address] = { balance: balance, utxos: utxos };
+        }
+        // Update the new balances to state
+        let newBalances = { ...store.getState().vault.balances };
+
+        // Check each address and update accordingly -- Make sure previous state from web3 updates is kept
+        for (let address in balancesAndUtxos) {
+            let addressBalancesAndUtxos = balancesAndUtxos[address];
+            // Create the balance entry if it doesn't exist yet
+            if (!newBalances[address]) {
+                newBalances[address] = {};
+            }
+            // Update balances
+            newBalances[address].madBytes = addressBalancesAndUtxos["balance"];
+            newBalances[address].madUTXOs = addressBalancesAndUtxos["utxos"];
+        }
+
+        // Return newly updated balances and utxos
+        return newBalances;
+    }
+
+
+    /**
+     * 
+     */
+    async getMadNetWalletBalanceAndUTXOs(address, curve) {
+        let madWallet = this.wallet();
+        try {
+            let [utxoids, balance] = await madWallet.Rpc.getValueStoreUTXOIDs(address, curve)
+            balance = madWallet.Validator.hexToInt(balance)
+            return [balance, utxoids];
+        }
+        catch (ex) {
+            return [{ error: ex }]
         }
     }
 

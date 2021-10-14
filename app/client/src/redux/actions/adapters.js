@@ -18,9 +18,9 @@ export const setWeb3Info = (epoch, validators, max_validators) => {
     }
 }
 
-export const setWeb3ValidatorCount = valCountString => {
+export const setWeb3Epoch = epoch => {
     return dispatch => {
-        dispatch({ type: ADAPTER_ACTION_TYPES.SET_WEB3_VALIDATORS, payload: valCountString })
+        dispatch({ type: ADAPTER_ACTION_TYPES.SET_WEB3_EPOCH, payload: epoch })
     }
 }
 
@@ -40,4 +40,14 @@ export const setMadNetKeyChainValue = (keyChain, value) => {
     return dispatch => {
         dispatch({ type: ADAPTER_ACTION_TYPES.SET_MADNET_KEYCHAIN_VALUE, payload: { keyChain: keyChain, value: value } })
     }
+}
+
+// Get MadByte Balances/UTXOs for all of madnetWallet.Account.accounts and push balance to redux state
+export const loadMadNetBalancesToState = () => {
+
+}
+
+// Get eth, util, and stake balances from Web3 instance for all madnetWallet.Account.accounts and push balance to redux state
+export const loadWeb3BalancesToState = () => {
+
 }

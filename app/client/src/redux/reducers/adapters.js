@@ -52,6 +52,11 @@ export default function adapterReducer(state = initialAdapterState, action) {
                 web3Adapter: { ...state.web3Adapter, epoch: action.payload.epoch, validators: action.payload.validators, max_validators: action.payload.validators }
             });
 
+        case ADAPTER_ACTION_TYPES.SET_WEB3_EPOCH:
+            return Object.assign({}, state, {
+                web3Adapter: { ...state.web3Adapter, epoch: action.payload }
+            });
+
         case ADAPTER_ACTION_TYPES.SET_MADNET_CONNECTED:
             return Object.assign({}, state, {
                 madNetAdapter: { ...state.madNetAdapter, connected: action.payload }
@@ -81,11 +86,9 @@ export default function adapterReducer(state = initialAdapterState, action) {
                 log.warn("Falling back to previous state during SET_MADNET_KEYCHAIN_VALUE, verify keyChain accessors and value set on payload correctly.")
                 newAdapterState = { ...state.madNetAdapter }
             }
-            console.log(newAdapterState);
             return Object.assign({}, state, {
                 madNetAdapter: newAdapterState,
             });
-
 
         default:
             return state;

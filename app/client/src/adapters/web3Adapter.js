@@ -2,6 +2,10 @@ import store from '../redux/store/store';
 import Web3 from 'web3';
 import ABI from './abi.js';
 import { ADAPTER_ACTIONS } from 'redux/actions/_actions';
+import { ADAPTER_ACTION_TYPES } from 'redux/constants/_constants';
+
+import { SyncToastMessageSuccess } from 'components/customToasts/CustomToasts';
+import { toast } from 'react-toastify';
 
 const reqContracts = ["staking", "validators", "deposit", "stakingToken", "utilityToken"]
 const REGISTRY_VERSION = "/v1"; // CHANGE OR PUT IN SETTINGS
@@ -52,6 +56,7 @@ class Web3Adapter {
         }
         // If all of this passes, note that the instance is connected
         store.dispatch(ADAPTER_ACTIONS.setWeb3Connected(true));
+        toast.success(<SyncToastMessageSuccess basic title="Success" message="Web3 Connected" />, {className: "basic", "autoClose": 2400})
         return true;
     }
 
@@ -141,14 +146,37 @@ class Web3Adapter {
 
     /**
      * Retrieve account information from contracts
+     * Additionally update redux balance state anytime account information is pulled
      * @returns { Object } - Returns object with balances and validatorInfo
      */
     async updateAccount() {
         try {
-            let ethBalance = await this.getEthBalance(this.selectedAddress);
-            let [stakingBalance, stakingAllowance, utilityBalance, utilityAllowance] = await this.getTokenBalances(this.selectedAddress);
-            this.getEpoch();
+            let balances = await  this.getAccountBalances(this.selectedAddress);
+            this.getEpoch(); // Fire off an epoch update
+            // Get the latest validator information on account updates
             let validatorInfo = await this.getValidatorInfo();
+            // Update the balances in the redux store
+            this.account = {
+                address: this.selectedAddress,
+                balances,
+                "validatorInfo": validatorInfo
+            };
+            return this.account;
+        } catch (ex) {
+            return { error: ex }
+        }
+    }
+
+    /**
+     * Get ETH, Staking, and Utility account balances for a specified address
+     * @param { String } address 
+     * @returns { Object } - Object containing balance keys: "eth", "stakingToken", and "utilityToken" 
+     */
+    async getAccountBalances(address) {
+        try {
+            let ethBalance = await this.getEthBalance(address);
+            let [stakingBalance, stakingAllowance, utilityBalance, utilityAllowance] = await this.getTokenBalances(address);
+            this.getEpoch(); // Fire off an epoch update
             let balances = {
                 "eth": ethBalance,
                 "stakingToken": {
@@ -160,12 +188,7 @@ class Web3Adapter {
                     "allowance": utilityAllowance
                 }
             };
-            this.account = {
-                address: this.selectedAddress,
-                balances,
-                "validatorInfo": validatorInfo
-            };
-            return this.account;
+            return balances;
         } catch (ex) {
             return { error: ex }
         }
@@ -484,9 +507,11 @@ class Web3Adapter {
     async getEpoch() {
         try {
             let epoch = await this.internalMethod("staking", "currentEpoch");
+            store.dispatch(ADAPTER_ACTIONS.setWeb3Epoch(epoch))
             return epoch;
         } catch (ex) {
-            return ""
+            store.dispatch(ADAPTER_ACTIONS.setWeb3Epoch(""))
+            return { error: ex }
         }
     }
 

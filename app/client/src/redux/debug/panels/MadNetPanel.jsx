@@ -25,9 +25,13 @@ export default function Web3Panel() {
         setLoading("instance");
         await madNetAdapter.__init();
         setLoading(false);
-        console.log(
-            madNetAdapter.failed.get()
-        )
+    }
+
+    const printBalances = async () => {
+        setLoading("balances");
+        let balancesAndUTXOs = await madNetAdapter.getAllMadWalletBalancesWithUTXOs(); 
+        console.log(balancesAndUTXOs);
+        setLoading("false");
     }
 
     const walletArrayToButtons = (walletArray, actionFunction) => {
@@ -70,6 +74,7 @@ export default function Web3Panel() {
                         <DButton color={!adapterState.connected ? "orange" : "purple"} disabled={!vaultUnlockedAndExists} loading={loading === "instance"}
                             content={!adapterState.connected ? "Init MadNet Adapter" : "Print madNetAdapter Instance"}
                             onClick={!adapterState.connected ? initMadNetAdapter : () => console.log(madNetAdapter)} />
+                        <DButton content="Print Wallet Balances"  loading={loading==="balances"} disabled={!adapterState.connected} onClick={printBalances} />
                     </Button.Group>
                 </div>
             </div>
