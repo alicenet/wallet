@@ -24,6 +24,14 @@ export const setWeb3Epoch = epoch => {
     }
 }
 
+// If web3 in not connected attempt a connect
+export const initWeb3 = () => {
+    return (dispatch, getState) => {
+        let isConnected = getState().adapter.web3Adapter.connected;
+        console.log(isConnected);
+    }
+}
+
 export const setMadNetConnected = (isConnected) => {
     return dispatch => {
         dispatch({ type: ADAPTER_ACTION_TYPES.SET_MADNET_CONNECTED, payload: isConnected })
@@ -39,6 +47,14 @@ export const setMadNetError = (error) => {
 export const setMadNetKeyChainValue = (keyChain, value) => {
     return dispatch => {
         dispatch({ type: ADAPTER_ACTION_TYPES.SET_MADNET_KEYCHAIN_VALUE, payload: { keyChain: keyChain, value: value } })
+    }
+}
+
+// If web3 in not connected attempt a connect
+export const initMadNet = () => {
+    return (dispatch, getState) => {
+        let isConnected = getState().adapter.madNetAdapter.connected;
+        console.log(isConnected);
     }
 }
 
