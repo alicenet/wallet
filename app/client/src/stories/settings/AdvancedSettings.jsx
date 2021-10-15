@@ -2,12 +2,9 @@ import React from 'react';
 
 import { Button, Container, Form, Grid, Header } from 'semantic-ui-react';
 
-import Web3 from 'web3';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import isEmpty from 'validator/lib/isEmpty';
-import isURL from 'validator/lib/isURL';
 
 import Page from 'layout/Page';
 import { useFormState } from 'hooks/_hooks';
@@ -29,59 +26,26 @@ function AdvancedSettings() {
     }));
 
     const [formState, formSetter] = useFormState([
-        { name: 'MadNetChainId', type: 'integer', isRequired: true, value: madNetChainId },
-        { name: 'MadNetProvider', type: 'url', isRequired: true, value: madNetProvider },
-        { name: 'EthereumProvider', type: 'url', isRequired: true, value: ethereumProvider },
-        { name: 'RegistryContractAddress', type: 'address', isRequired: true, value: registryContractAddress }
+        { name: 'MadNetChainId', display: 'MadNet ChainId', type: 'integer', isRequired: true, value: madNetChainId },
+        { name: 'MadNetProvider', display: 'MadNet Provider', type: 'url', isRequired: true, value: madNetProvider },
+        { name: 'EthereumProvider', display: 'Ethereum Provider', type: 'url', isRequired: true, value: ethereumProvider },
+        { name: 'RegistryContractAddress', display: 'Registry Contract Address', type: 'address', isRequired: true, value: registryContractAddress }
     ]);
 
-    const handleFormSubmit = () => {
+    const handleSubmit = () => {
+        formSetter.checkMadNetChainId();
+        formSetter.checkMadNetProvider();
+        formSetter.checkEthereumProvider();
+        formSetter.checkMadNetChainId();
+        formSetter.checkRegistryContractAddress();
 
-        if (!formState.MadNetChainId.value || isEmpty(formState.MadNetChainId.value)) {
-            formSetter.setMadNetChainIdError("MadNet ChainID is required");
-        }
-        else if (isNaN(formState.MadNetChainId.value)) {
-            formSetter.setMadNetChainIdError("MadNet ChainID is not a valid number");
-        }
-        else {
-            formSetter.clearMadNetChainIdError();
-        }
-
-        if (!formState.MadNetProvider.value) {
-            formSetter.setMadNetProviderError("MadNet Provider is required");
-        }
-        else if (!isURL(formState.MadNetProvider.value, { protocols: ['http', 'https'] })) {
-            formSetter.setMadNetProviderError("MadNet Provider is not a valid HTTP url");
-        }
-        else {
-            formSetter.clearMadNetProviderError();
-        }
-
-        if (!formState.EthereumProvider.value) {
-            formSetter.setEthereumProviderError("Ethereum Provider is required");
-        }
-        else if (!isURL(formState.EthereumProvider.value, { protocols: ['http', 'https'] })) {
-            formSetter.setEthereumProviderError("Ethereum Provider is not a valid HTTP url");
-        }
-        else {
-            formSetter.clearEthereumProviderError();
-        }
-
-        if (!formState.RegistryContractAddress.value) {
-            formSetter.setRegistryContractAddressError("Registry Contract Address is required");
-        }
-        else if (!Web3.utils.isAddress(formState.RegistryContractAddress.value)) {
-            formSetter.setRegistryContractAddressError("Registry Contract Address is not a valid address");
-        }
-        else {
-            formSetter.clearRegistryContractAddressError();
-        }
+        console.log(formState);
 
         // Propagate save to redux state
-        if (!formState.MadNetChainId.error
-            && !formState.MadNetProvider.error
-            && !formState.EthereumProvider.error
-            && !formState.RegistryContractAddress.error) {
+        if (formState.MadNetChainId.validated
+            && formState.MadNetProvider.validated
+            && formState.EthereumProvider.validated
+            && formState.RegistryContractAddress.validated) {
             saveValues();
         }
     }
@@ -132,7 +96,7 @@ function AdvancedSettings() {
 
                 <Grid.Column width={12} className="self-center p-0 m-0 text-left">
 
-                    <Form onSubmit={(event => handleFormSubmit(event))} className="text-sm">
+                    <Form className="text-sm">
 
                         <Form.Input
                             id='madNetChainId'
@@ -192,7 +156,7 @@ function AdvancedSettings() {
 
                             <Button.Group>
 
-                                <Button disabled={loading} color="purple" icon="save" basic content="Save" className="m-0" onClick={handleFormSubmit}/>
+                                <Button disabled={loading} color="purple" icon="save" basic content="Save" className="m-0" onClick={handleSubmit}/>
 
                                 <Button.Or className="w-0 self-center text-sm"/>
 
