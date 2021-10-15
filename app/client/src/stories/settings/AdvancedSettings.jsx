@@ -28,16 +28,12 @@ function AdvancedSettings() {
         loading: state.interface.globalLoading,
     }));
 
-    // This is a local state change, and is not propagated to the store
-    const [formState, formSetter] = useFormState(["MadNetChainId", "MadNetProvider", "EthereumProvider", "RegistryContractAddress"]);
-
-    // This actually won't run because the context equality check passes ( We never update it, it stays the same )
-    React.useEffect(() => {
-        formSetter.setMadNetChainId(madNetChainId);
-        formSetter.setMadNetProvider(madNetProvider);
-        formSetter.setEthereumProvider(ethereumProvider);
-        formSetter.setRegistryContractAddress(registryContractAddress);
-    }, []);
+    const [formState, formSetter] = useFormState([
+        { name: 'MadNetChainId', type: 'integer', isRequired: true, value: madNetChainId },
+        { name: 'MadNetProvider', type: 'url', isRequired: true, value: madNetProvider },
+        { name: 'EthereumProvider', type: 'url', isRequired: true, value: ethereumProvider },
+        { name: 'RegistryContractAddress', type: 'address', isRequired: true, value: registryContractAddress }
+    ]);
 
     const handleFormSubmit = () => {
 

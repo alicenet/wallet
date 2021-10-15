@@ -17,11 +17,12 @@ function UnlockExistingVault() {
     const history = useHistory();
     const dispatch = useDispatch();
 
-    const [formState, formSetter] = useFormState(["password"]);
+    const [formState, formSetter] = useFormState([{ name: 'password', type: 'password', isRequired: true }]);
+
     const incorrectPasswordError = "Vault password incorrect. Please try again.";
     const incorrectPwEntered = formState.password.error === incorrectPasswordError;
 
-    const { vaultLocked, vaultExists} = useSelector(state => ({ vaultLocked: state.vault.is_locked, vaultExists: state.vault.exists }));
+    const { vaultLocked, vaultExists } = useSelector(state => ({ vaultLocked: state.vault.is_locked, vaultExists: state.vault.exists }));
 
     // Make sure vault is actually locked
     React.useEffect(() => {
@@ -52,7 +53,7 @@ function UnlockExistingVault() {
 
                 <Grid.Column width={16} className="p-0 self-center">
 
-                    <Header content="Welcome Back" as="h3" className="m-0" />
+                    <Header content="Welcome Back" as="h3" className="m-0"/>
 
                 </Grid.Column>
 
@@ -83,7 +84,7 @@ function UnlockExistingVault() {
                                 }}
                             />
 
-                            <ForgottenVaultPasswordModal incorrectPwEntered={incorrectPwEntered} />
+                            <ForgottenVaultPasswordModal incorrectPwEntered={incorrectPwEntered}/>
 
                         </Form.Group>
 
@@ -95,7 +96,7 @@ function UnlockExistingVault() {
 
                     <Container className="flex justify-center">
 
-                        <Button color="teal" basic content='Unlock Vault' disabled={!formState.password.value} className="m-0" onClick={handleFormSubmit} />
+                        <Button color="teal" basic content='Unlock Vault' disabled={!formState.password.value} className="m-0" onClick={handleFormSubmit}/>
 
                     </Container>
 
