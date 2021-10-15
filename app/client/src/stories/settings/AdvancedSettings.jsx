@@ -39,8 +39,6 @@ function AdvancedSettings() {
         formSetter.checkMadNetChainId();
         formSetter.checkRegistryContractAddress();
 
-        console.log(formState);
-
         // Propagate save to redux state
         if (formState.MadNetChainId.validated
             && formState.MadNetProvider.validated
@@ -69,13 +67,9 @@ function AdvancedSettings() {
     // Instead we can pull in the default values from the context and use it as a local setter, and propagate those changes upwards to redux
     const handleLoadDefaultValues = () => {
         formSetter.setMadNetChainId(initialConfigurationState.mad_net_chainID);
-        formSetter.clearMadNetChainIdError();
         formSetter.setMadNetProvider(initialConfigurationState.mad_net_provider);
-        formSetter.clearMadNetProviderError();
         formSetter.setEthereumProvider(initialConfigurationState.ethereum_provider);
-        formSetter.clearEthereumProviderError();
         formSetter.setRegistryContractAddress(initialConfigurationState.registry_contract_address);
-        formSetter.clearRegistryContractAddressError();
 
         dispatch(INTERFACE_ACTIONS.toggleGlobalLoadingBool(true));
         dispatch(CONFIG_ACTIONS.loadDefaultValues());
