@@ -21,7 +21,7 @@ export default function useFormState(initialStateKeysArray) {
 
     // Extrapolate keys from initial state array and populate with value && error sub-keys
     initialStateKeysArray.forEach(key => {
-        initialState[key.name] = { ...key, error: '', validated: false }
+        initialState[key.name] = { ...key, error: '' }
     })
 
     // Setup state blob
@@ -33,7 +33,7 @@ export default function useFormState(initialStateKeysArray) {
         // Capitalize first name of function key
         const keyName = upperFirst(key.name);
 
-        setters["set" + keyName] = (value) => setFormState(prevState => ({ ...prevState, [key.name]: { ...prevState[key.name], value: value, validated: false, error: '' } }));
+        setters["set" + keyName] = (value) => setFormState(prevState => ({ ...prevState, [key.name]: { ...prevState[key.name], value: value, error: '' } }));
         setters["set" + keyName + "Error"] = (value) => setFormState(prevState => ({ ...prevState, [key.name]: { ...prevState[key.name], error: value } }));
         setters["clear" + keyName + "Error"] = () => setFormState(prevState => ({ ...prevState, [key.name]: { ...prevState[key.name], error: '' } }));
 
@@ -72,11 +72,13 @@ export default function useFormState(initialStateKeysArray) {
                     }
                 }
 
-                return { ...prevState, [key.name]: { ...prevState[key.name], error, validated } };
+                return { ...prevState, [key.name]: { ...prevState[key.name], error } };
             });
         };
     });
 
+    const onSubmit = (callback) => callback();
+
     // Return it all
-    return [formState, setters];
+    return [formState, setters, onSubmit];
 }

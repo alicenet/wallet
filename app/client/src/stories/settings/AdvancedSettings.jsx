@@ -25,7 +25,7 @@ function AdvancedSettings() {
         loading: state.interface.globalLoading,
     }));
 
-    const [formState, formSetter] = useFormState([
+    const [formState, formSetter, onSubmit] = useFormState([
         { name: 'MadNetChainId', display: 'MadNet ChainId', type: 'integer', isRequired: true, value: madNetChainId },
         { name: 'MadNetProvider', display: 'MadNet Provider', type: 'url', isRequired: true, value: madNetProvider },
         { name: 'EthereumProvider', display: 'Ethereum Provider', type: 'url', isRequired: true, value: ethereumProvider },
@@ -33,27 +33,6 @@ function AdvancedSettings() {
     ]);
 
     const handleSubmit = () => {
-        formSetter.checkMadNetChainId();
-        formSetter.checkMadNetProvider();
-        formSetter.checkEthereumProvider();
-        formSetter.checkMadNetChainId();
-        formSetter.checkRegistryContractAddress();
-
-        // Propagate save to redux state
-        if (formState.MadNetChainId.validated
-            && formState.MadNetProvider.validated
-            && formState.EthereumProvider.validated
-            && formState.RegistryContractAddress.validated) {
-            saveValues();
-        }
-    }
-
-    const notifySuccess = message =>
-        toast.success(<SyncToastMessageSuccess title="Success" message={message}/>, {
-            autoClose: 1000, onClose: () => dispatch(INTERFACE_ACTIONS.toggleGlobalLoadingBool(false))
-        });
-
-    const saveValues = () => {
         dispatch(INTERFACE_ACTIONS.toggleGlobalLoadingBool(true));
         dispatch(CONFIG_ACTIONS.saveConfigurationValues(
             formState.MadNetChainId.value,
@@ -63,6 +42,11 @@ function AdvancedSettings() {
         ));
         notifySuccess('Settings were updated');
     }
+
+    const notifySuccess = message =>
+        toast.success(<SyncToastMessageSuccess title="Success" message={message}/>, {
+            autoClose: 1000, onClose: () => dispatch(INTERFACE_ACTIONS.toggleGlobalLoadingBool(false))
+        });
 
     // Instead we can pull in the default values from the context and use it as a local setter, and propagate those changes upwards to redux
     const handleLoadDefaultValues = () => {
@@ -150,7 +134,7 @@ function AdvancedSettings() {
 
                             <Button.Group>
 
-                                <Button disabled={loading} color="purple" icon="save" basic content="Save" className="m-0" onClick={handleSubmit}/>
+                                <Button disabled={loading} color="purple" icon="save" basic content="Save" className="m-0" onClick={() => onSubmit(handleSubmit)}/>
 
                                 <Button.Or className="w-0 self-center text-sm"/>
 
