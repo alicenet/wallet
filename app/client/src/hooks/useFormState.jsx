@@ -13,7 +13,11 @@ export const fieldType = {
 
 /** Returns an object with getters and setters for each state as needed following a {value: "", error: ""} key paradigm for each passed key string
  * @param {Array} initialStateKeysArray - List of objects to create get/setters for
- * @returns {Object} -- Returns an object composed of the values of the respective passed keys including: set<KEY>, set<KEY>Error and clear<KEY>Error as state functions
+ * @typedef {Object} FormStateReturn
+ * @property {Object} formState - Object containing the form values
+ * @property {Object} setters - Object containing the respective set functions named as set[key.name]()
+ * @property {Function} onSubmit - Function to call when successful form submission has occurred
+ * @returns {FormStateReturn} - Returns an object composed of the values of the respective passed keys including: set<KEY>, set<KEY>Error and clear<KEY>Error as state functions
  */
 export default function useFormState(initialStateKeysArray) {
     // Initial State
