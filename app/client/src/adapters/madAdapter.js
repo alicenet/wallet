@@ -53,17 +53,24 @@ class MadNetAdapter {
         return this.connected;
     }
 
-    async __init() {
+    /**
+     * Initiate the madNet Adapater and verify a connection is possible 
+     * @param {Object} config - Prevent toast from popping?
+     * @property { Bool } config.preventToast - Should the toast be prevented?
+     */
+    async __init(config = {}) {
         try {
             await this.wallet().Rpc.setProvider(this.provider)
             this.connected.set(true);
             this.failed.set(false);
-            toast.success(<SyncToastMessageSuccess basic title="Success" message="MadNet Connected" />, { className: "basic", "autoClose": 2400 })
-            return true;
+            if (!config.preventToast) {
+                toast.success(<SyncToastMessageSuccess basic title="Success" message="MadNet Connected" />, { className: "basic", "autoClose": 2400 })
+            }
+            return { success: true }
         }
         catch (ex) {
             this.failed.set(ex.message);
-            toast.error(<SyncToastMessageWarning title="Error Connecting To Madnet!" />)
+            toast.error(<SyncToastMessageWarning title="Error Connecting To Madnet!" message="Check network settings" />)
             return ({ error: ex })
         }
     }
@@ -168,7 +175,7 @@ class MadNetAdapter {
                                     tx["Tx"]["Vout"][j]["DataStore"] &&
                                     address == tx["Tx"]["Vout"][j]["DataStore"]["DSLinker"]["DSPreImage"]["Owner"].slice(4) && // eslint-disable-line
                                     curve == tx["Tx"]["Vout"][j]["DataStore"]["DSLinker"]["DSPreImage"]["Owner"].slice(2, 4) // eslint-disable-line
-                                ) 
+                                )
                             ) {
                                 pTx = pTx.concat(tx)
                                 continue transactionLoop;

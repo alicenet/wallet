@@ -4,6 +4,7 @@ import ABI from './abi.js';
 import { ADAPTER_ACTIONS } from 'redux/actions/_actions';
 
 import { SyncToastMessageSuccess } from 'components/customToasts/CustomToasts';
+import { SyncToastMessageWarning } from 'components/customToasts/CustomToasts';
 import { toast } from 'react-toastify';
 
 const reqContracts = ["staking", "validators", "deposit", "stakingToken", "utilityToken"]
@@ -38,8 +39,10 @@ class Web3Adapter {
 
     /**
      * Initialize the current instance by setting up store listen and getting uptoDateContracts and information
+     * @param {Object} config - Prevent toast from popping?
+     * @property { Bool } config.preventToast - Should the toast be prevented?
      */
-    async __init() {
+    async __init(config = {}) {
         // Set up subscribe and listen to store events
         await this._listenToStore();
         // Set the latest contracts
@@ -48,15 +51,19 @@ class Web3Adapter {
         await this._setAndGetInfo();
         // Verify that both provider and registry contract are available
         if (!this._getEthereumProviderFromStore()) {
-            throw new Error("No Ethereum provider found in state.");
+            toast.error(<SyncToastMessageWarning basic title="Error" message="Web3 Connection Error - Verify Settings" />, { className: "basic", "autoClose": 2400 })
+            return { error: "No Ethereum provider found in state." };
         }
         if (!this._getRegistryContractFromStore()) {
-            throw new Error("No registry contract found in state.");
+            toast.error(<SyncToastMessageWarning basic title="Error" message="Web3 Connection Error - Verify Settings" />, { className: "basic", "autoClose": 2400 })
+            return { error: "No registry contract found in state." };
         }
         // If all of this passes, note that the instance is connected
         store.dispatch(ADAPTER_ACTIONS.setWeb3Connected(true));
-        toast.success(<SyncToastMessageSuccess basic title="Success" message="Web3 Connected" />, {className: "basic", "autoClose": 2400})
-        return true;
+        if (!config.preventToast) {
+            toast.success(<SyncToastMessageSuccess basic title="Success" message="Web3 Connected" />, { className: "basic", "autoClose": 2400 })
+        }
+        return { success: true };
     }
 
     /**
@@ -150,7 +157,7 @@ class Web3Adapter {
      */
     async updateAccount() {
         try {
-            let balances = await  this.getAccountBalances(this.selectedAddress);
+            let balances = await this.getAccountBalances(this.selectedAddress);
             this.getEpoch(); // Fire off an epoch update
             // Get the latest validator information on account updates
             let validatorInfo = await this.getValidatorInfo();

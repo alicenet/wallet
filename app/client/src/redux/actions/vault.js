@@ -86,10 +86,15 @@ export function loadSecureHDVaultFromStorage(password) {
         dispatch({ type: VAULT_ACTION_TYPES.SET_MNEMONIC, payload: mnemonic });
 
         // Once the vault is unlocked attempt to connect web3, and then madNet
-        log.debug("Attempting to init web3Adapter.")
-        await dispatch(ADAPTER_ACTIONS.initWeb3());
-        log.debug("Attempting to init madNetAdapter.")
-        await dispatch(ADAPTER_ACTIONS.initMadNet());
+        log.debug("Vault Unlock: Attempting to init MadNet && Web3 Adapters. . .")
+        let adaptersConnected = await dispatch(ADAPTER_ACTIONS.initAdapters());
+
+        // Check and log any errors -- Allow unlock to happen even if network errors occur -- Appropriate toasts will be delivered to user via their respective adapaters
+        if (adaptersConnected.error) {
+            log.error("GeneralNetworkConnectionError:", adaptersConnected.error);
+            log.error("MadNetConnectionError: ", adaptersConnected.errors.madNet);
+            log.error("Web3ConnectionError: ", adaptersConnected.errors.web3);
+        }
 
         return res;
     }
