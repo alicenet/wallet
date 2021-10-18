@@ -1,5 +1,4 @@
 import store from '../redux/store/store';
-import { ADAPTER_ACTIONS } from 'redux/actions/_actions';
 import BigInt from "big-integer";
 import { ADAPTER_ACTION_TYPES } from 'redux/constants/_constants';
 import { getMadWalletInstance } from 'redux/middleware/WalletManagerMiddleware'
@@ -149,7 +148,7 @@ class MadNetAdapter {
                         for (let k = 0; k < addresses.length; k++) {
                             let address = addresses[k]["address"].toLowerCase();
                             let curve = addresses[k]["curve"]
-                            if (curve == 2) {
+                            if (curve == 2) { // eslint-disable-line
                                 curve = "02"
                             }
                             else {
@@ -157,19 +156,19 @@ class MadNetAdapter {
                             }
                             if ((
                                 tx["Tx"]["Vout"][j]["AtomicSwap"] &&
-                                address == tx["Tx"]["Vout"][j]["AtomicSwap"]["ASPreImage"]["Owner"].slice(4) &&
-                                curve == tx["Tx"]["Vout"][j]["AtomicSwap"]["ASPreImage"]["Owner"].slice(2, 4)
+                                address == tx["Tx"]["Vout"][j]["AtomicSwap"]["ASPreImage"]["Owner"].slice(4) && // eslint-disable-line
+                                curve == tx["Tx"]["Vout"][j]["AtomicSwap"]["ASPreImage"]["Owner"].slice(2, 4) // eslint-disable-line
                             ) ||
                                 (
                                     tx["Tx"]["Vout"][j]["ValueStore"] &&
-                                    address == tx["Tx"]["Vout"][j]["ValueStore"]["VSPreImage"]["Owner"].slice(4) &&
-                                    curve == tx["Tx"]["Vout"][j]["ValueStore"]["VSPreImage"]["Owner"].slice(2, 4)
+                                    address == tx["Tx"]["Vout"][j]["ValueStore"]["VSPreImage"]["Owner"].slice(4) && // eslint-disable-line
+                                    curve == tx["Tx"]["Vout"][j]["ValueStore"]["VSPreImage"]["Owner"].slice(2, 4) // eslint-disable-line
                                 ) ||
                                 (
                                     tx["Tx"]["Vout"][j]["DataStore"] &&
-                                    address == tx["Tx"]["Vout"][j]["DataStore"]["DSLinker"]["DSPreImage"]["Owner"].slice(4) &&
-                                    curve == tx["Tx"]["Vout"][j]["DataStore"]["DSLinker"]["DSPreImage"]["Owner"].slice(2, 4)
-                                )
+                                    address == tx["Tx"]["Vout"][j]["DataStore"]["DSLinker"]["DSPreImage"]["Owner"].slice(4) && // eslint-disable-line
+                                    curve == tx["Tx"]["Vout"][j]["DataStore"]["DSLinker"]["DSPreImage"]["Owner"].slice(2, 4) // eslint-disable-line
+                                ) 
                             ) {
                                 pTx = pTx.concat(tx)
                                 continue transactionLoop;
@@ -346,7 +345,6 @@ class MadNetAdapter {
 
     // Get block for modal
     async viewBlock(height) {
-        await this.cb.call(this, "wait", "Getting Block");
         try {
             let blockHeader = await this.wallet().Rpc.getBlockHeader(height);
             await this.cb.call(this, "notify", blockHeader);
@@ -356,8 +354,7 @@ class MadNetAdapter {
         catch (ex) {
             await this.backOffRetry("vB");
             if (this['vB-attempts'] > 10) {
-                await this.cb.call(this, "error", String(ex));
-                return
+                return { error: ex };
             }
             await this.sleep(this["vB-timeout"])
             this.viewBlock(height)
@@ -366,20 +363,17 @@ class MadNetAdapter {
 
     // Get block for modal
     async viewBlockFromTx(txHash) {
-        await this.cb.call(this, "wait", "Getting Block");
         try {
             let txHeight = await this.wallet().Rpc.getTxBlockHeight(txHash);
             this.transactionHeight.set(txHeight);
             let blockHeader = await this.wallet().Rpc.getBlockHeader(txHeight);
-            await this.cb.call(this, "notify", blockHeader);
             await this.backOffRetry("viewBlock", true)
             return blockHeader
         }
         catch (ex) {
             await this.backOffRetry("viewBlock")
             if (this["viewBlock-attempts"] > 10) {
-                await this.cb.call(this, "error", String(ex));
-                return
+                return { error: ex }
             }
             await this.sleep(this["viewBlock-timeout"])
             this.viewBlockFromTx(txHash);
@@ -387,8 +381,7 @@ class MadNetAdapter {
     }
 
     // Get transaction for txExplorer
-    async viewTransaction(txHash, changeView) {
-        await this.cb.call(this, "wait", "Getting Transaction");
+    async viewTransaction(txHash) {
         try {
             this.transactionHash.set(txHash);
             if (txHash.indexOf('0x') >= 0) {
@@ -399,25 +392,18 @@ class MadNetAdapter {
             let txHeight = await this.wallet().Rpc.getTxBlockHeight(txHash);
             this.transactionHeight.set(txHeight);
             await this.backOffRetry("viewTx", true);
-            if (changeView) {
-                await this.cb.call(this, "view", "txExplorer");
-            }
-            else {
-                await this.cb.call(this, "success");
-            }
+            return { tx: Tx, txHeight: txHeight }
         }
         catch (ex) {
-            console.log(ex)
             await this.backOffRetry("viewTx");
             if (this["viewTx-attempts"] > 10) {
                 this.transactionHash.set(false);
                 this.transactionHeight.set(false);
                 this.transaction.set(false);
-                await this.cb.call(this, "error", String(ex));
-                return
+                return { error: ex }
             }
             await this.sleep(this["viewTx-timeout"])
-            this.viewTransaction(txHash, changeView);
+            this.viewTransaction(txHash);
         }
     }
 
@@ -456,7 +442,7 @@ class MadNetAdapter {
             return expEpoch;
         }
         catch (ex) {
-            return false;
+            return { error: ex };
         }
     }
 
@@ -465,71 +451,70 @@ class MadNetAdapter {
             let newTxOuts = [...this.txOuts.get()];
             newTxOuts.push(txOut)
             this.txOuts.set(newTxOuts);
-            await this.cb.call(this, "success");
+            return newTxOuts;
         }
         catch (ex) {
-            await this.cb.call(this, "error", String(ex));
+            return { error: ex }
         }
     }
 
     async setTxOuts(txOuts) {
         try {
             this.txOuts.set(txOuts);
-            await this.cb.call(this, "success");
+            return txOuts;
         }
         catch (ex) {
-            await this.cb.call(this, "error", String(ex));
+            return { error: ex }
         }
     }
 
     async setChangeAddress(changeAddress) {
         try {
             this.changeAddress.set(changeAddress);
-            await this.cb.call(this, "success");
+            return true;
         }
         catch (ex) {
-            await this.cb.call(this, "error", String(ex));
+            return { error: ex }
         }
     }
 
     async setDsSearchOpts(searchOpts) {
         try {
             this.dsSearchOpts = searchOpts;
-            await this.cb.call(this, "success");
+            return true;
         }
         catch (ex) {
-            await this.cb.call(this, "error", String(ex));
+            return { error: ex }
         }
     }
 
     async setDsDataStores(DataStores) {
         try {
             this.dsDataStores = this.dsDataStores.concat(DataStores)
-            await this.cb.call(this, "success");
+            return true;
         }
         catch (ex) {
-            console.trace(ex)
-            await this.cb.call(this, "error", String(ex));
+            return { error: ex }
         }
     }
 
     async setDsActivePage(activePage) {
         try {
             this.dsActivePage = activePage;
-            await this.cb.call(this, "success");
+            return true;
         }
         catch (ex) {
-            await this.cb.call(this, "error", String(ex));
+            return { error: ex }
         }
     }
 
     async setDsView(dsView) {
         try {
             this.dsView = dsView;
-            await this.cb.call(this, "success");
+            return true;
         }
         catch (ex) {
-            await this.cb.call(this, "error", String(ex));
+            return { error: ex }
         }
     }
 
@@ -540,7 +525,7 @@ class MadNetAdapter {
             return trimmed
         }
         catch (ex) {
-            throw String(ex)
+            throw new Error(ex)
         }
     }
 
@@ -551,7 +536,7 @@ class MadNetAdapter {
             return bInt.toString();
         }
         catch (ex) {
-
+            throw new Error(ex);
         }
     }
 
