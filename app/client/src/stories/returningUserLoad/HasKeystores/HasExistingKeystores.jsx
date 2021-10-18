@@ -8,10 +8,10 @@ import { useDispatch } from 'react-redux';
 import { useFormState } from 'hooks/_hooks';
 
 import { VAULT_ACTIONS } from 'redux/actions/_actions'
-import { electronStoreCommonActions } from '../../../store/electronStoreHelper'
+import { electronStoreCommonActions } from 'store/electronStoreHelper'
 import utils from 'util/_util';
 
-import Page from '../../../layout/Page';
+import Page from 'layout/Page';
 
 function HasExistingKeystores() {
 

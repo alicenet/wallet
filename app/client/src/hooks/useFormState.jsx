@@ -7,6 +7,7 @@ import isURL from "validator/lib/isURL";
 export const fieldType = {
     URL: 'url',
     PASSWORD: 'password',
+    VERIFIED_PASSWORD: 'verified-password',
     INTEGER: 'integer',
     ADDRESS: 'address',
 }
@@ -68,6 +69,14 @@ export default function useFormState(initialStateKeysArray) {
                         }
                         break;
                     case fieldType.PASSWORD:
+                        if (formState[keyName].value.length < 8) {
+                            error = (formState[keyName].display || formState[keyName].name) + " must be at least 8 characters long.";
+                        }
+                        break;
+                    case fieldType.VERIFIED_PASSWORD:
+                        if (formState[keyName].value !== formState['Password'].value) {
+                            error = "Passwords do not match.";
+                        }
                         break;
                     default:
                         break;
