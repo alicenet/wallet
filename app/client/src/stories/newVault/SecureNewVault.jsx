@@ -19,7 +19,10 @@ function SecureNewVault() {
         desiredCurve: state.user.desired_hd_curve
     }));
 
-    const [formState, formSetter] = useFormState(["password", "verifiedPassword"]);
+    const [formState, formSetter] = useFormState([
+        { name: 'password', type: 'password', isRequired: true },
+        { name: 'verifiedPassword', type: 'password', isRequired: true }
+    ]);
 
     const handleFormSubmit = () => {
         if (!formState.password.value) {

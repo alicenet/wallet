@@ -2,95 +2,74 @@ import React from 'react';
 
 import { Button, Container, Form, Grid, Header } from 'semantic-ui-react';
 
-import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 import Page from 'layout/Page';
 import { useFormState } from 'hooks/_hooks';
-import { CONFIG_ACTIONS } from 'redux/actions/_actions';
+import { CONFIG_ACTIONS, INTERFACE_ACTIONS } from 'redux/actions/_actions';
 import { initialConfigurationState } from 'redux/reducers/configuration'; // <= We can import this to use as a local setter
+import { SyncToastMessageSuccess, SyncToastMessageWarning } from 'components/customToasts/CustomToasts';
 
 function AdvancedSettings() {
 
     const history = useHistory();
     const dispatch = useDispatch();
 
-    const { madNetChainId, madNetProvider, ethereumProvider, registryContractAddress } = useSelector(state => ({
+    const { madNetChainId, madNetProvider, ethereumProvider, registryContractAddress, loading } = useSelector(state => ({
         madNetChainId: state.config.mad_net_chainID,
         madNetProvider: state.config.mad_net_provider,
         ethereumProvider: state.config.ethereum_provider,
         registryContractAddress: state.config.registry_contract_address,
+        loading: state.interface.globalLoading,
     }));
 
-    // This is a local state change, and is not propagated to the store
-    const [formState, formSetter] = useFormState(["MadNetChainId", "MadNetProvider", "EthereumProvider", "RegistryContractAddress"]);
+    const [formState, formSetter, onSubmit] = useFormState([
+        { name: 'MadNetChainId', display: 'MadNet ChainId', type: 'integer', isRequired: true, value: madNetChainId },
+        { name: 'MadNetProvider', display: 'MadNet Provider', type: 'url', isRequired: true, value: madNetProvider },
+        { name: 'EthereumProvider', display: 'Ethereum Provider', type: 'url', isRequired: true, value: ethereumProvider },
+        { name: 'RegistryContractAddress', display: 'Registry Contract Address', type: 'address', isRequired: true, value: registryContractAddress }
+    ]);
 
-    // This actually won't run because the context equality check passes ( We never update it, it stays the same )
-    React.useEffect(() => {
-        formSetter.setMadNetChainId(madNetChainId);
-        formSetter.setMadNetProvider(madNetProvider);
-        formSetter.setEthereumProvider(ethereumProvider);
-        formSetter.setRegistryContractAddress(registryContractAddress);
-    }, [madNetChainId, madNetProvider, ethereumProvider, registryContractAddress]); // <= These didn't change so this effect didnt't run.
-    // Technically you could use [] here since you only care about the defaults on initial mount, but you would need to ignore the linter
-
-    const handleFormSubmit = () => {
-        if (!formState.MadNetChainId.value) {
-            formSetter.setMadNetChainIdError("MadNet ChainID is required");
-        }
-        else {
-            formSetter.clearMadNetChainIdError();
-        }
-
-        if (!formState.MadNetProvider.value) {
-            formSetter.setMadNetProviderError("MadNet Provider is required");
-        }
-        else {
-            formSetter.clearMadNetProviderError();
-        }
-
-        if (!formState.EthereumProvider.value) {
-            formSetter.setEthereumProviderError("Ethereum Provider is required");
-        }
-        else {
-            formSetter.clearEthereumProviderError();
-        }
-
-        if (!formState.RegistryContractAddress.value) {
-            formSetter.setRegistryContractAddressError("Registry Contract Address is required");
-        }
-        else {
-            formSetter.clearRegistryContractAddressError();
-        }
-
-        if (!formState.MadNetChainId.error
-            && !formState.MadNetProvider.error
-            && !formState.EthereumProvider.error
-            && !formState.RegistryContractAddress.error) {
-            // Propagate save to redux state
-            saveValues();
-        }
-    }
-
-    // In this function we can propagate the save upwards to the redux state -- Treat redux as truth and the local state as the editing playground
-    const saveValues = () => {
-        console.log("SAVE VALUES")
-        console.log(formState);
-        dispatch(CONFIG_ACTIONS.saveConfigurationValues(
+    const handleSubmit = async () => {
+        dispatch(INTERFACE_ACTIONS.toggleGlobalLoadingBool(true));
+        const result = await dispatch(CONFIG_ACTIONS.saveConfigurationValues(
             formState.MadNetChainId.value,
             formState.MadNetProvider.value,
             formState.EthereumProvider.value,
             formState.RegistryContractAddress.value
         ));
-    }
 
-    // Instead we can pull in the default values from the context and use it as a local setter, and propagate those chnages upwards to redux
-    const handleLoadDefaultValues = () => {
-        dispatch(CONFIG_ACTIONS.loadDefaultValues()) // This call *does* update the redux state, but the local state isn't being bubbled to as we never update this state
+        if (result.error) {
+            notifyError('There was an error while saving changes');
+        }
+        else {
+            notifySuccess('Settings were updated');
+        }
+    };
+
+    const notifyError = message => {
+        toast.error(<SyncToastMessageWarning title="Error" message={message}/>, { autoClose: 2000 });
+        dispatch(INTERFACE_ACTIONS.toggleGlobalLoadingBool(false));
+    };
+
+    const notifySuccess = message => {
+        toast.success(<SyncToastMessageSuccess title="Success" message={message}/>, { autoClose: 1000 });
+        dispatch(INTERFACE_ACTIONS.toggleGlobalLoadingBool(false));
+    };
+
+    // Instead we can pull in the default values from the context and use it as a local setter, and propagate those changes upwards to redux
+    const handleLoadDefaultValues = async () => {
         formSetter.setMadNetChainId(initialConfigurationState.mad_net_chainID);
         formSetter.setMadNetProvider(initialConfigurationState.mad_net_provider);
         formSetter.setEthereumProvider(initialConfigurationState.ethereum_provider);
         formSetter.setRegistryContractAddress(initialConfigurationState.registry_contract_address);
+
+        dispatch(INTERFACE_ACTIONS.toggleGlobalLoadingBool(true));
+        await dispatch(CONFIG_ACTIONS.loadDefaultValues());
+
+        notifySuccess('Default values loaded');
     }
 
     return (
@@ -106,7 +85,7 @@ function AdvancedSettings() {
 
                 <Grid.Column width={12} className="self-center p-0 m-0 text-left">
 
-                    <Form onSubmit={(event => handleFormSubmit(event))} className="text-sm">
+                    <Form className="text-sm">
 
                         <Form.Input
                             id='madNetChainId'
@@ -115,7 +94,7 @@ function AdvancedSettings() {
                             required
                             value={formState.MadNetChainId.value}
                             onChange={e => formSetter.setMadNetChainId(e.target.value)}
-                            error={!!formState.MadNetChainId.error && {content: formState.MadNetChainId.error}}
+                            error={!!formState.MadNetChainId.error && { content: formState.MadNetChainId.error }}
                         />
 
                         <Form.Input
@@ -125,9 +104,7 @@ function AdvancedSettings() {
                             required
                             value={formState.MadNetProvider.value}
                             onChange={e => formSetter.setMadNetProvider(e.target.value)}
-                            error={!!formState.MadNetProvider.error && {
-                                content: formState.MadNetProvider.error
-                            }}
+                            error={!!formState.MadNetProvider.error && { content: formState.MadNetProvider.error }}
                         />
 
                         <Form.Input
@@ -137,9 +114,7 @@ function AdvancedSettings() {
                             required
                             value={formState.EthereumProvider.value}
                             onChange={e => formSetter.setEthereumProvider(e.target.value)}
-                            error={!!formState.EthereumProvider.error && {
-                                content: formState.EthereumProvider.error
-                            }}
+                            error={!!formState.EthereumProvider.error && { content: formState.EthereumProvider.error }}
                         />
 
                         <Form.Input
@@ -149,9 +124,7 @@ function AdvancedSettings() {
                             required
                             value={formState.RegistryContractAddress.value}
                             onChange={e => formSetter.setRegistryContractAddress(e.target.value)}
-                            error={!!formState.RegistryContractAddress.error && {
-                                content: formState.RegistryContractAddress.error
-                            }}
+                            error={!!formState.RegistryContractAddress.error && { content: formState.RegistryContractAddress.error }}
                         />
 
                     </Form>
@@ -172,11 +145,11 @@ function AdvancedSettings() {
 
                             <Button.Group>
 
-                                <Button color="purple" icon="save" basic content="Save" className="m-0" onClick={handleFormSubmit}/>
+                                <Button disabled={loading} color="purple" icon="save" basic content="Save" className="m-0" onClick={() => onSubmit(handleSubmit)}/>
 
                                 <Button.Or className="w-0 self-center text-sm"/>
 
-                                <Button color="purple" icon="undo alternate" basic content="Load Defaults" className="m-0"
+                                <Button disabled={loading} color="purple" icon="undo alternate" basic content="Load Defaults" className="m-0"
                                         onClick={handleLoadDefaultValues}/>
 
                             </Button.Group>

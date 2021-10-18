@@ -2,7 +2,7 @@ import { INTERFACE_ACTION_TYPES } from '../constants/_constants';
 
 /**
  * Toggle the current state of the global loading boolean within the interfaceReducer
- * @param { Boolean } isLoading - Is a global loading event occuring | set to occur ?
+ * @param { Boolean } isLoading - Is a global loading event occurring | set to occur ?
  * @returns { Object } - Action object to be passed as first parameter within Redux.dispatch()
  */
 export function toggleGlobalLoadingBool(isLoading) {

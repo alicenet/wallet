@@ -18,7 +18,7 @@ function HasExistingKeystores() {
     const history = useHistory();
     const dispatch = useDispatch();
 
-    const [formState, formSetter] = useFormState(["password"]);
+    const [formState, formSetter] = useFormState([{ name: 'password', type: 'password', isRequired: true }]);
     const incorrectPasswordError = "Password incorrect. Please try again.";
     const incorrectPwEntered = formState.password.error === incorrectPasswordError;
     const [showPassword, setShowPassword] = React.useState(false);
@@ -71,12 +71,12 @@ function HasExistingKeystores() {
         }
     }
 
-
     const skipStore = () => {
         // If this is the last keystore and no keystores have been loaded show error
-        if ( (keystoreData.length - (activeKeystore + 1 === 0) ) && keystoresUnlocked === 0) {
+        if ((keystoreData.length - (activeKeystore + 1 === 0)) && keystoresUnlocked === 0) {
             return setNotEnoughKeystoresError(true);
-        } else {
+        }
+        else {
             setActiveKeystore(s => s + 1);
         }
     }
@@ -88,7 +88,7 @@ function HasExistingKeystores() {
 
                 <Grid.Column width={16} className="p-0 self-center">
 
-                    <Header content="Welcome Back" as="h3" className="m-0" />
+                    <Header content="Welcome Back" as="h3" className="m-0"/>
 
                 </Grid.Column>
 
@@ -120,14 +120,14 @@ function HasExistingKeystores() {
                                     content: formState.password.error,
                                     pointing: 'above',
                                 }}
-                                icon={<Icon name={showPassword ? "eye" : "eye slash"} />}
+                                icon={<Icon name={showPassword ? "eye" : "eye slash"}/>}
                             />
 
                             {/* 
                             onClick={ () => setShowPassword(s => !s) } 
                             */}
 
-                            <ForgottenKeystorePasswordModal incorrectPwEntered={incorrectPwEntered} />
+                            <ForgottenKeystorePasswordModal incorrectPwEntered={incorrectPwEntered}/>
 
                             <div className="font-xs">
                                 {activeKeystore} / {keystoreData.length - activeKeystore} keystores examined
@@ -143,11 +143,11 @@ function HasExistingKeystores() {
 
                     <Container className="flex justify-between gap-2">
 
-                        <Button color="orange" basic content='Skip This Store' onClick={skipStore} />
-                        { notEnoughKeystoresError && (
+                        <Button color="orange" basic content='Skip This Store' onClick={skipStore}/>
+                        {notEnoughKeystoresError && (
                             <Message visible={notEnoughKeystoresError} error size="mini" className="m-0">At least one keystore must be loaded.</Message>
                         )}
-                        <Button color="teal" basic content='Unlock Store' disabled={!formState.password.value} onClick={handleFormSubmit} />
+                        <Button color="teal" basic content='Unlock Store' disabled={!formState.password.value} onClick={handleFormSubmit}/>
 
                     </Container>
 

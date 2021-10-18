@@ -1,9 +1,7 @@
-import { strip0x } from "./wallet";
-
 /**
  * Limit string length to limit, return as full limit length, where length through length -3 are ellipses
- * @param {string} str 
- * @param {int} limit 
+ * @param {string} str
+ * @param {int} limit
  * @return Returns limited string, or original string if limit is not greater than passed string length
  */
 export function limitStringLength(str, limit) {

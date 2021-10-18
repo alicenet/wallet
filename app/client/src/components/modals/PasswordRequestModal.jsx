@@ -12,7 +12,7 @@ import { classNames } from 'util/_util';
 export default function PasswordRequestModal() {
 
     const dispatch = useDispatch();
-    const [formState, formSetter] = useFormState(["password"]);
+    const [formState, formSetter] = useFormState([{ name: 'password', type: 'password', isRequired: true }]);
     const [isOpen, reason, callback] = useSelector(s => ([s.modal.password_req_modal, s.modal.password_req_reason, s.modal.password_req_cb]));
 
     const tryPassword = async () => {

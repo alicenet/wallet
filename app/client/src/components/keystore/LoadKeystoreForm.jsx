@@ -1,12 +1,11 @@
 import React from 'react'
 import { useFormState } from 'hooks/_hooks';
-import { Header, Form, Message } from 'semantic-ui-react';
+import { Form, Header, Message } from 'semantic-ui-react';
 import { walletUtils } from 'util/_util';
 
 export default function LoadKeystoreForm() {
 
-    const [formState, formSetter] = useFormState(["password"])
-
+    const [formState, formSetter] = useFormState([{ name: 'password', type: 'password', isRequired: true }]);
     const [keystore, setKeystore] = React.useState(false);
     const [error, setError] = React.useState(false);
 
@@ -54,7 +53,6 @@ export default function LoadKeystoreForm() {
             <Message error>{error}</Message>
 
         </Form>
-
 
     )
 

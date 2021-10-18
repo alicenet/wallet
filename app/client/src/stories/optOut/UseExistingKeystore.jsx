@@ -11,8 +11,7 @@ function UseExistingKeystore() {
 
     const history = useHistory();
 
-    const [formState, formSetter] = useFormState(["password"]);
-
+    const [formState, formSetter] = useFormState([{ name: 'password', type: 'password', isRequired: true }]);
     const [fileName, setFileName] = React.useState('');
 
     const handleFormSubmit = () => {

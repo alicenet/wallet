@@ -51,6 +51,7 @@ export function updateRegistryContractAddress(newRegistryContractAddress) {
 export function loadDefaultValues() {
     return async function (dispatch) {
         dispatch({ type: CONFIG_ACTION_TYPES.LOAD_DEFAULT_VALUES });
+        return true;
     }
 }
 
@@ -60,15 +61,23 @@ export function loadDefaultValues() {
  * @prop { String } madNetProvider - MadNetProvider URL to update settings to
  * @prop { String } ethProvider - EthProvider URL to update settings to
  * @prop { String } registryContractAddress - Registry Contract Address to update settings to
- * @returns null
+ * @returns { Bool || Object.error }
  */
- export function saveConfigurationValues(chainId, madNetProvider, ethProvider, registryContractAddress) {
+export function saveConfigurationValues(chainId, madNetProvider, ethProvider, registryContractAddress) {
     return async function (dispatch) {
-        dispatch({ type: CONFIG_ACTION_TYPES.SAVE_CONFIGURATION, payload: {
-            mad_net_chainID: chainId,
-            mad_net_provider: madNetProvider,
-            ethereum_provider: ethProvider,
-            registry_contract_address: registryContractAddress,
-        } });
+        try {
+            // CAT-TODO: Attempt write to electron store, and fail if necessary
+            dispatch({
+                type: CONFIG_ACTION_TYPES.SAVE_CONFIGURATION, payload: {
+                    mad_net_chainID: chainId,
+                    mad_net_provider: madNetProvider,
+                    ethereum_provider: ethProvider,
+                    registry_contract_address: registryContractAddress,
+                }
+            });
+            return true;
+        } catch (ex) {
+            return { error: ex };
+        }
     }
 }

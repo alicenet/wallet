@@ -1,6 +1,6 @@
 import React from 'react'
 import { useFormState } from 'hooks/_hooks';
-import { Header, Form, Button, Checkbox } from 'semantic-ui-react';
+import { Button, Checkbox, Form, Header } from 'semantic-ui-react';
 import utils from 'util/_util.js';
 import { curveTypes } from 'util/wallet.js';
 
@@ -11,9 +11,9 @@ import { curveTypes } from 'util/wallet.js';
  * @prop { Boolean } showPassword -- Show the password in plain text?
  * @prop { String } customTitle -- Use a custom form title?
  */
-export default function GenerateKeystoreForm({ loadKeystoreCB, inline, defaultPassword = "", showPassword = false, customTitle="Generate Keystore" }) {
+export default function GenerateKeystoreForm({ loadKeystoreCB, inline, defaultPassword = "", showPassword = false, customTitle = "Generate Keystore" }) {
 
-    const [formState, formSetter] = useFormState(["password"])
+    const [formState, formSetter] = useFormState([{ name: 'password', type: 'password', isRequired: true }]);
     const [keystoreDL, setKeystoreDL] = React.useState(false);
     const [curveType, setCurveType] = React.useState(curveTypes.SECP256K1);
     const toggleCurveType = () => setCurveType(s => (s === curveTypes.SECP256K1 ? curveTypes.BARRETO_NAEHRIG : curveTypes.SECP256K1));
@@ -54,13 +54,12 @@ export default function GenerateKeystoreForm({ loadKeystoreCB, inline, defaultPa
         }));
     }
 
-
     ////////////////////
     // Inline Version //
     ////////////////////
     if (inline) {
         return (
-            <Form size="mini" className="max-w-lg" >
+            <Form size="mini" className="max-w-lg">
 
                 <Header as="h4">{customTitle}</Header>
 
@@ -98,7 +97,7 @@ export default function GenerateKeystoreForm({ loadKeystoreCB, inline, defaultPa
     ////////////////////
     return (
 
-        <Form size="mini" className="max-w-lg" >
+        <Form size="mini" className="max-w-lg">
 
             <Header as="h4">{customTitle}</Header>
 

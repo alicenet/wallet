@@ -19,7 +19,11 @@ function CreateAKeystore() {
         desiredCurve: state.user.desired_hd_curve
     }));
 
-    const [formState, formSetter] = useFormState(["name", "password", "verifiedPassword"]);
+    const [formState, formSetter] = useFormState([
+        { name: 'name', type: 'string', isRequired: true },
+        { name: 'password', type: 'password', isRequired: true },
+        { name: 'verifiedPassword', type: 'password', isRequired: true }
+    ]);
 
     const handleFormSubmit = () => {
         if (!formState.name.value) {
