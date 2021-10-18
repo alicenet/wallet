@@ -10,7 +10,7 @@ import Page from 'layout/Page';
 import { useFormState } from 'hooks/_hooks';
 import { CONFIG_ACTIONS, INTERFACE_ACTIONS } from 'redux/actions/_actions';
 import { initialConfigurationState } from 'redux/reducers/configuration'; // <= We can import this to use as a local setter
-import { SyncToastMessageSuccess } from 'components/customToasts/CustomToasts';
+import { SyncToastMessageSuccess, SyncToastMessageWarning } from 'components/customToasts/CustomToasts';
 
 function AdvancedSettings() {
 
@@ -32,31 +32,42 @@ function AdvancedSettings() {
         { name: 'RegistryContractAddress', display: 'Registry Contract Address', type: 'address', isRequired: true, value: registryContractAddress }
     ]);
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         dispatch(INTERFACE_ACTIONS.toggleGlobalLoadingBool(true));
-        dispatch(CONFIG_ACTIONS.saveConfigurationValues(
+        const result = await dispatch(CONFIG_ACTIONS.saveConfigurationValues(
             formState.MadNetChainId.value,
             formState.MadNetProvider.value,
             formState.EthereumProvider.value,
             formState.RegistryContractAddress.value
         ));
-        notifySuccess('Settings were updated');
-    }
 
-    const notifySuccess = message =>
-        toast.success(<SyncToastMessageSuccess title="Success" message={message}/>, {
-            autoClose: 1000, onClose: () => dispatch(INTERFACE_ACTIONS.toggleGlobalLoadingBool(false))
-        });
+        if (result.error) {
+            notifyError('There was an error while saving changes');
+        }
+        else {
+            notifySuccess('Settings were updated');
+        }
+    };
+
+    const notifyError = message => {
+        toast.error(<SyncToastMessageWarning title="Error" message={message}/>, { autoClose: 2000 });
+        dispatch(INTERFACE_ACTIONS.toggleGlobalLoadingBool(false));
+    };
+
+    const notifySuccess = message => {
+        toast.success(<SyncToastMessageSuccess title="Success" message={message}/>, { autoClose: 1000 });
+        dispatch(INTERFACE_ACTIONS.toggleGlobalLoadingBool(false));
+    };
 
     // Instead we can pull in the default values from the context and use it as a local setter, and propagate those changes upwards to redux
-    const handleLoadDefaultValues = () => {
+    const handleLoadDefaultValues = async () => {
         formSetter.setMadNetChainId(initialConfigurationState.mad_net_chainID);
         formSetter.setMadNetProvider(initialConfigurationState.mad_net_provider);
         formSetter.setEthereumProvider(initialConfigurationState.ethereum_provider);
         formSetter.setRegistryContractAddress(initialConfigurationState.registry_contract_address);
 
         dispatch(INTERFACE_ACTIONS.toggleGlobalLoadingBool(true));
-        dispatch(CONFIG_ACTIONS.loadDefaultValues());
+        await dispatch(CONFIG_ACTIONS.loadDefaultValues());
 
         notifySuccess('Default values loaded');
     }
