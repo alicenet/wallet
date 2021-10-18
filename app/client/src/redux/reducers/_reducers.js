@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 // Reducers
-import adapterReducer from './adapters';
+import adapterReducer from './adapter';
 import configReducer from './configuration';
 import interfaceReducer from './interface';
 import modalReducer from './modals';

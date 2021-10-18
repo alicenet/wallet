@@ -396,13 +396,17 @@ class Web3Adapter {
         }
     }
 
-    // Get Ethereum balance in "Ether"
+    /**
+     * Get Ethereum balance in "Ether"
+     * @param { String } address 
+     * @returns { String } - Balance
+     */
     async getEthBalance(address) {
         try {
             let balance = await this.web3.utils.fromWei(await this.web3.eth.getBalance(address ? address : this.selectedAddress), 'ether');
             return balance.substring(0, 12);
         } catch (ex) {
-            throw ex;
+            return { error: ex }
         }
     }
 
@@ -412,16 +416,17 @@ class Web3Adapter {
             let stakingToken = await this.getContract("stakingToken");
             let stakingBalance = await stakingToken.methods.balanceOf(address ? address : this.selectedAddress).call();
             let staking = await this.getContract("staking");
-            let stakingAllowance = await stakingToken.methods.allowance(this.selectedAddress, staking["_address"]).call();
+            let stakingAllowance = await stakingToken.methods.allowance(address ? address : this.selectedAddress, staking["_address"]).call();
 
             let utilityToken = await this.getContract("utilityToken");
             let utilityBalance = await utilityToken.methods.balanceOf(address ? address : this.selectedAddress).call();
             let utility = await this.getContract("deposit");
-            let utilityAllowance = await utilityToken.methods.allowance(this.selectedAddress, utility["_address"]).call();
+            let utilityAllowance = await utilityToken.methods.allowance(address ? address : this.selectedAddress, utility["_address"]).call();
 
             return [stakingBalance, stakingAllowance, utilityBalance, utilityAllowance];
         } catch (ex) {
-            throw ex;
+            throw new Error(ex);
+            return [{ error: ex }]
         }
     }
 

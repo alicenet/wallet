@@ -27,7 +27,16 @@ export const buildVaultStateObject = ({ exists = null, isLocked = null, optout =
             external: externalWallets, // Array of <WalletObject>s as defined below
             internal: internalWallets, // Array of <WalletObject>s as defined below
         },
-        balances: {} // K:V store of address:balances,utxos -- Updated via madNetWallet and web3Wallet actions
+        balances: {
+            // Contains array of following obj structures:
+            // eth: 0
+            // util: 0
+            // utilAllowance: 0
+            // stake: 0
+            // stakeAllowance: 0
+            // madBytes: 0
+            // madUTXOs: []
+        } // K:V store of address:balances,utxos -- Updated via madNetWallet and web3Wallet actions
     }
 }
 
@@ -71,6 +80,12 @@ export default function vaultReducer(state = initialVaultState, action) {
             log.debug("Internal Wallet Added To Redux State:", action.payload);
             return Object.assign({}, state, {
                 wallets: { internal: [...state.wallets.internal, action.payload], external: state.wallets.external }
+            })
+
+        case VAULT_ACTION_TYPES.SET_BALANCES_STATE:
+            log.debug("Setting new balances state:", action.payload);
+            return Object.assign({}, state, {
+                balances: action.payload
             })
 
         ////////////////////

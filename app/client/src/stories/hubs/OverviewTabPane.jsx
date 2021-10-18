@@ -1,17 +1,51 @@
 import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { ADAPTER_ACTIONS } from 'redux/actions/_actions';
 
-import { Button, Container, Grid } from 'semantic-ui-react'
+import { Button, Container, Grid, Loader } from 'semantic-ui-react'
 
 import { curveTypes } from '../../util/wallet';
 
 export default function OverviewTabPane({ wallet }) {
+
+    const dispatch = useDispatch();
+    const balances = useSelector(state => ({ ...state.vault.balances }));
+    const { madNetConnected, web3Connected } = useSelector(state => ({ web3Conncted: state.adapter.web3Adapter.connected, madNetConnected: state.adapter.madNetAdapter.connected }));
+    const thisWalletBalances = balances[wallet.address] ? balances[wallet.address] : false;
+    const [loader, setLoader] = React.useState(false);
+
+    const fetchBalances = React.useCallback(async () => {
+        setLoader("balances");
+        await dispatch(ADAPTER_ACTIONS.getAndStoreLatestBalancesForAddress(wallet.address))
+        setLoader(false);
+    }, [wallet])
+
+    // Only fetch balances when connected status changes and is true.
+    React.useEffect(() => {
+        if ((web3Connected || madNetConnected) && !balances[wallet.address]) {
+            fetchBalances();
+        }
+    }, [web3Connected, madNetConnected, wallet])
+
+    const MicroBalanceLoader = ({ balanceType, balanceKey, balanceKey2 }) => {
+        if (loader === "balances") {
+            return (<div className="w-23 flex justify-start ">
+                <div className="text-left">{balanceType} :</div>
+                <div className="ml-2"> . . .</div>
+            </div>)
+        } else {
+            return (<span>
+                {balanceType} : {thisWalletBalances[balanceKey]} {balanceKey2 ? " / " + thisWalletBalances[balanceKey2] : ""}
+            </span>)
+        }
+    }
 
     return (
         <Grid className="break-all text-sm p-3">
 
             <Grid.Row>
 
-                <Grid.Column>
+                <Grid.Column width={10}>
 
                     <Container>
 
@@ -20,6 +54,10 @@ export default function OverviewTabPane({ wallet }) {
 
                     </Container>
 
+                </Grid.Column>
+
+                <Grid.Column width={6} textAlign="right" >
+                    <Button size="mini" content="Balance Refresh" icon="refresh" loading={loader === "balances"} onClick={fetchBalances} color="green" basic />
                 </Grid.Column>
 
             </Grid.Row>
@@ -32,9 +70,9 @@ export default function OverviewTabPane({ wallet }) {
 
                         <label className="font-semibold">Ethereum Balances</label>
                         <div className="py-1">
-                            <div>{'0.0 ETH'}</div>
-                            <div>{'0.0 STAKE'}</div>
-                            <div>{'0.0 UTIL'}</div>
+                            <div><MicroBalanceLoader balanceType="ETH" balanceKey={"eth"} /> </div>
+                            <div><MicroBalanceLoader balanceType="STAKE" balanceKey={"stake"} balanceKey2={"stakeAllowance"} /> </div>
+                            <div><MicroBalanceLoader balanceType="UTIL" balanceKey={"util"} balanceKey2={"utilAllowance"} /> </div>
                         </div>
 
                     </Container>
@@ -46,7 +84,9 @@ export default function OverviewTabPane({ wallet }) {
                     <Container>
 
                         <label className="font-semibold">MadNet Balances</label>
-                        <div className="py-1">{'0.00 Mad Bytes'}</div>
+                        <div className="py-1">
+                            <div><MicroBalanceLoader balanceType="MadBytes" balanceKey={"madBytes"} /> </div>
+                        </div>
 
                     </Container>
 

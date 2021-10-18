@@ -84,14 +84,14 @@ class MadNetAdapter {
         // await this._setAndGetInfo();
     }
 
-    /** Fetch upto date balances for MadNetWallets , return data and set to state accordingly 
+    /** Fetch upto date balances for MadNetWallets
      * @returns { Object } -- Returns latest balances state
     */
     async getAllMadWalletBalancesWithUTXOs() {
         let madWallet = this.wallet();
         let balancesAndUtxos = {};
         for (let wallet of madWallet.Account.accounts) {
-            let [balance, utxos] = await this.getMadNetWalletBalanceAndUTXOs(wallet.address, wallet.curve);
+            let [balance, utxos] = await this._getMadNetWalletBalanceAndUTXOs(wallet.address, wallet.curve);
             if (balance.error) {
                 return { error: balance.error }
             }
@@ -116,11 +116,25 @@ class MadNetAdapter {
         return newBalances;
     }
 
+    /**
+     * Returns both the balance and utxos for a corresponding address
+     * @param { String } address 
+     * @returns {Array} - [balance, utxos]
+     */
+    async getMadWalletBalanceWithUTXOsForAddress(address) {
+        let madWallet = this.wallet();
+        let madJSWallet = madWallet.Account.accounts.filter(wallet => wallet.address === address)[0];
+        if (!madJSWallet) {
+            return [{ error: "MadWalletJS wallet instance not found" }, null];
+        }
+        let [balance, utxos] = await this._getMadNetWalletBalanceAndUTXOs(madJSWallet.address, madJSWallet.curve);
+        return [balance, utxos];
+    }
 
     /**
-     * 
+     * Returns mad wallet balance and utxoids for respctive address and curve
      */
-    async getMadNetWalletBalanceAndUTXOs(address, curve) {
+    async _getMadNetWalletBalanceAndUTXOs(address, curve) {
         let madWallet = this.wallet();
         try {
             let [utxoids, balance] = await madWallet.Rpc.getValueStoreUTXOIDs(address, curve)
@@ -128,7 +142,7 @@ class MadNetAdapter {
             return [balance, utxoids];
         }
         catch (ex) {
-            return [{ error: ex }]
+            return [{ error: ex }, null]
         }
     }
 

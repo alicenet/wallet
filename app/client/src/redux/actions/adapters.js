@@ -1,4 +1,4 @@
-import { ADAPTER_ACTION_TYPES } from '../constants/_constants';
+import { ADAPTER_ACTION_TYPES, VAULT_ACTION_TYPES } from '../constants/_constants';
 import web3Adapter from 'adapters/web3Adapter';
 import { default_log as log } from 'log/logHelper';
 import madNetAdapter from 'adapters/madAdapter';
@@ -110,12 +110,97 @@ export const initAdapters = () => {
     }
 }
 
+/**
+ * Get and store the latest balances for a given address to redux state
+ * @param { String } address 
+ * @returns { Array } [latestAddressBalances, allBalances]
+ */
+export const getAndStoreLatestBalancesForAddress = (address) => {
+    return async (dispatch, getState) => {
+        let state = getState();
+        let wallets = [...state.vault.wallets.internal, ...state.vault.wallets.external];
+        let web3Connected = state.adapter.web3Adapter.connected;
+        let madNetConnected = state.adapter.madNetAdapter.connected;
+        let balanceState = {...state.vault.balances}; // Get current balances for state object update
+
+        // Set default balance object for this address
+        let addressBalances = {
+            eth: "Not Available",
+            stake: "Not Available",
+            stakeAllowance: "Not Available",
+            util: "Not Available",
+            utilAllowance: "Not Available",
+            madBytes: "Not Available",
+            madUTXOs: [],
+        }
+
+        let balancePromises = []; // [eth, [stake,stakeAllow,util,utilAllow], [madBytes, UTXOs]]
+
+        // First get eth/staking/util balances -- Only if web3 connected
+        if (web3Connected) {
+            // Get the account privK based on the address from state to add to web3 to fetch balance information
+            let wallet = wallets.filter(wal => wal.address === address )[0];
+            balancePromises.push(web3Adapter.useAccount(wallet.privK));
+        } else { log.debug("Skipping eth/staking/util balance fetch for address: " + address + " :: Web3 not connected.") }
+        // Second get madBytes balance/utxos -- Only if madNet connected
+        if (madNetConnected) {
+            balancePromises.push(madNetAdapter.getMadWalletBalanceWithUTXOsForAddress(address));
+        } else { log.debug("Skipping madBytes/UTXO balance fetch for address: " + address + " :: MadNet not connected.") }
+
+        // If neither mad or web3 is connected, don't bother to try and pull balances
+        if (!madNetConnected && !web3Connected ) {
+            return false;
+        }
+
+        let foundBalances = await Promise.all(balancePromises);
+
+        // Inject eth
+        if (typeof foundBalances[0] !== 'undefined' && !foundBalances[0].error) {
+            addressBalances.eth = foundBalances[0].balances.eth;
+            addressBalances.stake =  foundBalances[0].balances.stakingToken.balance;
+            addressBalances.stakeAllowance = foundBalances[0].balances.stakingToken.allowance;
+            addressBalances.util = foundBalances[0].balances.utilityToken.balance;
+            addressBalances.utilAllowance = foundBalances[0].balances.utilityToken.allowance;
+        }
+        // Mad Bytes/UTXOs
+        if (typeof foundBalances[1] !== 'undefined' && !foundBalances[1].error) {
+            let [madBytes, madUtxos] = foundBalances[1];
+            addressBalances.madBytes = madBytes;
+            addressBalances.madUTXOs = madUtxos;
+        }
+
+        // Condense to updated state
+        let updatedBalanceState = {
+            ...balanceState,
+            [address]: addressBalances
+        }
+
+        // Set new balance to state
+        dispatch({ type: VAULT_ACTION_TYPES.SET_BALANCES_STATE, payload: updatedBalanceState })
+
+        // Return latest found balances and the complete updated balance state
+        return [addressBalances, updatedBalanceState];
+
+    }
+}
+
 // Get Latest MadByte Balances/UTXOs for all of madnetWallet.Account.accounts and push balance to redux state
 export const updateAndLoadMadNetBalancesToState = () => {
 
 }
 
-// Get eth, util, and stake balances from Web3 instance for all madnetWallet.Account.accounts and push balance to redux state
+// Get eth, util, and stake balances from Web3 instance for specified wallet address
 export const updateAndLoadWeb3BalancesToState = () => {
+    return async (dispatch, getState) => {
+        let wallets = getState().vault.wallets;
+        // Concat wallets for getting balances
+        let allWallets = [...wallets.internal, ...wallets.external]
+        // For each wallet, get the balance --
+        for (let wallet of allWallets) {
+            // Get the eth balance. . .
+            web3Adapter.getEthBalance()
+            // Get the token balances . . .
+        }
 
+    }
 }
