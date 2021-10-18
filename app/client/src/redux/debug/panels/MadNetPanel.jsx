@@ -1,13 +1,9 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
 import { Button, Header, Placeholder, Segment } from 'semantic-ui-react';
-import { ADAPTER_ACTIIONS, ADAPTER_ACTIONS } from 'redux/actions/_actions.js';
-import { useDispatch } from 'react-redux';
 import { DButton } from '../DebugPanel.jsx';
 import { useSelector } from 'react-redux';
 import web3Adapter from 'adapters/web3Adapter.js';
 import madNetAdapter from 'adapters/madAdapter';
-import { array } from 'prop-types';
 import utils from 'util/_util.js';
 import { classNames } from 'util/generic.js';
 
@@ -61,7 +57,7 @@ export default function Web3Panel() {
                         <span className="font-bold">connected:</span> {String(adapterState.connected)}
                     </span>
                     <span className="ml-8">
-                        <span onClick={() => console.log(madNetAdapter.failed.get())} className={classNames("font-bold", { ["text-red-500"]: !!adapterState.error })}>error:</span> {String(!!adapterState.error)}
+                        <span onClick={() => console.log(madNetAdapter.failed.get())} className={classNames("font-bold", { "text-red-500": !!adapterState.error })}>error:</span> {String(!!adapterState.error)}
                     </span>
                 </div>
                 <div>

@@ -1,5 +1,3 @@
-import { strip0x } from "./wallet";
-
 /**
  * Limit string length to limit, return as full limit length, where length through length -3 are ellipses
  * @param {string} str 

@@ -5,7 +5,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { VAULT_ACTIONS } from 'redux/actions/_actions';
 import { DButton } from '../../DebugPanel.jsx';
 import { classNames } from 'util/_util';
-import { } from 'store/electronStoreHelper';
 import GenerateKeystoreForm from 'components/keystore/GenerateKeystoreForm';
 
 /** 
@@ -36,7 +35,7 @@ export default function VaultSegment() {
     const unlockVault = async () => {
         console.log("DEBUG:: Attempt unlock vault with password: " + password);
         setVaultLoading(true);
-        let [done, errors] = await dispatch(VAULT_ACTIONS.loadSecureHDVaultFromStorage(password));
+        let [done, errors] = await dispatch(VAULT_ACTIONS.loadSecureHDVaultFromStorage(password)); // eslint-disable-line
         setVaultLoading(false)
         if (errors.length > 0) {
             return setPerr(true);
@@ -45,20 +44,20 @@ export default function VaultSegment() {
     }
 
     const lockVault = async () => {
-        let done = await dispatch(VAULT_ACTIONS.lockVault());
+        await dispatch(VAULT_ACTIONS.lockVault());
     }
 
     const addWalletFromKeystore = async (keystoreJson, password) => {
-        let success = await dispatch(VAULT_ACTIONS.addExternalWalletToState(keystoreJson, password, newWalletName));
+        await dispatch(VAULT_ACTIONS.addExternalWalletToState(keystoreJson, password, newWalletName));
     }
 
     const addNextHdWallet = async () => {
-        let success = await dispatch(VAULT_ACTIONS.addInternalWalletToState(newWalletName));
+        await dispatch(VAULT_ACTIONS.addInternalWalletToState(newWalletName));
     }
 
-    const deleteVault = () => {
-        console.log('TBD: DELETE VAULT')
-    }
+    // const deleteVault = () => {
+    //     console.log('TBD: DELETE VAULT')
+    // }
 
     //////////////////////
     // Micro Components //

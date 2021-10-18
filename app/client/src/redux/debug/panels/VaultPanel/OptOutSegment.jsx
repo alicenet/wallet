@@ -11,12 +11,9 @@ export default function OptOutSegment() {
     const dispatch = useDispatch();
     const vault = useSelector(s => s.vault);
 
-    const [vaultLoading, setVaultLoading] = React.useState(false);
-
     ////////////////////////////
     /*          State         */
     ////////////////////////////
-    const [password, setPassword] = React.useState("testing");
     const [newWalletName, setNewWalletName] = React.useState("test_wallet");
 
     ////////////////////////////
@@ -28,7 +25,7 @@ export default function OptOutSegment() {
     }
 
     const addOptOutKeystore = async (keystoreJson, password) => {
-        let success = await dispatch(VAULT_ACTIONS.addExternalWalletToState(keystoreJson, password, newWalletName));
+        await dispatch(VAULT_ACTIONS.addExternalWalletToState(keystoreJson, password, newWalletName));
     }
 
     return (
@@ -43,7 +40,7 @@ export default function OptOutSegment() {
                     <Header as="h3" className="m-0" content="Optout Wallet Management"/>
                     <div className="flex items-center">
                         <Header as="h6" className="m-0">Vault Instance -- ( Keystore Wallets Still Get Loaded Here )</Header>
-                        <Form className="max-w-md m-0" size="mini" className="ml-2">
+                        <Form className="max-w-md m-0 ml-2" size="mini">
                             <Form.Group widths="equal" className="mt-2">
                                 <Form.Button size='mini' basic content="Print Vault State" onClick={() => console.log(vault)}/>
                             </Form.Group>

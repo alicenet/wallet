@@ -1,12 +1,8 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
 import { Button, Header, Placeholder, Segment } from 'semantic-ui-react';
-import { ADAPTER_ACTIIONS, ADAPTER_ACTIONS } from 'redux/actions/_actions.js';
-import { useDispatch } from 'react-redux';
 import { DButton } from '../DebugPanel.jsx';
 import { useSelector } from 'react-redux';
 import web3Adapter from 'adapters/web3Adapter.js';
-import { array } from 'prop-types';
 import utils from 'util/_util.js';
 
 export default function Web3Panel() {
