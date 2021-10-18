@@ -36,48 +36,54 @@ export default function useFormState(initialStateKeysArray) {
         setters["set" + keyName] = (value) => setFormState(prevState => ({ ...prevState, [key.name]: { ...prevState[key.name], value: value, error: '' } }));
         setters["set" + keyName + "Error"] = (value) => setFormState(prevState => ({ ...prevState, [key.name]: { ...prevState[key.name], error: value } }));
         setters["clear" + keyName + "Error"] = () => setFormState(prevState => ({ ...prevState, [key.name]: { ...prevState[key.name], error: '' } }));
-
-        setters["check" + keyName] = () => {
-            setFormState(prevState => {
-                let error = "";
-                let validated = true;
-                if (prevState[keyName].isRequired && isEmpty(prevState[keyName].value)) {
-                    error = (prevState[keyName].display || prevState[keyName].name) + " is required";
-                    validated = false;
-                }
-                else {
-                    switch (prevState[keyName].type) {
-                        case fieldType.URL:
-                            if (!isURL(prevState[keyName].value, { protocols: ['http', 'https'] })) {
-                                error = (prevState[keyName].display || prevState[keyName].name) + " is not a valid HTTP URL";
-                                validated = false;
-                            }
-                            break;
-                        case fieldType.INTEGER:
-                            if (isNaN(prevState[keyName].value)) {
-                                error = (prevState[keyName].display || prevState[keyName].name) + " is not a valid number";
-                                validated = false;
-                            }
-                            break;
-                        case fieldType.ADDRESS:
-                            if (!Web3.utils.isAddress(prevState[keyName].value)) {
-                                error = (prevState[keyName].display || prevState[keyName].name) + " is not a valid address";
-                                validated = false;
-                            }
-                            break;
-                        case fieldType.PASSWORD:
-                            break;
-                        default:
-                            validated = true;
-                    }
-                }
-
-                return { ...prevState, [key.name]: { ...prevState[key.name], error } };
-            });
-        };
     });
 
-    const onSubmit = (callback) => callback();
+    const onSubmit = (callback) => {
+        let errorsFound = false;
+        initialStateKeysArray.forEach(key => {
+            const keyName = upperFirst(key.name);
+            let error = "";
+            if (formState[keyName].isRequired && isEmpty(formState[keyName].value)) {
+                error = (formState[keyName].display || formState[keyName].name) + " is required";
+            }
+            else {
+                switch (formState[keyName].type) {
+                    case fieldType.URL:
+                        if (!isURL(formState[keyName].value, { protocols: ['http', 'https'] })) {
+                            error = (formState[keyName].display || formState[keyName].name) + " is not a valid HTTP URL";
+                        }
+                        break;
+                    case fieldType.INTEGER:
+                        if (isNaN(formState[keyName].value)) {
+                            error = (formState[keyName].display || formState[keyName].name) + " is not a valid number";
+                        }
+                        break;
+                    case fieldType.ADDRESS:
+                        if (!Web3.utils.isAddress(formState[keyName].value)) {
+                            error = (formState[keyName].display || formState[keyName].name) + " is not a valid address";
+                        }
+                        break;
+                    case fieldType.PASSWORD:
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            if (error) {
+                setters['set' + keyName + 'Error'](error);
+                errorsFound = true;
+            }
+            else {
+                setters['clear' + keyName + 'Error']();
+            }
+
+        });
+
+        if (!errorsFound) {
+            callback();
+        }
+    };
 
     // Return it all
     return [formState, setters, onSubmit];
