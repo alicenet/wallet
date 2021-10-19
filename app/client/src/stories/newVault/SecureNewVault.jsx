@@ -97,7 +97,7 @@ function SecureNewVault() {
 
                         <Button color="red" basic content="Cancel Vault Creation" className="m-0" onClick={() => history.push('/')}/>
 
-                        <Button color="teal" basic content='Secure My Wallets' className="m-0" onClick={onSubmit(handleFormSubmit)}/>
+                        <Button color="teal" basic content='Secure My Wallets' className="m-0" onClick={() => onSubmit(handleFormSubmit)}/>
 
                     </Container>
                 </Grid.Column>

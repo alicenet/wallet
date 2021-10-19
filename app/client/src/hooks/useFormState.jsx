@@ -38,7 +38,7 @@ export default function useFormState(initialStateKeysArray) {
         // Capitalize first name of function key
         const keyName = upperFirst(key.name);
 
-        setters["set" + keyName] = (value) => setFormState(prevState => ({ ...prevState, [key.name]: { ...prevState[key.name], value: value, error: '' } }));
+        setters["set" + keyName] = (value) => setFormState(prevState => ({ ...prevState, [key.name]: { ...prevState[key.name], value, error: '' } }));
         setters["set" + keyName + "Error"] = (value) => setFormState(prevState => ({ ...prevState, [key.name]: { ...prevState[key.name], error: value } }));
         setters["clear" + keyName + "Error"] = () => setFormState(prevState => ({ ...prevState, [key.name]: { ...prevState[key.name], error: '' } }));
     });
@@ -46,46 +46,53 @@ export default function useFormState(initialStateKeysArray) {
     const onSubmit = (callback) => {
         let errorsFound = false;
         initialStateKeysArray.forEach(key => {
-            const keyName = upperFirst(key.name);
             let error = "";
-            if (formState[keyName].isRequired && isEmpty(formState[keyName].value)) {
-                error = (formState[keyName].display || formState[keyName].name) + " is required";
+            if (key.validation) {
+                if (!key.validation.check(formState[key.name].value)) {
+                    error = key.validation.message;
+                }
             }
             else {
-                switch (formState[keyName].type) {
-                    case fieldType.URL:
-                        if (!isURL(formState[keyName].value, { protocols: ['http', 'https'] })) {
-                            error = (formState[keyName].display || formState[keyName].name) + " is not a valid HTTP URL";
-                        }
-                        break;
-                    case fieldType.INTEGER:
-                        if (isNaN(formState[keyName].value)) {
-                            error = (formState[keyName].display || formState[keyName].name) + " is not a valid number";
-                        }
-                        break;
-                    case fieldType.ADDRESS:
-                        if (!Web3.utils.isAddress(formState[keyName].value)) {
-                            error = (formState[keyName].display || formState[keyName].name) + " is not a valid address";
-                        }
-                        break;
-                    case fieldType.PASSWORD:
-                        if (formState[keyName].value.length < 8) {
-                            error = (formState[keyName].display || formState[keyName].name) + " must be at least 8 characters long.";
-                        }
-                        break;
-                    case fieldType.VERIFIED_PASSWORD:
-                        if (formState[keyName].value !== formState['Password'].value) {
-                            error = "Passwords do not match.";
-                        }
-                        break;
-                    default:
-                        break;
+                if (formState[key.name].isRequired && isEmpty(formState[key.name].value)) {
+                    error = (formState[key.name].display || formState[key.name].name) + " is required";
+                }
+                else {
+                    switch (formState[key.name].type) {
+                        case fieldType.URL:
+                            if (!isURL(formState[key.name].value, { protocols: ['http', 'https'] })) {
+                                error = (formState[key.name].display || formState[key.name].name) + " is not a valid HTTP URL";
+                            }
+                            break;
+                        case fieldType.INTEGER:
+                            if (isNaN(formState[key.name].value)) {
+                                error = (formState[key.name].display || formState[key.name].name) + " is not a valid number";
+                            }
+                            break;
+                        case fieldType.ADDRESS:
+                            if (!Web3.utils.isAddress(formState[key.name].value)) {
+                                error = (formState[key.name].display || formState[key.name].name) + " is not a valid address";
+                            }
+                            break;
+                        case fieldType.PASSWORD:
+                            if (formState[key.name].value.length < 8) {
+                                error = (formState[key.name].display || formState[key.name].name) + " must be at least 8 characters long.";
+                            }
+                            break;
+                        case fieldType.VERIFIED_PASSWORD:
+                            if (formState[key.name].value !== formState['password'].value) {
+                                error = "Passwords do not match.";
+                            }
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
 
+            const keyName = upperFirst(key.name);
             if (error) {
                 setters['set' + keyName + 'Error'](error);
-                errorsFound = true;
+                errorsFound |= true;
             }
             else {
                 setters['clear' + keyName + 'Error']();

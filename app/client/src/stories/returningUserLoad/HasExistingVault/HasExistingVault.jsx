@@ -8,19 +8,24 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useFormState } from 'hooks/_hooks';
 
 import { VAULT_ACTIONS } from 'redux/actions/_actions'
-import { electronStoreCommonActions } from '../../../store/electronStoreHelper'
+import { electronStoreCommonActions } from 'store/electronStoreHelper'
 
-import Page from '../../../layout/Page';
+import Page from 'layout/Page';
 
 function UnlockExistingVault() {
 
     const history = useHistory();
     const dispatch = useDispatch();
 
-    const [formState, formSetter] = useFormState([{ name: 'password', type: 'password', isRequired: true }]);
-
-    const incorrectPasswordError = "Vault password incorrect. Please try again.";
-    const incorrectPwEntered = formState.password.error === incorrectPasswordError;
+    const [formState, formSetter, onSubmit] = useFormState([
+        {
+            name: 'password',
+            validation: {
+                check: async (password) => await electronStoreCommonActions.checkPasswordAgainstPreflightHash(password), // Check password against preflight hash
+                message: 'Vault password incorrect. Please try again.'
+            }
+        }
+    ]);
 
     const { vaultLocked, vaultExists } = useSelector(state => ({ vaultLocked: state.vault.is_locked, vaultExists: state.vault.exists }));
 
@@ -32,15 +37,7 @@ function UnlockExistingVault() {
     });
 
     const handleFormSubmit = async () => {
-        // Check password against preflight hash
-        const pw = formState.password.value;
-        const isCorrectPassword = await electronStoreCommonActions.checkPasswordAgainstPreflightHash(pw);
-        if (!isCorrectPassword) {
-            return formSetter.setPasswordError(incorrectPasswordError)
-        }
-        else { formSetter.clearPasswordError(); }
-        // Dispatch the vault generation action and. . .
-        let loaded = await dispatch(VAULT_ACTIONS.loadSecureHDVaultFromStorage(pw))
+        let loaded = false; //await dispatch(VAULT_ACTIONS.loadSecureHDVaultFromStorage(formState.password.value))
         if (loaded) {
             history.push('/hub')
         }
@@ -75,16 +72,14 @@ function UnlockExistingVault() {
                                 label='Password'
                                 placeholder='Enter Password'
                                 type='password'
-                                onChange={e => {
-                                    formSetter.setPassword(e.target.value)
-                                }}
+                                onChange={e => formSetter.setPassword(e.target.value)}
                                 error={!!formState.password.error && {
                                     content: formState.password.error,
                                     pointing: 'above',
                                 }}
                             />
 
-                            <ForgottenVaultPasswordModal incorrectPwEntered={incorrectPwEntered}/>
+                            <ForgottenVaultPasswordModal incorrectPwEntered={!!formState.password.error}/>
 
                         </Form.Group>
 
@@ -96,7 +91,7 @@ function UnlockExistingVault() {
 
                     <Container className="flex justify-center">
 
-                        <Button color="teal" basic content='Unlock Vault' disabled={!formState.password.value} className="m-0" onClick={handleFormSubmit}/>
+                        <Button color="teal" basic content='Unlock Vault' disabled={!formState.password.value} className="m-0" onClick={() => onSubmit(handleFormSubmit)}/>
 
                     </Container>
 
