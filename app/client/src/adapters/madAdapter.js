@@ -4,6 +4,7 @@ import { ADAPTER_ACTION_TYPES } from 'redux/constants/_constants';
 import { getMadWalletInstance } from 'redux/middleware/WalletManagerMiddleware'
 import { SyncToastMessageWarning, SyncToastMessageSuccess } from 'components/customToasts/CustomToasts'
 import { toast } from 'react-toastify';
+import { curveTypes } from 'util/wallet';
 
 class MadNetAdapter {
 
@@ -245,7 +246,7 @@ class MadNetAdapter {
             try {
                 switch (txOut.type) {
                     case "VS":
-                        await this.wallet().Transaction.createValueStore(txOut.fromAddress, txOut.value, txOut.toAddress, txOut.bnCurve ? 2 : 1)
+                        await this.wallet().Transaction.createValueStore(txOut.fromAddress, txOut.value, txOut.toAddress, txOut.bnCurve ? curveTypes.BARRETO_NAEHRIG : curveTypes.SECP256K1)
                         break;;
                     case "DS":
                         await this.wallet().Transaction.createDataStore(txOut.fromAddress, txOut.index, txOut.duration, txOut.rawData)
