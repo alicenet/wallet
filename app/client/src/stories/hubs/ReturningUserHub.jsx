@@ -21,6 +21,10 @@ export default function Hub() {
 
     const { vaultExistsAndIsLocked } = useSelector(s => ({ vaultExistsAndIsLocked: s.vault.exists && s.vault.is_locked }))
 
+    const gotoAddWallet = () => {
+        history.push('/addWallet/menu');
+    }
+
     React.useEffect(() => {
         if (vaultExistsAndIsLocked) {
             history.push('/'); // Send to root for appropriate redirect
@@ -61,7 +65,11 @@ export default function Hub() {
 
                             <Container className="gap-3 flex flex-row justify-center items-center text-justify">
 
+<<<<<<< HEAD
                                 <Button circular size={openDrawer ? 'mini' : 'small'} className="m-0" icon="add" onClick={() => setOpenDrawer(prevState => !prevState)}/>
+=======
+                                <Button circular size={openDrawer ? 'mini' : 'small'} className="m-0" icon="add" onClick={gotoAddWallet} />
+>>>>>>> Add Wallets Menu && Add Internal Wallet
 
                                 {openDrawer && <Header as='h3' className="m-0">Wallets</Header>}
 
