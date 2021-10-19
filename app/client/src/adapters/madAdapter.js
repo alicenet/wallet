@@ -119,7 +119,12 @@ class MadNetAdapter {
      */
     async getMadWalletBalanceWithUTXOsForAddress(address) {
         let madWallet = this.wallet();
-        let madJSWallet = madWallet.Account.accounts.filter(wallet => wallet.address === address)[0];
+        let madJSWallet;
+        try {
+            madJSWallet = madWallet.Account.accounts.filter(wallet => wallet.address === address)[0];
+        } catch (ex) {
+            return { error: "Unable to filter out address from current madJSWallet instance. State imbalance? See error: ", ex }
+        }
         if (!madJSWallet) {
             return [{ error: "MadWalletJS wallet instance not found" }, null];
         }
@@ -173,6 +178,7 @@ class MadNetAdapter {
                             else {
                                 curve = "01";
                             }
+                            // TODO: REFACTOR: Abstract these checks to an internal function
                             if ((
                                 tx["Tx"]["Vout"][j]["AtomicSwap"] &&
                                 address == tx["Tx"]["Vout"][j]["AtomicSwap"]["ASPreImage"]["Owner"].slice(4) && // eslint-disable-line
@@ -235,7 +241,7 @@ class MadNetAdapter {
             return ({ error: "Waiting for pending transaction to be mined" });
         }
         this.pendingTxStatus.set("Sending transaction")
-        for await (let txOut of this.txOuts.get()) {
+        for await (const txOut of this.txOuts.get()) {
             try {
                 switch (txOut.type) {
                     case "VS":
@@ -424,7 +430,8 @@ class MadNetAdapter {
         }
     }
 
-    async backOffRetry(fn, reset) {
+    // TODO: REFACTOR: Move string types to constant configuration file, eg fn names to remove chance of mistypes
+    backOffRetry(fn, reset) {
         if (reset) {
             this[String(fn) + "-timeout"] = 1000;
             this[String(fn) + "-attempts"] = 1
@@ -463,7 +470,7 @@ class MadNetAdapter {
         }
     }
 
-    async addTxOut(txOut) {
+    addTxOut(txOut) {
         try {
             let newTxOuts = [...this.txOuts.get()];
             newTxOuts.push(txOut)
@@ -475,7 +482,7 @@ class MadNetAdapter {
         }
     }
 
-    async setTxOuts(txOuts) {
+    setTxOuts(txOuts) {
         try {
             this.txOuts.set(txOuts);
             return txOuts;
@@ -485,7 +492,7 @@ class MadNetAdapter {
         }
     }
 
-    async setChangeAddress(changeAddress) {
+    setChangeAddress(changeAddress) {
         try {
             this.changeAddress.set(changeAddress);
             return true;
@@ -495,9 +502,9 @@ class MadNetAdapter {
         }
     }
 
-    async setDsSearchOpts(searchOpts) {
+    setDsSearchOpts(searchOpts) {
         try {
-            this.dsSearchOpts = searchOpts;
+            this.dsSearchOpts.set(searchOpts);
             return true;
         }
         catch (ex) {
@@ -505,9 +512,9 @@ class MadNetAdapter {
         }
     }
 
-    async setDsDataStores(DataStores) {
+    setDsDataStores(DataStores) {
         try {
-            this.dsDataStores = this.dsDataStores.concat(DataStores)
+            this.dsDataStores.set(this.dsDataStores.get().concat(DataStores));
             return true;
         }
         catch (ex) {
@@ -515,9 +522,9 @@ class MadNetAdapter {
         }
     }
 
-    async setDsActivePage(activePage) {
+    setDsActivePage(activePage) {
         try {
-            this.dsActivePage = activePage;
+            this.dsActivePage.set(activePage);
             return true;
         }
         catch (ex) {
@@ -525,9 +532,9 @@ class MadNetAdapter {
         }
     }
 
-    async setDsView(dsView) {
+    setDsView(dsView) {
         try {
-            this.dsView = dsView;
+            this.dsView.set(dsView);
             return true;
         }
         catch (ex) {
