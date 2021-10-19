@@ -22,11 +22,17 @@ export default function AddWalletMenu() {
     const genWallet = async () => {
 
         setLoading(true);
+        let error = false;
 
         if (typeof walletName.value !== 'string') {
-            return setWalletNameKeys({ "error": "Must be a string" });
+            error = "Must be a string"
         }
         if (walletName.value.length <= 3) {
+            error = "Must be atleast 4 characters"
+        }
+        
+        if (error) {
+            setLoading(false);
             return setWalletNameKeys({ "error": "Must be atleast 4 characters" });
         }
 
