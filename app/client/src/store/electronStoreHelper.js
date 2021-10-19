@@ -268,7 +268,6 @@ function checkIfUserHasVault() {
 
 /**
  * Check input password against stored preflight hash 
- * 
  */
 function checkPasswordAgainstPreflightHash(password) {
     return new Promise(async res => {

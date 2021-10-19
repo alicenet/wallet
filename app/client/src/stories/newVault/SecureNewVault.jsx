@@ -8,7 +8,7 @@ import { useFormState } from 'hooks/_hooks';
 
 import { VAULT_ACTIONS } from 'redux/actions/_actions'
 
-import Page from '../../layout/Page';
+import Page from 'layout/Page';
 
 function SecureNewVault() {
 
@@ -19,34 +19,12 @@ function SecureNewVault() {
         desiredCurve: state.user.desired_hd_curve
     }));
 
-    const [formState, formSetter] = useFormState([
+    const [formState, formSetter, onSubmit] = useFormState([
         { name: 'password', type: 'password', isRequired: true },
-        { name: 'verifiedPassword', type: 'password', isRequired: true }
+        { name: 'verifiedPassword', type: 'verified-password', isRequired: true }
     ]);
 
     const handleFormSubmit = () => {
-        if (!formState.password.value) {
-            return formSetter.setPasswordError("Password is required");
-        }
-        else {
-            formSetter.clearPasswordError()
-        }
-
-        if (formState.password.value.length < 7) {
-            return formSetter.setPasswordError("Password must be at least 8 characters long.");
-        }
-        else {
-            formSetter.clearPasswordError()
-        }
-
-        if (formState.password.value !== formState.verifiedPassword.value) {
-            return formSetter.setVerifiedPasswordError("Password do not match.");
-        }
-        else {
-            formSetter.clearVerifiedPasswordError()
-        }
-
-        // Dispatch the vault generation action and. . .
         dispatch(VAULT_ACTIONS.generateNewSecureHDVault(seedPhrase, formState.password.value, desiredCurve))
         history.push("/hub");
     }
@@ -93,12 +71,8 @@ function SecureNewVault() {
                                 placeholder='Enter Password'
                                 type='password'
                                 required
-                                onChange={e => {
-                                    formSetter.setPassword(e.target.value)
-                                }}
-                                error={!!formState.password.error && {
-                                    content: formState.password.error
-                                }}
+                                onChange={e => formSetter.setPassword(e.target.value)}
+                                error={!!formState.password.error && { content: formState.password.error }}
                             />
 
                             <Form.Input
@@ -107,12 +81,8 @@ function SecureNewVault() {
                                 placeholder='Enter Password'
                                 type='password'
                                 required
-                                onChange={e => {
-                                    formSetter.setVerifiedPassword(e.target.value)
-                                }}
-                                error={!!formState.verifiedPassword.error && {
-                                    content: formState.verifiedPassword.error
-                                }}
+                                onChange={e => formSetter.setVerifiedPassword(e.target.value)}
+                                error={!!formState.verifiedPassword.error && { content: formState.verifiedPassword.error }}
                             />
 
                         </Form.Group>
@@ -127,7 +97,7 @@ function SecureNewVault() {
 
                         <Button color="red" basic content="Cancel Vault Creation" className="m-0" onClick={() => history.push('/')}/>
 
-                        <Button color="teal" basic content='Secure My Wallets' className="m-0" onClick={handleFormSubmit}/>
+                        <Button color="teal" basic content='Secure My Wallets' className="m-0" onClick={() => onSubmit(handleFormSubmit)}/>
 
                     </Container>
                 </Grid.Column>
