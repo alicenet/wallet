@@ -43,12 +43,16 @@ export default function useFormState(initialStateKeysArray) {
         setters["clear" + keyName + "Error"] = () => setFormState(prevState => ({ ...prevState, [key.name]: { ...prevState[key.name], error: '' } }));
     });
 
-    const onSubmit = (callback) => {
+    const onSubmit = async (callback) => {
         let errorsFound = false;
-        initialStateKeysArray.forEach(key => {
+
+        for (let i = 0; i < initialStateKeysArray.length; i++) {
+
+            let key = initialStateKeysArray[i];
+
             let error = "";
             if (key.validation) {
-                if (!key.validation.check(formState[key.name].value)) {
+                if (!(await key.validation.check(formState[key.name].value))) {
                     error = key.validation.message;
                 }
             }
@@ -98,7 +102,7 @@ export default function useFormState(initialStateKeysArray) {
                 setters['clear' + keyName + 'Error']();
             }
 
-        });
+        }
 
         if (!errorsFound) {
             callback();

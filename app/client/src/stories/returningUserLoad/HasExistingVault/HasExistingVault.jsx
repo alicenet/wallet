@@ -37,7 +37,7 @@ function UnlockExistingVault() {
     });
 
     const handleFormSubmit = async () => {
-        let loaded = false; //await dispatch(VAULT_ACTIONS.loadSecureHDVaultFromStorage(formState.password.value))
+        let loaded = await dispatch(VAULT_ACTIONS.loadSecureHDVaultFromStorage(formState.password.value))
         if (loaded) {
             history.push('/hub')
         }
@@ -50,7 +50,7 @@ function UnlockExistingVault() {
 
                 <Grid.Column width={16} className="p-0 self-center">
 
-                    <Header content="Welcome Back" as="h3" className="m-0"/>
+                    <Header content="Welcome Back" as="h3" className="m-0" />
 
                 </Grid.Column>
 
@@ -62,7 +62,7 @@ function UnlockExistingVault() {
 
                 <Grid.Column width={8} className="p-0 self-center">
 
-                    <Form onSubmit={(event => handleFormSubmit(event))}>
+                    <Form onSubmit={() => onSubmit(handleFormSubmit)}>
 
                         <Form.Group className="flex flex-auto flex-col m-0 text-left text-sm gap-5 items-center h-32">
 
@@ -79,7 +79,7 @@ function UnlockExistingVault() {
                                 }}
                             />
 
-                            <ForgottenVaultPasswordModal incorrectPwEntered={!!formState.password.error}/>
+                            <ForgottenVaultPasswordModal incorrectPwEntered={!!formState.password.error} />
 
                         </Form.Group>
 
@@ -91,7 +91,7 @@ function UnlockExistingVault() {
 
                     <Container className="flex justify-center">
 
-                        <Button color="teal" basic content='Unlock Vault' disabled={!formState.password.value} className="m-0" onClick={() => onSubmit(handleFormSubmit)}/>
+                        <Button color="teal" basic content='Unlock Vault' disabled={!formState.password.value} className="m-0" onClick={() => onSubmit(handleFormSubmit)} />
 
                     </Container>
 
