@@ -43,7 +43,11 @@ class Web3Adapter {
         // Set up subscribe and listen to store events
         await this._listenToStore();
         // Set the latest contracts
-        await this._setAndGetUptoDateContracts();
+        let connected = await this._setAndGetUptoDateContracts();
+        if (connected.error) {
+            toast.error(<SyncToastMessageWarning basic title="Error" message="Web3 Connection Error - Verify Settings" />, { className: "basic", "autoClose": 2400 })
+            return { error: connected.error }
+        }
         // Set and get the latest contract info
         await this._setAndGetInfo();
         // Verify that both provider and registry contract are available
@@ -91,9 +95,13 @@ class Web3Adapter {
      * @returns { Web3 } - Web3 Instance referencing latest ethereum provider from state
      */
     _setAndGetUptoDateWeb3Instance() {
-        let newWeb3 = new Web3(new Web3.providers.HttpProvider(this._getEthereumProviderFromStore(), { timeout: 5000 }));
-        this.web3 = newWeb3;
-        return this.web3;
+        try {
+            let newWeb3 = new Web3(new Web3.providers.HttpProvider(this._getEthereumProviderFromStore(), { timeout: 5000 }));
+            this.web3 = newWeb3;
+            return this.web3;
+        } catch (ex) {
+            throw new Error(ex);
+        }
     }
 
     /**
@@ -101,19 +109,23 @@ class Web3Adapter {
      * @returns { Array[Web3.Contract] } - Array of contract objects
      */
     async _setAndGetUptoDateContracts() {
-        let web3 = this._setAndGetUptoDateWeb3Instance(); // Get an uptoDate web3 instance
-        let registryContract = new web3.eth.Contract(ABI["registry"], this._getRegistryContractFromStore()); // Note the current registry address from config
-        let contractList = []; // Array to push contracts to and return
-        for await (let contract of reqContracts) {
-            let contractAddr = await registryContract.methods.lookup(contract + REGISTRY_VERSION).call();
-            let newContract = new this.web3.eth.Contract(ABI[contract], contractAddr);
-            let info = {}
-            info["name"] = contract;
-            info["instance"] = newContract;
-            contractList.push(info);
+        try {
+            let web3 = this._setAndGetUptoDateWeb3Instance(); // Get an uptoDate web3 instance
+            let registryContract = new web3.eth.Contract(ABI["registry"], this._getRegistryContractFromStore()); // Note the current registry address from config
+            let contractList = []; // Array to push contracts to and return
+            for await (let contract of reqContracts) {
+                let contractAddr = await registryContract.methods.lookup(contract + REGISTRY_VERSION).call();
+                let newContract = new this.web3.eth.Contract(ABI[contract], contractAddr);
+                let info = {}
+                info["name"] = contract;
+                info["instance"] = newContract;
+                contractList.push(info);
+            }
+            this.contracts = contractList;
+            return this.contracts;
+        } catch (ex) {
+            return { error: ex }
         }
-        this.contracts = contractList;
-        return this.contracts;
     }
 
     /** Sets the current information to redux state regarding validators and epoch time */

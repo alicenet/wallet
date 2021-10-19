@@ -15,7 +15,7 @@ export const SyncToastMessageWarning = ({ title, message }) => {
     )
 }
 
-export const SyncToastMessageSuccess = ({ title, message, noIcon, basic }) => {
+export const SyncToastMessageSuccess = ({ title, message, hideIcon, basic }) => {
 
     if (basic) {
         return (
@@ -30,7 +30,7 @@ export const SyncToastMessageSuccess = ({ title, message, noIcon, basic }) => {
     return (
         <div className="w-full">
             <Header color="green" as="h5" textAlign="left">
-                {!noIcon && (<Icon size="small" name="thumbs up" className="mt-1" />)}
+                {hideIcon ? "" : (<Icon size="small" name="thumbs up" className="mt-1" />)}
                 <Header.Content>
                     {title}
                     <Header.Subheader >{message}</Header.Subheader>
