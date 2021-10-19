@@ -96,7 +96,7 @@ export default function useFormState(initialStateKeysArray) {
             const keyName = upperFirst(key.name);
             if (error) {
                 setters['set' + keyName + 'Error'](error);
-                errorsFound |= true;
+                errorsFound = true;
             }
             else {
                 setters['clear' + keyName + 'Error']();
