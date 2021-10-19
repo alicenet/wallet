@@ -17,6 +17,8 @@ function UnlockExistingVault() {
     const history = useHistory();
     const dispatch = useDispatch();
 
+    const [showForgottenVaultPasswordModal, setShowForgottenVaultPasswordModal] = React.useState(false);
+
     const [formState, formSetter, onSubmit] = useFormState([
         {
             name: 'password',
@@ -43,6 +45,12 @@ function UnlockExistingVault() {
         }
     }
 
+    React.useEffect(() => {
+        if (formState.password.error) {
+            setShowForgottenVaultPasswordModal(true);
+        }
+    }, [formState]);
+
     return (
         <Page>
 
@@ -50,7 +58,7 @@ function UnlockExistingVault() {
 
                 <Grid.Column width={16} className="p-0 self-center">
 
-                    <Header content="Welcome Back" as="h3" className="m-0" />
+                    <Header content="Welcome Back" as="h3" className="m-0"/>
 
                 </Grid.Column>
 
@@ -79,7 +87,7 @@ function UnlockExistingVault() {
                                 }}
                             />
 
-                            <ForgottenVaultPasswordModal incorrectPwEntered={!!formState.password.error} />
+                            <ForgottenVaultPasswordModal incorrectPwEntered={showForgottenVaultPasswordModal}/>
 
                         </Form.Group>
 
@@ -91,7 +99,7 @@ function UnlockExistingVault() {
 
                     <Container className="flex justify-center">
 
-                        <Button color="teal" basic content='Unlock Vault' disabled={!formState.password.value} className="m-0" onClick={() => onSubmit(handleFormSubmit)} />
+                        <Button color="teal" basic content='Unlock Vault' disabled={!formState.password.value} className="m-0" onClick={() => onSubmit(handleFormSubmit)}/>
 
                     </Container>
 
