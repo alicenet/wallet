@@ -121,7 +121,7 @@ export const getAndStoreLatestBalancesForAddress = (address) => {
         let wallets = [...state.vault.wallets.internal, ...state.vault.wallets.external];
         let web3Connected = state.adapter.web3Adapter.connected;
         let madNetConnected = state.adapter.madNetAdapter.connected;
-        let balanceState = {...state.vault.balances}; // Get current balances for state object update
+        let balanceState = { ...state.vault.balances }; // Get current balances for state object update
 
         // Set default balance object for this address
         let addressBalances = {
@@ -139,25 +139,35 @@ export const getAndStoreLatestBalancesForAddress = (address) => {
         // First get eth/staking/util balances -- Only if web3 connected
         if (web3Connected) {
             // Get the account privK based on the address from state to add to web3 to fetch balance information
-            let wallet = wallets.filter(wal => wal.address === address )[0];
-            balancePromises.push(web3Adapter.useAccount(wallet.privK));
-        } else { log.debug("Skipping eth/staking/util balance fetch for address: " + address + " :: Web3 not connected.") }
+            let wallet
+            try {
+                wallet = wallets.filter(wal => wal.address === address)[0];
+                balancePromises.push(web3Adapter.useAccount(wallet.privK));
+            } catch (ex) {
+                log.warn("Unable to parse wallet data for web3 balances of address: " + address, ". Is there a state imbalance? Error: ", ex);
+            }
+        }
+        // Push an IIFE for a false resolving promise to position 0, to maintain array positions for the Promise.all resolve
+        else {
+            balancePromises.push((() => (new Promise(res => (res(false))))())); 
+            log.debug("Skipping eth/staking/util balance fetch for address: " + address + " :: Web3 not connected.")
+        }
         // Second get madBytes balance/utxos -- Only if madNet connected
         if (madNetConnected) {
             balancePromises.push(madNetAdapter.getMadWalletBalanceWithUTXOsForAddress(address));
         } else { log.debug("Skipping madBytes/UTXO balance fetch for address: " + address + " :: MadNet not connected.") }
 
         // If neither mad or web3 is connected, don't bother to try and pull balances
-        if (!madNetConnected && !web3Connected ) {
+        if (!madNetConnected && !web3Connected) {
             return false;
         }
 
         let foundBalances = await Promise.all(balancePromises);
 
         // Inject eth
-        if (typeof foundBalances[0] !== 'undefined' && !foundBalances[0].error) {
+        if (typeof foundBalances[0] !== false && typeof foundBalances[0] !== 'undefined' && !foundBalances[0].error) {
             addressBalances.eth = foundBalances[0].balances.eth;
-            addressBalances.stake =  foundBalances[0].balances.stakingToken.balance;
+            addressBalances.stake = foundBalances[0].balances.stakingToken.balance;
             addressBalances.stakeAllowance = foundBalances[0].balances.stakingToken.allowance;
             addressBalances.util = foundBalances[0].balances.utilityToken.balance;
             addressBalances.utilAllowance = foundBalances[0].balances.utilityToken.allowance;
