@@ -48,15 +48,10 @@ class MadNetAdapter {
 
     }
 
-    // Return state of connected
-    _isReady() {
-        return this.connected;
-    }
-
     /**
      * Initiate the madNet Adapater and verify a connection is possible 
-     * @param {Object} config - Prevent toast from popping?
-     * @property { Bool } config.preventToast - Should the toast be prevented?
+     * @param {Object} config - Init Config
+     * @property { Bool } config.preventToast - Should the success toast be prevented?
      */
     async __init(config = {}) {
         try {
@@ -66,6 +61,7 @@ class MadNetAdapter {
             if (!config.preventToast) {
                 toast.success(<SyncToastMessageSuccess basic title="Success" message="MadNet Connected" />, { className: "basic", "autoClose": 2400 })
             }
+            this._listenToStore();
             return { success: true }
         }
         catch (ex) {
@@ -133,6 +129,8 @@ class MadNetAdapter {
 
     /**
      * Returns mad wallet balance and utxoids for respctive address and curve
+     * @param address - Wallet address to look up the balance for
+     * @param curve - Address curve to use
      */
     async _getMadNetWalletBalanceAndUTXOs(address, curve) {
         let madWallet = this.wallet();
@@ -149,7 +147,7 @@ class MadNetAdapter {
     /**
      * Fetch previous transactions for a given account
      * @param { Array<String> } addresses - Array of addresses to get previous transactions for
-     * @returns { Array[ [Array<Object>], currentBlock<Int> ] } - Array of previous transactions
+     * @returns { Array[ [Array<Object>], currentBlock<Int> ] } - Array of previous transactions as well as the current block
      */
     async getPrevTransactions(addresses) {
         try {
@@ -361,8 +359,6 @@ class MadNetAdapter {
         this.currentBlock.set(0);
         this.blocksLocked.set(false);
     }
-
-    // TODO: Cat Continue Porting here after testing above functionality . . . //
 
     // Get block for modal
     async viewBlock(height) {

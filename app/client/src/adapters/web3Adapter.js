@@ -32,9 +32,6 @@ class Web3Adapter {
             },
             "validatorInfo": {}
         };
-
-        // Init instance -- Let this happen externally and keep one instance as a singleton
-        // this.__init()
     }
 
     /**
@@ -410,7 +407,11 @@ class Web3Adapter {
         }
     }
 
-    // Get token balances - 0 decimals
+    /**
+     * Fetch STAKE and UTIL token balances
+     * @param { String } address - Addres to fetch the balances for 
+     * @returns 
+     */
     async getTokenBalances(address) {
         try {
             let stakingToken = await this.getContract("stakingToken");
@@ -425,7 +426,6 @@ class Web3Adapter {
 
             return [stakingBalance, stakingAllowance, utilityBalance, utilityAllowance];
         } catch (ex) {
-            throw new Error(ex);
             return [{ error: ex }]
         }
     }

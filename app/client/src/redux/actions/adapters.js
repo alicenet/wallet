@@ -183,24 +183,3 @@ export const getAndStoreLatestBalancesForAddress = (address) => {
 
     }
 }
-
-// Get Latest MadByte Balances/UTXOs for all of madnetWallet.Account.accounts and push balance to redux state
-export const updateAndLoadMadNetBalancesToState = () => {
-
-}
-
-// Get eth, util, and stake balances from Web3 instance for specified wallet address
-export const updateAndLoadWeb3BalancesToState = () => {
-    return async (dispatch, getState) => {
-        let wallets = getState().vault.wallets;
-        // Concat wallets for getting balances
-        let allWallets = [...wallets.internal, ...wallets.external]
-        // For each wallet, get the balance --
-        for (let wallet of allWallets) {
-            // Get the eth balance. . .
-            web3Adapter.getEthBalance()
-            // Get the token balances . . .
-        }
-
-    }
-}
