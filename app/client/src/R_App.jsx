@@ -8,10 +8,13 @@ import util from 'util/_util';
 
 // User Story Components
 import * as Hubs from 'stories/hubs/_hubs';
-import * as Settings from 'stories/settings/_settings';
+import * as AddWallet from 'stories/addWallet/_addWallet';
 import * as NewVaultFlows from 'stories/newVault/_newVault';
 import * as OptOutFlow from 'stories/optOut/_optOut';
 import * as ReturningUserLoadFlows from 'stories/returningUserLoad/_returnUserLoad';
+import * as Settings from 'stories/settings/_settings';
+
+// Global Modals
 import PasswordRequestModal from 'components/modals/PasswordRequestModal';
 
 /**
@@ -57,6 +60,9 @@ function App() {
                 {/* Wallet Hub -- Send here if vault exists */}
                 <Route exact path="/hub" component={Hubs.ReturningUserHub}/>
 
+                {/* Add Wallet -- Add Wallet Menu && Screens */}
+                <Route exact path="/addWallet/menu" component={AddWallet.AddWalletMenu}/>
+                <Route exact path="/addWallet/generate" component={AddWallet.GenerateWallet}/>
 
                 {/* Wallet Hub -- Settings */}
                 <Route exact path="/wallet/settings" component={Settings.Settings}/>
