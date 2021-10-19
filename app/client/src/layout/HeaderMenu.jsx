@@ -21,7 +21,7 @@ function HeaderMenu({ hideMenu }) {
 
             <Container fluid className="flex flex-row content-center justify-start">
 
-                <Menu.Item as='a' header className='p-0 mx-2' onClick={() => history.push('/')}>
+                <Menu.Item as='a' header className='p-0 mx-2 hover:bg-transparent' onClick={() => history.push('/')}>
 
                     <Container fluid className="flex flex-row items-center gap-4">
 
@@ -43,7 +43,7 @@ function HeaderMenu({ hideMenu }) {
 
             <Container fluid className="flex flex-row content-center justify-end">
 
-                {!hideMenu && existingAccount && <Menu.Item as='a' header onClick={() => history.push('/wallet/settings')} className="mx-0">
+                {!hideMenu && existingAccount && <Menu.Item as='a' header onClick={() => history.push('/wallet/settings')} className="mx-0 hover:bg-transparent">
 
                     <Icon name="cog" size="large" className="mx-0 transform duration-300 hover:rotate-90"/>
 
