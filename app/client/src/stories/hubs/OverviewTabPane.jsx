@@ -2,7 +2,7 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ADAPTER_ACTIONS } from 'redux/actions/_actions';
 
-import { Button, Container, Grid, Loader } from 'semantic-ui-react'
+import { Button, Container, Grid } from 'semantic-ui-react'
 
 import { curveTypes } from '../../util/wallet';
 
@@ -45,7 +45,7 @@ export default function OverviewTabPane({ wallet }) {
 
             <Grid.Row>
 
-                <Grid.Column width={10}>
+                <Grid.Column width={16}>
 
                     <Container>
 
@@ -54,10 +54,6 @@ export default function OverviewTabPane({ wallet }) {
 
                     </Container>
 
-                </Grid.Column>
-
-                <Grid.Column width={6} textAlign="right" >
-                    <Button size="mini" content="Balance Refresh" icon="refresh" loading={loader === "balances"} onClick={fetchBalances} color="green" basic />
                 </Grid.Column>
 
             </Grid.Row>
@@ -70,9 +66,9 @@ export default function OverviewTabPane({ wallet }) {
 
                         <label className="font-semibold">Ethereum Balances</label>
                         <div className="py-1">
-                            <div><MicroBalanceLoader balanceType="ETH" balanceKey={"eth"} /> </div>
-                            <div><MicroBalanceLoader balanceType="STAKE" balanceKey={"stake"} balanceKey2={"stakeAllowance"} /> </div>
-                            <div><MicroBalanceLoader balanceType="UTIL" balanceKey={"util"} balanceKey2={"utilAllowance"} /> </div>
+                            <div><MicroBalanceLoader balanceType="ETH" balanceKey={"eth"}/></div>
+                            <div><MicroBalanceLoader balanceType="STAKE" balanceKey={"stake"} balanceKey2={"stakeAllowance"}/></div>
+                            <div><MicroBalanceLoader balanceType="UTIL" balanceKey={"util"} balanceKey2={"utilAllowance"}/></div>
                         </div>
 
                     </Container>
@@ -85,7 +81,7 @@ export default function OverviewTabPane({ wallet }) {
 
                         <label className="font-semibold">MadNet Balances</label>
                         <div className="py-1">
-                            <div><MicroBalanceLoader balanceType="MadBytes" balanceKey={"madBytes"} /> </div>
+                            <div><MicroBalanceLoader balanceType="MadBytes" balanceKey={"madBytes"}/></div>
                         </div>
 
                     </Container>
@@ -113,6 +109,7 @@ export default function OverviewTabPane({ wallet }) {
 
                         <label className="font-semibold">Actions</label>
                         <Container className="flex flex-col items-baseline underline py-1">
+                            <Button className="text-green-500 text-sm bg-transparent p-0.5" onClick={fetchBalances}>Refresh Balances</Button>
                             <Button className="text-purple-700 text-sm bg-transparent p-0.5">Rename Wallet</Button>
                             <Button className="text-purple-700 text-sm bg-transparent p-0.5">Export Private Key</Button>
                             <Button className="text-red-700 text-sm bg-transparent p-0.5">Remove Wallet</Button>
