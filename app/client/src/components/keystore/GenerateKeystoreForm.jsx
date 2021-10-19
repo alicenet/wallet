@@ -61,11 +61,9 @@ export default function GenerateKeystoreForm({ loadKeystoreCB, inline, defaultPa
                 <Form.Group widths="equal">
 
                     <Form.Input
-                        label={
-                            <label className="flex justify-between">Password
-                                <Checkbox checked={curveType === curveTypes.BARRETO_NAEHRIG} onChange={toggleCurveType}
-                                          label={<label className={"labelCheckbox"}>Use BN Curve</label>}
-                                          className="flex justify-center items-center text-xs uppercase font-bold relative -top-0"/>
+                        label={<label className="flex justify-between">
+                            Password
+                            <Checkbox checked={curveType === curveTypes.BARRETO_NAEHRIG} onChange={toggleCurveType} label={<label className={"labelCheckbox"}>Use BN Curve</label>} className="flex justify-center items-center text-xs uppercase font-bold relative -top-0"/>
                             </label>}
                         type={showPassword ? "text" : "password"} value={formState.password.value}
                         onChange={e => formSetter.setPassword(e.target.value)}
@@ -73,14 +71,13 @@ export default function GenerateKeystoreForm({ loadKeystoreCB, inline, defaultPa
                     />
 
                     <Form.Input label="Keystore Download" disabled={!keystoreDL} value={keystoreDL.filename} onChange={setFilename}
-                                action={
-                                    <Button.Group size="mini">
-                                        <Button content="Download" icon="download" size="mini" color="purple" basic ref={downloadRef}
-                                                href={keystoreDL ? URL.createObjectURL(keystoreDL.data) : ""} download={keystoreDL.filename}/>
-                                        <Button.Or text="or"/>
-                                        <Button content="Load" icon="arrow alternate circle right" labelPosition="right" color="green" basic onClick={loadKeystore}/>
-                                    </Button.Group>
-                                }
+                        action={
+                            <Button.Group size="mini">
+                                <Button content="Download" icon="download" size="mini" color="purple" basic ref={downloadRef} href={keystoreDL ? URL.createObjectURL(keystoreDL.data) : ""} download={keystoreDL.filename} />
+                                <Button.Or text="or" />
+                                <Button content="Load" icon="arrow alternate circle right" labelPosition="right" color="green" basic onClick={loadKeystore} />
+                            </Button.Group>
+                        }
                     />
 
                 </Form.Group>
@@ -106,10 +103,7 @@ export default function GenerateKeystoreForm({ loadKeystoreCB, inline, defaultPa
                 action={{ content: "Generate", size: "mini", onClick: generateWallet, icon: "refresh", className: "w-28" }}
             />
 
-            <Form.Input
-                label="Keystore Download"
-                disabled={!keystoreDL}
-                value={keystoreDL.filename}
+            <Form.Input label="Keystore Download" disabled={!keystoreDL} value={keystoreDL.filename}
                 action={{
                     content: "Download",
                     icon: "download",
@@ -122,7 +116,7 @@ export default function GenerateKeystoreForm({ loadKeystoreCB, inline, defaultPa
             />
 
             <Form.Button color="green" basic className="mt-6"
-                         content="Load This Keystore" onClick={loadKeystore}
+                content="Load This Keystore" onClick={loadKeystore}
             />
 
         </Form>
