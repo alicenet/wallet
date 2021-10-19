@@ -2,7 +2,7 @@ import electronStoreMessenger from './electronStoreMessenger';
 import { electronStoreHelper_logger as log } from 'log/logHelper';
 import utils from 'util/_util';
 import { utils as web3Utils } from 'web3'
-import { v4 as uuidv4, v4 } from 'uuid';
+import { v4 } from 'uuid';
 
 /** A utility module to assist in reading and writing from the secure-electron-store using the elctronStoreMessenger 
  * without directly utilizing the pub/sub interface provided by it, but rather it's sync-mimicking abstractions
@@ -216,7 +216,7 @@ async function addOptOutKeystore(ksString, walletName) {
     // First see if optOuts exist, if not make them
     let currentKeystores = await readPlainValueFromStore("optOutStores");
     // If not existant, set as empty array and add to it
-    if (currentKeystores.error && currentKeystores.error == "Key is not in secure-electron-storage!") {
+    if (currentKeystores.error && currentKeystores.error === "Key is not in secure-electron-storage!") {
         currentKeystores = [];
     }
     // Add new keystore with a uid
@@ -231,7 +231,7 @@ async function addOptOutKeystore(ksString, walletName) {
 function checkForOptoutStores() {
     return new Promise(async res => {
         let keystores = await readPlainValueFromStore("optOutStores")
-        if (keystores.error && keystores.error == "Key is not in secure-electron-storage!") {
+        if (keystores.error && keystores.error === "Key is not in secure-electron-storage!") {
             res(false);
         }
         else if (keystores.error) {

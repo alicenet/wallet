@@ -11,10 +11,26 @@ export const initialAdapterState = {
         max_validators: false, // Max number of validators -- False if not able to || hasn't been polled
     },
     madNetAdapter: {
-        can_connect: false,
+        connected: false,
         error: false,
+        transactions: {
+            txOuts: [],
+            pendingtx: false,
+            pendingLocked: false,
+            changeAddress: { "address": "", "bnCurve": false },
+        },
+        blocks: {
+            list: [],
+            started: false,
+            locked: false,
+            id: false,
+            mbAttempts: false,
+        },
+
     }
 }
+
+// madNetAdapter[key1][key2][key3]
 
 /* Modal Reducer */
 export default function adapterReducer(state = initialAdapterState, action) {
@@ -34,7 +50,12 @@ export default function adapterReducer(state = initialAdapterState, action) {
         case ADAPTER_ACTION_TYPES.SET_WEB3_INFO:
             return Object.assign({}, state, {
                 web3Adapter: { ...state.web3Adapter, epoch: action.payload.epoch, validators: action.payload.validators, max_validators: action.payload.validators }
-        });
+            });
+
+        case ADAPTER_ACTION_TYPES.SET_WEB3_EPOCH:
+            return Object.assign({}, state, {
+                web3Adapter: { ...state.web3Adapter, epoch: action.payload }
+            });
 
         case ADAPTER_ACTION_TYPES.SET_MADNET_CONNECTED:
             return Object.assign({}, state, {
@@ -44,6 +65,29 @@ export default function adapterReducer(state = initialAdapterState, action) {
         case ADAPTER_ACTION_TYPES.SET_MADNET_ERROR:
             return Object.assign({}, state, {
                 madNetAdapter: { ...state.madNetAdapter, error: action.payload }
+            });
+
+        /**
+         * A payload dependant state setter action for the madNetAdapter state 
+         * --  Supports upto object depth of 3
+         * Requires payload.keyChain and payload.value
+         */
+        case ADAPTER_ACTION_TYPES.SET_MADNET_KEYCHAIN_VALUE:
+            let keyDepth = action.payload.keyChain.length;
+            let keyTargets = action.payload.keyChain;
+            let newAdapterState = { ...state.madNetAdapter };
+            if (keyDepth === 1) {
+                newAdapterState[keyTargets[0]] = action.payload.value;
+            } else if (keyDepth === 2) {
+                newAdapterState[keyTargets[0]][keyTargets[1]] = action.payload.value;
+            } else if (keyDepth === 3) {
+                newAdapterState[keyTargets[0]][keyTargets[1]][keyTargets[2]] = action.payload.value;
+            } else { // Fallback to prev state
+                log.warn("Falling back to previous state during SET_MADNET_KEYCHAIN_VALUE, verify keyChain accessors and value set on payload correctly.")
+                newAdapterState = { ...state.madNetAdapter }
+            }
+            return Object.assign({}, state, {
+                madNetAdapter: newAdapterState,
             });
 
         default:

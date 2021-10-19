@@ -1,12 +1,8 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
-import { USER_ACTIONS } from 'redux/actions/_actions';
 import { Segment, Form, Header, Button, TextArea } from 'semantic-ui-react';
 import { electronStoreUtilityActons } from 'store/electronStoreHelper.js';
 
 export default function ElectronStorePanel() {
-
-    const dispatch = useDispatch();
 
     // State
 

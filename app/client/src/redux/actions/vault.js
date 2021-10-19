@@ -6,6 +6,7 @@ import util from 'util/_util';
 import { ACTION_ELECTRON_SYNC } from 'redux/middleware/VaultUpdateManagerMiddleware';
 import { curveTypes } from 'util/wallet';
 import utils from 'util/_util';
+import { ADAPTER_ACTIONS } from './_actions';
 
 /* !!!!!!! ____   ATTENTION: ______ !!!!!!!!  
 
@@ -50,7 +51,7 @@ export function loadSecureHDVaultFromStorage(password) {
         let wu = util.wallet;
         // Unlock vault for parsing and note the mnemonic for HD wallets
         const unlockedVault = await electronStoreCommonActions.unlockAndGetSecuredHDVault(password);
-        if (unlockedVault.error) { return [false, [unlockedVault] ] }; // Bubble the done/error upwards
+        if (unlockedVault.error) { return [false, [unlockedVault]] }; // Bubble the done/error upwards
         const mnemonic = unlockedVault.mnemonic;
         const hdLoadCount = unlockedVault.hd_wallet_count;
         const hdCurve = unlockedVault.hd_wallet_curve;
@@ -83,6 +84,18 @@ export function loadSecureHDVaultFromStorage(password) {
         let res = await dispatch({ type: MIDDLEWARE_ACTION_TYPES.INIT_MAD_WALLET, payload: preInitPayload }); // Pass off to MadWalletMiddleware to finish state initiation
         dispatch({ type: VAULT_ACTION_TYPES.MARK_EXISTS_AND_UNLOCKED });
         dispatch({ type: VAULT_ACTION_TYPES.SET_MNEMONIC, payload: mnemonic });
+
+        // Once the vault is unlocked attempt to connect web3, and then madNet
+        log.debug("Vault Unlock: Attempting to init MadNet && Web3 Adapters. . .")
+        let adaptersConnected = await dispatch(ADAPTER_ACTIONS.initAdapters());
+
+        // Check and log any errors -- Allow unlock to happen even if network errors occur -- Appropriate toasts will be delivered to user via their respective adapaters
+        if (adaptersConnected.error) {
+            log.error("GeneralNetworkConnectionError:", adaptersConnected.error);
+            log.error("MadNetConnectionError: ", adaptersConnected.errors.madNet);
+            log.error("Web3ConnectionError: ", adaptersConnected.errors.web3);
+        }
+
         return res;
     }
 }

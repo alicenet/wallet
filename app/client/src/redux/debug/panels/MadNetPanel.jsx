@@ -3,20 +3,31 @@ import { Button, Header, Placeholder, Segment } from 'semantic-ui-react';
 import { DButton } from '../DebugPanel.jsx';
 import { useSelector } from 'react-redux';
 import web3Adapter from 'adapters/web3Adapter.js';
+import madNetAdapter from 'adapters/madAdapter';
 import utils from 'util/_util.js';
+import { classNames } from 'util/generic.js';
 
 export default function Web3Panel() {
 
-    const web3AdapterState = useSelector(s => (s.adapter.web3Adapter));
+    const adapterState = useSelector(s => (s.adapter.madNetAdapter));
     const wallets = useSelector(s => s.vault.wallets);
     const [activeWallet, setActiveWallet] = React.useState(false);
 
     const [loading, setLoading] = React.useState(false);
 
-    const initWeb3Adapter = async () => {
+    const { vaultUnlockedAndExists } = useSelector(s => ({ vaultUnlockedAndExists: s.vault.exists && !s.vault.is_locked }))
+
+    const initMadNetAdapter = async () => {
         setLoading("instance");
-        await web3Adapter.__init();
+        await madNetAdapter.__init();
         setLoading(false);
+    }
+
+    const printBalances = async () => {
+        setLoading("balances");
+        let balancesAndUTXOs = await madNetAdapter.getAllMadWalletBalancesWithUTXOs(); 
+        console.log(balancesAndUTXOs);
+        setLoading("false");
     }
 
     const walletArrayToButtons = (walletArray, actionFunction) => {
@@ -37,29 +48,29 @@ export default function Web3Panel() {
     return (<>
         <Segment>
             <Header as="h4">
-                Web3 Overview
-                <Header.Subheader>Debug web3 instance initiated: {String(!!web3AdapterState.connected)}</Header.Subheader>
+                MadNet Overview
+                <Header.Subheader>Debug madNet instance initiated: {String(!!adapterState.connected)}</Header.Subheader>
             </Header>
             <div className="flex justify-between items-end">
                 <div>
                     <span>
-                        <span className="font-bold">connected:</span> {String(web3AdapterState.connected)}
+                        <span className="font-bold">connected:</span> {String(adapterState.connected)}
                     </span>
                     <span className="ml-8">
-                        <span className="font-bold">error:</span> {String(web3AdapterState.error)}
-                    </span>
-                    <span className="ml-8">
-                        <span className="font-bold">validators:</span> {String(web3AdapterState.validators) + "/" + String(web3AdapterState.max_validators)}
-                    </span>
-                    <span className="ml-8">
-                        <span className="font-bold">epoch:</span> {String(web3AdapterState.epoch)}
+                        <span onClick={() => console.log(madNetAdapter.failed.get())} className={classNames("font-bold", { "text-red-500": !!adapterState.error })}>error:</span> {String(!!adapterState.error)}
                     </span>
                 </div>
                 <div>
+                    {!vaultUnlockedAndExists && (
+                        <div className="text-xs text-red-500 text-center">
+                            Unlock accounts first!
+                        </div>
+                    )}
                     <Button.Group size="mini">
-                        <DButton color={!web3AdapterState.connected ? "orange" : "purple"} loading={loading === "instance"}
-                            content={!web3AdapterState.connected ? "Init Web3 Adapter" : "Print web3Adapter Instance"}
-                            onClick={!web3AdapterState.connected ? initWeb3Adapter : () => console.log(web3Adapter)} />
+                        <DButton color={!adapterState.connected ? "orange" : "purple"} disabled={!vaultUnlockedAndExists} loading={loading === "instance"}
+                            content={!adapterState.connected ? "Init MadNet Adapter" : "Print madNetAdapter Instance"}
+                            onClick={!adapterState.connected ? initMadNetAdapter : () => console.log(madNetAdapter)} />
+                        <DButton content="Print Wallet Balances"  loading={loading==="balances"} disabled={!adapterState.connected} onClick={printBalances} />
                     </Button.Group>
                 </div>
             </div>

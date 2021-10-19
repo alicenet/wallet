@@ -7,6 +7,8 @@ import ReduxState from './panels/ReduxState.jsx';
 import VaultPanel from './panels/VaultPanel/_VaultPanel.jsx';
 import ElectronPanel from './panels/ElectronStorePanel.jsx';
 import UserStoriesPanel from './panels/UserStoriesPanel.jsx';
+import Web3Panel from './panels/Web3Panel.jsx';
+import MadNetPanel from './panels/MadNetPanel.jsx';
 
 import store from 'redux/store/store';
 import { useDispatch, useSelector } from "react-redux";
@@ -14,7 +16,6 @@ import { INTERFACE_ACTIONS, USER_ACTIONS } from 'redux/actions/_actions';
 
 import lstyle from './DebugPanel.module.scss';
 import log from 'loglevel';
-import Web3Panel from './panels/Web3Panel.jsx';
 
 export const DButton = (props) => <Form.Button basic size="mini" fluid {...props} className={"m-1 ml-0 " + props.className} />
 
@@ -42,6 +43,7 @@ function DebugPanel() {
             case views.ELECTRON_STORE: return <ElectronPanel />;
             case views.USER_STORIES: return <UserStoriesPanel />;
             case views.WEB3: return <Web3Panel />;
+            case views.MADNET: return <MadNetPanel />;
             default: return null;
         }
     }

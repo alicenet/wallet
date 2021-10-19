@@ -37,13 +37,22 @@ html, body, #root {
 
 /* To be used as customization for tab panes */
 .overwrite-tab {
-    div {
+    >div {
         border: 0 !important;
         justify-content: space-around !important;
         .active {
             color: #A333C8 !important;
             border-color: #A333C8 !important;
         }
+    }
+}
+
+// Extra-mini-loader
+.extra-mini-loader {
+    &:before, &:after {
+        height: .5rem !important;
+        width: .5rem !important;
+        margin: .325rem 0rem 0rem .45rem !important;
     }
 }
 

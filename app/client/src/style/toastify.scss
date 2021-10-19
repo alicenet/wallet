@@ -1,5 +1,11 @@
 .Toastify__toast-container {
     width: 240px;
+    
+    .basic {
+        min-height: 24px !important;
+        margin-top: .25rem !important;
+    }   
+
 }
 .Toastify__toast {
     min-height: 56px;
@@ -29,6 +35,7 @@
     }
 
 }
+
 .Toastify__toast-body {
     display: flex;
     justify-content: center;

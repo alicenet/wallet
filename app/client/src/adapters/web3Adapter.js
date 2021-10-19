@@ -3,6 +3,10 @@ import Web3 from 'web3';
 import ABI from './abi.js';
 import { ADAPTER_ACTIONS } from 'redux/actions/_actions';
 
+import { SyncToastMessageSuccess } from 'components/customToasts/CustomToasts';
+import { SyncToastMessageWarning } from 'components/customToasts/CustomToasts';
+import { toast } from 'react-toastify';
+
 const reqContracts = ["staking", "validators", "deposit", "stakingToken", "utilityToken"]
 const REGISTRY_VERSION = "/v1"; // CHANGE OR PUT IN SETTINGS
 
@@ -28,31 +32,39 @@ class Web3Adapter {
             },
             "validatorInfo": {}
         };
-
-        // Init instance -- Let this happen externally and keep one instance as a singleton
-        // this.__init()
     }
 
     /**
      * Initialize the current instance by setting up store listen and getting uptoDateContracts and information
+     * @param {Object} config - Prevent toast from popping?
+     * @property { Bool } config.preventToast - Should the toast be prevented?
      */
-    async __init() {
+    async __init(config = {}) {
         // Set up subscribe and listen to store events
         await this._listenToStore();
         // Set the latest contracts
-        await this._setAndGetUptoDateContracts();
+        let connected = await this._setAndGetUptoDateContracts();
+        if (connected.error) {
+            toast.error(<SyncToastMessageWarning basic title="Error" message="Web3 Connection Error - Verify Settings" />, { className: "basic", "autoClose": 2400 })
+            return { error: connected.error }
+        }
         // Set and get the latest contract info
         await this._setAndGetInfo();
         // Verify that both provider and registry contract are available
         if (!this._getEthereumProviderFromStore()) {
-            throw new Error("No Ethereum provider found in state.");
+            toast.error(<SyncToastMessageWarning basic title="Error" message="Web3 Connection Error - Verify Settings" />, { className: "basic", "autoClose": 2400 })
+            return { error: "No Ethereum provider found in state." };
         }
         if (!this._getRegistryContractFromStore()) {
-            throw new Error("No registry contract found in state.");
+            toast.error(<SyncToastMessageWarning basic title="Error" message="Web3 Connection Error - Verify Settings" />, { className: "basic", "autoClose": 2400 })
+            return { error: "No registry contract found in state." };
         }
         // If all of this passes, note that the instance is connected
         store.dispatch(ADAPTER_ACTIONS.setWeb3Connected(true));
-        return true;
+        if (!config.preventToast) {
+            toast.success(<SyncToastMessageSuccess basic title="Success" message="Web3 Connected" />, { className: "basic", "autoClose": 2400 })
+        }
+        return { success: true };
     }
 
     /**
@@ -83,9 +95,13 @@ class Web3Adapter {
      * @returns { Web3 } - Web3 Instance referencing latest ethereum provider from state
      */
     _setAndGetUptoDateWeb3Instance() {
-        let newWeb3 = new Web3(new Web3.providers.HttpProvider(this._getEthereumProviderFromStore(), { timeout: 5000 }));
-        this.web3 = newWeb3;
-        return this.web3;
+        try {
+            let newWeb3 = new Web3(new Web3.providers.HttpProvider(this._getEthereumProviderFromStore(), { timeout: 5000 }));
+            this.web3 = newWeb3;
+            return this.web3;
+        } catch (ex) {
+            throw new Error(ex);
+        }
     }
 
     /**
@@ -93,19 +109,23 @@ class Web3Adapter {
      * @returns { Array[Web3.Contract] } - Array of contract objects
      */
     async _setAndGetUptoDateContracts() {
-        let web3 = this._setAndGetUptoDateWeb3Instance(); // Get an uptoDate web3 instance
-        let registryContract = new web3.eth.Contract(ABI["registry"], this._getRegistryContractFromStore()); // Note the current registry address from config
-        let contractList = []; // Array to push contracts to and return
-        for await (let contract of reqContracts) {
-            let contractAddr = await registryContract.methods.lookup(contract + REGISTRY_VERSION).call();
-            let newContract = new this.web3.eth.Contract(ABI[contract], contractAddr);
-            let info = {}
-            info["name"] = contract;
-            info["instance"] = newContract;
-            contractList.push(info);
+        try {
+            let web3 = this._setAndGetUptoDateWeb3Instance(); // Get an uptoDate web3 instance
+            let registryContract = new web3.eth.Contract(ABI["registry"], this._getRegistryContractFromStore()); // Note the current registry address from config
+            let contractList = []; // Array to push contracts to and return
+            for await (let contract of reqContracts) {
+                let contractAddr = await registryContract.methods.lookup(contract + REGISTRY_VERSION).call();
+                let newContract = new this.web3.eth.Contract(ABI[contract], contractAddr);
+                let info = {}
+                info["name"] = contract;
+                info["instance"] = newContract;
+                contractList.push(info);
+            }
+            this.contracts = contractList;
+            return this.contracts;
+        } catch (ex) {
+            return { error: ex }
         }
-        this.contracts = contractList;
-        return this.contracts;
     }
 
     /** Sets the current information to redux state regarding validators and epoch time */
@@ -141,14 +161,37 @@ class Web3Adapter {
 
     /**
      * Retrieve account information from contracts
+     * Additionally update redux balance state anytime account information is pulled
      * @returns { Object } - Returns object with balances and validatorInfo
      */
     async updateAccount() {
         try {
-            let ethBalance = await this.getEthBalance(this.selectedAddress);
-            let [stakingBalance, stakingAllowance, utilityBalance, utilityAllowance] = await this.getTokenBalances(this.selectedAddress);
-            this.getEpoch();
+            let balances = await this.getAccountBalances(this.selectedAddress);
+            this.getEpoch(); // Fire off an epoch update
+            // Get the latest validator information on account updates
             let validatorInfo = await this.getValidatorInfo();
+            // Update the balances in the redux store
+            this.account = {
+                address: this.selectedAddress,
+                balances,
+                "validatorInfo": validatorInfo
+            };
+            return this.account;
+        } catch (ex) {
+            return { error: ex }
+        }
+    }
+
+    /**
+     * Get ETH, Staking, and Utility account balances for a specified address
+     * @param { String } address 
+     * @returns { Object } - Object containing balance keys: "eth", "stakingToken", and "utilityToken" 
+     */
+    async getAccountBalances(address) {
+        try {
+            let ethBalance = await this.getEthBalance(address);
+            let [stakingBalance, stakingAllowance, utilityBalance, utilityAllowance] = await this.getTokenBalances(address);
+            this.getEpoch(); // Fire off an epoch update
             let balances = {
                 "eth": ethBalance,
                 "stakingToken": {
@@ -160,12 +203,7 @@ class Web3Adapter {
                     "allowance": utilityAllowance
                 }
             };
-            this.account = {
-                address: this.selectedAddress,
-                balances,
-                "validatorInfo": validatorInfo
-            };
-            return this.account;
+            return balances;
         } catch (ex) {
             return { error: ex }
         }
@@ -367,32 +405,40 @@ class Web3Adapter {
         }
     }
 
-    // Get Ethereum balance in "Ether"
+    /**
+     * Get Ethereum balance in "Ether"
+     * @param { String } address 
+     * @returns { String } - Balance
+     */
     async getEthBalance(address) {
         try {
             let balance = await this.web3.utils.fromWei(await this.web3.eth.getBalance(address ? address : this.selectedAddress), 'ether');
             return balance.substring(0, 12);
         } catch (ex) {
-            throw ex;
+            return { error: ex }
         }
     }
 
-    // Get token balances - 0 decimals
+    /**
+     * Fetch STAKE and UTIL token balances
+     * @param { String } address - Addres to fetch the balances for 
+     * @returns 
+     */
     async getTokenBalances(address) {
         try {
             let stakingToken = await this.getContract("stakingToken");
             let stakingBalance = await stakingToken.methods.balanceOf(address ? address : this.selectedAddress).call();
             let staking = await this.getContract("staking");
-            let stakingAllowance = await stakingToken.methods.allowance(this.selectedAddress, staking["_address"]).call();
+            let stakingAllowance = await stakingToken.methods.allowance(address ? address : this.selectedAddress, staking["_address"]).call();
 
             let utilityToken = await this.getContract("utilityToken");
             let utilityBalance = await utilityToken.methods.balanceOf(address ? address : this.selectedAddress).call();
             let utility = await this.getContract("deposit");
-            let utilityAllowance = await utilityToken.methods.allowance(this.selectedAddress, utility["_address"]).call();
+            let utilityAllowance = await utilityToken.methods.allowance(address ? address : this.selectedAddress, utility["_address"]).call();
 
             return [stakingBalance, stakingAllowance, utilityBalance, utilityAllowance];
         } catch (ex) {
-            throw ex;
+            return [{ error: ex }]
         }
     }
 
@@ -484,9 +530,11 @@ class Web3Adapter {
     async getEpoch() {
         try {
             let epoch = await this.internalMethod("staking", "currentEpoch");
+            store.dispatch(ADAPTER_ACTIONS.setWeb3Epoch(epoch))
             return epoch;
         } catch (ex) {
-            return ""
+            store.dispatch(ADAPTER_ACTIONS.setWeb3Epoch(""))
+            return { error: ex }
         }
     }
 

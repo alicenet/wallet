@@ -82,7 +82,7 @@ function App() {
                 </Switch>
 
                 <DebugTools/>
-                <ToastContainer/>
+                <ToastContainer position="bottom-right" />
                 <PasswordRequestModal/>
 
             </Router>
