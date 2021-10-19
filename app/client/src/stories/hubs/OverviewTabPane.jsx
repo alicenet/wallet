@@ -27,7 +27,7 @@ export default function OverviewTabPane({ wallet }) {
         }
     }, [web3Connected, madNetConnected, wallet])
 
-    const MicroBalanceLoader = ({ balanceType, balanceKey, balanceKey2 }) => {
+    const MicroBalanceLoader = ({ balanceType, balanceKey, balanceAllowance }) => {
         if (loader === "balances") {
             return (<div className="w-23 flex justify-start ">
                 <div className="text-left">{balanceType} :</div>
@@ -35,7 +35,7 @@ export default function OverviewTabPane({ wallet }) {
             </div>)
         } else {
             return (<span>
-                {balanceType} : {thisWalletBalances[balanceKey]} {balanceKey2 ? " / " + thisWalletBalances[balanceKey2] : ""}
+                {balanceType} : {thisWalletBalances[balanceKey]} {balanceAllowance ? " / " + thisWalletBalances[balanceAllowance] : ""}
             </span>)
         }
     }
