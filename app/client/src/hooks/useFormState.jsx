@@ -36,10 +36,10 @@ export default function useFormState(initialStateKeysArray) {
         if (!key.type) { warnTypesNotSupplied = true };
         initialState[key.name] = {
             error: "",
-            validated: key.value || key.initValue
-                ? _validateValueByType(key.value || key.initValue, key.type)
+            validated: key.value
+                ? _validateValueByType(key.value, key.type)
                 : false,
-            value: !!key.value || !!key.initValue ? key.value || key.initValue : "",
+            value: !!key.value ? key.value : "",
             type: key.type,
             required: key.required || key.isRequired,
         };
@@ -105,6 +105,8 @@ export default function useFormState(initialStateKeysArray) {
 
             let key = initialStateKeysArray[i];
 
+            console.log("HIT", formState[key.name])
+
             let error = "";
             if (key.validation) {
                 if (!(await key.validation.check(formState[key.name].value))) {
@@ -118,28 +120,30 @@ export default function useFormState(initialStateKeysArray) {
                 else {
                     switch (formState[key.name].type) {
                         case fieldType.STRING:
-                            if (!_validateValueByType(fieldType.STRING, formState[key.name].value)) {
+                            if (!_validateValueByType(formState[key.name].value, fieldType.STRING)) {
                                 error = (formState[key.name].display || formState[key.name].name) + " is not a valid string.";
                             }
                             break;
                         case fieldType.URL:
-                            if (!_validateValueByType(fieldType.URL, formState[key.name].value)) {
+                            if (!_validateValueByType(formState[key.name].value, fieldType.URL)) {
                                 error = (formState[key.name].display || formState[key.name].name) + " is not a valid HTTP URL";
+                                console.log(formState[key.name].value)
+                                console.log(error)
                             }
                             break;
                         case fieldType.INTEGER:
                         case fieldType.INT:
-                            if (!_validateValueByType(fieldType.INTEGER, formState[key.name].value)) {
+                            if (!_validateValueByType(formState[key.name].value, fieldType.INTEGER)) {
                                 error = (formState[key.name].display || formState[key.name].name) + " is not a valid number";
                             }
                             break;
                         case fieldType.ADDRESS:
-                            if (!_validateValueByType(fieldType.ADDRESS, formState[key.name].value)) {
+                            if (!_validateValueByType(formState[key.name].value, fieldType.ADDRESS)) {
                                 error = (formState[key.name].display || formState[key.name].name) + " is not a valid address";
                             }
                             break;
                         case fieldType.PASSWORD:
-                            if (!_validateValueByType(fieldType.PASSWORD, formState[key.name].value.length)) {
+                            if (!_validateValueByType(formState[key.name].value.length, fieldType.PASSWORD)) {
                                 error = (formState[key.name].display || formState[key.name].name) + " must be at least 8 characters long.";
                             }
                             break;
@@ -186,7 +190,7 @@ function _validateValueByType(value, type) {
     switch (type) {
         case fieldType.ADDRESS:
             return Web3.utils.isAddress(value);
-            case fieldType.STRING:
+        case fieldType.STRING:
             return typeof value === "string" && value !== "";
         case fieldType.INT:
         case fieldType.INTEGER:
