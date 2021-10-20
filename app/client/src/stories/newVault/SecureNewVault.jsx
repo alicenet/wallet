@@ -20,8 +20,8 @@ function SecureNewVault() {
     }));
 
     const [formState, formSetter, onSubmit] = useFormState([
-        { name: 'password', type: 'password', isRequired: true },
-        { name: 'verifiedPassword', type: 'verified-password', isRequired: true }
+        { name: 'password', display: 'Password', type: 'password', isRequired: true },
+        { name: 'verifiedPassword', display: 'Verify Password', type: 'verified-password', isRequired: true }
     ]);
 
     const handleFormSubmit = () => {

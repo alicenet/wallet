@@ -22,7 +22,7 @@ function CreateAKeystore() {
     const [formState, formSetter, onSubmit] = useFormState([
         { name: 'name', display: 'Keystore Name', type: 'string', isRequired: true },
         { name: 'password', display: 'Keystore Password', type: 'password', isRequired: true },
-        { name: 'verifiedPassword', display: 'Verify Password', type: 'password', isRequired: true }
+        { name: 'verifiedPassword', display: 'Verify Password', type: 'verified-password', isRequired: true }
     ]);
 
     const handleFormSubmit = () => {
