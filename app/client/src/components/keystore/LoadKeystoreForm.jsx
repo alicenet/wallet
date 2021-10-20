@@ -15,6 +15,7 @@ export default function LoadKeystoreForm({ submitText, submitFunction, cancelTex
         { name: 'password', type: 'password', isRequired: true },
         { name: 'walletName', type: 'string', isRequired: true, length: 4 }
     ]);
+
     const [keystore, setKeystore] = React.useState(false);
     const [error, setError] = React.useState(false);
     const [success, setSuccess] = React.useState(false);
@@ -36,6 +37,7 @@ export default function LoadKeystoreForm({ submitText, submitFunction, cancelTex
     }
 
     const loadKeystore = () => {
+        console.log('hit')
         setLoading(true);
         let unlocked = walletUtils.unlockKeystore(keystore, formState.password.value)
         if (unlocked.error) {
@@ -73,7 +75,7 @@ export default function LoadKeystoreForm({ submitText, submitFunction, cancelTex
                     trigger={<Icon name="question circle" className="ml-1" />} content="Keystore to load" /> </>} />
 
             <Form.Input
-                label={<><label className="inline">Keystore Password</label><Popup size="mini" position="right center" offset={"4,2"}
+                label={<><label className="inline">Keystore Password</label><Popup size="mini" position="right center" offset={"4,2"} className="transition-none"
                     trigger={<Icon name="question circle" className="ml-1" />} content="Password to unlock this keystore" /> </>}
                 type="password" value={formState.password.value}
                 onChange={e => formSetter.setPassword(e.target.value)}
