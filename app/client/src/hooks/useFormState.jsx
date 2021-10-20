@@ -2,7 +2,6 @@ import React from 'react';
 import upperFirst from 'lodash/upperFirst';
 import isEmpty from 'lodash/isEmpty';
 import Web3 from 'web3';
-import isURL from "validator/lib/isURL";
 import validator from 'validator';
 
 export const fieldType = {
