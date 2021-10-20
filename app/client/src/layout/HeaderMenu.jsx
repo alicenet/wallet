@@ -23,7 +23,6 @@ function HeaderMenu({ showMenu }) {
 
     const handleTabChange = (e, { activeIndex, panes }) => {
         if (panes[activeIndex].destination) {
-            console.log(activeIndex)
             dispatch(INTERFACE_ACTIONS.updateActiveTabPane(activeIndex));
             history.push(panes[activeIndex].destination);
         }
