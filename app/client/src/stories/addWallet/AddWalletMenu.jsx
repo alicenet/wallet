@@ -9,7 +9,7 @@ export default function AddWalletMenu() {
     const walletButtons = [
         { content: "Generate Wallet", icon: "plus", onClick: () => history.push('/addWallet/generate') },
         { content: "Import Keystore", icon: "download", onClick: () => history.push('/addWallet/importKeystore') },
-        { content: "Import Private Key", icon: "download", onClick: () => history.push('/addWallet/importPrivKey') },
+        { content: "Import Private Key", icon: "download", onClick: () => history.push('/addWallet/importPrivateKey') },
         { content: "Go Back", icon: "arrow left", onClick: () => history.goBack(), color: "orange" },
     ]
 
