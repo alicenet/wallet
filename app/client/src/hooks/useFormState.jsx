@@ -1,6 +1,6 @@
 import React from 'react';
 import upperFirst from 'lodash/upperFirst';
-import isEmpty from 'validator/lib/isEmpty';
+import isEmpty from 'lodash/isEmpty';
 import Web3 from 'web3';
 import isURL from "validator/lib/isURL";
 

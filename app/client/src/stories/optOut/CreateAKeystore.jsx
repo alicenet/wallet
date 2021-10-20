@@ -8,7 +8,7 @@ import { useFormState } from 'hooks/_hooks';
 
 import { VAULT_ACTIONS } from 'redux/actions/_actions'
 
-import Page from '../../layout/Page';
+import Page from 'layout/Page';
 
 function CreateAKeystore() {
 
@@ -19,42 +19,13 @@ function CreateAKeystore() {
         desiredCurve: state.user.desired_hd_curve
     }));
 
-    const [formState, formSetter] = useFormState([
-        { name: 'name', type: 'string', isRequired: true },
-        { name: 'password', type: 'password', isRequired: true },
-        { name: 'verifiedPassword', type: 'password', isRequired: true }
+    const [formState, formSetter, onSubmit] = useFormState([
+        { name: 'name', display: 'Keystore Name', type: 'string', isRequired: true },
+        { name: 'password', display: 'Keystore Password', type: 'password', isRequired: true },
+        { name: 'verifiedPassword', display: 'Verify Password', type: 'password', isRequired: true }
     ]);
 
     const handleFormSubmit = () => {
-        if (!formState.name.value) {
-            return formSetter.setNameError("Name is required");
-        }
-        else {
-            formSetter.clearNameError()
-        }
-
-        if (!formState.password.value) {
-            return formSetter.setPasswordError("Password is required");
-        }
-        else {
-            formSetter.clearPasswordError()
-        }
-
-        if (formState.password.value.length < 7) {
-            return formSetter.setPasswordError("Password must be at least 8 characters long.");
-        }
-        else {
-            formSetter.clearPasswordError()
-        }
-
-        if (formState.password.value !== formState.verifiedPassword.value) {
-            return formSetter.setVerifiedPasswordError("Password do not match.");
-        }
-        else {
-            formSetter.clearVerifiedPasswordError()
-        }
-
-        // Dispatch the vault generation action and. . .
         dispatch(VAULT_ACTIONS.generateNewSecureHDVault(seedPhrase, formState.password.value, desiredCurve))
         history.push("/hub");
     }
@@ -82,7 +53,7 @@ function CreateAKeystore() {
 
                 <Grid.Column width={8} className="p-0 self-center">
 
-                    <Form onSubmit={(event => handleFormSubmit(event))}>
+                    <Form onSubmit={() => onSubmit(handleFormSubmit)}>
 
                         <Form.Group className="flex flex-auto flex-col m-0 text-left text-sm gap-5">
 
@@ -92,9 +63,7 @@ function CreateAKeystore() {
                                 placeholder='Enter Name'
                                 type='text'
                                 required
-                                onChange={e => {
-                                    formSetter.setName(e.target.value)
-                                }}
+                                onChange={e => formSetter.setName(e.target.value)}
                                 error={!!formState.name.error && {
                                     content: formState.name.error
                                 }}
@@ -106,9 +75,7 @@ function CreateAKeystore() {
                                 placeholder='Enter Password'
                                 type='password'
                                 required
-                                onChange={e => {
-                                    formSetter.setPassword(e.target.value)
-                                }}
+                                onChange={e => formSetter.setPassword(e.target.value)}
                                 error={!!formState.password.error && {
                                     content: formState.password.error
                                 }}
@@ -120,9 +87,7 @@ function CreateAKeystore() {
                                 placeholder='Enter Password'
                                 type='password'
                                 required
-                                onChange={e => {
-                                    formSetter.setVerifiedPassword(e.target.value)
-                                }}
+                                onChange={e => formSetter.setVerifiedPassword(e.target.value)}
                                 error={!!formState.verifiedPassword.error && {
                                     content: formState.verifiedPassword.error
                                 }}
@@ -140,7 +105,7 @@ function CreateAKeystore() {
 
                         <Button color="red" basic content="Back" className="m-0" onClick={() => history.push('/optOut/disclaimer')}/>
 
-                        <Button color="teal" basic content='Secure My Wallets' className="m-0" onClick={handleFormSubmit}/>
+                        <Button color="teal" basic content='Secure My Wallets' className="m-0" onClick={() => onSubmit(handleFormSubmit)}/>
 
                     </Container>
                 </Grid.Column>
