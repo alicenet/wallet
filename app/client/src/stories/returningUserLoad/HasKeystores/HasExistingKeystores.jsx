@@ -1,18 +1,20 @@
 import React from 'react';
 
-import { Button, Container, Form, Grid, Header, Icon, Message } from 'semantic-ui-react';
+import { Button, Container, Form, Grid, Header, Icon } from 'semantic-ui-react';
 import ForgottenKeystorePasswordModal from './ForgottenKeystorePasswordModal';
 
 import { useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { useFormState } from 'hooks/_hooks';
-
+import { toast } from 'react-toastify';
 import has from 'lodash/has';
+
 import { VAULT_ACTIONS } from 'redux/actions/_actions'
 import { electronStoreCommonActions } from 'store/electronStoreHelper'
-import utils from 'util/_util';
 
+import utils from 'util/_util';
 import Page from 'layout/Page';
+import { SyncToastMessageWarning } from 'components/customToasts/CustomToasts';
 
 function HasExistingKeystores() {
 
@@ -42,28 +44,9 @@ function HasExistingKeystores() {
     const [keystoreData, setKeystoreData] = React.useState([]); // Collection of stores 
     const [activeKeystore, setActiveKeystore] = React.useState(0);
     const [activeAddress, setActiveAddress] = React.useState("");
-
     const [notEnoughKeystoresError, setNotEnoughKeystoresError] = React.useState(false);
 
-    // Onload, check for existing keystores and, in sequence request the passwords for them
-    React.useEffect(() => {
-        const checkForKeystores = async () => {
-            let keystoreData = await electronStoreCommonActions.checkForOptoutStores();
-            setKeystoreData(keystoreData);
-        }
-        checkForKeystores();
-    }, [])
-
     // Parse active address
-    React.useEffect(() => {
-        try {
-            let address = utils.string.splitStringWithEllipsis(JSON.parse(keystoreData[activeKeystore]?.keystore).address, 5);
-            setActiveAddress(address);
-        } catch (ex) {
-            setActiveAddress("");
-        }
-    }, [activeKeystore, keystoreData])
-
     const handleFormSubmit = async () => {
         // Add the keystore to external wallets state
         let ksData = keystoreData[activeKeystore];
@@ -86,11 +69,39 @@ function HasExistingKeystores() {
         }
     }
 
+    // Onload, check for existing keystores and, in sequence request the passwords for them
+    React.useEffect(() => {
+        const checkForKeystores = async () => {
+            let keystoreData = await electronStoreCommonActions.checkForOptoutStores();
+            setKeystoreData(keystoreData);
+        }
+        checkForKeystores();
+    }, [])
+
+    React.useEffect(() => {
+        try {
+            let address = utils.string.splitStringWithEllipsis(JSON.parse(keystoreData[activeKeystore]?.keystore).address, 5);
+            setActiveAddress(address);
+        } catch (ex) {
+            setActiveAddress("");
+        }
+    }, [activeKeystore, keystoreData])
+
     React.useEffect(() => {
         if (formState.password.error) {
             setShowForgottenPasswordModal(true);
         }
     }, [formState]);
+
+    React.useEffect(() => {
+        if (notEnoughKeystoresError) {
+            toast.error(
+                <SyncToastMessageWarning
+                    title="Error"
+                    message="At least one keystore must be loaded."/>,
+                { autoClose: 2500, onClose: () => {setNotEnoughKeystoresError(false)} });
+        }
+    }, [notEnoughKeystoresError]);
 
     return (
         <Page>
@@ -149,7 +160,6 @@ function HasExistingKeystores() {
                     <Container className="flex justify-between gap-2">
 
                         <Button color="orange" basic content='Skip This Store' onClick={skipStore}/>
-                        {notEnoughKeystoresError && <Message visible={notEnoughKeystoresError} error size="mini" className="m-0">At least one keystore must be loaded.</Message>}
                         <Button color="teal" basic content='Unlock Store' disabled={!formState.password.value} onClick={() => onSubmit(handleFormSubmit)}/>
 
                     </Container>
