@@ -21,10 +21,6 @@ export default function LoadKeystoreForm({ submitText, submitFunction, cancelTex
     const [success, setSuccess] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
 
-    const anyFormErrors = formState.password.error || formState.walletName.error; 
-
-    console.log(anyFormErrors);
-
     const fileChange = (e) => {
         let file = e.target.files[0];
         let reader = new FileReader();
@@ -37,7 +33,7 @@ export default function LoadKeystoreForm({ submitText, submitFunction, cancelTex
     }
 
     const loadKeystore = () => {
-        console.log('hit')
+
         setLoading(true);
         let unlocked = walletUtils.unlockKeystore(keystore, formState.password.value)
         if (unlocked.error) {
