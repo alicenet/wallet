@@ -77,7 +77,7 @@ export default function useFormState(initialStateKeysArray) {
                     [key.name]: {
                         ...prevState[key.name],
                         value: value,
-                        error: reqErr ? reqErr : validationErr ? validationErr : ""
+                        preFlightError: reqErr ? reqErr : validationErr ? validationErr : ""
                     },
                     // Pass what will be newly built state to gather validation. . .
                     allValidated: _validateAllInSuppliedState({
