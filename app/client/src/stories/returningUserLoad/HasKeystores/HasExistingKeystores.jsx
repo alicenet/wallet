@@ -24,6 +24,7 @@ function HasExistingKeystores() {
         {
             name: 'password',
             type: 'password',
+            value: 'testing',
             isRequired: true,
             validation: {
                 check: async (password) => {
@@ -46,7 +47,6 @@ function HasExistingKeystores() {
 
     // Onload, check for existing keystores and, in sequence request the passwords for them
     React.useEffect(() => {
-        formSetter.setPassword("testing");
         const checkForKeystores = async () => {
             let keystoreData = await electronStoreCommonActions.checkForOptoutStores();
             setKeystoreData(keystoreData);
