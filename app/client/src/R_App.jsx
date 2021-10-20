@@ -63,6 +63,7 @@ function App() {
                 {/* Add Wallet -- Add Wallet Menu && Screens */}
                 <Route exact path="/addWallet/menu" component={AddWallet.AddWalletMenu}/>
                 <Route exact path="/addWallet/generate" component={AddWallet.GenerateWallet}/>
+                <Route exact path="/addWallet/importKeystore" component={AddWallet.ImportKeystore}/>
 
                 {/* Wallet Hub -- Settings */}
                 <Route exact path="/wallet/settings" component={Settings.Settings}/>
