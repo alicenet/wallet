@@ -8,7 +8,7 @@ import validator from 'validator';
 export const fieldType = {
     ADDRESS: 'address',
     EMAIL: 'email',
-    INT: "int",
+    INT: 'int',
     INTEGER: 'integer',
     PASSWORD: 'password',
     STRING: 'string',
