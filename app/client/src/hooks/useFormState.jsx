@@ -32,13 +32,14 @@ export default function useFormState(initialStateKeysArray) {
     let warnTypesNotSupplied = false;
     // Extrapolate keys from initial state array and populate with value && error sub-keys
     initialStateKeysArray.forEach(key => {
+        console.log(key);
         if (!key.type) { warnTypesNotSupplied = true };
         initialState[key.name] = {
             error: "",
-            validated: key.initValue
-                ? _validateValueByType(key.initValue, key.type)
+            validated: key.value || key.initValue
+                ? _validateValueByType(key.value || key.initValue, key.type)
                 : false,
-            value: !!key.initValue ? key.initValue : "",
+            value: !!key.value || !!key.initValue ? key.value || key.initValue : "",
             type: key.type,
             required: key.required || key.isRequired,
         };
