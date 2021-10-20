@@ -12,17 +12,13 @@ import { walletUtils } from 'util/_util';
 export default function LoadKeystoreForm({ submitText, submitFunction, cancelText, cancelFunction, hideTitle }) {
 
     const [formState, formSetter, onSubmit] = useFormState([
-        { name: 'password', type: 'password', isRequired: true },
-        { name: 'walletName', type: 'string', isRequired: true, length: 4 }
+        { name: 'password', isRequired: true },
+        { name: 'walletName', isRequired: true }
     ]);
     const [keystore, setKeystore] = React.useState(false);
     const [error, setError] = React.useState(false);
     const [success, setSuccess] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
-
-    const anyFormErrors = formState.password.error || formState.walletName.error; 
-
-    console.log(anyFormErrors);
 
     const fileChange = (e) => {
         let file = e.target.files[0];
