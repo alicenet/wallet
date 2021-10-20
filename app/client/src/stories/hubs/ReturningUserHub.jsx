@@ -65,11 +65,7 @@ export default function Hub() {
 
                             <Container className="gap-3 flex flex-row justify-center items-center text-justify">
 
-<<<<<<< HEAD
-                                <Button circular size={openDrawer ? 'mini' : 'small'} className="m-0" icon="add" onClick={() => setOpenDrawer(prevState => !prevState)}/>
-=======
                                 <Button circular size={openDrawer ? 'mini' : 'small'} className="m-0" icon="add" onClick={gotoAddWallet} />
->>>>>>> Add Wallets Menu && Add Internal Wallet
 
                                 {openDrawer && <Header as='h3' className="m-0">Wallets</Header>}
 
