@@ -20,7 +20,7 @@ export const SyncToastMessageSuccess = ({ title, message, hideIcon, basic }) => 
     if (basic) {
         return (
             <div className="w-full">
-                <div className="text-green-600" as="h5" textAlign="left">
+                <div className="text-green-600 text-left" as="h5">
                     <Icon name="thumbs up" color="green" className="mr-4"/> {title && title + ":"} {message}
                 </div>
             </div>
