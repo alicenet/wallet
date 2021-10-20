@@ -1,3 +1,4 @@
+import React from 'react';
 import useFormState from 'hooks/useFormState';
 import { useDispatch, useSelector } from 'react-redux';
 import { MODAL_ACTION_TYPES } from 'redux/constants/_constants';
@@ -12,20 +13,22 @@ import { classNames } from 'util/_util';
 export default function PasswordRequestModal() {
 
     const dispatch = useDispatch();
-    const [formState, formSetter] = useFormState([{ name: 'password', type: 'password', isRequired: true }]);
+    const [formState, formSetter, onSubmit] = useFormState([
+        {
+            name: 'password',
+            isRequired: true,
+            validation: {
+                check: async (password) => await electronStoreCommonActions.checkPasswordAgainstPreflightHash(password), // Check password against preflight hash
+                message: 'Incorrect Password!'
+            }
+        }
+    ]);
     const [isOpen, reason, callback] = useSelector(s => ([s.modal.password_req_modal, s.modal.password_req_reason, s.modal.password_req_cb]));
 
     const tryPassword = async () => {
-        let success = await electronStoreCommonActions.checkPasswordAgainstPreflightHash(formState.password.value);
-        if (!success) {
-            return formSetter.setPasswordError("Incorrect Password!");
-        }
-        else {
-            formSetter.clearPasswordError();
-            formSetter.setPassword("");
-            callback(formState.password.value);
-            dispatch({ type: MODAL_ACTION_TYPES.CLOSE_PW_REQUEST });
-        }
+        formSetter.setPassword('');
+        callback(formState.password.value);
+        dispatch({ type: MODAL_ACTION_TYPES.CLOSE_PW_REQUEST });
     }
 
     return (
@@ -52,7 +55,7 @@ export default function PasswordRequestModal() {
                     Your password has been requested for the reason above.
                 </div>
 
-                <Form size="small" className="mt-4" onSubmit={tryPassword} error={!!formState.password.error}>
+                <Form size="small" className="mt-4" onSubmit={() => onSubmit(tryPassword)} error={!!formState.password.error}>
                     <Form.Input error={!!formState.password.error} icon="key" value={formState.password.value} onChange={e => formSetter.setPassword(e.target.value)}/>
                 </Form>
 
@@ -62,7 +65,7 @@ export default function PasswordRequestModal() {
                 {!!formState.password.error ? (
                     <Button size="mini" content="Can't Remember Password" basic color="orange" onClick={() => console.log("CAT TODO!")}/>
                 ) : null}
-                <Button size="mini" content={formState.password.error ? "Try Again" : "Submit"} basic color={formState.password.error ? "red" : "green"} onClick={tryPassword}/>
+                <Button size="mini" content={formState.password.error ? "Try Again" : "Submit"} basic color={formState.password.error ? "red" : "green"} onClick={() => onSubmit(tryPassword)}/>
             </Modal.Actions>
 
         </Modal>
