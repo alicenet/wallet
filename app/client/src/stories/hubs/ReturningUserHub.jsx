@@ -36,7 +36,7 @@ export default function Hub() {
     const panes = [
         {
             menuItem: 'Overview',
-            render: () => <OverviewTabPane wallet={selectedWallet} />,
+            render: () => <OverviewTabPane wallet={selectedWallet}/>,
         },
         {
             menuItem: 'Recent TXs',
@@ -61,7 +61,7 @@ export default function Hub() {
 
                             <Container className="gap-3 flex flex-row justify-center items-center text-justify">
 
-                                <Button circular size={openDrawer ? 'mini' : 'small'} className="m-0" icon="add" onClick={() => setOpenDrawer(prevState => !prevState)} />
+                                <Button circular size={openDrawer ? 'mini' : 'small'} className="m-0" icon="add" onClick={() => setOpenDrawer(prevState => !prevState)}/>
 
                                 {openDrawer && <Header as='h3' className="m-0">Wallets</Header>}
 
@@ -90,7 +90,7 @@ export default function Hub() {
 
                         <Container className="p-4">
 
-                            {selectedWallet ? <Tab className="overwrite-tab" menu={{ secondary: true, pointing: true }} panes={panes} /> : <Loader active />}
+                            {selectedWallet ? <Tab className="overwrite-tab" menu={{ secondary: true, pointing: true }} panes={panes}/> : <Loader active/>}
 
                         </Container>
 
@@ -102,8 +102,8 @@ export default function Hub() {
 
                     <div className="flex">
 
-                        <Button className="-mt-4 mr-0 z-10" circular size="mini" icon={`triangle ${openDrawer ? 'left' : 'right'}`}
-                            onClick={() => setOpenDrawer(prevState => !prevState)} />
+                        <Button className="-mt-4 mr-0 z-10 transition-bg hover:bg-gray-300" circular size="mini" icon={`triangle ${openDrawer ? 'left' : 'right'}`}
+                            onClick={() => setOpenDrawer(prevState => !prevState)}/>
 
                     </div>
 
