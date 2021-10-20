@@ -49,7 +49,7 @@ export default function Hub() {
     ];
 
     return (
-        <Page>
+        <Page showMenu>
 
             <div className="relative">
 
