@@ -92,7 +92,7 @@ function UseExistingKeystore() {
 
                     <Container className="flex justify-between">
 
-                        <Button color="red" basic content="Back" className="m-0" onClick={() => history.push('/optOut/disclaimer')}/>
+                        <Button color="orange" basic content="Go Back" className="m-0" onClick={() => history.push('/optOut/disclaimer')}/>
 
                         <Button color="teal" disabled={fileName.length === 0} basic content='Unlock Keystore' className="m-0" onClick={() => onSubmit(handleFormSubmit)}/>
 

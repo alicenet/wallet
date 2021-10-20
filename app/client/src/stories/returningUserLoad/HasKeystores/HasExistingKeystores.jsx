@@ -43,8 +43,8 @@ function HasExistingKeystores() {
     // Parse active address
     React.useEffect(() => {
         try {
-            let aAddress = utils.string.splitStringWithEllipsis(JSON.parse(keystoreData[activeKeystore]?.keystore).address, false, 5);
-            setActiveAddress(aAddress);
+            let address = utils.string.splitStringWithEllipsis(JSON.parse(keystoreData[activeKeystore]?.keystore).address, 5);
+            setActiveAddress(address);
         } catch (ex) {
             setActiveAddress("");
         }
@@ -110,7 +110,7 @@ function HasExistingKeystores() {
                             <Form.Input
                                 className="w-80"
                                 id='password'
-                                label={'Password for: ' + keystoreData[activeKeystore]?.name + " (" + activeAddress + ")"}
+                                label={`Password for: ${keystoreData[activeKeystore]?.name} (${activeAddress})`}
                                 placeholder='Enter Password'
                                 value={formState.password.value}
                                 type={showPassword ? "text" : "password"}
@@ -119,12 +119,8 @@ function HasExistingKeystores() {
                                     content: formState.password.error,
                                     pointing: 'above',
                                 }}
-                                icon={<Icon name={showPassword ? "eye" : "eye slash"}/>}
+                                icon={<Icon name={showPassword ? "eye" : "eye slash"} link onClick={() => setShowPassword(s => !s)}/>}
                             />
-
-                            {/* 
-                            onClick={ () => setShowPassword(s => !s) } 
-                            */}
 
                             <ForgottenKeystorePasswordModal incorrectPwEntered={incorrectPwEntered}/>
 
