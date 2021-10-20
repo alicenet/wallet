@@ -18,23 +18,22 @@ export default function ImportKeystore() {
 
     const addWallet = async (results) => {
 
-        console.log(results)
         setLoading(true);
 
         let error = false;
-
+        
         if (error) {
             setError(error);
             return setLoading(false);
         }
-
+        
         // Clear Error
         setError(false);
-
+        
         // Falsify wait for UI
         setTimeout(async () => {
             // Attempt to add the HD Wallet
-            let added = {error: "yes"} // await dispatch(VAULT_ACTIONS.addExternalWalletToState());
+            let added = await dispatch(VAULT_ACTIONS.addExternalWalletToState(results.locked, results.password, results.walletName));
             setLoading(false);
             if (added.error) {
                 log.error(added.error);

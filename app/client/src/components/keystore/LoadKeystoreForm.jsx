@@ -5,14 +5,14 @@ import { walletUtils } from 'util/_util';
 
 /**
  * Unlock a keystore
- * @param { Function (keystore, walletName) => {} } submitFunction - Callback function to use -- Provides (keystore, walletName) => {} 
+ * @param { Function ({results}) => {} } submitFunction - Callback function to use -- Provides ({unlocked, locked, password, success, error, walletName}) => {} 
  * @prop { Bool } hideTitle - Hide the form title?
  * @returns 
  */
 export default function LoadKeystoreForm({ submitText, submitFunction, cancelText, cancelFunction, hideTitle }) {
 
     const [formState, formSetter, onSubmit] = useFormState([
-        { name: 'password', type: 'password', isRequired: true },
+        { name: 'password', type: 'string', isRequired: true },
         { name: 'walletName', type: 'string', isRequired: true, length: 4 }
     ]);
 
@@ -40,22 +40,20 @@ export default function LoadKeystoreForm({ submitText, submitFunction, cancelTex
             setSuccess(false);
             setError(unlocked.error.message === "Key derivation failed - possibly wrong password" ? "Incorrect password" : unlocked.error.message)
             setLoading(false);
-            return submitFunction({ unlocked: unlocked, walletName: formState.walletName.value, error: unlocked.error.message });
+            return submitFunction({ locked: JSON.parse(keystore), unlocked: false, walletName: formState.walletName.value, error: unlocked.error.message, success: false });
         }
         else {
             setLoading(false);
             setSuccess(true);
             setError(false);
-            return submitFunction({ unlocked: unlocked, walletName: formState.walletName.value, success: true });
+            return submitFunction({ locked: JSON.parse(keystore), password: formState.password.value, unlocked: unlocked, walletName: formState.walletName.value, success: true, error: false, });
         }
 
     }
 
-    console.log(formState);
-
     return (
 
-        <Form error={error} size="mini" className="max-w-md w-72 text-left" onSubmit={ () => onSubmit(loadKeystore)}>
+        <Form error={error} size="mini" className="max-w-md w-72 text-left" onSubmit={() => onSubmit(loadKeystore)}>
 
             {!hideTitle && (
                 <Header as="h4" textAlign="center">Load A Keystore</Header>
@@ -75,7 +73,7 @@ export default function LoadKeystoreForm({ submitText, submitFunction, cancelTex
                     trigger={<Icon name="question circle" className="ml-1" />} content="Password to unlock this keystore" /> </>}
                 type="password" value={formState.password.value}
                 onChange={e => formSetter.setPassword(e.target.value)}
-                error={!!formState.password.error && {content: formState.password.error}}
+                error={!!formState.password.error && { content: formState.password.error }}
             />
 
             <Form.Input
@@ -83,7 +81,7 @@ export default function LoadKeystoreForm({ submitText, submitFunction, cancelTex
                     trigger={<Icon name="question circle" className="ml-1" />} content="How this keystore will be referenced" /> </>}
                 type="text" value={formState.walletName.value}
                 onChange={e => formSetter.setWalletName(e.target.value)}
-                error={!!formState.walletName.error && {content: formState.walletName.error}}
+                error={!!formState.walletName.error && { content: formState.walletName.error }}
             />
 
             <Form.Button fluid size="small" basic loading={loading} className="mt-16"
@@ -95,10 +93,10 @@ export default function LoadKeystoreForm({ submitText, submitFunction, cancelTex
                 content={error ? "Try Again" : submitText}
             />
 
-            <Form.Button fluid size="small" basic 
+            <Form.Button fluid size="small" basic
                 icon={success ? "thumbs up" : "x"}
                 color={success ? "green" : "orange"}
-                onClick={success ? e => e.preventDefault() : cancelFunction}
+                onClick={success ? e => e.preventDefault() : (e) => { e.preventDefault(); cancelFunction() }}
                 content={success ? "Success, please wait..." : cancelText}
             />
 
