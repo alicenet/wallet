@@ -34,12 +34,15 @@ export default function useFormState(initialStateKeysArray) {
         console.log(key);
         if (!key.type) { warnTypesNotSupplied = true };
         initialState[key.name] = {
+            name: key.name,
+            display: key.display || false,
             error: "",
             validated: key.value
                 ? _validateValueByType(key.value, key.type)
                 : false,
             value: !!key.value ? key.value : "",
             type: key.type,
+            isRequired: key.required || key.isRequired,
             required: key.required || key.isRequired,
         };
     })
@@ -104,7 +107,11 @@ export default function useFormState(initialStateKeysArray) {
 
             let key = initialStateKeysArray[i];
 
+<<<<<<< Updated upstream
             console.log("HIT", formState[key.name])
+=======
+            console.log(formState[key.name]);
+>>>>>>> Stashed changes
 
             let error = "";
             if (key.validation) {
