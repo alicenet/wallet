@@ -60,7 +60,8 @@ function HasExistingKeystores() {
                 return formSetter.setPasswordError("Incorrect keystore password. Try again.");
             }
             throw new Error("Error trying to unlock wallet", unlocked.error)
-        };
+        }
+
         formSetter.clearPasswordError();
         // Add the keystore to external wallets state
         dispatch(VAULT_ACTIONS.addExternalWalletToState(ks, formState.password.value, ksData.name))
@@ -113,9 +114,7 @@ function HasExistingKeystores() {
                                 placeholder='Enter Password'
                                 value={formState.password.value}
                                 type={showPassword ? "text" : "password"}
-                                onChange={e => {
-                                    formSetter.setPassword(e.target.value)
-                                }}
+                                onChange={e => formSetter.setPassword(e.target.value)}
                                 error={!!formState.password.error && {
                                     content: formState.password.error,
                                     pointing: 'above',
