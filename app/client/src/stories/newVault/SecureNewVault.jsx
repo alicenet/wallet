@@ -61,7 +61,7 @@ function SecureNewVault() {
 
                 <Grid.Column width={8} className="p-0 self-center">
 
-                    <Form onSubmit={(event => handleFormSubmit(event))}>
+                    <Form onSubmit={() => onSubmit(handleFormSubmit)}>
 
                         <Form.Group className="flex flex-auto flex-col m-0 text-left text-sm gap-5">
 
