@@ -47,6 +47,17 @@ html, body, #root {
     }
 }
 
+.smaller {
+    >div {
+        min-height: auto !important;
+        >a {
+            margin: 3px 10px !important;
+            padding: 0 !important;
+            padding-bottom: 5px !important;
+        }
+    }
+}
+
 // Extra-mini-loader
 .extra-mini-loader {
     &:before, &:after {

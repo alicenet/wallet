@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-import { Container, Header, Icon, Image, Menu } from 'semantic-ui-react';
+import { Container, Header, Icon, Image, Menu, Tab } from 'semantic-ui-react';
 
 import { useHistory } from 'react-router-dom';
 
@@ -8,13 +8,26 @@ import MadIcon from '../Assets/icon.png';
 
 import { useSelector } from 'react-redux';
 
-function HeaderMenu({ hideMenu }) {
+function HeaderMenu({ showMenu }) {
 
     const history = useHistory();
 
     const { exists, optout } = useSelector(s => ({ exists: s.vault.exists, optout: s.vault.optout }));
 
     const existingAccount = exists || optout;
+
+    const handleTabChange = (e, { activeIndex, panes }) => {
+        if(panes[activeIndex].destination) {
+            history.push(panes[activeIndex].destination);
+        }
+    };
+
+    const tabPanes = [
+        { menuItem: 'Wallets', destination: '/hub' },
+        { menuItem: 'Transactions' },
+        { menuItem: 'MadNet' },
+        { menuItem: 'Ethereum' }
+    ];
 
     return (
         <Menu secondary className="m-0 my-1">
@@ -39,11 +52,24 @@ function HeaderMenu({ hideMenu }) {
 
             </Container>
 
-            <Container fluid className="flex flex-row content-center justify-center"/>
+            <Container fluid className="flex flex-row content-center justify-center items-center">
+
+                {showMenu && existingAccount && (
+
+                    <Tab
+                        className="overwrite-tab smaller text-xs"
+                        menu={{ secondary: true, pointing: true }}
+                        panes={tabPanes}
+                        activeIndex={0}
+                        onTabChange={handleTabChange}
+                    />
+                )}
+
+            </Container>
 
             <Container fluid className="flex flex-row content-center justify-end">
 
-                {!hideMenu && existingAccount && <Menu.Item as='a' header onClick={() => history.push('/wallet/settings')} className="mx-0 hover:bg-transparent">
+                {existingAccount && <Menu.Item as='a' header onClick={() => history.push('/wallet/settings')} className="mx-0 hover:bg-transparent">
 
                     <Icon name="cog" size="large" className="mx-0 transform duration-300 hover:rotate-90"/>
 
