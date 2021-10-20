@@ -31,7 +31,6 @@ export default function useFormState(initialStateKeysArray) {
     let warnTypesNotSupplied = false;
     // Extrapolate keys from initial state array and populate with value && error sub-keys
     initialStateKeysArray.forEach(key => {
-        console.log(key);
         if (!key.type) { warnTypesNotSupplied = true };
         initialState[key.name] = {
             name: key.name,
@@ -107,12 +106,6 @@ export default function useFormState(initialStateKeysArray) {
 
             let key = initialStateKeysArray[i];
 
-<<<<<<< Updated upstream
-            console.log("HIT", formState[key.name])
-=======
-            console.log(formState[key.name]);
->>>>>>> Stashed changes
-
             let error = "";
             if (key.validation) {
                 if (!(await key.validation.check(formState[key.name].value))) {
@@ -133,8 +126,6 @@ export default function useFormState(initialStateKeysArray) {
                         case fieldType.URL:
                             if (!_validateValueByType(formState[key.name].value, fieldType.URL)) {
                                 error = (formState[key.name].display || formState[key.name].name) + " is not a valid HTTP URL";
-                                console.log(formState[key.name].value)
-                                console.log(error)
                             }
                             break;
                         case fieldType.INTEGER:
