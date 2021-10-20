@@ -7,6 +7,7 @@ import { useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { useFormState } from 'hooks/_hooks';
 
+import has from 'lodash/has';
 import { VAULT_ACTIONS } from 'redux/actions/_actions'
 import { electronStoreCommonActions } from 'store/electronStoreHelper'
 import utils from 'util/_util';
@@ -18,16 +19,29 @@ function HasExistingKeystores() {
     const history = useHistory();
     const dispatch = useDispatch();
 
-    const [formState, formSetter] = useFormState([{ name: 'password', type: 'password', isRequired: true }]);
-    const incorrectPasswordError = "Password incorrect. Please try again.";
-    const incorrectPwEntered = formState.password.error === incorrectPasswordError;
+    const [showForgottenPasswordModal, setShowForgottenPasswordModal] = React.useState(false);
+    const [formState, formSetter, onSubmit] = useFormState([
+        {
+            name: 'password',
+            type: 'password',
+            isRequired: true,
+            validation: {
+                check: async (password) => {
+                    let ksData = keystoreData[activeKeystore];
+                    let ks = JSON.parse(ksData.keystore);
+                    let unlocked = utils.wallet.unlockKeystore(ks, password);
+                    return !has(unlocked, 'error');
+                }, // Try to unlock active keystore
+                message: 'Incorrect keystore password. Try again.'
+            }
+        }
+    ]);
     const [showPassword, setShowPassword] = React.useState(false);
 
     const [keystoreData, setKeystoreData] = React.useState([]); // Collection of stores 
     const [activeKeystore, setActiveKeystore] = React.useState(0);
     const [activeAddress, setActiveAddress] = React.useState("");
 
-    const [keystoresUnlocked, setKeystoresUnlocked] = React.useState(0);
     const [notEnoughKeystoresError, setNotEnoughKeystoresError] = React.useState(false);
 
     // Onload, check for existing keystores and, in sequence request the passwords for them
@@ -51,19 +65,9 @@ function HasExistingKeystores() {
     }, [activeKeystore, keystoreData])
 
     const handleFormSubmit = async () => {
-        // Try to unlock active keystore
+        // Add the keystore to external wallets state
         let ksData = keystoreData[activeKeystore];
         let ks = JSON.parse(ksData.keystore);
-        let unlocked = utils.wallet.unlockKeystore(ks, formState.password.value);
-        if (unlocked.error) {
-            if (unlocked.error.message.indexOf("possibly wrong password")) {
-                return formSetter.setPasswordError("Incorrect keystore password. Try again.");
-            }
-            throw new Error("Error trying to unlock wallet", unlocked.error)
-        }
-
-        formSetter.clearPasswordError();
-        // Add the keystore to external wallets state
         dispatch(VAULT_ACTIONS.addExternalWalletToState(ks, formState.password.value, ksData.name))
         setActiveKeystore(s => s + 1); // Go to next keystore
         // +1 to adjust for state change above that hasn't happened yet -- Checking if anymore keystores remain to look at
@@ -74,13 +78,19 @@ function HasExistingKeystores() {
 
     const skipStore = () => {
         // If this is the last keystore and no keystores have been loaded show error
-        if ((keystoreData.length - (activeKeystore + 1 === 0)) && keystoresUnlocked === 0) {
+        if (keystoreData.length - (activeKeystore + 1) === 0) {
             return setNotEnoughKeystoresError(true);
         }
         else {
             setActiveKeystore(s => s + 1);
         }
     }
+
+    React.useEffect(() => {
+        if (formState.password.error) {
+            setShowForgottenPasswordModal(true);
+        }
+    }, [formState]);
 
     return (
         <Page>
@@ -103,7 +113,7 @@ function HasExistingKeystores() {
 
                 <Grid.Column width={8} className="p-0 self-center">
 
-                    <Form onSubmit={(event => handleFormSubmit(event))}>
+                    <Form onSubmit={() => onSubmit(handleFormSubmit)}>
 
                         <Form.Group className="flex flex-auto flex-col m-0 text-left text-sm gap-5 items-center h-32">
 
@@ -122,7 +132,7 @@ function HasExistingKeystores() {
                                 icon={<Icon name={showPassword ? "eye" : "eye slash"} link onClick={() => setShowPassword(s => !s)}/>}
                             />
 
-                            <ForgottenKeystorePasswordModal incorrectPwEntered={incorrectPwEntered}/>
+                            <ForgottenKeystorePasswordModal incorrectPwEntered={showForgottenPasswordModal}/>
 
                             <div className="font-xs">
                                 {activeKeystore} / {keystoreData.length - activeKeystore} keystores examined
@@ -139,10 +149,8 @@ function HasExistingKeystores() {
                     <Container className="flex justify-between gap-2">
 
                         <Button color="orange" basic content='Skip This Store' onClick={skipStore}/>
-                        {notEnoughKeystoresError && (
-                            <Message visible={notEnoughKeystoresError} error size="mini" className="m-0">At least one keystore must be loaded.</Message>
-                        )}
-                        <Button color="teal" basic content='Unlock Store' disabled={!formState.password.value} onClick={handleFormSubmit}/>
+                        {notEnoughKeystoresError && <Message visible={notEnoughKeystoresError} error size="mini" className="m-0">At least one keystore must be loaded.</Message>}
+                        <Button color="teal" basic content='Unlock Store' disabled={!formState.password.value} onClick={() => onSubmit(handleFormSubmit)}/>
 
                     </Container>
 
