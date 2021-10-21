@@ -84,7 +84,7 @@ export default function AddWalletMenu() {
                 <Grid.Column width={16} textAlign="center">
 
                     <div className="flex justify-center h-28">
-                        <Form className="w-56">
+                        <Form className="w-56" size="small">
                             <Form.Input value={walletName.value} onChange={e => setWalletNameKeys({ value: e.target.value })}
                                 error={!!walletName.error && walletName.error}
                                 label="Wallet Name" size="small" placeholder=". . ."

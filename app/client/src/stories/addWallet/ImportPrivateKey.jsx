@@ -1,9 +1,9 @@
 import React from 'react';
 import { Container, Grid, Header, Button, Form, Message } from 'semantic-ui-react'
 import { useHistory } from 'react-router';
-import LoadKeystoreForm from 'components/keystore/LoadKeystoreForm';
+import ImportPrivateKeyForm from 'components/keystore/ImportPrivateKeyForm';
 
-export default function ImportKeystore() {
+export default function ImportPrivateKey() {
 
     const history = useHistory();
 
@@ -11,11 +11,8 @@ export default function ImportKeystore() {
     const [results, setResult] = React.useState(false);
 
     const addWallet = async (results) => {
-        if (results.error) { return } // Error handled internally of form
-        else {
-            setResult(results);
-            setSuccces(true);
-        }
+        setResult(results);
+        setSuccces(true);
     }
 
     React.useEffect(() => {
@@ -34,11 +31,11 @@ export default function ImportKeystore() {
 
                 <Grid.Column width={16}>
 
-                    <Header className="text-gray-500 mb-8">Import Keystore</Header>
+                    <Header className="text-gray-500 mb-8">Import Private Key</Header>
 
                     <div className="text-sm">
 
-                        <p>Import an existing wallet from an ethereum keystore.</p>
+                        <p>If your key was used with a BN Curve derrived public address, tick the box accordingly.</p>
 
                     </div>
 
@@ -47,7 +44,7 @@ export default function ImportKeystore() {
                 <Grid.Column width={16} textAlign="center">
 
                     <div className="flex justify-center">
-                        <LoadKeystoreForm hideTitle
+                        <ImportPrivateKeyForm hideTitle
                             submitText="Add Wallet"
                             submitFunction={addWallet}
                             cancelText="Cancel"

@@ -154,7 +154,7 @@ export function unlockKeystore(keystore, password) {
 
 /**
  * Generate and return a new JSON blob representing the data for a keystore.
- * @param { Boolean } asBlob - Password to secure the keystore with 
+ * @param { Boolean } asBlob - Return keystore as a blob? 
  * @param { String } password - Password to secure the keystore with 
  * @param { CurveType } curve - Curve if desired, default to type 1
  * @returns { Blob || JSON String } - JSON Blob || Json String
@@ -168,6 +168,21 @@ export function generateKeystore(asBlob, password, curve = curveTypes.SECP256K1)
     if (curve === 2) { keystore["curve"] = 2 } // Note the curve if BN -- This gets removed on reads
     let ksJSONBlob = new Blob([JSON.stringify(keystore, null, 2)]);
     return asBlob ? ksJSONBlob : keystore;
+}
+
+/**
+ * Generated a keystore object from a privateKey
+ * @param {*} privK 
+ * @param {*} password 
+ * @param {*} curve 
+ */
+export function generateKeystoreFromPrivK(privK, password, curve = curveTypes.SECP256K1) {
+    let web3 = new Web3();
+    web3.eth.accounts.wallet.add(privK);
+    let ks = web3.eth.accounts.wallet.encrypt(password);
+    let keystore = ks[0];
+    if (curve === 2) { keystore["curve"] = 2 } // Note the curve if BN -- This gets removed on reads
+    return keystore;
 }
 
 /** Standardized Wallet Data Object for State Storage and General Use

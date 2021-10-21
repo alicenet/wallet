@@ -6,6 +6,9 @@ dist/*
 app-build/*
 !app-build/.gitkeep
 
+teststore.json
+teststore_bn.json
+
 # React App
 app/client/build
 app/client/node_modules
