@@ -3,9 +3,10 @@ import { useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import head from 'lodash/head';
 import { Button, Container, Divider, Grid, Header, Loader, Tab } from 'semantic-ui-react'
+
 import Page from 'layout/Page';
 import { classNames } from 'util/generic';
-import OverviewTabPane from './OverviewTabPane';
+import { Datastores, Overview,  RecentTxs } from './tabPanes/_tabPanes';
 
 export default function Hub() {
 
@@ -36,15 +37,15 @@ export default function Hub() {
     const panes = [
         {
             menuItem: 'Overview',
-            render: () => <OverviewTabPane wallet={selectedWallet}/>,
+            render: () => <Overview wallet={selectedWallet}/>,
         },
         {
             menuItem: 'Recent TXs',
-            render: () => { },
+            render: () => <RecentTxs wallet={selectedWallet}/>,
         },
         {
             menuItem: 'Datastores',
-            render: () => { },
+            render: () => <Datastores wallet={selectedWallet}/>,
         },
     ];
 
@@ -104,7 +105,7 @@ export default function Hub() {
 
                         <Button
                             className="-mt-4 mr-0 z-10 transition-bg hover:bg-gray-300"
-                            style={{backgroundColor: '#E0E1E2'}}
+                            style={{ backgroundColor: '#E0E1E2' }}
                             circular
                             size="mini"
                             icon={`triangle ${openDrawer ? 'left' : 'right'}`}

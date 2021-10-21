@@ -4,9 +4,9 @@ import { ADAPTER_ACTIONS } from 'redux/actions/_actions';
 
 import { Button, Container, Grid } from 'semantic-ui-react'
 
-import { curveTypes } from '../../util/wallet';
+import { curveTypes } from 'util/wallet';
 
-export default function OverviewTabPane({ wallet }) {
+export default function Overview({ wallet }) {
 
     const dispatch = useDispatch();
     const balances = useSelector(state => ({ ...state.vault.balances }));
