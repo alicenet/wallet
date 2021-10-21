@@ -102,8 +102,14 @@ export default function Hub() {
 
                     <div className="flex">
 
-                        <Button className="-mt-4 mr-0 z-10 transition-bg hover:bg-gray-300" circular size="mini" icon={`triangle ${openDrawer ? 'left' : 'right'}`}
-                            onClick={() => setOpenDrawer(prevState => !prevState)}/>
+                        <Button
+                            className="-mt-4 mr-0 z-10 transition-bg hover:bg-gray-300"
+                            style={{backgroundColor: '#E0E1E2'}}
+                            circular
+                            size="mini"
+                            icon={`triangle ${openDrawer ? 'left' : 'right'}`}
+                            onClick={() => setOpenDrawer(prevState => !prevState)}
+                        />
 
                     </div>
 
