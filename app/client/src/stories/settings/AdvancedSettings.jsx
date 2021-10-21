@@ -32,8 +32,6 @@ function AdvancedSettings() {
         { name: 'RegistryContractAddress', display: 'Registry Contract Address', type: 'address', isRequired: true, value: registryContractAddress }
     ]);
 
-    console.log(formState);
-
     const handleSubmit = async () => {
         dispatch(INTERFACE_ACTIONS.toggleGlobalLoadingBool(true));
         const result = await dispatch(CONFIG_ACTIONS.saveConfigurationValues(
@@ -75,7 +73,7 @@ function AdvancedSettings() {
     }
 
     return (
-        <Page hideMenu>
+        <Page>
 
             <Grid textAlign="center" className="m-0 content-evenly">
 

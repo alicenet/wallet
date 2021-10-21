@@ -9,6 +9,8 @@ import util from 'util/_util';
 // User Story Components
 import * as Hubs from 'stories/hubs/_hubs';
 import * as AddWallet from 'stories/addWallet/_addWallet';
+import * as Settings from 'stories/settings/_settings';
+import * as Transactions from 'stories/transactions/_transactions';
 import * as NewVaultFlows from 'stories/newVault/_newVault';
 import * as OptOutFlow from 'stories/optOut/_optOut';
 import * as ReturningUserLoadFlows from 'stories/returningUserLoad/_returnUserLoad';
@@ -66,11 +68,12 @@ function App() {
                 <Route exact path="/addWallet/importKeystore" component={AddWallet.ImportKeystore}/>
                 <Route exact path="/addWallet/importPrivateKey" component={AddWallet.ImportPrivateKey}/>
                 <Route exact path="/addWallet/verify" component={AddWallet.VerifyImport}/>
+                  
+                {/* Construct Hub */}
+                <Route exact path="/transactions" component={Transactions.Construct}/>
 
-                {/* Wallet Hub -- Settings */}
+                {/* Settings */}
                 <Route exact path="/wallet/settings" component={Settings.Settings}/>
-
-                {/* Wallet Hub -- Advanced Settings */}
                 <Route exact path="/wallet/advancedSettings" component={Settings.AdvancedSettings}/>
 
             </>
