@@ -111,7 +111,7 @@ function ChooseRecoveryEllipticCurve() {
 
                     <Container className="flex justify-between">
 
-                        <Button color="purple" basic content="Back" className="m-0" onClick={() => history.push('/newVault/useRecoveryPhrase')}/>
+                        <Button color="orange" basic content="Go Back" className="m-0" onClick={() => history.goBack()}/>
 
                         <Button color="teal" basic content="Secure My Vault" className="m-0" onClick={secureMyVault}/>
 

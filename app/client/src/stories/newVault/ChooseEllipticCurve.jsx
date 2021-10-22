@@ -101,7 +101,7 @@ function ChooseEllipticCurve() {
 
                     <Container className="flex justify-between">
 
-                        <Button color="orange" basic className="m-0" content="Go Back" onClick={() => history.push('/newVault/verifySeedPhrase')}/>
+                        <Button color="orange" basic className="m-0" content="Go Back" onClick={() => history.goBack()}/>
 
                         <Button color="teal" basic className="m-0" content="Secure My Vault" onClick={generateWallet}/>
 

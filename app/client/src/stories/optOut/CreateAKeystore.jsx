@@ -103,7 +103,7 @@ function CreateAKeystore() {
 
                     <Container className="flex justify-between">
 
-                        <Button color="red" basic content="Back" className="m-0" onClick={() => history.push('/optOut/disclaimer')}/>
+                        <Button color="orange" basic content="Go Back" className="m-0" onClick={() => history.goBack()}/>
 
                         <Button color="teal" basic content='Secure My Wallets' className="m-0" onClick={() => onSubmit(handleFormSubmit)}/>
 
