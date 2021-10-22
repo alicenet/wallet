@@ -183,7 +183,7 @@ function unlockAndGetSecuredHDVault(password) {
 }
 
 /**
- * Updates the current vault wallets against current redux state
+ * Updates the current vault store wallets with a sent wallet state
  * @param { Object } vaultState 
  * @returns 
  */

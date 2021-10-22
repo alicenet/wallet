@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { ADAPTER_ACTIONS } from 'redux/actions/_actions';
+import { ADAPTER_ACTIONS, MODAL_ACTIONS } from 'redux/actions/_actions';
 
 import { Button, Container, Grid } from 'semantic-ui-react'
 
@@ -10,6 +10,7 @@ export default function Overview({ wallet }) {
 
     const dispatch = useDispatch();
     const balances = useSelector(state => ({ ...state.vault.balances }));
+    const vaultExists = useSelector(state => state.vault.exists);
     const { madNetConnected, web3Connected } = useSelector(state => ({ web3Conncted: state.adapter.web3Adapter.connected, madNetConnected: state.adapter.madNetAdapter.connected }));
     const thisWalletBalances = balances[wallet.address] ? balances[wallet.address] : false;
     const [loader, setLoader] = React.useState(false);
@@ -40,6 +41,10 @@ export default function Overview({ wallet }) {
         }
     }
 
+    const openRenameWalletModal = () => { dispatch(MODAL_ACTIONS.openRenameWalletModal(wallet)) }
+    const openRemoveWalletModal = () => { dispatch(MODAL_ACTIONS.openRemoveWalletModal(wallet)) }
+    const openXportPrivKModal = () => { dispatch(MODAL_ACTIONS.openXportPrivKModal(wallet)) }
+
     return (
         <Grid className="break-all text-sm p-3">
 
@@ -66,9 +71,9 @@ export default function Overview({ wallet }) {
 
                         <label className="font-semibold">Ethereum Balances</label>
                         <div className="py-1">
-                            <div><MicroBalanceLoader balanceType="ETH" balanceKey={"eth"}/></div>
-                            <div><MicroBalanceLoader balanceType="STAKE" balanceKey={"stake"} balanceKey2={"stakeAllowance"}/></div>
-                            <div><MicroBalanceLoader balanceType="UTIL" balanceKey={"util"} balanceKey2={"utilAllowance"}/></div>
+                            <div><MicroBalanceLoader balanceType="ETH" balanceKey={"eth"} /></div>
+                            <div><MicroBalanceLoader balanceType="STAKE" balanceKey={"stake"} balanceKey2={"stakeAllowance"} /></div>
+                            <div><MicroBalanceLoader balanceType="UTIL" balanceKey={"util"} balanceKey2={"utilAllowance"} /></div>
                         </div>
 
                     </Container>
@@ -81,7 +86,7 @@ export default function Overview({ wallet }) {
 
                         <label className="font-semibold">MadNet Balances</label>
                         <div className="py-1">
-                            <div><MicroBalanceLoader balanceType="MadBytes" balanceKey={"madBytes"}/></div>
+                            <div><MicroBalanceLoader balanceType="MadBytes" balanceKey={"madBytes"} /></div>
                         </div>
 
                     </Container>
@@ -110,9 +115,11 @@ export default function Overview({ wallet }) {
                         <label className="font-semibold">Actions</label>
                         <Container className="flex flex-col items-baseline underline py-1">
                             <Button className="text-green-500 text-sm bg-transparent p-0.5" onClick={fetchBalances}>Refresh Balances</Button>
-                            <Button className="text-purple-700 text-sm bg-transparent p-0.5">Rename Wallet</Button>
-                            <Button className="text-purple-700 text-sm bg-transparent p-0.5">Export Private Key</Button>
-                            <Button className="text-red-700 text-sm bg-transparent p-0.5">Remove Wallet</Button>
+                            {vaultExists && (
+                                <Button className="text-purple-700 text-sm bg-transparent p-0.5" onClick={openRenameWalletModal} >Rename Wallet</Button>
+                            )} {/* Currently Vault Only */ } 
+                            <Button className="text-purple-700 text-sm bg-transparent p-0.5" onClick={openRemoveWalletModal} >Export Private Key</Button>
+                            <Button className="text-red-700 text-sm bg-transparent p-0.5" onClick={openXportPrivKModal} >Remove Wallet</Button>
                         </Container>
 
                     </Container>

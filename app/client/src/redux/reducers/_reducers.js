@@ -3,7 +3,7 @@ import { combineReducers } from 'redux';
 import adapterReducer from './adapter';
 import configReducer from './configuration';
 import interfaceReducer from './interface';
-import modalReducer from './modals';
+import modalReducer from './modal';
 import userReducer from './user';
 import vaultReducer from './vault';
 

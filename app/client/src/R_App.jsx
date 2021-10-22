@@ -14,6 +14,7 @@ import * as Transactions from 'stories/transactions/_transactions';
 import * as NewVaultFlows from 'stories/newVault/_newVault';
 import * as OptOutFlow from 'stories/optOut/_optOut';
 import * as ReturningUserLoadFlows from 'stories/returningUserLoad/_returnUserLoad';
+import * as WalletActionModals from 'modals/_walletActionModals';
 
 // Global Modals
 import PasswordRequestModal from 'components/modals/PasswordRequestModal';
@@ -93,8 +94,12 @@ function App() {
                 </Switch>
 
                 <DebugTools/>
+
                 <ToastContainer position="bottom-right" />
                 <PasswordRequestModal/>
+                <WalletActionModals.RenameWalletModal />
+                <WalletActionModals.RemoveWalletModal />
+                <WalletActionModals.ExportPrivateKeyModal />
 
             </Router>
         </Container>
