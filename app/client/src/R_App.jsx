@@ -14,7 +14,6 @@ import * as Transactions from 'stories/transactions/_transactions';
 import * as NewVaultFlows from 'stories/newVault/_newVault';
 import * as OptOutFlow from 'stories/optOut/_optOut';
 import * as ReturningUserLoadFlows from 'stories/returningUserLoad/_returnUserLoad';
-import * as Settings from 'stories/settings/_settings';
 
 // Global Modals
 import PasswordRequestModal from 'components/modals/PasswordRequestModal';
