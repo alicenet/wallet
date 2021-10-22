@@ -13,7 +13,12 @@ function Construct() {
 
     useEffect(() => {
         dispatch(INTERFACE_ACTIONS.updateActiveTabPane(tabPaneIndex.Transactions));
-    }, []);
+    }, [dispatch]);
+
+    const addToTransactionButtons = [
+        { icon: 'chart bar', title: 'Data Store' },
+        { icon: 'currency', title: 'Value Store' }
+    ];
 
     return (
         <Page showMenu>
@@ -36,29 +41,19 @@ function Construct() {
 
                     <Container className="flex justify-evenly">
 
-                        <Button className="p-1 m-0 relative">
+                        {addToTransactionButtons.map((button, index) =>
+                            <Button className="p-1 m-0 relative" key={`add-to-tx-${index}`}>
 
-                            <Icon size="tiny" name='plus circle' className="text-sm	absolute p-1 top-0 right-0"/>
+                                <Icon size="tiny" name='plus circle' className="text-sm	absolute p-1 top-0 right-0"/>
 
-                            <Header size="tiny" icon className="uppercase m-0 mx-3">
+                                <Header size="tiny" icon className="uppercase m-0 mx-3">
 
-                                Add<Icon name='chart bar'/>Data Store
+                                    Add<Icon name={button.icon}/>{button.title}
 
-                            </Header>
+                                </Header>
 
-                        </Button>
-
-                        <Button className="p-1 m-0 relative">
-
-                            <Icon size="tiny" name='plus circle' className="text-sm absolute p-1 top-0 right-0"/>
-
-                            <Header size="tiny" icon className="uppercase m-0 mx-3">
-
-                                Add<Icon name='currency'/>Value Store
-
-                            </Header>
-
-                        </Button>
+                            </Button>
+                        )}
 
                     </Container>
 
