@@ -139,7 +139,7 @@ export default function useFormState(initialStateKeysArray) {
                             break;
                         case fieldType.PASSWORD:
                             if (!_validateValueByType(formState[key.name].value, fieldType.PASSWORD)) {
-                                error = (formState[key.name].display || formState[key.name].name) + " must be at least 8 characters long.";
+                                error = (formState[key.name].display || formState[key.name].name) + " is not strong enough.";
                             }
                             break;
                         case fieldType.VERIFIED_PASSWORD:
