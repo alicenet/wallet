@@ -100,6 +100,8 @@ export default function useFormState(initialStateKeysArray) {
     const onSubmit = async (callback) => {
         let errorsFound = false;
 
+        console.log("HIT")
+
         for (let i = 0; i < initialStateKeysArray.length; i++) {
 
             let key = initialStateKeysArray[i];
@@ -139,7 +141,7 @@ export default function useFormState(initialStateKeysArray) {
                             break;
                         case fieldType.PASSWORD:
                             if (!_validateValueByType(formState[key.name].value, fieldType.PASSWORD)) {
-                                error = (formState[key.name].display || formState[key.name].name) + " is not strong enough.";
+                                error = (formState[key.name].display || formState[key.name].name) + " must be atleast 8 characters long.";
                             }
                             break;
                         case fieldType.VERIFIED_PASSWORD:
@@ -195,7 +197,7 @@ function _validateValueByType(value, type) {
         case fieldType.URL:
             return validator.isURL(value, { protocols: ['http', 'https'] });
         case fieldType.PASSWORD:
-            return validator.isStrongPassword(value, { minLength: 8 });
+            return value.length >= 8;
         default:
             new Error("Invalid type submitted to useFormState validator");
     }
@@ -240,7 +242,7 @@ function _getValidationError(type, isValidated) {
         case fieldType.URL:
             return "Must be a URL";
         case fieldType.PASSWORD:
-            return "Password is not strong enough.";
+            return "Password must be at least 8 characters long.";
         default:
             new Error("Invalid type submitted to useFormState validator");
     }

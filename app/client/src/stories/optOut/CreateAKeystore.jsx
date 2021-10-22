@@ -6,6 +6,8 @@ import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFormState } from 'hooks/_hooks';
 
+import GenerateKeystoreForm from 'components/keystore/GenerateKeystoreForm';
+
 import { VAULT_ACTIONS } from 'redux/actions/_actions'
 
 import Page from 'layout/Page';
@@ -26,9 +28,13 @@ function CreateAKeystore() {
     ]);
 
     const handleFormSubmit = () => {
+        // Generate the new keystore for the user
+
         dispatch(VAULT_ACTIONS.generateNewSecureHDVault(seedPhrase, formState.password.value, desiredCurve))
         history.push("/hub");
     }
+
+    console.log(formState);
 
     return (
         <Page>
@@ -51,63 +57,10 @@ function CreateAKeystore() {
 
                 </Grid.Column>
 
-                <Grid.Column width={8} className="p-0 self-center">
+                <Grid.Column width={16} className="p-0 self-center flex flex-col items-center" >
 
-                    <Form onSubmit={() => onSubmit(handleFormSubmit)}>
+                    <GenerateKeystoreForm hideTitle />
 
-                        <Form.Group className="flex flex-auto flex-col m-0 text-left text-sm gap-5">
-
-                            <Form.Input
-                                id='name'
-                                label='Keystore Name'
-                                placeholder='Enter Name'
-                                type='text'
-                                required
-                                onChange={e => formSetter.setName(e.target.value)}
-                                error={!!formState.name.error && {
-                                    content: formState.name.error
-                                }}
-                            />
-
-                            <Form.Input
-                                id='password'
-                                label='Keystore Password'
-                                placeholder='Enter Password'
-                                type='password'
-                                required
-                                onChange={e => formSetter.setPassword(e.target.value)}
-                                error={!!formState.password.error && {
-                                    content: formState.password.error
-                                }}
-                            />
-
-                            <Form.Input
-                                id='verify-password'
-                                label='Verify Password'
-                                placeholder='Enter Password'
-                                type='password'
-                                required
-                                onChange={e => formSetter.setVerifiedPassword(e.target.value)}
-                                error={!!formState.verifiedPassword.error && {
-                                    content: formState.verifiedPassword.error
-                                }}
-                            />
-
-                        </Form.Group>
-
-                    </Form>
-
-                </Grid.Column>
-
-                <Grid.Column width={12} className="p-0 self-center">
-
-                    <Container className="flex justify-between">
-
-                        <Button color="orange" basic content="Go Back" className="m-0" onClick={() => history.goBack()}/>
-
-                        <Button color="teal" basic content='Secure My Wallets' className="m-0" onClick={() => onSubmit(handleFormSubmit)}/>
-
-                    </Container>
                 </Grid.Column>
 
             </Grid>
