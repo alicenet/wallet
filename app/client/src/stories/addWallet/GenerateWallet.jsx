@@ -28,12 +28,12 @@ export default function AddWalletMenu() {
             error = "Must be a string"
         }
         if (walletName.value.length <= 3) {
-            error = "Must be atleast 4 characters"
+            error = "Must be at least 4 characters"
         }
         
         if (error) {
             setLoading(false);
-            return setWalletNameKeys({ "error": "Must be atleast 4 characters" });
+            return setWalletNameKeys({ "error": "Must be at least 4 characters" });
         }
 
         // Clear Error

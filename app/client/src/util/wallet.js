@@ -165,7 +165,7 @@ export function generateKeystore(asBlob, password, curve = curveTypes.SECP256K1)
     web3.eth.accounts.wallet.add(wallet[0])
     let ks = web3.eth.accounts.wallet.encrypt(password)
     let keystore = ks[0];
-    if (curve === 2) { keystore["curve"] = 2 } // Note the curve if BN -- This gets removed on reads
+    if (curve === curveTypes.BARRETO_NAEHRIG) { keystore["curve"] = curveTypes.BARRETO_NAEHRIG } // Note the curve if BN -- This gets removed on reads
     let ksJSONBlob = new Blob([JSON.stringify(keystore, null, 2)]);
     return asBlob ? ksJSONBlob : keystore;
 }
@@ -181,7 +181,7 @@ export function generateKeystoreFromPrivK(privK, password, curve = curveTypes.SE
     web3.eth.accounts.wallet.add(privK);
     let ks = web3.eth.accounts.wallet.encrypt(password);
     let keystore = ks[0];
-    if (curve === 2) { keystore["curve"] = 2 } // Note the curve if BN -- This gets removed on reads
+    if (curve === curveTypes.BARRETO_NAEHRIG) { keystore["curve"] = curveTypes.BARRETO_NAEHRIG } // Note the curve if BN -- This gets removed on reads
     return keystore;
 }
 

@@ -64,7 +64,7 @@ export default function ImportPrivateKeyForm({ submitText, submitFunction, cance
                             onChange={toggleCurveType}
                             label={<><label className={"labelCheckbox"}>Use BN Curve</label><Popup size="mini" position="right center" offset={"0,2"}
                                 trigger={<Icon name="question circle" className="ml-1 mb-1.5" style={{ marginRight: "-.035rem" }} />} content="Generate public address with BN Curve" /></>}
-                            className="flex justify-center items-center text-xs uppercase font-bold relative -top-0" />
+                            className="flex justify-center items-center text-xs uppercase font-bold relative top-0" />
                     </label>
                 }
                 error={!!formState.privateKey.error && { content: formState.privateKey.error }}
