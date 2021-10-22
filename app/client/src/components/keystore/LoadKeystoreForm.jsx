@@ -78,6 +78,7 @@ export default function LoadKeystoreForm({ submitText, submitFunction, cancelTex
             )}
 
             <Form.Input
+                disabled={success}
                 size="mini"
                 type="file"
                 id="file"
@@ -97,7 +98,7 @@ export default function LoadKeystoreForm({ submitText, submitFunction, cancelTex
 
             />
 
-            <Form.Input
+            <Form.Input disabled={success}
                 label={<><label className="inline">Keystore Password</label><Popup size="mini" position="right center" offset={"4,2"} className="transition-none"
                     trigger={<Icon name="question circle" className="ml-1" />} content="Password to unlock this keystore" /> </>}
                 type="password" value={formState.password.value}
@@ -105,7 +106,7 @@ export default function LoadKeystoreForm({ submitText, submitFunction, cancelTex
                 error={!!formState.password.error && { content: formState.password.error }}
             />
 
-            <Form.Input
+            <Form.Input disabled={success}
                 label={<><label className="inline">Wallet Name</label><Popup size="mini" position="right center" offset={"4,2"}
                     trigger={<Icon name="question circle" className="ml-1" />} content="How this keystore will be referenced" /> </>}
                 type="text" value={formState.walletName.value}

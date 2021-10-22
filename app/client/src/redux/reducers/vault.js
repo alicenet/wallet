@@ -88,6 +88,12 @@ export default function vaultReducer(state = initialVaultState, action) {
                 balances: action.payload
             })
 
+        case VAULT_ACTION_TYPES.SET_CURVE:
+            log.debug("Setting preferred vault curve state:", action.payload);
+            return Object.assign({}, state, {
+                hd_curve: action.payload
+            });
+
         ////////////////////
         // State Markers // -- Vault State Marker Actions
         ///////////////////

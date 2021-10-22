@@ -5,30 +5,45 @@ import utils from 'util/_util.js';
 import { curveTypes } from 'util/wallet.js';
 
 /**
- * @prop { Function (keystore<JSON>, password<String>) => {...} } loadKeystoreCB -- Additional function to call after pressing "Load This Keystore" -- Most likely a redux action or history push, etc
+ * @prop { Function (keystore<JSON>, password<String>) => {...} } submitFunction -- Additional function to call after pressing "Load This Keystore" -- Most likely a redux action or history push, etc
  * @prop { Boolean } inline -- Compact the form into a single line?
  * @prop { String } defaultPassword --Default password to use? ( Mainly for debugging )
  * @prop { Boolean } showPassword -- Show the password in plain text?
  * @prop { String } customTitle -- Use a custom form title?
+ * @prop { String } hideTitle -- Hide the title?
  */
-export default function GenerateKeystoreForm({ loadKeystoreCB, inline, defaultPassword = "", showPassword = false, customTitle = "Generate Keystore" }) {
-
-    const [formState, formSetter] = useFormState([{ name: 'password', type: 'password', value: defaultPassword, isRequired: true }]);
+export default function GenerateKeystoreForm(
+    {
+        cancelText,
+        cancelFunction,
+        submitText,
+        submitFunction,
+        inline,
+        defaultPassword = "",
+        showPassword = false,
+        customTitle = "Generate Keystore",
+        hideTitle
+    }
+) {
+    const [formState, formSetter, onSubmit] = useFormState([
+        { name: 'password', type: 'password', value: defaultPassword, isRequired: true },
+        { name: 'verifiedPassword', display: 'Verify Password', type: 'verified-password', isRequired: true }
+    ]);
     const [keystoreDL, setKeystoreDL] = React.useState(false);
     const [curveType, setCurveType] = React.useState(curveTypes.SECP256K1);
     const toggleCurveType = () => setCurveType(s => (s === curveTypes.SECP256K1 ? curveTypes.BARRETO_NAEHRIG : curveTypes.SECP256K1));
 
     const downloadRef = React.useRef();
 
-    // TODO ADD CURVE SWITCH
+    // CAT TODO ADD CURVE SWITCH
 
     const loadKeystore = () => {
         let fr = new FileReader();
         fr.readAsText(keystoreDL.data)
         fr.onload = (res) => {
             let ksJSON = JSON.parse(res.target.result);
-            if (loadKeystoreCB) {
-                loadKeystoreCB(ksJSON, formState.password.value);
+            if (submitFunction) {
+                submitFunction(ksJSON, formState.password.value);
             }
         }
     }
@@ -42,7 +57,7 @@ export default function GenerateKeystoreForm({ loadKeystoreCB, inline, defaultPa
         downloadRef.current.href = URL.createObjectURL(newStoreBlob);
     }
 
-    const setFilename = async (e) => {
+    const setFilename = async () => {
         setKeystoreDL(s => ({
             filename: "a",
             ...s
@@ -50,13 +65,13 @@ export default function GenerateKeystoreForm({ loadKeystoreCB, inline, defaultPa
     }
 
     ////////////////////
-    // Inline Version //
+    // Inline Version // -- Deprecated -- DEBUG Menu only
     ////////////////////
     if (inline) {
         return (
-            <Form size="mini" className="max-w-lg">
+            <Form size="mini" className="max-w-lg" onSubmit={e => e.preventDefault()}>
 
-                <Header as="h4">{customTitle}</Header>
+                {!hideTitle && <Header as="h4">{customTitle}</Header>}
 
                 <Form.Group widths="equal">
 
@@ -83,10 +98,23 @@ export default function GenerateKeystoreForm({ loadKeystoreCB, inline, defaultPa
                         onChange={setFilename}
                         action={
                             <Button.Group size="mini">
-                                <Button content="Download" icon="download" size="mini" color="purple" basic ref={downloadRef}
-                                        href={keystoreDL ? URL.createObjectURL(keystoreDL.data) : ""} download={keystoreDL.filename}/>
+                                <Button
+                                    content="Download"
+                                    icon="download"
+                                    size="mini"
+                                    color="purple"
+                                    basic ref={downloadRef}
+                                    href={keystoreDL ? URL.createObjectURL(keystoreDL.data) : ""} download={keystoreDL.filename}
+                                />
                                 <Button.Or text="or"/>
-                                <Button content="Load" icon="arrow alternate circle right" labelPosition="right" color="green" basic onClick={loadKeystore}/>
+                                <Button
+                                    content="Load"
+                                    icon="arrow alternate circle right"
+                                    labelPosition="right"
+                                    color="green"
+                                    basic
+                                    onClick={loadKeystore}
+                                />
                             </Button.Group>
                         }
                     />
@@ -100,17 +128,27 @@ export default function GenerateKeystoreForm({ loadKeystoreCB, inline, defaultPa
     /////////////////////
     // Column Version //
     ////////////////////
-    return (
+    return (<>
 
-        <Form size="mini" className="max-w-lg">
+        <Form size="mini" className="w-96 mb-12">
 
-            <Header as="h4">{customTitle}</Header>
+            {!hideTitle && <Header as="h4">{customTitle}</Header>}
 
-            <Form.Input size="small"
+            <Form.Input
+                size="small"
                 label="Keystore Password"
                 type="password" value={formState.password.value}
                 onChange={e => formSetter.setPassword(e.target.value)}
-                action={{ content: "Generate", size: "mini", onClick: generateWallet, icon: "refresh", className: "w-28" }}
+                error={!!formState.password.error && { content: formState.password.error }}
+            />
+
+            <Form.Input
+                size="small"
+                label="Verify Keystore Password"
+                type="password" value={formState.verifiedPassword.value}
+                onChange={e => formSetter.setVerifiedPassword(e.target.value)}
+                action={{ content: "Generate", size: "mini", onClick: () => onSubmit(generateWallet), icon: "refresh", className: "w-28" }}
+                error={!!formState.verifiedPassword.error && { content: formState.verifiedPassword.error }}
             />
 
             <Form.Input
@@ -128,10 +166,13 @@ export default function GenerateKeystoreForm({ loadKeystoreCB, inline, defaultPa
                 }}
             />
 
-            <Form.Button color="green" basic className="mt-6" content="Load This Keystore" onClick={loadKeystore}/>
-
         </Form>
 
-    )
+        <div className="flex justify-between mt-12 w-96">
+            <Form.Button basic content={cancelText} color="orange" onClick={cancelFunction}/>
+            <Form.Button disabled={!keystoreDL} color="green" basic content={submitText} onClick={loadKeystore}/>
+        </div>
+
+    </>)
 
 }

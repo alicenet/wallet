@@ -49,7 +49,7 @@ export default function OptOutSegment() {
                 </div>
             </div>
 
-            <GenerateKeystoreForm inline defaultPassword="testing" showPassword loadKeystoreCB={addOptOutKeystore} customTitle={"Generate And Load Optout Keystore"}/>
+            <GenerateKeystoreForm inline defaultPassword="testing" showPassword submitFunction={addOptOutKeystore} customTitle={"Generate And Load Optout Keystore"}/>
             <Form size="mini" className="max-w-sm">
                 <Form.Input label="Name for Above Generated Wallet ( Saved As the wallet name on 'Load' )" size="mini" value={newWalletName}
                             onChange={e => setNewWalletName(e.target.value)}/>

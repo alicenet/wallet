@@ -83,6 +83,7 @@ export function loadSecureHDVaultFromStorage(password) {
         })
         let res = await dispatch({ type: MIDDLEWARE_ACTION_TYPES.INIT_MAD_WALLET, payload: preInitPayload }); // Pass off to MadWalletMiddleware to finish state initiation
         dispatch({ type: VAULT_ACTION_TYPES.MARK_EXISTS_AND_UNLOCKED });
+        dispatch({ type: VAULT_ACTION_TYPES.SET_CURVE, payload: hdCurve })
         dispatch({ type: VAULT_ACTION_TYPES.SET_MNEMONIC, payload: mnemonic });
 
         // Once the vault is unlocked attempt to connect web3, and then madNet

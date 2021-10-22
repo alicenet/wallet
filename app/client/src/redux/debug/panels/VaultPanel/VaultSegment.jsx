@@ -33,7 +33,6 @@ export default function VaultSegment() {
     }
 
     const unlockVault = async () => {
-        console.log("DEBUG:: Attempt unlock vault with password: " + password);
         setVaultLoading(true);
         let [done, errors] = await dispatch(VAULT_ACTIONS.loadSecureHDVaultFromStorage(password)); // eslint-disable-line
         setVaultLoading(false)
