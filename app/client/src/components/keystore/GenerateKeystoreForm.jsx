@@ -12,18 +12,19 @@ import { curveTypes } from 'util/wallet.js';
  * @prop { String } customTitle -- Use a custom form title?
  * @prop { String } hideTitle -- Hide the title?
  */
-export default function GenerateKeystoreForm({
-    cancelText,
-    cancelFunction,
-    submitText,
-    submitFunction,
-    inline,
-    defaultPassword =
-    "", showPassword = false,
-    customTitle = "Generate Keystore",
-    hideTitle
-}) {
-
+export default function GenerateKeystoreForm(
+    {
+        cancelText,
+        cancelFunction,
+        submitText,
+        submitFunction,
+        inline,
+        defaultPassword = "",
+        showPassword = false,
+        customTitle = "Generate Keystore",
+        hideTitle
+    }
+) {
     const [formState, formSetter, onSubmit] = useFormState([
         { name: 'password', type: 'password', value: defaultPassword, isRequired: true },
         { name: 'verifiedPassword', display: 'Verify Password', type: 'verified-password', isRequired: true }
@@ -56,7 +57,7 @@ export default function GenerateKeystoreForm({
         downloadRef.current.href = URL.createObjectURL(newStoreBlob);
     }
 
-    const setFilename = async (e) => {
+    const setFilename = async () => {
         setKeystoreDL(s => ({
             filename: "a",
             ...s
@@ -82,12 +83,12 @@ export default function GenerateKeystoreForm({
                                     checked={curveType === curveTypes.BARRETO_NAEHRIG}
                                     onChange={toggleCurveType}
                                     label={<label className={"labelCheckbox"}>Use BN Curve</label>}
-                                    className="flex justify-center items-center text-xs uppercase font-bold relative -top-0" />
+                                    className="flex justify-center items-center text-xs uppercase font-bold relative -top-0"/>
                             </label>
                         }
                         type={showPassword ? "text" : "password"} value={formState.password.value}
                         onChange={e => formSetter.setPassword(e.target.value)}
-                        action={{ content: "Generate", size: "mini", onClick:generateWallet, icon: "refresh" }}
+                        action={{ content: "Generate", size: "mini", onClick: generateWallet, icon: "refresh" }}
                     />
 
                     <Form.Input
@@ -97,10 +98,23 @@ export default function GenerateKeystoreForm({
                         onChange={setFilename}
                         action={
                             <Button.Group size="mini">
-                                <Button content="Download" icon="download" size="mini" color="purple" basic ref={downloadRef}
-                                    href={keystoreDL ? URL.createObjectURL(keystoreDL.data) : ""} download={keystoreDL.filename} />
-                                <Button.Or text="or" />
-                                <Button content="Load" icon="arrow alternate circle right" labelPosition="right" color="green" basic onClick={loadKeystore} />
+                                <Button
+                                    content="Download"
+                                    icon="download"
+                                    size="mini"
+                                    color="purple"
+                                    basic ref={downloadRef}
+                                    href={keystoreDL ? URL.createObjectURL(keystoreDL.data) : ""} download={keystoreDL.filename}
+                                />
+                                <Button.Or text="or"/>
+                                <Button
+                                    content="Load"
+                                    icon="arrow alternate circle right"
+                                    labelPosition="right"
+                                    color="green"
+                                    basic
+                                    onClick={loadKeystore}
+                                />
                             </Button.Group>
                         }
                     />
@@ -120,14 +134,16 @@ export default function GenerateKeystoreForm({
 
             {!hideTitle && <Header as="h4">{customTitle}</Header>}
 
-            <Form.Input size="small"
+            <Form.Input
+                size="small"
                 label="Keystore Password"
                 type="password" value={formState.password.value}
                 onChange={e => formSetter.setPassword(e.target.value)}
                 error={!!formState.password.error && { content: formState.password.error }}
             />
 
-            <Form.Input size="small"
+            <Form.Input
+                size="small"
                 label="Verify Keystore Password"
                 type="password" value={formState.verifiedPassword.value}
                 onChange={e => formSetter.setVerifiedPassword(e.target.value)}
@@ -153,8 +169,8 @@ export default function GenerateKeystoreForm({
         </Form>
 
         <div className="flex justify-between mt-12 w-96">
-            <Form.Button basic content={cancelText} color="orange" onClick={cancelFunction} />
-            <Form.Button disabled={!keystoreDL} color="green" basic content={submitText} onClick={loadKeystore} />
+            <Form.Button basic content={cancelText} color="orange" onClick={cancelFunction}/>
+            <Form.Button disabled={!keystoreDL} color="green" basic content={submitText} onClick={loadKeystore}/>
         </div>
 
     </>)
