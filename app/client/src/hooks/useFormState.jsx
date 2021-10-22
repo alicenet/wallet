@@ -27,11 +27,10 @@ export default function useFormState(initialStateKeysArray) {
     // Initial State
     let initialState = {};
 
-
     let warnTypesNotSupplied = false;
     // Extrapolate keys from initial state array and populate with value && error sub-keys
     initialStateKeysArray.forEach(key => {
-        if (!key.type) { warnTypesNotSupplied = true };
+        if (!key.type) { warnTypesNotSupplied = true }
         initialState[key.name] = {
             name: key.name,
             display: key.display || false,
@@ -74,7 +73,7 @@ export default function useFormState(initialStateKeysArray) {
                     prevState[key.name].required
                 );
 
-                let newState = {
+                return {
                     ...prevState,
                     [key.name]: {
                         ...prevState[key.name],
@@ -91,7 +90,6 @@ export default function useFormState(initialStateKeysArray) {
                         }
                     })
                 };
-                return newState;
             });
 
         // Provide external error setters for any complex situations
@@ -242,7 +240,7 @@ function _getValidationError(type, isValidated) {
         case fieldType.URL:
             return "Must be a URL";
         case fieldType.PASSWORD:
-            return "Must be atleast 8 characters.";
+            return "Password is not strong enough.";
         default:
             new Error("Invalid type submitted to useFormState validator");
     }
