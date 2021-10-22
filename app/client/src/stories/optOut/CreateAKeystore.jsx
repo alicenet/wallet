@@ -37,7 +37,7 @@ function CreateAKeystore() {
     const dispatchWalletUpdate = async () => {
 
         if (formState.name.value.length < 3) {
-            return setLoadError("Should be atleast 3 characters.")
+            return setLoadError("Should be at least 3 characters.")
         }
 
         let loaded = await dispatch(VAULT_ACTIONS.addExternalWalletToState(keystore[0], keystore[1], formState.name.value));
