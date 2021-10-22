@@ -106,7 +106,7 @@ export default function GenerateKeystoreForm({ loadKeystoreCB, inline, defaultPa
 
             <Header as="h4">{customTitle}</Header>
 
-            <Form.Input
+            <Form.Input size="small"
                 label="Keystore Password"
                 type="password" value={formState.password.value}
                 onChange={e => formSetter.setPassword(e.target.value)}

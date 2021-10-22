@@ -8,11 +8,15 @@ import util from 'util/_util';
 
 // User Story Components
 import * as Hubs from 'stories/hubs/_hubs';
+import * as AddWallet from 'stories/addWallet/_addWallet';
 import * as Settings from 'stories/settings/_settings';
 import * as Transactions from 'stories/transactions/_transactions';
 import * as NewVaultFlows from 'stories/newVault/_newVault';
 import * as OptOutFlow from 'stories/optOut/_optOut';
 import * as ReturningUserLoadFlows from 'stories/returningUserLoad/_returnUserLoad';
+import * as Settings from 'stories/settings/_settings';
+
+// Global Modals
 import PasswordRequestModal from 'components/modals/PasswordRequestModal';
 
 /**
@@ -58,9 +62,15 @@ function App() {
                 {/* Wallet Hub -- Send here if vault exists */}
                 <Route exact path="/hub" component={Hubs.ReturningUserHub}/>
 
+                {/* Add Wallet -- Add Wallet Menu && Screens */}
+                <Route exact path="/addWallet/menu" component={AddWallet.AddWalletMenu}/>
+                <Route exact path="/addWallet/generate" component={AddWallet.GenerateWallet}/>
+                <Route exact path="/addWallet/importKeystore" component={AddWallet.ImportKeystore}/>
+                <Route exact path="/addWallet/importPrivateKey" component={AddWallet.ImportPrivateKey}/>
+                <Route exact path="/addWallet/verify" component={AddWallet.VerifyImport}/>
+                  
                 {/* Construct Hub */}
                 <Route exact path="/transactions" component={Transactions.Construct}/>
-
 
                 {/* Settings */}
                 <Route exact path="/wallet/settings" component={Settings.Settings}/>
