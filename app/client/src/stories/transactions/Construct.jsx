@@ -1,10 +1,19 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { Button, Container, Grid, Header, Icon } from 'semantic-ui-react';
 
 import Page from 'layout/Page';
+import { INTERFACE_ACTIONS } from 'redux/actions/_actions';
+import { useDispatch } from 'react-redux';
+import { tabPaneIndex } from 'layout/HeaderMenu';
 
 function Construct() {
+
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(INTERFACE_ACTIONS.updateActiveTabPane(tabPaneIndex.Transactions));
+    }, []);
 
     return (
         <Page showMenu>

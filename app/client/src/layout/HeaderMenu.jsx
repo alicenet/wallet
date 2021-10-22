@@ -1,12 +1,18 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
 import { Container, Header, Icon, Image, Menu, Tab } from 'semantic-ui-react';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import MadIcon from '../Assets/icon.png';
-
 import { INTERFACE_ACTIONS } from '../redux/actions/_actions';
+
+export const tabPaneIndex = {
+    Wallets: 0,
+    Transactions: 1,
+    MadNet: 2,
+    Ethereum: 3,
+}
 
 function HeaderMenu({ showMenu }) {
 

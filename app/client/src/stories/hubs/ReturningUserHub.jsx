@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import head from 'lodash/head';
 import { Button, Container, Divider, Grid, Header, Loader, Tab } from 'semantic-ui-react'
 
 import Page from 'layout/Page';
 import { classNames } from 'util/generic';
-import { Datastores, Overview,  RecentTxs } from './tabPanes/_tabPanes';
+import { Datastores, Overview, RecentTxs } from './tabPanes/_tabPanes';
+import { INTERFACE_ACTIONS } from 'redux/actions/_actions';
+import { tabPaneIndex } from 'layout/HeaderMenu';
 
 export default function Hub() {
 
@@ -15,6 +17,7 @@ export default function Hub() {
     ));
 
     const wallets = React.useMemo(() => internal.concat(external) || [], [internal, external]);
+    const dispatch = useDispatch();
     const history = useHistory();
 
     const [openDrawer, setOpenDrawer] = React.useState(true);
@@ -33,6 +36,10 @@ export default function Hub() {
             setSelectedWallet(head(wallets));
         }
     }, [wallets])
+
+    useEffect(() => {
+        dispatch(INTERFACE_ACTIONS.updateActiveTabPane(tabPaneIndex.Wallets));
+    }, []);
 
     const panes = [
         {
