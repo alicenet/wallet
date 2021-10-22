@@ -5,14 +5,24 @@ import utils from 'util/_util.js';
 import { curveTypes } from 'util/wallet.js';
 
 /**
- * @prop { Function (keystore<JSON>, password<String>) => {...} } loadKeystoreCB -- Additional function to call after pressing "Load This Keystore" -- Most likely a redux action or history push, etc
+ * @prop { Function (keystore<JSON>, password<String>) => {...} } submitFunction -- Additional function to call after pressing "Load This Keystore" -- Most likely a redux action or history push, etc
  * @prop { Boolean } inline -- Compact the form into a single line?
  * @prop { String } defaultPassword --Default password to use? ( Mainly for debugging )
  * @prop { Boolean } showPassword -- Show the password in plain text?
  * @prop { String } customTitle -- Use a custom form title?
  * @prop { String } hideTitle -- Hide the title?
  */
-export default function GenerateKeystoreForm({ loadKeystoreCB, inline, defaultPassword = "", showPassword = false, customTitle = "Generate Keystore", hideTitle }) {
+export default function GenerateKeystoreForm({
+    cancelText,
+    cancelFunction,
+    submitText,
+    submitFunction,
+    inline,
+    defaultPassword =
+    "", showPassword = false,
+    customTitle = "Generate Keystore",
+    hideTitle
+}) {
 
     const [formState, formSetter, onSubmit] = useFormState([
         { name: 'password', type: 'password', value: defaultPassword, isRequired: true },
@@ -31,14 +41,13 @@ export default function GenerateKeystoreForm({ loadKeystoreCB, inline, defaultPa
         fr.readAsText(keystoreDL.data)
         fr.onload = (res) => {
             let ksJSON = JSON.parse(res.target.result);
-            if (loadKeystoreCB) {
-                loadKeystoreCB(ksJSON, formState.password.value);
+            if (submitFunction) {
+                submitFunction(ksJSON, formState.password.value);
             }
         }
     }
 
     const generateWallet = async () => {
-        console.log("WHAT")
         let newStoreBlob = await utils.wallet.generateKeystore(true, formState.password.value, curveType);
         setKeystoreDL({
             filename: "MadWallet_" + Date.now() + ".json",
@@ -55,7 +64,7 @@ export default function GenerateKeystoreForm({ loadKeystoreCB, inline, defaultPa
     }
 
     ////////////////////
-    // Inline Version //
+    // Inline Version // -- Deprecated -- DEBUG Menu only
     ////////////////////
     if (inline) {
         return (
@@ -78,7 +87,7 @@ export default function GenerateKeystoreForm({ loadKeystoreCB, inline, defaultPa
                         }
                         type={showPassword ? "text" : "password"} value={formState.password.value}
                         onChange={e => formSetter.setPassword(e.target.value)}
-                        action={{ content: "Generate", size: "mini", onClick: () => onSubmit(generateWallet), icon: "refresh" }}
+                        action={{ content: "Generate", size: "mini", onClick:generateWallet, icon: "refresh" }}
                     />
 
                     <Form.Input
@@ -144,8 +153,8 @@ export default function GenerateKeystoreForm({ loadKeystoreCB, inline, defaultPa
         </Form>
 
         <div className="flex justify-between mt-12 w-96">
-            <Form.Button basic content="Go Back" color="orange" />
-            <Form.Button disabled={!keystoreDL} color="green" basic content="Load This Keystore" onClick={loadKeystore} />
+            <Form.Button basic content={cancelText} color="orange" onClick={cancelFunction} />
+            <Form.Button disabled={!keystoreDL} color="green" basic content={submitText} onClick={loadKeystore} />
         </div>
 
     </>)

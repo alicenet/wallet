@@ -9,7 +9,7 @@ import { useFormState } from 'hooks/_hooks';
 import { toast } from 'react-toastify';
 import has from 'lodash/has';
 
-import { VAULT_ACTIONS } from 'redux/actions/_actions'
+import { ADAPTER_ACTIONS, VAULT_ACTIONS } from 'redux/actions/_actions'
 import { electronStoreCommonActions } from 'store/electronStoreHelper'
 
 import utils from 'util/_util';
@@ -55,6 +55,7 @@ function HasExistingKeystores() {
         setActiveKeystore(s => s + 1); // Go to next keystore
         // +1 to adjust for state change above that hasn't happened yet -- Checking if anymore keystores remain to look at
         if (keystoreData.length - (activeKeystore + 1) === 0) {
+            dispatch(ADAPTER_ACTIONS.initAdapters())
             history.push('/hub')
         }
     }
@@ -146,7 +147,7 @@ function HasExistingKeystores() {
                             <ForgottenKeystorePasswordModal incorrectPwEntered={showForgottenPasswordModal}/>
 
                             <div className="font-xs">
-                                {activeKeystore} / {keystoreData.length - activeKeystore} keystores examined
+                                {activeKeystore} / {keystoreData.length} keystores examined
                             </div>
 
                         </Form.Group>

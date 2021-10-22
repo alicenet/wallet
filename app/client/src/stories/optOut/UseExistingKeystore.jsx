@@ -1,102 +1,62 @@
 import React from 'react';
 
-import { Button, Container, Form, Grid, Header, Input } from 'semantic-ui-react';
+import { Grid, Header } from 'semantic-ui-react';
 
 import { useHistory } from 'react-router-dom';
-import { useFormState } from 'hooks/_hooks';
+
+import LoadKeystoreForm from 'components/keystore/LoadKeystoreForm';
+import { useDispatch } from 'react-redux';
 
 import Page from 'layout/Page';
+import { toast } from 'react-toastify';
+
+import { VAULT_ACTIONS, ADAPTER_ACTIONS } from 'redux/actions/_actions';
 
 function UseExistingKeystore() {
 
     const history = useHistory();
+    const dispatch = useDispatch();
 
-    const [formState, formSetter, onSubmit] = useFormState([{ name: 'password', type: 'password', isRequired: true }]);
-    const [fileName, setFileName] = React.useState('');
+    const handleLoad = async (results) => {
 
-    const handleFormSubmit = () => {
-        history.push('/');
-    }
+        let loaded = await dispatch(VAULT_ACTIONS.addExternalWalletToState(results.locked, results.password, results.walletName));
+        // Force a manual network connection on a newly generated wallet
 
-    const handleFileSelected = event => {
-        setFileName(event.target.value);
+        // Errors are primarily handled in the form before reaching this state, 
+        // If something bubbles this high, it is severe.
+        if (loaded.error) {
+            return toast.error("A serious error has occurred, please restart the application and try again.");
+        }
+
+        await dispatch(ADAPTER_ACTIONS.initAdapters())
+        history.push('/hub');
     }
 
     return (
         <Page>
 
-            <Grid textAlign="center" className="m-0">
+            <Grid textAlign="center" className="m-0 w-full">
 
                 <Grid.Column width={16} className="p-0 self-center">
 
-                    <Header content="Use Existing Keystore" as="h3" className="m-0"/>
+                    <Header content="Use Existing Keystore" as="h3" className="m-0" />
 
                 </Grid.Column>
 
-                <Grid.Column width={16} className="p-0 self-center text-sm">
+                <Grid.Column width={16} className="p-0 text-sm">
 
                     <p>Please choose an existing keystore file to load.</p>
 
                 </Grid.Column>
 
-                <Grid.Column width={10} className="p-0 self-center">
+                <Grid.Column width={16} className="p-0 flex justify-center" textAlign="center">
 
-                    <Form onSubmit={() => onSubmit(handleFormSubmit)}>
-
-                        <Form.Group className="flex flex-auto flex-col m-0 text-left text-sm gap-5">
-
-                            <Form.Field className="p-0">
-
-                                <Container className="flex justify-center items-center">
-
-                                    <Form.Input
-                                        id='file'
-                                        placeholder='Keystore file'
-                                        type='text'
-                                        required
-                                        className="w-full"
-                                        value={fileName}
-                                    >
-                                        <input className="rounded-r-none"/>
-
-                                        <Button as="label" color="blue" htmlFor="fileUpload" type="button" className="min-w-max m-0 rounded-l-none">
-                                            Select From File
-                                        </Button>
-
-                                        <Input type="file" id="fileUpload" className="hidden" onChange={handleFileSelected}/>
-
-                                    </Form.Input>
-
-                                </Container>
-
-                            </Form.Field>
-
-                            <Form.Input
-                                id='password'
-                                placeholder='Keystore Password'
-                                type='password'
-                                className="p-0"
-                                required
-                                disabled={fileName.length === 0}
-                                onChange={e => formSetter.setPassword(e.target.value)}
-                                error={!!formState.password.error && { content: formState.password.error }}
-                            />
-
-                        </Form.Group>
-
-                    </Form>
-
-                </Grid.Column>
-
-                <Grid.Column width={12} className="p-0 self-center">
-
-                    <Container className="flex justify-between">
-
-                        <Button color="orange" basic content="Go Back" className="m-0" onClick={() => history.goBack()}/>
-
-                        <Button color="teal" disabled={fileName.length === 0} basic content='Unlock Keystore' className="m-0" onClick={() => onSubmit(handleFormSubmit)}/>
-
-                    </Container>
+                    <LoadKeystoreForm
+                        submitText="Load Keystore"
+                        submitFunction={handleLoad}
+                        cancelText="Go Back"
+                        cancelFunction={history.goBack}
+                    />
 
                 </Grid.Column>
 

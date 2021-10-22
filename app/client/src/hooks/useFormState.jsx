@@ -100,8 +100,6 @@ export default function useFormState(initialStateKeysArray) {
     const onSubmit = async (callback) => {
         let errorsFound = false;
 
-        console.log("HIT")
-
         for (let i = 0; i < initialStateKeysArray.length; i++) {
 
             let key = initialStateKeysArray[i];

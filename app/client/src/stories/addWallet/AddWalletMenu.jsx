@@ -1,17 +1,24 @@
 import React from 'react';
 import { Container, Grid, Header, Button } from 'semantic-ui-react'
 import { useHistory } from 'react-router';
+import { useSelector } from 'react-redux';
 
 export default function AddWalletMenu() {
 
     const history = useHistory();
+    const { vaultExists } = useSelector(state => ({ vaultExists: state.vault.exists }))
 
-    const walletButtons = [
-        { content: "Generate Wallet", icon: "plus", onClick: () => history.push('/addWallet/generate') },
+    let walletButtons = [
         { content: "Import Keystore", icon: "download", onClick: () => history.push('/addWallet/importKeystore') },
         { content: "Import Private Key", icon: "download", onClick: () => history.push('/addWallet/importPrivateKey') },
         { content: "Go Back", icon: "arrow left", onClick: () => history.push('/hub'), color: "orange" },
     ]
+
+    if (vaultExists) {
+        walletButtons.unshift(
+            { content: "Generate Wallet", icon: "plus", onClick: () => history.push('/addWallet/generate') }
+        )
+    }
 
     const getWalletAdditionButtons = () => {
         return walletButtons.map(buttonSettings => {
