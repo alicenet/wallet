@@ -54,7 +54,7 @@ function VaultOptOutDisclaimer() {
 
                         <div>
 
-                            <Button color="orange" basic content="Go Back" className="m-0" onClick={() => history.goBack()}/>
+                            <Button color="orange" basic content="Go Back" className="m-0" onClick={history.goBack}/>
 
                         </div>
 

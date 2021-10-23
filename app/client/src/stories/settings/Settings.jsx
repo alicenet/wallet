@@ -52,7 +52,7 @@ function Settings() {
 
                     <Container className="flex flex-col justify-center text-justify w-72">
 
-                        <Button color="orange" basic content="Go Back" className="m-0 w-72" onClick={() => history.goBack()}/>
+                        <Button color="orange" basic content="Go Back" className="m-0 w-72" onClick={history.goBack}/>
 
                     </Container>
 

@@ -117,7 +117,7 @@ function EnterRecoveryPhrase() {
 
                     <Container className="flex justify-between">
 
-                        <Button color="orange" basic className="m-0" content="Go Back" onClick={() => history.goBack()}/>
+                        <Button color="orange" basic className="m-0" content="Go Back" onClick={history.goBack}/>
 
                         <Button color={seedPhraseIsCorrect ? 'teal' : 'red'} disabled={!seedPhraseIsCorrect}
                                 basic className="m-0"

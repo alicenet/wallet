@@ -120,7 +120,6 @@ export default function LoadKeystoreForm({ submitText, submitFunction, cancelTex
                 disabled={success}
                 content={error ? "Try Again" : success ? "Success" : "Add Wallet"}
                 icon={error ? "exclamation" : success ? "checkmark" : "plus"}
-                content={error ? "Try Again" : submitText}
             />
 
             <Form.Button fluid size="small" basic
