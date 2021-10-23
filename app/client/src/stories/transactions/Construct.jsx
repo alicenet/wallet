@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react';
-
-import { Button, Container, Grid, Header, Icon } from 'semantic-ui-react';
-
+import { Button, Container, Grid, Header } from 'semantic-ui-react';
 import Page from 'layout/Page';
 import { INTERFACE_ACTIONS } from 'redux/actions/_actions';
 import { useDispatch } from 'react-redux';
+
 import { tabPaneIndex } from 'layout/HeaderMenu';
+import AddValueStoreButton from './AddValueStoreButton';
+import AddDataStoreButton from './AddDataStoreButton';
 
 function Construct() {
 
@@ -14,11 +15,6 @@ function Construct() {
     useEffect(() => {
         dispatch(INTERFACE_ACTIONS.updateActiveTabPane(tabPaneIndex.Transactions));
     }, [dispatch]);
-
-    const addToTransactionButtons = [
-        { icon: 'chart bar', title: 'Data Store' },
-        { icon: 'currency', title: 'Value Store' }
-    ];
 
     return (
         <Page showMenu>
@@ -41,19 +37,9 @@ function Construct() {
 
                     <Container className="flex justify-evenly">
 
-                        {addToTransactionButtons.map((button, index) =>
-                            <Button className="p-1 m-0 relative" key={`add-to-tx-${index}`}>
+                        <AddDataStoreButton/>
 
-                                <Icon size="tiny" name='plus circle' className="text-sm	absolute p-1 top-0 right-0"/>
-
-                                <Header size="tiny" icon className="uppercase m-0 mx-3">
-
-                                    Add<Icon name={button.icon}/>{button.title}
-
-                                </Header>
-
-                            </Button>
-                        )}
+                        <AddValueStoreButton/>
 
                     </Container>
 
@@ -61,7 +47,7 @@ function Construct() {
 
                 <Grid.Column width={16} className="p-0 self-center">
 
-                    <Button color="teal" content='Send Transaction' disabled className="m-0"/>
+                    <Button color="teal" content='Send Transactions' disabled className="m-0"/>
 
                 </Grid.Column>
 
