@@ -6,8 +6,9 @@ import { toast } from 'react-toastify';
 
 import { TRANSACTION_ACTIONS } from 'redux/actions/_actions';
 import { SyncToastMessageSuccess } from 'components/customToasts/CustomToasts';
+import AddButton from './AddButton';
 
-export default function AddDataStoreButton({ dataStore = { from: null, to: null, duration: null, key: null, value: null } }) {
+export default function AddDataStoreButton({ dataStore }) {
 
     const [isOpen, setOpen] = React.useState(false);
 
@@ -51,19 +52,8 @@ export default function AddDataStoreButton({ dataStore = { from: null, to: null,
             onOpen={toggleOpen}
             onClose={toggleOpen}
             size="large"
-            trigger={
-                <Button className="p-1 m-0 relative">
-
-                    <Icon size="tiny" name='plus circle' className="text-sm	absolute p-1 top-0 right-0"/>
-
-                    <Header size="tiny" icon className="uppercase m-0 mx-3">
-
-                        Add<Icon name='chart bar'/>Data Store
-
-                    </Header>
-
-                </Button>
-            }>
+            trigger={<AddButton icon="chart bar" text="Data Store"/>}
+        >
 
             <Modal.Header className="text-center">
 

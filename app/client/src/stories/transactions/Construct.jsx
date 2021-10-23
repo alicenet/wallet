@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Container, Grid, Header } from 'semantic-ui-react';
 import Page from 'layout/Page';
 import { INTERFACE_ACTIONS } from 'redux/actions/_actions';
@@ -11,6 +11,9 @@ import AddDataStoreButton from './AddDataStoreButton';
 function Construct() {
 
     const dispatch = useDispatch();
+
+    const [selectedDataStore, setSelectedDataStore] = useState({ from: null, to: null, duration: null, key: null, value: null });
+    const [selectedValueStore, setSelectedValueStore] = useState({ from: null, to: null, value: null });
 
     useEffect(() => {
         dispatch(INTERFACE_ACTIONS.updateActiveTabPane(tabPaneIndex.Transactions));
@@ -37,9 +40,9 @@ function Construct() {
 
                     <Container className="flex justify-evenly">
 
-                        <AddDataStoreButton/>
+                        <AddDataStoreButton dataStore={selectedDataStore}/>
 
-                        <AddValueStoreButton/>
+                        <AddValueStoreButton valueStore={selectedValueStore}/>
 
                     </Container>
 
