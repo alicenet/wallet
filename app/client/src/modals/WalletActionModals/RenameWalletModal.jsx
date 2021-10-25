@@ -17,12 +17,20 @@ export default function RenameWalletModal() {
         vaultExists: s.vault.exists,
     }))
 
-    const closeModal = () => dispatch(MODAL_ACTIONS.closeRenameWalletModal());
-
     const [formState, formSetter, onSubmit] = useFormState([
         { name: 'name', display: 'Wallet Name', type: 'string', isRequired: true },
         { name: 'password', display: "Password", type: 'string', isRequired: true },
     ]);
+
+    // Anytime open changes, clear forms
+    React.useEffect( () => {
+        formSetter.setName("");
+        formSetter.setPassword("");
+    }, isOpen)
+
+    const closeModal = () => { 
+        dispatch(MODAL_ACTIONS.closeRenameWalletModal())
+    };
 
     const [error, setError] = React.useState()
     const [loading, setLoading] = React.useState(false)
@@ -30,6 +38,7 @@ export default function RenameWalletModal() {
     const updateName = async () => {
         setLoading(true);
         if (!await electronStoreCommonActions.checkPasswordAgainstPreflightHash(formState.password.value)) {
+            setLoading(false);
             return formSetter.setPasswordError("Incorrect password")
         }
         let renamed = await dispatch(VAULT_ACTIONS.renameWalletByAddress(targetWallet, formState.name.value, formState.password.value))

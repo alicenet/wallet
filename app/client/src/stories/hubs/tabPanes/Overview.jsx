@@ -117,9 +117,13 @@ export default function Overview({ wallet }) {
                             <Button className="text-green-500 text-sm bg-transparent p-0.5" onClick={fetchBalances}>Refresh Balances</Button>
                             {vaultExists && (
                                 <Button className="text-purple-700 text-sm bg-transparent p-0.5" onClick={openRenameWalletModal} >Rename Wallet</Button>
-                            )} {/* Currently Vault Only */ } 
-                            <Button className="text-purple-700 text-sm bg-transparent p-0.5" onClick={openRemoveWalletModal} >Export Private Key</Button>
-                            <Button className="text-red-700 text-sm bg-transparent p-0.5" onClick={openXportPrivKModal} >Remove Wallet</Button>
+                            )} {/* Currently Vault Only */}
+                            <Button className="text-purple-700 text-sm bg-transparent p-0.5" onClick={openXportPrivKModal}>Export Private Key</Button>
+                            {/** -- Placeholder for feature addition 
+                            {!wallet.isInternal && (
+                                <Button className="text-red-700 text-sm bg-transparent p-0.5" onClick={openRemoveWalletModal}>Remove Wallet</Button>
+                            )}
+                            */}
                         </Container>
 
                     </Container>

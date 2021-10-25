@@ -44,7 +44,7 @@ export default function modalReducer(state = initialModalState, action) {
 
         case MODAL_ACTION_TYPES.OPEN_REMOVE_WALLET:
             return Object.assign({}, state, {
-                remove_wallet_modal: false,
+                remove_wallet_modal: true,
                 wallet_action_target: action.payload,
             });
 
@@ -56,7 +56,7 @@ export default function modalReducer(state = initialModalState, action) {
 
         case MODAL_ACTION_TYPES.OPEN_XPORT_PRIVK:
             return Object.assign({}, state, {
-                export_privK_modal: false,
+                export_privK_modal: true,
                 wallet_action_target: action.payload,
             });
 
