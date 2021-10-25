@@ -15,8 +15,8 @@ export default function AddValueStoreButton({ valueStore }) {
     const dispatch = useDispatch();
 
     const [formState, formSetter, onSubmit] = useFormState([
-        { name: 'From', type: 'address', isRequired: true, value: valueStore.from },
-        { name: 'To', type: 'address', isRequired: true, value: valueStore.to },
+        { name: 'From', display: 'From address', type: 'address', isRequired: true, value: valueStore.from },
+        { name: 'To', display: 'To address', type: 'address', isRequired: true, value: valueStore.to },
         { name: 'Value', type: 'string', isRequired: true, value: valueStore.value },
     ]);
 

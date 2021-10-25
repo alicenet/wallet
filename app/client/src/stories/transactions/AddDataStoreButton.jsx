@@ -15,8 +15,8 @@ export default function AddDataStoreButton({ dataStore }) {
     const dispatch = useDispatch();
 
     const [formState, formSetter, onSubmit] = useFormState([
-        { name: 'From', type: 'address', isRequired: true, value: dataStore.from },
-        { name: 'To', type: 'address', isRequired: true, value: dataStore.to },
+        { name: 'From', display: 'From address', type: 'address', isRequired: true, value: dataStore.from },
+        { name: 'To', display: 'To address', type: 'address', isRequired: true, value: dataStore.to },
         { name: 'Duration', type: 'integer', isRequired: true, value: dataStore.duration },
         { name: 'Key', type: 'string', isRequired: true, value: dataStore.key },
         { name: 'Value', type: 'string', isRequired: true, value: dataStore.value },
