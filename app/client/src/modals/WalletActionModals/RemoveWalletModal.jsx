@@ -10,7 +10,7 @@ export default function RemoveWalletModal() {
 
     return (
 
-        <Modal>
+        <Modal open={isOpen}>
 
             <Modal.Content>
                 <Modal.Header>

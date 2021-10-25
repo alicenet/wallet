@@ -10,7 +10,7 @@ export default function ExportPrivateKeyModal() {
 
     return (
 
-        <Modal>
+        <Modal open={isOpen}>
 
             <Modal.Content>
                 <Modal.Header>
