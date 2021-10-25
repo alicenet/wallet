@@ -21,7 +21,7 @@ export default function AddValueStoreButton({ valueStore }) {
     ]);
 
     const handleSubmit = async () => {
-        dispatch(TRANSACTION_ACTIONS.add({
+        dispatch(TRANSACTION_ACTIONS.addValueStore({
             from: formState.From.value,
             to: formState.To.value,
             value: formState.Value.value,
@@ -31,6 +31,9 @@ export default function AddValueStoreButton({ valueStore }) {
             { className: "basic", "autoClose": 1000 }
         );
         setOpen(s => !s);
+        formSetter.setFrom(null);
+        formSetter.setTo(null);
+        formSetter.setValue(null);
     };
 
     const toggleOpen = () => {

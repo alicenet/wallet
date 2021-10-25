@@ -23,7 +23,7 @@ export default function AddDataStoreButton({ dataStore }) {
     ]);
 
     const handleSubmit = async () => {
-        dispatch(TRANSACTION_ACTIONS.add({
+        dispatch(TRANSACTION_ACTIONS.addDataStore({
             from: formState.From.value,
             to: formState.To.value,
             key: formState.Key.value,
@@ -35,6 +35,11 @@ export default function AddDataStoreButton({ dataStore }) {
             { className: "basic", "autoClose": 1000 }
         );
         setOpen(s => !s);
+        formSetter.setFrom(null);
+        formSetter.setTo(null);
+        formSetter.setKey(null);
+        formSetter.setValue(null);
+        formSetter.setDuration(null);
     };
 
     const toggleOpen = () => {
