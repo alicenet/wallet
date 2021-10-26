@@ -3,9 +3,11 @@ import { Button, Form, Grid, Header, Icon, Modal } from 'semantic-ui-react';
 import { useFormState } from 'hooks/_hooks';
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
+import has from 'lodash/has';
 
 import { TRANSACTION_ACTIONS } from 'redux/actions/_actions';
 import { SyncToastMessageSuccess } from 'components/customToasts/CustomToasts';
+import { transactionTypes } from 'util/_util';
 
 export default function AddEditValueStoreModal({ valueStore, onClose }) {
 
@@ -17,14 +19,27 @@ export default function AddEditValueStoreModal({ valueStore, onClose }) {
         { name: 'Value', type: 'string', isRequired: true, value: valueStore.value },
     ]);
 
+    const isEditing = has(valueStore, 'index');
+
     const handleSubmit = async () => {
-        dispatch(TRANSACTION_ACTIONS.addValueStore({
-            from: formState.From.value,
-            to: formState.To.value,
-            value: formState.Value.value,
-        }));
+        if (isEditing) {
+            dispatch(TRANSACTION_ACTIONS.editStore({
+                ...valueStore,
+                from: formState.From.value,
+                to: formState.To.value,
+                value: formState.Value.value,
+            }));
+        }
+        else {
+            dispatch(TRANSACTION_ACTIONS.addStore({
+                from: formState.From.value,
+                to: formState.To.value,
+                value: formState.Value.value,
+                type: transactionTypes.VALUE_STORE,
+            }));
+        }
         toast.success(
-            <SyncToastMessageSuccess basic title="Success" message="Value store added"/>,
+            <SyncToastMessageSuccess basic title="Success" message={`Value Store was ${isEditing ? 'updated' : 'added'}`}/>,
             { className: "basic", "autoClose": 1000 }
         );
         onClose();
@@ -39,7 +54,7 @@ export default function AddEditValueStoreModal({ valueStore, onClose }) {
 
             <Modal.Header className="text-center">
 
-                <Header as="h4" className="uppercase" color="purple">Add Value Store</Header>
+                <Header as="h4" className="uppercase" color="purple">{`${isEditing ? 'Edit' : 'Add'} Value Store`}</Header>
 
             </Modal.Header>
 
@@ -109,7 +124,14 @@ export default function AddEditValueStoreModal({ valueStore, onClose }) {
 
                 <Button color="orange" className="m-0" basic onClick={onClose} content="Close"/>
 
-                <Button icon={<Icon name='currency'/>} className="m-0" content="Add Value Store" basic color="teal" onClick={() => onSubmit(handleSubmit)}/>
+                <Button
+                    icon={<Icon name='chart bar'/>}
+                    className="m-0"
+                    content={`${isEditing ? 'Edit' : 'Add'} Value Store`}
+                    basic
+                    color="teal"
+                    onClick={() => onSubmit(handleSubmit)}
+                />
 
             </Modal.Actions>
 

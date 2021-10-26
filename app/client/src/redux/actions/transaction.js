@@ -1,5 +1,4 @@
 import { TRANSACTION_ACTION_TYPES } from '../constants/_constants';
-import { transactionTypes } from 'util/_util';
 
 //////////////////////////////////
 /* External Async Action Calls */
@@ -16,24 +15,24 @@ export function clearList() {
 }
 
 /**
- * Adds a value store
- * @param { Object } transaction - A value store
+ * Adds a data/value store
+ * @param { Object } transaction - A data/value store
  * @returns null
  */
-export function addValueStore(transaction) {
+export function addStore(transaction) {
     return async function (dispatch) {
-        dispatch({ type: TRANSACTION_ACTION_TYPES.ADD_TO_LIST, payload: { ...transaction, type: transactionTypes.VALUE_STORE } });
+        dispatch({ type: TRANSACTION_ACTION_TYPES.ADD_TO_LIST, payload: transaction });
     }
 }
 
 /**
- * Adds a data store
- * @param { Object } transaction - A data store
+ * Edits a data/value store
+ * @param { Object } transaction - A data/value store
  * @returns null
  */
-export function addDataStore(transaction) {
+export function editStore(transaction) {
     return async function (dispatch) {
-        dispatch({ type: TRANSACTION_ACTION_TYPES.ADD_TO_LIST, payload: { ...transaction, type: transactionTypes.DATA_STORE } });
+        dispatch({ type: TRANSACTION_ACTION_TYPES.UPDATE_FROM_LIST, payload: transaction });
     }
 }
 

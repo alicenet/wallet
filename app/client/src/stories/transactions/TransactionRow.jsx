@@ -15,6 +15,18 @@ export default function TransactionRow({ transaction, index, onUpdate }) {
         onUpdate({ ...transaction, index });
     };
 
+    const handleClone = (transaction) => {
+        dispatch(TRANSACTION_ACTIONS.addStore(transaction));
+        toast.success(
+            <SyncToastMessageSuccess
+                basic
+                title="Success"
+                message={transaction.type === transactionTypes.DATA_STORE ? 'Data Store' : 'Value Store' + ' cloned'}
+            />,
+            { className: "basic", "autoClose": 1000 }
+        );
+    };
+
     const handleDelete = (index) => {
         dispatch(TRANSACTION_ACTIONS.removeItem(index));
         toast.success(
@@ -32,13 +44,13 @@ export default function TransactionRow({ transaction, index, onUpdate }) {
 
             <Table.Cell>{transaction.type === transactionTypes.DATA_STORE ? 'Data Store' : 'Value Store'}</Table.Cell>
 
-            <Table.Cell>{utils.string.splitStringWithEllipsis(transaction.from, 5)}</Table.Cell>
+            <Table.Cell>{transaction.from && utils.string.splitStringWithEllipsis(transaction.from, 5)}</Table.Cell>
 
-            <Table.Cell>{utils.string.splitStringWithEllipsis(transaction.to, 5)}</Table.Cell>
+            <Table.Cell>{transaction.to && utils.string.splitStringWithEllipsis(transaction.to, 5)}</Table.Cell>
 
             <Table.Cell>{transaction.key}</Table.Cell>
 
-            <Table.Cell>{utils.string.splitStringWithEllipsis(transaction.value, 15)}</Table.Cell>
+            <Table.Cell>{transaction.value && utils.string.splitStringWithEllipsis(transaction.value, 15)}</Table.Cell>
 
             <Table.Cell>{transaction.duration}</Table.Cell>
 
@@ -50,7 +62,7 @@ export default function TransactionRow({ transaction, index, onUpdate }) {
                         <Icon name='edit'/>
                     </Menu.Item>
 
-                    <Menu.Item name='clone' fitted onClick={() => handleEdit(transaction)}>
+                    <Menu.Item name='clone' fitted onClick={() => handleClone(transaction)}>
                         <Icon name='clone'/>
                     </Menu.Item>
 

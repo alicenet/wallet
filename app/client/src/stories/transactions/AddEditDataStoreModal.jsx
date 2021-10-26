@@ -3,9 +3,11 @@ import { Button, Form, Grid, Header, Icon, Modal } from 'semantic-ui-react';
 import { useFormState } from 'hooks/_hooks';
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
+import has from 'lodash/has';
 
 import { TRANSACTION_ACTIONS } from 'redux/actions/_actions';
 import { SyncToastMessageSuccess } from 'components/customToasts/CustomToasts';
+import { transactionTypes } from 'util/_util';
 
 export default function AddEditDataStoreModal({ dataStore, onClose }) {
 
@@ -19,16 +21,31 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
         { name: 'Value', type: 'string', isRequired: true, value: dataStore.value },
     ]);
 
+    const isEditing = has(dataStore, 'index');
+
     const handleSubmit = async () => {
-        dispatch(TRANSACTION_ACTIONS.addDataStore({
-            from: formState.From.value,
-            to: formState.To.value,
-            key: formState.Key.value,
-            value: formState.Value.value,
-            duration: formState.Duration.value,
-        }));
+        if (isEditing) {
+            dispatch(TRANSACTION_ACTIONS.editStore({
+                ...dataStore,
+                from: formState.From.value,
+                to: formState.To.value,
+                key: formState.Key.value,
+                value: formState.Value.value,
+                duration: formState.Duration.value,
+            }));
+        }
+        else {
+            dispatch(TRANSACTION_ACTIONS.addStore({
+                from: formState.From.value,
+                to: formState.To.value,
+                key: formState.Key.value,
+                value: formState.Value.value,
+                duration: formState.Duration.value,
+                type: transactionTypes.DATA_STORE,
+            }));
+        }
         toast.success(
-            <SyncToastMessageSuccess basic title="Success" message="Data store added"/>,
+            <SyncToastMessageSuccess basic title="Success" message={`Data Store was ${isEditing ? 'updated' : 'added'}`}/>,
             { className: "basic", "autoClose": 1000 }
         );
         onClose();
@@ -43,7 +60,7 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
 
             <Modal.Header className="text-center">
 
-                <Header as="h4" className="uppercase" color="purple">Add Data Store</Header>
+                <Header as="h4" className="uppercase" color="purple">{`${isEditing ? 'Edit' : 'Add'} Data Store`}</Header>
 
             </Modal.Header>
 
@@ -139,7 +156,14 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
 
                 <Button color="orange" className="m-0" basic onClick={onClose} content="Close"/>
 
-                <Button icon={<Icon name='chart bar'/>} className="m-0" content="Add Data Store" basic color="teal" onClick={() => onSubmit(handleSubmit)}/>
+                <Button
+                    icon={<Icon name='chart bar'/>}
+                    className="m-0"
+                    content={`${isEditing ? 'Edit' : 'Add'} Data Store`}
+                    basic
+                    color="teal"
+                    onClick={() => onSubmit(handleSubmit)}
+                />
 
             </Modal.Actions>
 
