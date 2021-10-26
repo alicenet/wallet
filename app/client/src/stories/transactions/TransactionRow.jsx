@@ -1,5 +1,5 @@
 import React from 'react';
-import { Icon, Menu, Table } from 'semantic-ui-react';
+import { Icon, Menu, Popup, Table } from 'semantic-ui-react';
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 
@@ -15,13 +15,15 @@ export default function TransactionRow({ transaction, index, onUpdate }) {
         onUpdate({ ...transaction, index });
     };
 
+    const storeType = transaction.type === transactionTypes.DATA_STORE ? 'Data Store' : 'Value Store';
+
     const handleClone = (transaction) => {
         dispatch(TRANSACTION_ACTIONS.addStore(transaction));
         toast.success(
             <SyncToastMessageSuccess
                 basic
                 title="Success"
-                message={transaction.type === transactionTypes.DATA_STORE ? 'Data Store' : 'Value Store' + ' cloned'}
+                message={storeType + ' cloned'}
             />,
             { className: "basic", "autoClose": 1000 }
         );
@@ -33,7 +35,7 @@ export default function TransactionRow({ transaction, index, onUpdate }) {
             <SyncToastMessageSuccess
                 basic
                 title="Success"
-                message={transaction.type === transactionTypes.DATA_STORE ? 'Data Store' : 'Value Store' + ' deleted'}
+                message={storeType + ' deleted'}
             />,
             { className: "basic", "autoClose": 1000 }
         );
@@ -42,7 +44,7 @@ export default function TransactionRow({ transaction, index, onUpdate }) {
     return (
         <Table.Row>
 
-            <Table.Cell>{transaction.type === transactionTypes.DATA_STORE ? 'Data Store' : 'Value Store'}</Table.Cell>
+            <Table.Cell>{storeType}</Table.Cell>
 
             <Table.Cell>{transaction.from && utils.string.splitStringWithEllipsis(transaction.from, 5)}</Table.Cell>
 
@@ -58,17 +60,38 @@ export default function TransactionRow({ transaction, index, onUpdate }) {
 
                 <Menu compact secondary size="small">
 
-                    <Menu.Item name='edit' fitted onClick={() => handleEdit(transaction, index)}>
-                        <Icon name='edit'/>
-                    </Menu.Item>
+                    <Popup
+                        trigger={
+                            <Menu.Item name='edit' fitted onClick={() => handleEdit(transaction, index)}>
+                                <Icon name='edit'/>
+                            </Menu.Item>
+                        }
+                        content={`Edit ${storeType}`}
+                        inverted
+                        basic
+                    />
 
-                    <Menu.Item name='clone' fitted onClick={() => handleClone(transaction)}>
-                        <Icon name='clone'/>
-                    </Menu.Item>
+                    <Popup
+                        trigger={
+                            <Menu.Item name='clone' fitted onClick={() => handleClone(transaction)}>
+                                <Icon name='clone'/>
+                            </Menu.Item>
+                        }
+                        content={`Clone ${storeType}`}
+                        inverted
+                        basic
+                    />
 
-                    <Menu.Item name='delete' fitted onClick={() => handleDelete(index)}>
-                        <Icon name='delete'/>
-                    </Menu.Item>
+                    <Popup
+                        trigger={
+                            <Menu.Item name='delete' fitted onClick={() => handleDelete(index)}>
+                                <Icon name='delete'/>
+                            </Menu.Item>
+                        }
+                        content={`Delete ${storeType}`}
+                        inverted
+                        basic
+                    />
 
                 </Menu>
 
