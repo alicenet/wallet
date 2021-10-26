@@ -1,5 +1,5 @@
 import { TRANSACTION_ACTION_TYPES } from '../constants/_constants';
-import { reduxState_logger as log } from "../../log/logHelper";
+import { reduxState_logger as log } from 'log/logHelper';
 
 // The list of transactions before being sent to the chain
 export const initialTransactionState = {
@@ -20,7 +20,13 @@ export default function transactionReducer(state = initialTransactionState, acti
         case TRANSACTION_ACTION_TYPES.ADD_TO_LIST:
             log.debug("Adding a transaction to the list", action.payload);
             return Object.assign({}, state, {
-                list: state.list.push(action.payload),
+                list: state.list.concat([action.payload]),
+            });
+
+        case TRANSACTION_ACTION_TYPES.REMOVE_FROM_LIST:
+            log.debug("Removing an element from the list at position", action.payload);
+            return Object.assign({}, state, {
+                list: state.list.filter((value, index) => index !== action.payload),
             });
 
         default:

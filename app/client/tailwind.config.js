@@ -55,6 +55,7 @@ module.exports = {
         'margin',
         'maxHeight',
         'maxWidth',
+        'minHeight',
         'minWidth',
         'outline',
         'overflow',

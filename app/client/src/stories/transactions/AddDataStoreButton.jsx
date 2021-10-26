@@ -1,12 +1,11 @@
 import React from 'react';
-import { Button, Form, Grid, Header, Icon, Modal } from 'semantic-ui-react';
+import { Button, Form, Grid, Header, Icon, Menu, Modal } from 'semantic-ui-react';
 import { useFormState } from 'hooks/_hooks';
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 
 import { TRANSACTION_ACTIONS } from 'redux/actions/_actions';
 import { SyncToastMessageSuccess } from 'components/customToasts/CustomToasts';
-import AddButton from './AddButton';
 
 export default function AddDataStoreButton({ dataStore }) {
 
@@ -23,7 +22,7 @@ export default function AddDataStoreButton({ dataStore }) {
     ]);
 
     const handleSubmit = async () => {
-        dispatch(TRANSACTION_ACTIONS.add({
+        dispatch(TRANSACTION_ACTIONS.addDataStore({
             from: formState.From.value,
             to: formState.To.value,
             key: formState.Key.value,
@@ -35,6 +34,11 @@ export default function AddDataStoreButton({ dataStore }) {
             { className: "basic", "autoClose": 1000 }
         );
         setOpen(s => !s);
+        formSetter.setFrom('');
+        formSetter.setTo('');
+        formSetter.setKey('');
+        formSetter.setValue('');
+        formSetter.setDuration('');
     };
 
     const toggleOpen = () => {
@@ -52,7 +56,7 @@ export default function AddDataStoreButton({ dataStore }) {
             onOpen={toggleOpen}
             onClose={toggleOpen}
             size="large"
-            trigger={<AddButton icon="chart bar" text="Data Store"/>}
+            trigger={<Menu.Item name='add-data-store'><Icon name='chart bar'/>Add Data Store</Menu.Item>}
         >
 
             <Modal.Header className="text-center">
