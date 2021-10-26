@@ -34,15 +34,10 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
         onClose();
     };
 
-    const toggleOpen = () => {
-        onClose();
-    };
-
     return (
         <Modal
             open={!!dataStore}
-            onOpen={toggleOpen}
-            onClose={toggleOpen}
+            onClose={onClose}
             size="large"
         >
 
@@ -142,7 +137,7 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
 
             <Modal.Actions className="flex justify-between">
 
-                <Button color="orange" className="m-0" basic onClick={toggleOpen} content="Close"/>
+                <Button color="orange" className="m-0" basic onClick={onClose} content="Close"/>
 
                 <Button icon={<Icon name='chart bar'/>} className="m-0" content="Add Data Store" basic color="teal" onClick={() => onSubmit(handleSubmit)}/>
 

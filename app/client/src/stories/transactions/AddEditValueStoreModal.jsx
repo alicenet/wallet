@@ -30,15 +30,10 @@ export default function AddEditValueStoreModal({ valueStore, onClose }) {
         onClose();
     };
 
-    const toggleOpen = () => {
-        onClose();
-    };
-
     return (
         <Modal
             open={!!valueStore}
-            onOpen={toggleOpen}
-            onClose={toggleOpen}
+            onClose={onClose}
             size="small"
         >
 
@@ -112,7 +107,7 @@ export default function AddEditValueStoreModal({ valueStore, onClose }) {
 
             <Modal.Actions className="flex justify-between">
 
-                <Button color="orange" className="m-0" basic onClick={toggleOpen} content="Close"/>
+                <Button color="orange" className="m-0" basic onClick={onClose} content="Close"/>
 
                 <Button icon={<Icon name='currency'/>} className="m-0" content="Add Value Store" basic color="teal" onClick={() => onSubmit(handleSubmit)}/>
 
