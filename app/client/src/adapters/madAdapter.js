@@ -109,6 +109,8 @@ class MadNetAdapter {
             newBalances[address].madUTXOs = addressBalancesAndUtxos["utxos"];
         }
 
+        console.log(newBalances)
+
         // Return newly updated balances and utxos
         return newBalances;
     }
@@ -130,6 +132,9 @@ class MadNetAdapter {
             return [{ error: "MadWalletJS wallet instance not found" }, null];
         }
         let [balance, utxos] = await this._getMadNetWalletBalanceAndUTXOs(madJSWallet.address, madJSWallet.curve);
+        if (balance.error) {
+            return { error: balance.error }
+        }
         return [balance, utxos];
     }
 

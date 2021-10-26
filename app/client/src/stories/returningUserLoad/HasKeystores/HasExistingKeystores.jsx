@@ -81,7 +81,7 @@ function HasExistingKeystores() {
 
     React.useEffect(() => {
         try {
-            let address = utils.string.splitStringWithEllipsis(JSON.parse(keystoreData[activeKeystore]?.keystore).address, 5);
+            let address = utils.string.splitStringWithEllipsis(JSON.parse(keystoreData[activeKeystore]?.keystore).address, 4);
             setActiveAddress(address);
         } catch (ex) {
             setActiveAddress("");
