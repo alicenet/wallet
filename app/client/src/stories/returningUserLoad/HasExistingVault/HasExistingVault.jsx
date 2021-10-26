@@ -16,6 +16,7 @@ function UnlockExistingVault() {
 
     const history = useHistory();
     const dispatch = useDispatch();
+    const [loading, setLoading] = React.useState(false);
 
     const [showForgottenVaultPasswordModal, setShowForgottenVaultPasswordModal] = React.useState(false);
 
@@ -39,6 +40,7 @@ function UnlockExistingVault() {
     });
 
     const handleFormSubmit = async () => {
+        setLoading(true);
         let loaded = await dispatch(VAULT_ACTIONS.loadSecureHDVaultFromStorage(formState.password.value))
         if (loaded) {
             history.push('/hub')
@@ -99,7 +101,7 @@ function UnlockExistingVault() {
 
                     <Container className="flex justify-center">
 
-                        <Button color="teal" basic content='Unlock Vault' disabled={!formState.password.value} className="m-0" onClick={() => onSubmit(handleFormSubmit)}/>
+                        <Button loading={loading} color="teal" basic content='Unlock Vault' disabled={!formState.password.value} className="m-0" onClick={() => onSubmit(handleFormSubmit)}/>
 
                     </Container>
 

@@ -6,7 +6,7 @@ import util from 'util/_util';
 import { ACTION_ELECTRON_SYNC } from 'redux/middleware/VaultUpdateManagerMiddleware';
 import { curveTypes } from 'util/wallet';
 import utils from 'util/_util';
-import { ADAPTER_ACTIONS } from './_actions';
+import { ADAPTER_ACTIONS, VAULT_ACTIONS } from './_actions';
 
 /* !!!!!!! ____   ATTENTION: ______ !!!!!!!!  
 
@@ -172,5 +172,48 @@ export function lockVault() {
             await dispatch({ type: VAULT_ACTION_TYPES.LOCK_VAULT });
             res(true);
         })
+    }
+}
+
+/**
+ * Rename a wallet in the vault referenced by address and push the update to the store
+ * -- Requires password
+ * @param { Object } targetWallet -- Wallet object from redux state
+ * @param { String } password -- Vault or administrative password -- For writing updates to store 
+ */
+export function renameWalletByAddress(targetWallet, newName, password) {
+    return async function (dispatch, getState) {
+        // Get latest wallet state and create mutable instances of internal/external state
+        let wallets = getState().vault.wallets;
+        let internalWallets = [...wallets.internal];
+        let externalWallets = [...wallets.external];
+        // First determine if internal or external
+        console.log(targetWallet, password, targetWallet.isInternal, "UHOH")
+        // Is internal
+        if (targetWallet.isInternal) {
+            let internalTargetIndex = internalWallets.findIndex(e => (targetWallet.address === e.address));
+            if (internalTargetIndex === -1) { return { error: "Unable to find wallet in state." } }
+            internalWallets[internalTargetIndex].name = newName;
+        }
+        // Else external...
+        else {
+            let externalTargetIndex = externalWallets.findIndex(e => (targetWallet.address === e.address));
+            if (externalTargetIndex === -1) { return { error: "Unable to find wallet in state." } }
+            externalWallets[externalTargetIndex].name = newName;
+        }
+        // Recompile newly mutated wallet states
+        let newWalletsState = { internal: internalWallets, external: externalWallets };
+
+        try {
+            // Submit the update to the redux store --
+            await dispatch({ type: VAULT_ACTION_TYPES.SET_WALLETS_STATE, payload: newWalletsState })
+            // Submit it to the electron helper for writing the vault --
+            await electronStoreCommonActions.updateVaultWallets(password, newWalletsState);
+        } catch (ex) {
+            return { error: ex }
+        }
+
+        return true;
+
     }
 }

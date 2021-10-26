@@ -93,7 +93,7 @@ export default function Web3Panel() {
                 ) : activeWallet ? (
                     <div>
                         <span>
-                            <span className="font-bold">active:</span> {utils.string.splitStringWithEllipsis(String(activeWallet.address), 5)}
+                            <span className="font-bold">active:</span> {utils.string.splitStringWithEllipsis(String(activeWallet.address), 4)}
                         </span>
                         <span className="ml-8">
                             <span className="font-bold">ethBal:</span> {String(activeWallet?.balances?.eth)}
