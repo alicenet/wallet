@@ -44,7 +44,7 @@ function Construct() {
                                         <Container className="flex justify-center items-center">
 
                                             <Header content="How to construct a transaction" as="h3" className="m-0"/>
-                                            <Icon size="small" name="question circle" style={{ cursor: 'pointer' }} className="px-2"/>
+                                            <Icon size="small" name="question circle" className="px-2 cursor-pointer"/>
 
                                         </Container>
 

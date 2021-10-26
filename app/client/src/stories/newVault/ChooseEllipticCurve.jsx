@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 
 import { Button, Checkbox, Container, Grid, Header, Icon, Radio } from 'semantic-ui-react';
 
-import Page from '../../layout/Page';
+import Page from 'layout/Page';
 import { classNames, curveTypes } from 'util/_util';
 import { USER_ACTIONS } from 'redux/actions/_actions';
 import KeyOperationCurveModal from './KeyOperationCurveModal';
@@ -64,7 +64,7 @@ function ChooseEllipticCurve() {
 
                                 <strong>
                                     Public Address Key Operation Curve
-                                    <Icon name="question circle" style={{ cursor: 'pointer' }} className="px-2"/>
+                                    <Icon name="question circle" className="px-2 cursor-pointer"/>
 
                                 </strong>
                             </p>
