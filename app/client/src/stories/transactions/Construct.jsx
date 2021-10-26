@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Container, Grid, Header, Icon, Menu, Segment, Table } from 'semantic-ui-react';
+import { Button, Container, Grid, Header, Icon, Menu, Pagination, Segment, Table } from 'semantic-ui-react';
 import Page from 'layout/Page';
 import { INTERFACE_ACTIONS } from 'redux/actions/_actions';
 import { useDispatch, useSelector } from 'react-redux';
 import isEmpty from 'lodash/isEmpty';
+import chunk from 'lodash/chunk';
 
 import { tabPaneIndex } from 'layout/HeaderMenu';
 import TransactionRow from './TransactionRow';
@@ -12,6 +13,8 @@ import { transactionTypes } from 'util/_util';
 import AddEditDataStoreModal from './AddEditDataStoreModal';
 import AddEditValueStoreModal from './AddEditValueStoreModal';
 
+const recordsPerPage = 4;
+
 function Construct() {
 
     const dispatch = useDispatch();
@@ -19,10 +22,28 @@ function Construct() {
     const emptyDataStore = { from: null, to: null, duration: null, key: null, value: null };
     const emptyValueStore = { from: null, to: null, value: null };
 
+    const { list } = useSelector(state => ({ list: state.transaction.list }));
+
     const [dataStore, setDataStore] = useState(null);
     const [valueStore, setValueStore] = useState(null);
+    const [activePage, setActivePage] = useState(1);
+    const [paginatedList, setPaginatedList] = useState([]);
 
-    const { list } = useSelector(state => ({ list: state.transaction.list }));
+    const handlePaginationChange = (e, { activePage }) => setActivePage(activePage);
+
+    useEffect(() => {
+        if (list.length > 0) {
+            const chunks = chunk(list, recordsPerPage);
+            const result = chunks[activePage - 1];
+            if (result) {
+                setPaginatedList(result);
+            }
+            else {
+                setPaginatedList(chunks[activePage - 2]);
+                setActivePage(activePage - 1);
+            }
+        }
+    }, [list, activePage]);
 
     useEffect(() => {
         dispatch(INTERFACE_ACTIONS.updateActiveTabPane(tabPaneIndex.Transactions));
@@ -108,18 +129,48 @@ function Construct() {
 
                                             </Table.Row> :
 
-                                            list.map((transaction, index) =>
-
-                                                <TransactionRow
-                                                    key={`transaction-row-${index}`}
-                                                    transaction={transaction}
-                                                    index={index}
-                                                    onUpdate={transaction.type === transactionTypes.DATA_STORE ? setDataStore : setValueStore}
-                                                />
+                                            paginatedList.map(
+                                                (transaction, index) => {
+                                                    const realIndex = (activePage - 1) * recordsPerPage + index;
+                                                    return <TransactionRow
+                                                        key={`transaction-row-${realIndex}`}
+                                                        transaction={transaction}
+                                                        index={realIndex}
+                                                        onUpdate={transaction.type === transactionTypes.DATA_STORE ? setDataStore : setValueStore}
+                                                    />;
+                                                }
                                             )
                                         }
 
                                     </Table.Body>
+
+                                    {list.length > recordsPerPage && (
+
+                                        <Table.Footer>
+
+                                            <Table.Row textAlign="right">
+
+                                                <Table.HeaderCell colSpan={7}>
+
+                                                    <Pagination
+                                                        activePage={activePage}
+                                                        onPageChange={handlePaginationChange}
+                                                        boundaryRange={0}
+                                                        defaultActivePage={1}
+                                                        ellipsisItem={null}
+                                                        firstItem={null}
+                                                        lastItem={null}
+                                                        siblingRange={1}
+                                                        totalPages={Math.ceil(list.length / recordsPerPage)}
+                                                    />
+
+                                                </Table.HeaderCell>
+
+                                            </Table.Row>
+
+                                        </Table.Footer>
+
+                                    )}
 
                                 </Table>
 
