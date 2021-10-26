@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Button, Container, Grid, Header, Menu, Segment, Table } from 'semantic-ui-react';
+import { Button, Container, Grid, Header, Icon, Menu, Segment, Table } from 'semantic-ui-react';
 import Page from 'layout/Page';
 import { INTERFACE_ACTIONS } from 'redux/actions/_actions';
 import { useDispatch, useSelector } from 'react-redux';
@@ -9,6 +9,7 @@ import { tabPaneIndex } from 'layout/HeaderMenu';
 import AddValueStoreButton from './AddValueStoreButton';
 import AddDataStoreButton from './AddDataStoreButton';
 import TransactionRow from './TransactionRow';
+import ConstructingATransactionModal from './ConstructingATransactionModal';
 
 function Construct() {
 
@@ -38,7 +39,16 @@ function Construct() {
 
                                 <Grid.Column verticalAlign="middle" width={11}>
 
-                                    <Header content="How to construct a transaction" as="h3"/>
+                                    <ConstructingATransactionModal>
+
+                                        <Container className="flex justify-center items-center">
+
+                                            <Header content="How to construct a transaction" as="h3" className="m-0"/>
+                                            <Icon size="small" name="question circle" style={{ cursor: 'pointer' }} className="px-2"/>
+
+                                        </Container>
+
+                                    </ConstructingATransactionModal>
 
                                 </Grid.Column>
 
