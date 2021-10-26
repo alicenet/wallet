@@ -18,6 +18,8 @@ function ConstructionModule() {
 
     const dispatch = useDispatch();
 
+    const columns = ['Type', 'To', 'From', 'Key', 'Value', 'Duration', ''];
+
     const emptyDataStore = { from: null, to: null, duration: null, key: null, value: null };
     const emptyValueStore = { from: null, to: null, value: null };
 
@@ -90,13 +92,9 @@ function ConstructionModule() {
 
                         <Table.Row>
 
-                            <Table.HeaderCell>Type</Table.HeaderCell>
-                            <Table.HeaderCell>To</Table.HeaderCell>
-                            <Table.HeaderCell>From</Table.HeaderCell>
-                            <Table.HeaderCell>Key</Table.HeaderCell>
-                            <Table.HeaderCell>Value</Table.HeaderCell>
-                            <Table.HeaderCell>Duration</Table.HeaderCell>
-                            <Table.HeaderCell/>
+                            {columns.map(
+                                item => <Table.HeaderCell>{item}</Table.HeaderCell>
+                            )}
 
                         </Table.Row>
 
@@ -122,11 +120,11 @@ function ConstructionModule() {
 
                             paginatedList.map(
                                 (transaction, index) => {
-                                    const realIndex = (activePage - 1) * recordsPerPage + index;
+                                    const absoluteIndex = (activePage - 1) * recordsPerPage + index;
                                     return <TransactionRow
-                                        key={`transaction-row-${realIndex}`}
+                                        key={`transaction-row-${absoluteIndex}`}
                                         transaction={transaction}
-                                        index={realIndex}
+                                        index={absoluteIndex}
                                         onUpdate={transaction.type === transactionTypes.DATA_STORE ? setDataStore : setValueStore}
                                     />;
                                 }
