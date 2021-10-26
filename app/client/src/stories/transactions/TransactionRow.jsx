@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Icon, Menu, Popup, Table } from 'semantic-ui-react';
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
@@ -11,11 +11,11 @@ export default function TransactionRow({ transaction, index, onUpdate }) {
 
     const dispatch = useDispatch();
 
+    const storeType = useMemo(() => transaction.type === transactionTypes.DATA_STORE ? 'Data Store' : 'Value Store', [transaction]);
+
     const handleEdit = (transaction, index) => {
         onUpdate({ ...transaction, index });
     };
-
-    const storeType = transaction.type === transactionTypes.DATA_STORE ? 'Data Store' : 'Value Store';
 
     const handleClone = (transaction) => {
         dispatch(TRANSACTION_ACTIONS.addStore(transaction));
