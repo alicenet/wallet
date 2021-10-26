@@ -91,7 +91,7 @@ function Construct() {
 
                             </Grid.Row>
 
-                            <Grid.Row>
+                            <Grid.Row className="p-0 h-60">
 
                                 <Table color="teal" size="small" compact className="break-all">
 
@@ -119,7 +119,7 @@ function Construct() {
 
                                                 <Table.Cell colSpan={7} className="p-5">
 
-                                                    <Segment placeholder>
+                                                    <Segment placeholder className="min-h-0 h-60">
 
                                                         <Header icon className="m-0">No records found</Header>
 
@@ -150,7 +150,7 @@ function Construct() {
 
                                             <Table.Row textAlign="right">
 
-                                                <Table.HeaderCell colSpan={7}>
+                                                <Table.HeaderCell colSpan={7} className="p-2">
 
                                                     <Pagination
                                                         activePage={activePage}
