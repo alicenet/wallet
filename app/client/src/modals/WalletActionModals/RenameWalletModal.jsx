@@ -57,7 +57,7 @@ export default function RenameWalletModal() {
                 <Header as="h4">
                     Rename Wallet: <span className="text-blue-500">{targetWallet.name}</span>
                     <Header.Subheader>
-                        Give a friendly name in reference to address: <span className="text-purple-500">{stringUtils.splitStringWithEllipsis(targetWallet.address, 6)}</span>
+                        Give a friendly name in reference to address: <span className="text-purple-500">{stringUtils.splitStringWithEllipsis(targetWallet.address, 4)}</span>
                     </Header.Subheader>
                 </Header>
             </Modal.Header>

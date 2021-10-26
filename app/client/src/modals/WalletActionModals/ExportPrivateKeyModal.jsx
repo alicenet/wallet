@@ -57,7 +57,7 @@ export default function ExportPrivateKeyModal() {
     }
 
     const closeModal = () => {
-        dispatch(MODAL_ACTIONS.closeXportPrivKModal())
+        dispatch(MODAL_ACTIONS.closeExportPrivateKeyModal())
     };
 
     const copyPkey = () => {
@@ -76,7 +76,7 @@ export default function ExportPrivateKeyModal() {
                 <Header as="h4">
                     Export Private Key For Wallet: <span className="text-blue-500">{targetWallet.name}</span>
                     <Header.Subheader>
-                        Get PrivK For Address: <span className="text-purple-500">{stringUtils.splitStringWithEllipsis(targetWallet.address, 6)}</span>
+                        Get PrivK For Address: <span className="text-purple-500">{stringUtils.splitStringWithEllipsis(targetWallet.address, 4)}</span>
                     </Header.Subheader>
                 </Header>
             </Modal.Header>

@@ -48,7 +48,7 @@ export function closeRemoveWalletModal() {
 }
 
 /** Inverse to the above -- Action will clear the wallet_action_target from state */
-export function closeXportPrivKModal() {
+export function closeExportPrivateKeyModal() {
     return function (dispatch) {
         dispatch({ type: MODAL_ACTION_TYPES.CLOSE_XPORT_PRIVK });
     }
