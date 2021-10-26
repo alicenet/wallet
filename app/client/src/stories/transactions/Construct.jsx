@@ -82,7 +82,7 @@ function Construct() {
 
                                             <Table.Row>
 
-                                                <Table.Cell colsPan={7} className="p-5">
+                                                <Table.Cell colSpan={7} className="p-5">
 
                                                     <Segment placeholder>
 
