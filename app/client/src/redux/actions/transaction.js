@@ -37,3 +37,13 @@ export function addDataStore(transaction) {
     }
 }
 
+/**
+ * Removes an item from the list
+ * @param { int } index - Index of the element
+ * @returns null
+ */
+export function removeItem(index) {
+    return async function (dispatch) {
+        dispatch({ type: TRANSACTION_ACTION_TYPES.REMOVE_FROM_LIST, payload: index });
+    }
+}

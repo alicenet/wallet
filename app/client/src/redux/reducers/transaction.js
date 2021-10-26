@@ -23,6 +23,12 @@ export default function transactionReducer(state = initialTransactionState, acti
                 list: state.list.concat([action.payload]),
             });
 
+        case TRANSACTION_ACTION_TYPES.REMOVE_FROM_LIST:
+            log.debug("Removing an element from the list at position", action.payload);
+            return Object.assign({}, state, {
+                list: state.list.filter((value, index) => index !== action.payload),
+            });
+
         default:
             return state;
 
