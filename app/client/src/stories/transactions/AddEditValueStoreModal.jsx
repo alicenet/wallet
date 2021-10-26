@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Form, Grid, Header, Icon, Menu, Modal } from 'semantic-ui-react';
+import { Button, Form, Grid, Header, Icon, Modal } from 'semantic-ui-react';
 import { useFormState } from 'hooks/_hooks';
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
@@ -7,9 +7,7 @@ import { toast } from 'react-toastify';
 import { TRANSACTION_ACTIONS } from 'redux/actions/_actions';
 import { SyncToastMessageSuccess } from 'components/customToasts/CustomToasts';
 
-export default function AddValueStoreButton({ valueStore }) {
-
-    const [isOpen, setOpen] = React.useState(false);
+export default function AddEditValueStoreModal({ valueStore, onClose }) {
 
     const dispatch = useDispatch();
 
@@ -29,26 +27,19 @@ export default function AddValueStoreButton({ valueStore }) {
             <SyncToastMessageSuccess basic title="Success" message="Value store added"/>,
             { className: "basic", "autoClose": 1000 }
         );
-        setOpen(s => !s);
-        formSetter.setFrom('');
-        formSetter.setTo('');
-        formSetter.setValue('');
+        onClose();
     };
 
     const toggleOpen = () => {
-        formSetter.clearFromError();
-        formSetter.clearToError();
-        formSetter.clearValueError();
-        setOpen(s => !s);
+        onClose();
     };
 
     return (
         <Modal
-            open={isOpen}
+            open={!!valueStore}
             onOpen={toggleOpen}
             onClose={toggleOpen}
             size="small"
-            trigger={<Menu.Item name='add-value-store'><Icon name='currency'/>Add Value Store</Menu.Item>}
         >
 
             <Modal.Header className="text-center">

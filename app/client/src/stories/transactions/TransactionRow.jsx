@@ -7,19 +7,12 @@ import utils, { transactionTypes } from 'util/_util';
 import { SyncToastMessageSuccess } from 'components/customToasts/CustomToasts';
 import { TRANSACTION_ACTIONS } from 'redux/actions/_actions';
 
-export default function TransactionRow({ transaction, index }) {
+export default function TransactionRow({ transaction, index, onUpdate }) {
 
     const dispatch = useDispatch();
 
     const handleEdit = (transaction, index) => {
-        toast.success(
-            <SyncToastMessageSuccess
-                basic
-                title="Success"
-                message={transaction.type === transactionTypes.DATA_STORE ? 'Data Store' : 'Value Store' + ' edited'}
-            />,
-            { className: "basic", "autoClose": 1000 }
-        );
+        onUpdate({ ...transaction, index });
     };
 
     const handleDelete = (index) => {
@@ -55,6 +48,10 @@ export default function TransactionRow({ transaction, index }) {
 
                     <Menu.Item name='edit' fitted onClick={() => handleEdit(transaction, index)}>
                         <Icon name='edit'/>
+                    </Menu.Item>
+
+                    <Menu.Item name='clone' fitted onClick={() => handleEdit(transaction)}>
+                        <Icon name='clone'/>
                     </Menu.Item>
 
                     <Menu.Item name='delete' fitted onClick={() => handleDelete(index)}>

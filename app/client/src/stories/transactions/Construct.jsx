@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Container, Grid, Header, Icon, Menu, Segment, Table } from 'semantic-ui-react';
 import Page from 'layout/Page';
 import { INTERFACE_ACTIONS } from 'redux/actions/_actions';
@@ -6,10 +6,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import isEmpty from 'lodash/isEmpty';
 
 import { tabPaneIndex } from 'layout/HeaderMenu';
-import AddValueStoreButton from './AddValueStoreButton';
-import AddDataStoreButton from './AddDataStoreButton';
 import TransactionRow from './TransactionRow';
 import ConstructingATransactionModal from './ConstructingATransactionModal';
+import { transactionTypes } from 'util/_util';
+import AddEditDataStoreModal from './AddEditDataStoreModal';
+import AddEditValueStoreModal from './AddEditValueStoreModal';
 
 function Construct() {
 
@@ -17,6 +18,9 @@ function Construct() {
 
     const emptyDataStore = { from: null, to: null, duration: null, key: null, value: null };
     const emptyValueStore = { from: null, to: null, value: null };
+
+    const [dataStore, setDataStore] = useState(null);
+    const [valueStore, setValueStore] = useState(null);
 
     const { list } = useSelector(state => ({ list: state.transaction.list }));
 
@@ -56,9 +60,9 @@ function Construct() {
 
                                     <Menu compact icon='labeled' size="small">
 
-                                        <AddDataStoreButton dataStore={emptyDataStore}/>
+                                        <Menu.Item name='add-data-store' onClick={() => setDataStore(emptyDataStore)}><Icon name='chart bar'/>Add Data Store</Menu.Item>
 
-                                        <AddValueStoreButton valueStore={emptyValueStore}/>
+                                        <Menu.Item name='add-value-store' onClick={() => setValueStore(emptyValueStore)}><Icon name='currency'/>Add Value Store</Menu.Item>
 
                                     </Menu>
 
@@ -106,9 +110,15 @@ function Construct() {
 
                                             list.map((transaction, index) =>
 
-                                                <TransactionRow key={`transaction-row-${index}`} transaction={transaction} index={index}/>
+                                                <TransactionRow
+                                                    key={`transaction-row-${index}`}
+                                                    transaction={transaction}
+                                                    index={index}
+                                                    onUpdate={transaction.type === transactionTypes.DATA_STORE ? setDataStore : setValueStore}
+                                                />
                                             )
                                         }
+
                                     </Table.Body>
 
                                 </Table>
@@ -128,6 +138,10 @@ function Construct() {
                 </Grid.Column>
 
             </Grid>
+
+            {dataStore && <AddEditDataStoreModal dataStore={dataStore} onClose={() => setDataStore(null)}/>}
+
+            {valueStore && <AddEditValueStoreModal valueStore={valueStore} onClose={() => setValueStore(null)}/>}
 
         </Page>
     )

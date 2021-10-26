@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Form, Grid, Header, Icon, Menu, Modal } from 'semantic-ui-react';
+import { Button, Form, Grid, Header, Icon, Modal } from 'semantic-ui-react';
 import { useFormState } from 'hooks/_hooks';
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
@@ -7,9 +7,7 @@ import { toast } from 'react-toastify';
 import { TRANSACTION_ACTIONS } from 'redux/actions/_actions';
 import { SyncToastMessageSuccess } from 'components/customToasts/CustomToasts';
 
-export default function AddDataStoreButton({ dataStore }) {
-
-    const [isOpen, setOpen] = React.useState(false);
+export default function AddEditDataStoreModal({ dataStore, onClose }) {
 
     const dispatch = useDispatch();
 
@@ -33,30 +31,19 @@ export default function AddDataStoreButton({ dataStore }) {
             <SyncToastMessageSuccess basic title="Success" message="Data store added"/>,
             { className: "basic", "autoClose": 1000 }
         );
-        setOpen(s => !s);
-        formSetter.setFrom('');
-        formSetter.setTo('');
-        formSetter.setKey('');
-        formSetter.setValue('');
-        formSetter.setDuration('');
+        onClose();
     };
 
     const toggleOpen = () => {
-        formSetter.clearFromError();
-        formSetter.clearToError();
-        formSetter.clearKeyError();
-        formSetter.clearValueError();
-        formSetter.clearDurationError();
-        setOpen(s => !s);
+        onClose();
     };
 
     return (
         <Modal
-            open={isOpen}
+            open={!!dataStore}
             onOpen={toggleOpen}
             onClose={toggleOpen}
             size="large"
-            trigger={<Menu.Item name='add-data-store'><Icon name='chart bar'/>Add Data Store</Menu.Item>}
         >
 
             <Modal.Header className="text-center">
