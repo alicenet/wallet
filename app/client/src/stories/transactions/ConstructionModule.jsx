@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Grid, Header, Icon, Menu, Pagination, Segment, Table } from 'semantic-ui-react';
+import { Checkbox, Container, Grid, Header, Icon, Menu, Pagination, Segment, Table } from 'semantic-ui-react';
 import { useSelector } from 'react-redux';
 import isEmpty from 'lodash/isEmpty';
 import chunk from 'lodash/chunk';
@@ -26,6 +26,7 @@ function ConstructionModule() {
     const [valueStore, setValueStore] = useState(null);
     const [activePage, setActivePage] = useState(1);
     const [paginatedList, setPaginatedList] = useState([]);
+    const [changeReturnAddress, setChangeReturnAddress] = useState(false);
 
     const handlePaginationChange = (e, { activePage }) => setActivePage(activePage);
 
@@ -46,7 +47,7 @@ function ConstructionModule() {
     return (
         <Grid padded="vertically">
 
-            <Grid.Row>
+            <Grid.Row className="py-3">
 
                 <Grid.Column verticalAlign="middle" width={11}>
 
@@ -160,11 +161,19 @@ function ConstructionModule() {
 
             </Grid.Row>
 
-            <Grid.Row>
+            <Grid.Row centered>
 
-                <Grid.Column className="p-0">
+                <Grid.Column width={8} textAlign="center">
 
-                    <ChangeReturnAddress/>
+                    <label className="font-semibold">Address to Return UTXOs to</label>
+                    <ChangeReturnAddress disabled={!changeReturnAddress}/>
+                    <Checkbox
+                        fitted
+                        checked={changeReturnAddress}
+                        onChange={() => setChangeReturnAddress(prevState => !prevState)}
+                        label="Change UTXO Return Address"
+                        className="text-xs py-1"
+                    />
 
                 </Grid.Column>
 

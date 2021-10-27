@@ -7,7 +7,7 @@ import Web3 from 'web3';
 import { toast } from 'react-toastify';
 import { SyncToastMessageWarning } from 'components/customToasts/CustomToasts';
 
-function ChangeReturnAddress() {
+function ChangeReturnAddress({ disabled = false }) {
 
     const { internal, external } = useSelector(state => ({
         internal: state.vault.wallets.internal,
@@ -24,6 +24,12 @@ function ChangeReturnAddress() {
         };
     }) || [], [internal, external, adHocWallets]);
 
+    useEffect(() => {
+        if (wallets.length > 0) {
+            setSelectedReturnWallet(head(wallets).value);
+        }
+    }, [wallets]);
+
     const handleAddressChange = (e, { value }) => setSelectedReturnWallet(value);
 
     const handleAddressAdded = (e, { value }) => {
@@ -35,21 +41,16 @@ function ChangeReturnAddress() {
         }
     };
 
-    useEffect(() => {
-        if (wallets.length > 0) {
-            setSelectedReturnWallet(head(wallets).address);
-        }
-    }, [wallets]);
-
     return (
         <Dropdown
+            disabled={disabled}
             options={wallets}
             placeholder='Choose UTXO Return Address'
             search
             selection
             fluid
             allowAdditions
-            value={selectedReturnWallet}
+            defaultValue={selectedReturnWallet}
             onAddItem={handleAddressAdded}
             onChange={handleAddressChange}
         />

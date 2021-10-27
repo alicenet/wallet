@@ -35,7 +35,7 @@ function Construct() {
 
                 <Grid.Column width={16} className="p-0 self-center">
 
-                    <Button color="teal" content='Send Transactions' disabled={isEmpty(list)} className="m-0"/>
+                    <Button color="teal" content='Send Transaction' disabled={isEmpty(list)} className="m-0"/>
 
                 </Grid.Column>
 
