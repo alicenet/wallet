@@ -6,7 +6,10 @@ import util from 'util/_util';
 import { ACTION_ELECTRON_SYNC } from 'redux/middleware/VaultUpdateManagerMiddleware';
 import { curveTypes } from 'util/wallet';
 import utils from 'util/_util';
-import { ADAPTER_ACTIONS, VAULT_ACTIONS } from './_actions';
+import { ADAPTER_ACTIONS } from './_actions';
+import web3Adapter from 'adapters/web3Adapter';
+import { toast } from 'react-toastify';
+import { SyncToastMessageSuccess } from 'components/customToasts/CustomToasts';
 
 /* !!!!!!! ____   ATTENTION: ______ !!!!!!!!  
 
@@ -38,6 +41,16 @@ export function generateNewSecureHDVault(mnemonic, password, curveType = util.wa
         await dispatch({ type: MIDDLEWARE_ACTION_TYPES.INIT_MAD_WALLET, payload: preInitPayload }); // Pass off to MadWalletMiddleware to finish state initiation
         dispatch({ type: VAULT_ACTION_TYPES.SET_MNEMONIC, payload: mnemonic });
         dispatch({ type: VAULT_ACTION_TYPES.MARK_EXISTS_AND_UNLOCKED });
+        // Once the vault is created attempt to connect web3, and then madNet
+        log.debug("Vault Created: Attempting to init MadNet && Web3 Adapters. . .")
+        let adaptersConnected = await dispatch(ADAPTER_ACTIONS.initAdapters());
+
+        // Check and log any errors -- Allow unlock to happen even if network errors occur -- Appropriate toasts will be delivered to user via their respective adapaters
+        if (adaptersConnected.error) {
+            log.error("GeneralNetworkConnectionError:", adaptersConnected.error);
+            log.error("MadNetConnectionError: ", adaptersConnected.errors.madNet);
+            log.error("Web3ConnectionError: ", adaptersConnected.errors.web3);
+        }
     }
 }
 
@@ -170,6 +183,10 @@ export function lockVault() {
         return new Promise(async res => {
             await dispatch({ type: MIDDLEWARE_ACTION_TYPES.REINSTANCE_MAD_WALLET });
             await dispatch({ type: VAULT_ACTION_TYPES.LOCK_VAULT });
+            // Additionally mark web3 and madnet as not connected so they can be reinstanced on reconnect
+            web3Adapter.setDefaultState(); // Mark default state on web3 adapter --
+            await dispatch(ADAPTER_ACTIONS.disconnectAdapters()) // Mark adapter state back to default and disconnected
+            toast.success(<SyncToastMessageSuccess hideIcon basic message="Locked & Disconnected" />, {autoClose: 1750, className: "basic"})
             res(true);
         })
     }

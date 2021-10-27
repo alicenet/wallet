@@ -1,6 +1,6 @@
 import React from 'react'
 import { useFormState } from 'hooks/_hooks';
-import { Button, Checkbox, Form, Header } from 'semantic-ui-react';
+import { Button, Checkbox, Form, Header, Icon } from 'semantic-ui-react';
 import utils from 'util/_util.js';
 import { curveTypes } from 'util/wallet.js';
 
@@ -20,7 +20,6 @@ export default function GenerateKeystoreForm(
         submitFunction,
         inline,
         defaultPassword = "",
-        showPassword = false,
         customTitle = "Generate Keystore",
         hideTitle
     }
@@ -29,6 +28,7 @@ export default function GenerateKeystoreForm(
         { name: 'password', type: 'password', value: defaultPassword, isRequired: true },
         { name: 'verifiedPassword', display: 'Verify Password', type: 'verified-password', isRequired: true }
     ]);
+    const [showPassword, setShowPassword] = React.useState(false);
     const [keystoreDL, setKeystoreDL] = React.useState(false);
     const [curveType, setCurveType] = React.useState(curveTypes.SECP256K1);
     const toggleCurveType = () => setCurveType(s => (s === curveTypes.SECP256K1 ? curveTypes.BARRETO_NAEHRIG : curveTypes.SECP256K1));
@@ -83,7 +83,7 @@ export default function GenerateKeystoreForm(
                                     checked={curveType === curveTypes.BARRETO_NAEHRIG}
                                     onChange={toggleCurveType}
                                     label={<label className={"labelCheckbox"}>Use BN Curve</label>}
-                                    className="flex justify-center items-center text-xs uppercase font-bold relative -top-0"/>
+                                    className="flex justify-center items-center text-xs uppercase font-bold relative -top-0" />
                             </label>
                         }
                         type={showPassword ? "text" : "password"} value={formState.password.value}
@@ -106,7 +106,7 @@ export default function GenerateKeystoreForm(
                                     basic ref={downloadRef}
                                     href={keystoreDL ? URL.createObjectURL(keystoreDL.data) : ""} download={keystoreDL.filename}
                                 />
-                                <Button.Or text="or"/>
+                                <Button.Or text="or" />
                                 <Button
                                     content="Load"
                                     icon="arrow alternate circle right"
@@ -130,22 +130,32 @@ export default function GenerateKeystoreForm(
     ////////////////////
     return (<>
 
-        <Form size="mini" className="w-96 mb-12">
+        <Form size="mini" className="w-96 mb-12 mini-error-form text-left">
 
             {!hideTitle && <Header as="h4">{customTitle}</Header>}
 
             <Form.Input
                 size="small"
                 label="Keystore Password"
-                type="password" value={formState.password.value}
+                icon={<Icon name={showPassword ? "eye" : "eye slash"} onClick={() => setShowPassword(s => !s)} link />}
+                type={showPassword ? "string" : "password"} value={formState.password.value}
                 onChange={e => formSetter.setPassword(e.target.value)}
                 error={!!formState.password.error && { content: formState.password.error }}
             />
 
             <Form.Input
                 size="small"
-                label="Verify Keystore Password"
-                type="password" value={formState.verifiedPassword.value}
+                label={
+                    <label className="flex justify-between">
+                        Verify Keystore Password
+                        <Checkbox
+                            checked={curveType === curveTypes.BARRETO_NAEHRIG}
+                            onChange={toggleCurveType}
+                            label={<label className={"labelCheckbox"}>Use BN Curve</label>}
+                            className="flex justify-center items-center text-xs uppercase font-bold relative -top-0" />
+                    </label>
+                } 
+                type={showPassword ? "string" : "password"} value={formState.verifiedPassword.value}
                 onChange={e => formSetter.setVerifiedPassword(e.target.value)}
                 action={{ content: "Generate", size: "mini", onClick: () => onSubmit(generateWallet), icon: "refresh", className: "w-28" }}
                 error={!!formState.verifiedPassword.error && { content: formState.verifiedPassword.error }}
@@ -169,8 +179,8 @@ export default function GenerateKeystoreForm(
         </Form>
 
         <div className="flex justify-between mt-12 w-96">
-            <Form.Button basic content={cancelText} color="orange" onClick={cancelFunction}/>
-            <Form.Button disabled={!keystoreDL} color="green" basic content={submitText} onClick={loadKeystore}/>
+            <Form.Button basic content={cancelText} color="orange" onClick={cancelFunction} />
+            <Form.Button disabled={!keystoreDL} color="green" basic content={submitText} onClick={loadKeystore} />
         </div>
 
     </>)

@@ -34,6 +34,8 @@ function KeyOperationCurveModal({ children }) {
                         <p>Additional wallets of the opposing type can be generated or imported if
                             necessary, but will not be recoverable by the vault seed phrase.</p>
 
+                        <p>It is generally advised to stick with secp256k1, unless you need BN curves for a specific use case.</p>
+
                     </Container>
 
                     <Button color="purple" onClick={() => setOpenModal(false)} content="Got it!"/>

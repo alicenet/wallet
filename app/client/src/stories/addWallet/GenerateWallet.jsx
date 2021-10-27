@@ -1,7 +1,6 @@
 import React from 'react';
 import { Container, Grid, Header, Button, Form, Message } from 'semantic-ui-react'
 import { useHistory } from 'react-router';
-import useFormState, { fieldType } from 'hooks/useFormState';
 import { useDispatch } from 'react-redux';
 import { VAULT_ACTIONS } from 'redux/actions/_actions';
 import { default_log as log } from 'log/logHelper';
@@ -59,7 +58,7 @@ export default function AddWalletMenu() {
                 history.push("/hub");
             }, 1450)
         }
-    }, [walletAdded])
+    }, [walletAdded, history])
 
     return (
 

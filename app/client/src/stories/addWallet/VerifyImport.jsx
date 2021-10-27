@@ -1,11 +1,9 @@
 import React from 'react';
-import { Container, Grid, Header, Button, Form, Message, Loader } from 'semantic-ui-react'
+import { Container, Grid, Header, Button, Message, Loader } from 'semantic-ui-react'
 import { useHistory } from 'react-router';
-import useFormState, { fieldType } from 'hooks/useFormState';
 import { useDispatch } from 'react-redux';
 import { VAULT_ACTIONS } from 'redux/actions/_actions';
 import { default_log as log } from 'log/logHelper';
-import LoadKeystoreForm from 'components/keystore/LoadKeystoreForm';
 
 import MadWalletJs from 'madwalletjs';
 import { walletUtils } from 'util/_util';
@@ -17,7 +15,6 @@ export default function VerifyImport() {
     const dispatch = useDispatch();
     // Forwarded state
     const toLoad = history?.location?.state?.toLoad;
-    const isKeystore = history?.location?.state?.isKeystore;
     // Local State
     const [potentialWallet, setPotentialWallet] = React.useState(false);
     const [loading, setLoading] = React.useState('address');
@@ -29,7 +26,7 @@ export default function VerifyImport() {
         if (!toLoad) {
             history.push('/addWallet/menu')
         }
-    })
+    }, [history, toLoad])
 
     // Use an empty MadNetWalletJS Instance to extract potential wallet information
     React.useEffect(() => {
@@ -51,13 +48,13 @@ export default function VerifyImport() {
 
         getPotentialWallet();
 
-    }, [])
+    }, []) //eslint-disable-line
 
     React.useEffect(() => {
         if (success) {
             history.push('/hub')
         }
-    }, [success])
+    }, [success, history])
 
     const verify = async () => {
         setLoading("verifying");

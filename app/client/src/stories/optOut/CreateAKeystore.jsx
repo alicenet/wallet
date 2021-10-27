@@ -64,7 +64,7 @@ function CreateAKeystore() {
                         <p>Alright, this is the last step! </p>
                         <p>We just need a name to reference this keystore by</p>
 
-                        <Form size="mini" className="w-60 mt-12">
+                        <Form size="mini" className="w-60 mt-12 mini-error-form">
                             <Form.Input
                                 className="text-left"
                                 value={formState.name.value}

@@ -15,6 +15,7 @@ import { electronStoreCommonActions } from 'store/electronStoreHelper'
 import utils from 'util/_util';
 import Page from 'layout/Page';
 import { SyncToastMessageWarning } from 'components/customToasts/CustomToasts';
+import { VAULT_ACTION_TYPES } from 'redux/constants/_constants';
 
 function HasExistingKeystores() {
 
@@ -26,7 +27,7 @@ function HasExistingKeystores() {
         {
             name: 'password',
             type: 'password',
-            value: 'testing',
+            value: '',
             isRequired: true,
             validation: {
                 check: async (password) => {
@@ -52,9 +53,11 @@ function HasExistingKeystores() {
         let ksData = keystoreData[activeKeystore];
         let ks = JSON.parse(ksData.keystore);
         dispatch(VAULT_ACTIONS.addExternalWalletToState(ks, formState.password.value, ksData.name))
+        formSetter.setPassword("");
         setActiveKeystore(s => s + 1); // Go to next keystore
         // +1 to adjust for state change above that hasn't happened yet -- Checking if anymore keystores remain to look at
         if (keystoreData.length - (activeKeystore + 1) === 0) {
+            dispatch({type: VAULT_ACTION_TYPES.MARK_UNLOCKED});
             dispatch(ADAPTER_ACTIONS.initAdapters())
             history.push('/hub')
         }
@@ -66,6 +69,7 @@ function HasExistingKeystores() {
             return setNotEnoughKeystoresError(true);
         }
         else {
+            formSetter.setPassword("");
             setActiveKeystore(s => s + 1);
         }
     }
@@ -99,8 +103,8 @@ function HasExistingKeystores() {
             toast.error(
                 <SyncToastMessageWarning
                     title="Error"
-                    message="At least one keystore must be loaded."/>,
-                { autoClose: 2500, onClose: () => {setNotEnoughKeystoresError(false)} });
+                    message="One keystore must be loaded." />,
+                { autoClose: 3000, onClose: () => { setNotEnoughKeystoresError(false) } });
         }
     }, [notEnoughKeystoresError]);
 
@@ -111,7 +115,7 @@ function HasExistingKeystores() {
 
                 <Grid.Column width={16} className="p-0 self-center">
 
-                    <Header content="Welcome Back" as="h3" className="m-0"/>
+                    <Header content="Welcome Back" as="h3" className="m-0" />
 
                 </Grid.Column>
 
@@ -123,16 +127,22 @@ function HasExistingKeystores() {
 
                 </Grid.Column>
 
-                <Grid.Column width={8} className="p-0 self-center">
+                <Grid.Column width={16} verticalAlign="middle">
+                    <div className="text-sm">
+                        <span className="font-bold">Password for:</span> {keystoreData[activeKeystore]?.name} ( {activeAddress} )
+                    </div>
+                </Grid.Column>
 
-                    <Form onSubmit={() => onSubmit(handleFormSubmit)}>
+                <Grid.Column width={16} className="p-0 self-center">
+
+                    <Form onSubmit={() => onSubmit(handleFormSubmit)} className="mini-error-form">
 
                         <Form.Group className="flex flex-auto flex-col m-0 text-left text-sm gap-5 items-center h-32">
 
                             <Form.Input
                                 className="w-80"
                                 id='password'
-                                label={`Password for: ${keystoreData[activeKeystore]?.name} (${activeAddress})`}
+                                label={`Password`}
                                 placeholder='Enter Password'
                                 value={formState.password.value}
                                 type={showPassword ? "text" : "password"}
@@ -141,10 +151,10 @@ function HasExistingKeystores() {
                                     content: formState.password.error,
                                     pointing: 'above',
                                 }}
-                                icon={<Icon name={showPassword ? "eye" : "eye slash"} link onClick={() => setShowPassword(s => !s)}/>}
+                                icon={<Icon name={showPassword ? "eye" : "eye slash"} link onClick={() => setShowPassword(s => !s)} />}
                             />
 
-                            <ForgottenKeystorePasswordModal incorrectPwEntered={showForgottenPasswordModal}/>
+                            <ForgottenKeystorePasswordModal incorrectPwEntered={showForgottenPasswordModal} />
 
                             <div className="font-xs">
                                 {activeKeystore} / {keystoreData.length} keystores examined
@@ -160,8 +170,8 @@ function HasExistingKeystores() {
 
                     <Container className="flex justify-between gap-2">
 
-                        <Button color="orange" basic content='Skip This Store' onClick={skipStore}/>
-                        <Button color="teal" basic content='Unlock Store' disabled={!formState.password.value} onClick={() => onSubmit(handleFormSubmit)}/>
+                        <Button color="orange" basic content='Skip This Store' onClick={skipStore} />
+                        <Button color="teal" basic content='Unlock Store' disabled={!formState.password.value} onClick={() => onSubmit(handleFormSubmit)} />
 
                     </Container>
 

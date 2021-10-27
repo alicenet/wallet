@@ -19,14 +19,14 @@ export default function Overview({ wallet }) {
         setLoader("balances");
         await dispatch(ADAPTER_ACTIONS.getAndStoreLatestBalancesForAddress(wallet.address))
         setLoader(false);
-    }, [wallet])
+    }, [wallet, dispatch])
 
     // Only fetch balances when connected status changes and is true.
     React.useEffect(() => {
-        if ((web3Connected || madNetConnected) && !balances[wallet.address]) {
+        if ((web3Connected || madNetConnected) && !balances[wallet.address] && loader !== "balances") {
             fetchBalances();
         }
-    }, [web3Connected, madNetConnected, wallet])
+    }, [web3Connected, madNetConnected, wallet, fetchBalances, balances, loader])
 
     const MicroBalanceLoader = ({ balanceType, balanceKey, balanceAllowance }) => {
         if (loader === "balances") {
@@ -42,7 +42,7 @@ export default function Overview({ wallet }) {
     }
 
     const openRenameWalletModal = () => { dispatch(MODAL_ACTIONS.openRenameWalletModal(wallet)) }
-    const openRemoveWalletModal = () => { dispatch(MODAL_ACTIONS.openRemoveWalletModal(wallet)) }
+    // const openRemoveWalletModal = () => { dispatch(MODAL_ACTIONS.openRemoveWalletModal(wallet)) }
     const openXportPrivKModal = () => { dispatch(MODAL_ACTIONS.openXportPrivKModal(wallet)) }
 
     return (

@@ -52,6 +52,7 @@ function UseExistingKeystore() {
                 <Grid.Column width={16} className="p-0 flex justify-center" textAlign="center">
 
                     <LoadKeystoreForm
+                        hideTitle
                         submitText="Load Keystore"
                         submitFunction={handleLoad}
                         cancelText="Go Back"

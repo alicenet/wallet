@@ -42,7 +42,7 @@ function Settings() {
 
                         <Radio label="Show Advanced Features" toggle color="purple" onChange={() => setShowAdvancedFeatures(prevState => !prevState)}
                                checked={showAdvancedFeatures}/>
-                        <Radio disabled label="Dark Mode" toggle color="purple"/>
+                        <Radio disabled label="Dark Mode" toggle color="purple" className="hidden"/>
 
                     </Container>
 

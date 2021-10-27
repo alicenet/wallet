@@ -1,8 +1,7 @@
 import React from 'react';
-
 import { Button, Checkbox, Header, Modal } from 'semantic-ui-react';
-
 import { classNames } from 'util/_util';
+import { electronStoreUtilityActons } from 'store/electronStoreHelper';
 
 /**
  * Shows a prompt to open a modal regarding forgotten vault password
@@ -18,6 +17,11 @@ export default function ForgottenVaultPasswordModal({ incorrectPwEntered }) {
     const toggleOkWithDelete = () => setOkWithDelete(s => !s);
     const toggleDoubleCheck = () => setDoubleCheck(s => !s);
     const toggleOpen = () => setOpen(s => !s);
+
+    const deleteTheVault = async () => {
+        await electronStoreUtilityActons.completelyDeleteElectronStore();
+        window.location.reload(true);
+    }
 
     return (
         <Modal
@@ -65,13 +69,13 @@ export default function ForgottenVaultPasswordModal({ incorrectPwEntered }) {
 
                 <div className="flex flex-col gap-4 text-left">
 
-                    <Checkbox label="I acknowledge this will delete my current vault" checked={okWithDelete} onChange={toggleOkWithDelete}/>
+                    <Checkbox label="I acknowledge this will delete my current vault" checked={okWithDelete} onChange={toggleOkWithDelete} />
 
-                    <Checkbox label="I am sure I want to create a new vault -- I don't need it" checked={doubleCheck} onChange={toggleDoubleCheck}/>
+                    <Checkbox label="I am sure I want to create a new vault -- I don't need it" checked={doubleCheck} onChange={toggleDoubleCheck} />
 
                 </div>
 
-                <Button content="Create New Vault" color="red" disabled={!okWithDelete || !doubleCheck}/>
+                <Button content="Delete The Vault" color="red" disabled={!okWithDelete || !doubleCheck} onClick={deleteTheVault} />
 
             </Modal.Actions>
 

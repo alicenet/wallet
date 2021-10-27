@@ -51,7 +51,7 @@ export default function vaultReducer(state = initialVaultState, action) {
         // Used for locking -- Clears state
         case VAULT_ACTION_TYPES.LOCK_VAULT:
             log.debug("Redux Vault State Locked");
-            return Object.assign({}, state, buildVaultStateObject({ exists: true, isLocked: true }));
+            return Object.assign({}, state, buildVaultStateObject({ isLocked: true, exists: state.exists, optout: state.optout }));
 
         case VAULT_ACTION_TYPES.SET_VAULT_TO_STATE:
             log.debug("Performing large object=>vault_state payload update with:", action.payload);
@@ -97,6 +97,13 @@ export default function vaultReducer(state = initialVaultState, action) {
         ////////////////////
         // State Markers // -- Vault State Marker Actions
         ///////////////////
+
+        // Mark vault as unlocked -- useful for tracking if keystores have been relocked into the optout store
+        case VAULT_ACTION_TYPES.MARK_UNLOCKED:
+            log.debug("Marking Vault as unlocked -- Most likely for optout stores")
+            return Object.assign({}, state, {
+                is_locked: false,
+            });
 
         case VAULT_ACTION_TYPES.MARK_EXISTS_AND_LOCKED:
             log.debug("Marking Vault as existing and locked");

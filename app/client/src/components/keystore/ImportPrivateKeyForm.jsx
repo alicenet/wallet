@@ -20,8 +20,8 @@ export default function ImportPrivateKeyForm({ submitText, submitFunction, cance
     ]);
 
     const [error, setError] = React.useState(false);
-    const [success, setSuccess] = React.useState(false);
-    const [loading, setLoading] = React.useState(false);
+    const [success] = React.useState(false); 
+    const [loading] = React.useState(false);
     const [curveType, setCurveType] = React.useState(curveTypes.SECP256K1);
     const toggleCurveType = () => setCurveType(s => s === curveTypes.SECP256K1 ? curveTypes.BARRETO_NAEHRIG : curveTypes.SECP256K1)
 
@@ -73,7 +73,7 @@ export default function ImportPrivateKeyForm({ submitText, submitFunction, cance
 
 
             <Form.Input
-                label={<><label className="inline">Wallet Name</label><Popup size="mini" position="right center" offset={"4,2"}
+                label={<><label className="inline text-left">Wallet Name</label><Popup size="mini" position="right center" offset={"4,2"}
                     trigger={<Icon name="question circle" className="ml-1" />} content="How this wallet will be referenced" /> </>}
                 type="text" value={formState.walletName.value}
                 onChange={e => formSetter.setWalletName(e.target.value)}
