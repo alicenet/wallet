@@ -1,17 +1,29 @@
 import React from 'react';
 import { Button, Form, Grid, Header, Icon, Modal } from 'semantic-ui-react';
 import { useFormState } from 'hooks/_hooks';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import has from 'lodash/has';
 
 import { TRANSACTION_ACTIONS } from 'redux/actions/_actions';
 import { SyncToastMessageSuccess } from 'components/customToasts/CustomToasts';
-import { transactionTypes } from 'util/_util';
+import utils, { transactionTypes } from 'util/_util';
 
 export default function AddEditValueStoreModal({ valueStore, onClose }) {
 
     const dispatch = useDispatch();
+
+    const { internal, external } = useSelector(state => ({
+        internal: state.vault.wallets.internal,
+        external: state.vault.wallets.external,
+    }));
+
+    const wallets = React.useMemo(() => (internal.concat(external)).map(wallet => {
+        return {
+            text: `${wallet.name} (0x${utils.string.splitStringWithEllipsis(wallet.address, 5)})`,
+            value: wallet.address
+        };
+    }) || [], [internal, external]);
 
     const [formState, formSetter, onSubmit] = useFormState([
         { name: 'From', display: 'From address', type: 'address', isRequired: true, value: valueStore.from },
@@ -68,12 +80,15 @@ export default function AddEditValueStoreModal({ valueStore, onClose }) {
 
                             <Grid.Column>
 
-                                <Form.Input
+                                <Form.Select
+                                    required
                                     id='From'
                                     label='From'
-                                    required
+                                    options={wallets}
+                                    selection
+                                    closeOnChange
                                     value={formState.From.value}
-                                    onChange={e => formSetter.setFrom(e.target.value)}
+                                    onChange={(e, { value }) => formSetter.setFrom(value)}
                                     error={!!formState.From.error && { content: formState.From.error }}
                                 />
 
