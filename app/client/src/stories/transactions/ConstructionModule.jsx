@@ -140,7 +140,6 @@ function ConstructionModule() {
                                         activePage={activePage}
                                         onPageChange={handlePaginationChange}
                                         boundaryRange={0}
-                                        defaultActivePage={1}
                                         ellipsisItem={null}
                                         firstItem={null}
                                         lastItem={null}
