@@ -74,6 +74,48 @@ html, body, #root {
     transform: translate(-50%, 0%);
 }
 
+// Form Class Micro Errors
+.form.ui.mini-error-form {
+
+    .error.field {
+        position: relative !important;
+    }
+
+    .ui.pointing.prompt.above.label {
+        position: absolute !important;
+        margin-top: 0px;
+        top: -2px;
+        right: 0px;
+        font-size: 10px !important;
+        padding: 3px;
+
+        &::before {
+            display: none !important;
+        }
+    }
+
+}
+
+.small-checkbox {
+
+    .ui.checkbox {
+        min-height: 14px;
+        label {
+            display: flex;
+            font-size: 10px;
+            padding-left: 1.75rem;
+            &::before {
+                height: 17px;
+                width: 17px;
+            }
+            &::after {
+                font-size: 11px;
+            }
+        }
+    }
+
+}
+
 
 //////////////////
 // No scrollbar //

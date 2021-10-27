@@ -110,6 +110,13 @@ export const initAdapters = () => {
     }
 }
 
+// Mark adapters as disconnected
+export const disconnectAdapters = () => {
+    return async (dispatch) => {
+        dispatch({type: ADAPTER_ACTION_TYPES.SET_DISCONNECTED});
+    }
+}
+
 /**
  * Get and store the latest balances for a given address to redux state
  * @param { String } address 
@@ -165,7 +172,7 @@ export const getAndStoreLatestBalancesForAddress = (address) => {
         let foundBalances = await Promise.all(balancePromises);
 
         // Inject eth
-        if (typeof foundBalances[0] !== false && typeof foundBalances[0] !== 'undefined' && !foundBalances[0].error) {
+        if (foundBalances[0] !== false && typeof foundBalances[0] !== 'undefined' && !foundBalances[0].error) {
             addressBalances.eth = foundBalances[0].balances.eth;
             addressBalances.stake = foundBalances[0].balances.stakingToken.balance;
             addressBalances.stakeAllowance = foundBalances[0].balances.stakingToken.allowance;

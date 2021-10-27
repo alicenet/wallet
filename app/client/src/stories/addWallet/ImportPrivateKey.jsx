@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Grid, Header, Button, Form, Message } from 'semantic-ui-react'
+import { Container, Grid, Header, Message } from 'semantic-ui-react'
 import { useHistory } from 'react-router';
 import ImportPrivateKeyForm from 'components/keystore/ImportPrivateKeyForm';
 
@@ -21,7 +21,7 @@ export default function ImportPrivateKey() {
                 toLoad: results,
             })
         }
-    }, [success, results])
+    }, [success, results, history])
 
     return (
 

@@ -22,11 +22,11 @@ export const DButton = (props) => <Form.Button basic size="mini" fluid {...props
 /** Provide context to DebugPanel  */
 export default function DebugRoot() {
     const showDebug = useSelector(state => (state.interface.showDebug));
-    return showDebug ? (
+    return (
         <DebugProvider>
-            <DebugPanel />
+            {showDebug && <DebugPanel />}
         </DebugProvider>
-    ) : null
+    )
 }
 
 /** Root Debug Panel */

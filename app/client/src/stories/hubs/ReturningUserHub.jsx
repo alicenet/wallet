@@ -23,7 +23,7 @@ export default function Hub() {
     const [openDrawer, setOpenDrawer] = React.useState(true);
     const [selectedWallet, setSelectedWallet] = React.useState(null);
 
-    const { vaultExistsAndIsLocked } = useSelector(s => ({ vaultExistsAndIsLocked: s.vault.exists && s.vault.is_locked }))
+    const { vaultExistsAndIsLocked } = useSelector(s => ({ vaultExistsAndIsLocked: s.vault.is_locked }))
 
     const gotoAddWallet = () => {
         history.push('/addWallet/menu');
@@ -33,7 +33,7 @@ export default function Hub() {
         if (vaultExistsAndIsLocked) {
             history.push('/'); // Send to root for appropriate redirect
         }
-    }, [vaultExistsAndIsLocked])
+    }, [vaultExistsAndIsLocked, history])
 
     React.useEffect(() => {
         if (wallets.length > 0) {
@@ -43,7 +43,7 @@ export default function Hub() {
 
     useEffect(() => {
         dispatch(INTERFACE_ACTIONS.updateActiveTabPane(tabPaneIndex.Wallets));
-    }, []);
+    }, []); // eslint-disable-line
 
     const panes = [
         {

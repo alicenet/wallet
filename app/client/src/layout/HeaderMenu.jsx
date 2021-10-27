@@ -1,11 +1,11 @@
 import React from 'react';
 
 import { Container, Header, Icon, Image, Menu, Tab } from 'semantic-ui-react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import MadIcon from '../Assets/icon.png';
-import { INTERFACE_ACTIONS } from '../redux/actions/_actions';
+import { INTERFACE_ACTIONS, VAULT_ACTIONS } from '../redux/actions/_actions';
 
 export const tabPaneIndex = {
     Wallets: 0,
@@ -18,8 +18,23 @@ function HeaderMenu({ showMenu }) {
 
     const history = useHistory();
     const dispatch = useDispatch();
+    const location = useLocation();
+    const pathname = location.pathname;
 
-    const { exists, optout, activeTabPane } = useSelector(s => ({
+    const [lockIcon, setLockIcon] = React.useState("unlock");
+
+    const exemptLockLocations = ['/returningUserLoad/hasKeystore', 'wallet/settings', 'wallet/advancedSettings'];
+    const pathIsLockExempt = () => { // The lock should not appear on any page in exemptLockLocations
+        for (let path of exemptLockLocations) {
+            if (pathname.indexOf(path) !== -1) {
+                return true
+            }
+        }
+        return false;
+    }
+
+    const { exists, optout, activeTabPane, vaultLocked } = useSelector(s => ({
+        vaultLocked: s.vault.is_locked,
         exists: s.vault.exists,
         optout: s.vault.optout,
         activeTabPane: s.interface.activeTabPane,
@@ -46,15 +61,15 @@ function HeaderMenu({ showMenu }) {
 
             <Container fluid className="flex flex-row content-center justify-start">
 
-                <Menu.Item as='a' header className='p-0 mx-2 hover:bg-transparent' onClick={() => history.push('/')}>
+                <Menu.Item header className='p-0 mx-2'>
 
                     <Container fluid className="flex flex-row items-center gap-4">
 
-                        <Image src={MadIcon} size="mini"/>
+                        <Image src={MadIcon} size="mini" />
 
                         <Container fluid>
 
-                            <Header content="MadWallet" as="h4"/>
+                            <Header content="MadWallet" as="h4" />
 
                         </Container>
 
@@ -81,9 +96,15 @@ function HeaderMenu({ showMenu }) {
 
             <Container fluid className="flex flex-row content-center justify-end">
 
+                {!vaultLocked && !pathIsLockExempt() && <Menu.Item as='a' header onClick={() => dispatch(VAULT_ACTIONS.lockVault())} className="mx-0 hover:bg-transparent">
+
+                    <Icon onMouseEnter={ () => setLockIcon("lock")} onMouseLeave={ () => setLockIcon("unlock")} name={lockIcon} size="large" className="mx-0 transform duration-300 rotate-12 hover:rotate-0" />
+
+                </Menu.Item>}
+
                 {existingAccount && <Menu.Item as='a' header onClick={() => history.push('/wallet/settings')} className="mx-0 hover:bg-transparent">
 
-                    <Icon name="cog" size="large" className="mx-0 transform duration-300 hover:rotate-90"/>
+                    <Icon name="cog" size="large" className="mx-0 transform duration-300 hover:rotate-90" />
 
                 </Menu.Item>}
 

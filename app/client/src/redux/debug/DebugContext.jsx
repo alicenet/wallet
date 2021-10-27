@@ -10,7 +10,7 @@ export const views = {
 }
 
 const defaultContextState = {
-    currentView: views.MADNET,
+    currentView: views.USER_STORIES,
 }
 
 export const DebugContext = React.createContext();

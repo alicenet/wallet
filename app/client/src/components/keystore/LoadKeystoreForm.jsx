@@ -14,10 +14,11 @@ import { isDebug } from 'util/generic';
 export default function LoadKeystoreForm({ submitText, submitFunction, cancelText, cancelFunction, hideTitle }) {
 
     const [formState, formSetter, onSubmit] = useFormState([
-        { name: 'password', type: 'string', isRequired: true, value: isDebug ? "testing" : "" },
-        { name: 'walletName', type: 'string', isRequired: true, length: 4, value: isDebug ? "testKeystore" : "" }
+        { name: 'password', display: "Password", type: 'string', isRequired: true, value: "" },
+        { name: 'walletName', display: "Wallet Name", type: 'string', isRequired: true, length: 4, value: "" }
     ]);
 
+    const [showPassword, setShowPassword] = React.useState(false);
     const [keystore, setKeystore] = React.useState(false);
     const [error, setError] = React.useState(false);
     const [success, setSuccess] = React.useState(false);
@@ -32,6 +33,8 @@ export default function LoadKeystoreForm({ submitText, submitFunction, cancelTex
 
         if (parsed.curve) {
             setCurveType(parseInt(parsed.curve) === curveTypes.SECP256K1 ? curveTypes.SECP256K1 : curveTypes.BARRETO_NAEHRIG);
+        } else {
+            setCurveType(curveTypes.SECP256K1); // Default to Secp256k1
         }
 
     }, [keystore])
@@ -58,7 +61,6 @@ export default function LoadKeystoreForm({ submitText, submitFunction, cancelTex
             setSuccess(false);
             setError(unlocked.error.message === "Key derivation failed - possibly wrong password" ? "Incorrect password" : unlocked.error.message)
             setLoading(false);
-            return submitFunction({ locked: JSON.parse(ks), password: false, walletName: formState.walletName.value, error: unlocked.error.message, success: false });
         }
         else {
             setLoading(false);
@@ -71,7 +73,7 @@ export default function LoadKeystoreForm({ submitText, submitFunction, cancelTex
 
     return (
 
-        <Form error={error} size="mini" className="max-w-md w-72 text-left" onSubmit={() => onSubmit(loadKeystore)}>
+        <Form error={error} size="mini" className="max-w-md w-72 text-left mini-error-form" onSubmit={() => onSubmit(loadKeystore)}>
 
             {!hideTitle && (
                 <Header as="h4" textAlign="center">Load A Keystore</Header>
@@ -101,9 +103,10 @@ export default function LoadKeystoreForm({ submitText, submitFunction, cancelTex
             <Form.Input disabled={success}
                 label={<><label className="inline">Keystore Password</label><Popup size="mini" position="right center" offset={"4,2"} className="transition-none"
                     trigger={<Icon name="question circle" className="ml-1" />} content="Password to unlock this keystore" /> </>}
-                type="password" value={formState.password.value}
+                type={showPassword ? "string" : "password"} value={formState.password.value}
                 onChange={e => formSetter.setPassword(e.target.value)}
                 error={!!formState.password.error && { content: formState.password.error }}
+                icon={<Icon name={showPassword ? "eye" : "eye slash"} link onClick={() => setShowPassword(s=>!s)} className="cursor-pointer" />}
             />
 
             <Form.Input disabled={success}

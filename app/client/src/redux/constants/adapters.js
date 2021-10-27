@@ -1,5 +1,6 @@
 /* Action Type Constants for ../reducer/configuration */
 export const adapterActionTypes = {
+    SET_DISCONNECTED: "SET_DISCONNECTED",
     SET_WEB3_CONNECTED: "SET_WEB3_CONNECTED",
     SET_WEB3_ERROR: "SET_WEB3_ERROR",
     SET_WEB3_INFO: "SET_WEB3_INFO",

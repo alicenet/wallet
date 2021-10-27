@@ -67,6 +67,10 @@ export default function adapterReducer(state = initialAdapterState, action) {
                 madNetAdapter: { ...state.madNetAdapter, error: action.payload }
             });
 
+        // On disconnect set initial adapter state
+        case ADAPTER_ACTION_TYPES.SET_DISCONNECTED:
+            return Object.assign({}, initialAdapterState);
+
         /**
          * A payload dependant state setter action for the madNetAdapter state 
          * --  Supports upto object depth of 3

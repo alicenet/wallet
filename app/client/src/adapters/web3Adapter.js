@@ -20,6 +20,10 @@ const REGISTRY_VERSION = "/v1"; // CHANGE OR PUT IN SETTINGS
 class Web3Adapter {
 
     constructor() {
+        this.__initialStateSet();
+    }
+
+    __initialStateSet() {
         this.web3 = [];
         this.contracts = [];
         this.info = {};
@@ -65,6 +69,11 @@ class Web3Adapter {
             toast.success(<SyncToastMessageSuccess basic title="Success" message="Web3 Connected" />, { className: "basic", "autoClose": 2400 })
         }
         return { success: true };
+    }
+
+    // Set adapter default state -- for disconnecting
+    setDefaultState() {
+        this.__initialStateSet();
     }
 
     /**

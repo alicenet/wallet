@@ -155,6 +155,10 @@ class MadNetAdapter {
         }
     }
 
+    getMadNetWalletInstance() {
+        return this.wallet();
+    }
+
     /**
      * Fetch previous transactions for a given account
      * @param { Array<String> } addresses - Array of addresses to get previous transactions for
@@ -358,7 +362,6 @@ class MadNetAdapter {
             this.blocksIdTimeout = setTimeout(() => { try { this.monitorBlocks() } catch (ex) { console.log(ex) } }, this["monitorBlocks-attempts"] == 1 ? 5000 : this["monitorBlocks-timeout"]);
         }
         catch (ex) {
-            console.log(ex)
             await this.cb.call(this, "error", String(ex));
         }
     }

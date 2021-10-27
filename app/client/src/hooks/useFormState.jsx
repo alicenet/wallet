@@ -3,6 +3,7 @@ import upperFirst from 'lodash/upperFirst';
 import isEmpty from 'lodash/isEmpty';
 import Web3 from 'web3';
 import validator from 'validator';
+import _ from 'lodash'
 
 export const fieldType = {
     ADDRESS: 'address',
@@ -139,7 +140,7 @@ export default function useFormState(initialStateKeysArray) {
                             break;
                         case fieldType.PASSWORD:
                             if (!_validateValueByType(formState[key.name].value, fieldType.PASSWORD)) {
-                                error = (formState[key.name].display || formState[key.name].name) + " must be atleast 8 characters long.";
+                                error = (_.upperFirst(formState[key.name].display || formState[key.name].name)) + " must be atleast 8 characters long.";
                             }
                             break;
                         case fieldType.VERIFIED_PASSWORD:
