@@ -3,6 +3,9 @@ import { Dropdown } from 'semantic-ui-react';
 import { useSelector } from 'react-redux';
 import head from 'lodash/head';
 import utils from 'util/_util';
+import Web3 from 'web3';
+import { toast } from 'react-toastify';
+import { SyncToastMessageWarning } from 'components/customToasts/CustomToasts';
 
 function ChangeReturnAddress() {
 
@@ -19,12 +22,17 @@ function ChangeReturnAddress() {
             text: `${wallet.name} (0x${utils.string.splitStringWithEllipsis(wallet.address, 5)})`,
             value: wallet.address
         };
-    }) || [], [internal, external]);
+    }) || [], [internal, external, adHocWallets]);
 
     const handleAddressChange = (e, { value }) => setSelectedReturnWallet(value);
 
     const handleAddressAdded = (e, { value }) => {
-        setAdHocWallets(prevState => prevState.concat([{ text: `New Return Address (${value})`, value }]))
+        if (Web3.utils.isAddress(value)) {
+            setAdHocWallets(prevState => prevState.concat([{ name: `Change Return Address (${value})`, address: value }]))
+        }
+        else {
+            toast.error(<SyncToastMessageWarning title="Error " message="Not a valid return address"/>, { className: "basic", "autoClose": 1500 })
+        }
     };
 
     useEffect(() => {
