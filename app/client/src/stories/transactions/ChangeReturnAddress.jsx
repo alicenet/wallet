@@ -51,7 +51,7 @@ function ChangeReturnAddress({ disabled = false }) {
             fluid
             allowAdditions
             closeOnChange
-            defaultValue={selectedReturnWallet}
+            defaultValue={head(wallets)?.value}
             onAddItem={handleAddressAdded}
             onChange={handleAddressChange}
         />
