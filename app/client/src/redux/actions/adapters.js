@@ -171,8 +171,9 @@ export const getAndStoreLatestBalancesForAddress = (address) => {
 
         let foundBalances = await Promise.all(balancePromises);
 
-        // Inject eth
-        if (foundBalances[0] !== false && typeof foundBalances[0] !== 'undefined' && !foundBalances[0].error) {
+        // Inject eth -- We expect false if these don't exist see ~L158 -- Self resolving IIFE for non-connects,
+        // Additionally if an error exists on the balance resolve, don't attempt to parse them
+        if (typeof foundBalances[0] !== 'undefined' && foundBalances[0] !== false && !foundBalances[0].error) {
             addressBalances.eth = foundBalances[0].balances.eth;
             addressBalances.stake = foundBalances[0].balances.stakingToken.balance;
             addressBalances.stakeAllowance = foundBalances[0].balances.stakingToken.allowance;
