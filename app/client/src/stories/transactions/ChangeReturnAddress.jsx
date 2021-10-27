@@ -34,7 +34,7 @@ function ChangeReturnAddress({ disabled = false }) {
 
     const handleAddressAdded = (e, { value }) => {
         if (Web3.utils.isAddress(value)) {
-            setAdHocWallets(prevState => prevState.concat([{ name: `Change Return Address (${value})`, address: value }]))
+            setAdHocWallets(prevState => prevState.concat([{ name: value, address: value }]))
         }
         else {
             toast.error(<SyncToastMessageWarning title="Error " message="Not a valid return address"/>, { className: "basic", "autoClose": 1500 })
@@ -50,6 +50,7 @@ function ChangeReturnAddress({ disabled = false }) {
             selection
             fluid
             allowAdditions
+            closeOnChange
             defaultValue={selectedReturnWallet}
             onAddItem={handleAddressAdded}
             onChange={handleAddressChange}

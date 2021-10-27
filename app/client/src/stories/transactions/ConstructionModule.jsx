@@ -163,7 +163,7 @@ function ConstructionModule() {
 
             <Grid.Row centered>
 
-                <Grid.Column width={8} textAlign="center">
+                <Grid.Column width={12} textAlign="center">
 
                     <label className="font-semibold">Address to Return UTXOs to</label>
                     <ChangeReturnAddress disabled={!changeReturnAddress}/>
