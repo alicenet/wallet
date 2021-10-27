@@ -1,22 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Grid, Header, Icon, Menu, Pagination, Segment, Table } from 'semantic-ui-react';
-import { INTERFACE_ACTIONS } from 'redux/actions/_actions';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import isEmpty from 'lodash/isEmpty';
 import chunk from 'lodash/chunk';
 
-import { tabPaneIndex } from 'layout/HeaderMenu';
 import TransactionRow from './TransactionRow';
-import ConstructingATransactionModal from './ConstructingATransactionModal';
 import { transactionTypes } from 'util/_util';
+import ConstructingATransactionModal from './ConstructingATransactionModal';
 import AddEditDataStoreModal from './AddEditDataStoreModal';
 import AddEditValueStoreModal from './AddEditValueStoreModal';
+import ChangeReturnAddress from './ChangeReturnAddress';
 
 const recordsPerPage = 4;
 
 function ConstructionModule() {
-
-    const dispatch = useDispatch();
 
     const columns = ['Type', 'To', 'From', 'Key', 'Value', 'Duration', ''];
 
@@ -45,10 +42,6 @@ function ConstructionModule() {
             }
         }
     }, [list, activePage]);
-
-    useEffect(() => {
-        dispatch(INTERFACE_ACTIONS.updateActiveTabPane(tabPaneIndex.Transactions));
-    }, [dispatch]);
 
     return (
         <Grid padded="vertically">
@@ -84,16 +77,17 @@ function ConstructionModule() {
 
             </Grid.Row>
 
-            <Grid.Row className="p-0 h-60">
+            <Grid.Row className="p-0">
 
-                <Table color="teal" size="small" compact className="break-all">
+                <Table color="teal" size="small" className="break-all h-60">
 
                     <Table.Header>
 
                         <Table.Row>
 
                             {columns.map(
-                                item => <Table.HeaderCell>{item}</Table.HeaderCell>
+                                (item, index) =>
+                                    <Table.HeaderCell key={`header-${item}-${index}`}>{item}</Table.HeaderCell>
                             )}
 
                         </Table.Row>
@@ -108,7 +102,7 @@ function ConstructionModule() {
 
                                 <Table.Cell colSpan={7} className="p-5">
 
-                                    <Segment placeholder className="min-h-0 h-60">
+                                    <Segment placeholder className="min-h-0 h-48">
 
                                         <Header icon className="m-0">No records found</Header>
 
@@ -151,6 +145,7 @@ function ConstructionModule() {
                                         lastItem={null}
                                         siblingRange={1}
                                         totalPages={Math.ceil(list.length / recordsPerPage)}
+                                        size='mini'
                                     />
 
                                 </Table.HeaderCell>
@@ -162,6 +157,16 @@ function ConstructionModule() {
                     )}
 
                 </Table>
+
+            </Grid.Row>
+
+            <Grid.Row>
+
+                <Grid.Column className="p-0">
+
+                    <ChangeReturnAddress/>
+
+                </Grid.Column>
 
             </Grid.Row>
 
