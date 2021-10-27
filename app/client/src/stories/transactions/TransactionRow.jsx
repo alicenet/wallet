@@ -44,19 +44,19 @@ export default function TransactionRow({ transaction, index, onUpdate }) {
     return (
         <Table.Row>
 
-            <Table.Cell>{storeType}</Table.Cell>
+            <Table.Cell className="p-2">{storeType}</Table.Cell>
 
-            <Table.Cell>{transaction.from && utils.string.splitStringWithEllipsis(transaction.from, 5)}</Table.Cell>
+            <Table.Cell className="p-2">{utils.string.splitStringWithEllipsis(transaction.from, 5)}</Table.Cell>
 
-            <Table.Cell>{transaction.to && utils.string.splitStringWithEllipsis(transaction.to, 5)}</Table.Cell>
+            <Table.Cell className="p-2">{utils.string.splitStringWithEllipsis(transaction.to, 5)}</Table.Cell>
 
-            <Table.Cell>{transaction.key}</Table.Cell>
+            <Table.Cell className="p-2">{transaction.key}</Table.Cell>
 
-            <Table.Cell>{transaction.value && utils.string.splitStringWithEllipsis(transaction.value, 15)}</Table.Cell>
+            <Table.Cell className="p-2">{utils.string.splitStringWithEllipsis(transaction.value, 15)}</Table.Cell>
 
-            <Table.Cell>{transaction.duration}</Table.Cell>
+            <Table.Cell className="p-2">{transaction.duration}</Table.Cell>
 
-            <Table.Cell textAlign="center">
+            <Table.Cell className="p-2" textAlign="center">
 
                 <Menu compact secondary size="small">
 
@@ -98,7 +98,6 @@ export default function TransactionRow({ transaction, index, onUpdate }) {
             </Table.Cell>
 
         </Table.Row>
-
     )
 
 }
