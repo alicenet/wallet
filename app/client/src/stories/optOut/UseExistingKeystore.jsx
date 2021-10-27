@@ -19,8 +19,6 @@ function UseExistingKeystore() {
 
     const handleLoad = async (results) => {
 
-        console.log(results);
-
         let loaded = await dispatch(VAULT_ACTIONS.addExternalWalletToState(results.locked, results.password, results.walletName));
         // Force a manual network connection on a newly generated wallet
 
