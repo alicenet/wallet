@@ -5,6 +5,16 @@ import { TRANSACTION_ACTION_TYPES } from '../constants/_constants';
 /////////////////////////////////
 
 /**
+ * Toggle loading status
+ * @returns null
+ */
+export function toggleStatus() {
+    return async function (dispatch) {
+        dispatch({ type: TRANSACTION_ACTION_TYPES.TOGGLE_STATUS });
+    }
+}
+
+/**
  * Clears the current list of transactions
  * @returns null
  */

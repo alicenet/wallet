@@ -1,8 +1,10 @@
 import { TRANSACTION_ACTION_TYPES } from '../constants/_constants';
 import { reduxState_logger as log } from 'log/logHelper';
+import utils, { transactionStatus } from 'util/_util';
 
 export const initialTransactionState = {
-    list: [], // The list of transactions before being sent to the chain
+    status: transactionStatus.CREATION, //The status reflects the transaction workflow
+    list: [], //The list of transactions before being sent to the chain
     changeReturnAddress: null, //The address to which the change might be returned if any
 }
 
@@ -15,6 +17,12 @@ export default function transactionReducer(state = initialTransactionState, acti
             log.debug("Clearing transactions list");
             return Object.assign({}, state, {
                 list: [],
+            });
+
+        case TRANSACTION_ACTION_TYPES.TOGGLE_STATUS:
+            log.debug("Toggle transaction status");
+            return Object.assign({}, state, {
+                status: utils.transaction.getNextTransactionStatus(state.status),
             });
 
         case TRANSACTION_ACTION_TYPES.SAVE_CHANGE_RETURN_ADDRESS:

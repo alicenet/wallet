@@ -14,6 +14,7 @@ const utils = {
 export const classNames = generic.classNames;
 export const curveTypes = wallet.curveTypes;
 export const transactionTypes = transaction.transactionTypes;
+export const transactionStatus = transaction.transactionStatus;
 
 // Util module exports
 export const genericUtils = generic;
