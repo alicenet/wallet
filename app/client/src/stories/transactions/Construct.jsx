@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Button, Container, Grid } from 'semantic-ui-react';
 import Page from 'layout/Page';
-import { INTERFACE_ACTIONS } from 'redux/actions/_actions';
+import { INTERFACE_ACTIONS, TRANSACTION_ACTIONS } from 'redux/actions/_actions';
 import { useDispatch, useSelector } from 'react-redux';
 import isEmpty from 'lodash/isEmpty';
 
@@ -16,7 +16,11 @@ function Construct() {
 
     useEffect(() => {
         dispatch(INTERFACE_ACTIONS.updateActiveTabPane(tabPaneIndex.Transactions));
-    }, [dispatch]);
+    }, []);
+
+    const handleSendTransaction = () => {
+        dispatch(TRANSACTION_ACTIONS.clearList());
+    };
 
     return (
         <Page showMenu>
@@ -35,7 +39,7 @@ function Construct() {
 
                 <Grid.Column width={16} className="p-0 self-center">
 
-                    <Button color="teal" content='Send Transaction' disabled={isEmpty(list)} className="m-0"/>
+                    <Button color="teal" content='Send Transaction' disabled={isEmpty(list)} onClick={handleSendTransaction} className="m-0"/>
 
                 </Grid.Column>
 
