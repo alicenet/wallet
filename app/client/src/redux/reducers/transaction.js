@@ -1,9 +1,9 @@
 import { TRANSACTION_ACTION_TYPES } from '../constants/_constants';
 import { reduxState_logger as log } from 'log/logHelper';
 
-// The list of transactions before being sent to the chain
 export const initialTransactionState = {
-    list: []
+    list: [], // The list of transactions before being sent to the chain
+    changeReturnAddress: null, //The address to which the change might be returned if any
 }
 
 /* Transaction Reducer */
@@ -17,6 +17,12 @@ export default function transactionReducer(state = initialTransactionState, acti
                 list: [],
             });
 
+        case TRANSACTION_ACTION_TYPES.SAVE_CHANGE_RETURN_ADDRESS:
+            log.debug("Saving change return address", action.payload);
+            return Object.assign({}, state, {
+                changeReturnAddress: action.payload,
+            });
+
         case TRANSACTION_ACTION_TYPES.ADD_TO_LIST:
             log.debug("Adding a transaction to the list", action.payload);
             return Object.assign({}, state, {
@@ -27,7 +33,7 @@ export default function transactionReducer(state = initialTransactionState, acti
             log.debug("Updating a transaction from the list", action.payload);
             return Object.assign({}, state, {
                 list: state.list.map((item, index) => {
-                    if(index === action.payload.index) {
+                    if (index === action.payload.index) {
                         return action.payload;
                     }
                     return item;

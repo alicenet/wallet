@@ -8,6 +8,16 @@ import { TRANSACTION_ACTION_TYPES } from '../constants/_constants';
  * Clears the current list of transactions
  * @returns null
  */
+export function saveChangeReturnAddress(address) {
+    return async function (dispatch) {
+        dispatch({ type: TRANSACTION_ACTION_TYPES.SAVE_CHANGE_RETURN_ADDRESS, payload: address });
+    }
+}
+
+/**
+ * Clears the current list of transactions
+ * @returns null
+ */
 export function clearList() {
     return async function (dispatch) {
         dispatch({ type: TRANSACTION_ACTION_TYPES.CLEAR_LIST });
