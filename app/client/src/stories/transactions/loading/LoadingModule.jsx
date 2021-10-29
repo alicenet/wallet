@@ -33,15 +33,16 @@ function LoadingModule() {
                 <Grid.Column width={16} className="p-0 self-center">
 
                     <p className="text-sm text-yellow-600">
+
                         <strong>
                             If you don&apos;t feel like waiting, you don&apos;t have to!
                             <br/>
                             Notifications will appear regarding transaction updates.
                         </strong>
+
                     </p>
 
                 </Grid.Column>
-
 
                 <Grid.Column width={16} className="p-0 self-center">
 
