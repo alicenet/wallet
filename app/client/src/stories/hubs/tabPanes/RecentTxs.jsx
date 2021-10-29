@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { ADAPTER_ACTIONS } from 'redux/actions/_actions';
 import Web3 from 'web3'
 
-import { Button, Header, Loader, Segment, Table } from 'semantic-ui-react';
+import { Button, Input, Loader, Segment, Table } from 'semantic-ui-react';
 import { stringUtils } from 'util/_util';
 import { BN } from 'bn.js';
 
@@ -137,7 +137,7 @@ export default function RecentTxs({ wallet }) {
     return (
         <Segment placeholder={recentTxs?.length === 0} className="m-4" style={{height: "450px"}}>
             {loading && <Loader active size="large" />}
-            {!loading && recentTxs?.length > 0 && (
+            {!loading && recentTxs?.length > 0 && (<>
 
                 <div className="flex flex-col justify-between h-full">
                     <div>
@@ -149,7 +149,7 @@ export default function RecentTxs({ wallet }) {
                         <Button disabled={activePage >= totalPages-1} content="Next" size="mini" onClick={pageForward} />
                     </div>
                 </div>
-            )}
+            </>)}
         </Segment>
     );
 }
