@@ -7,6 +7,8 @@ import Web3 from 'web3'
 import { Button, Input, Loader, Segment, Table } from 'semantic-ui-react';
 import { stringUtils } from 'util/_util';
 import { BN } from 'bn.js';
+import { getMadWalletInstance } from 'redux/middleware/WalletManagerMiddleware';
+import madNetAdapter from 'adapters/madAdapter';
 
 export default function RecentTxs({ wallet }) {
 
@@ -16,7 +18,7 @@ export default function RecentTxs({ wallet }) {
     if (!recentTxs) { recentTxs = [] } // Default to empty array
 
     const fetchRecentTxs = async () => {
-        setLoading(true);
+        setLoading("fetching");
         await dispatch(ADAPTER_ACTIONS.getAndStoreRecentTXsForAddress(wallet.address, wallet.curve));
         setLoading(false);
     }
@@ -77,13 +79,23 @@ export default function RecentTxs({ wallet }) {
     }
 
     // Pagination Logic
-    const txPerPage = 14;
+    const txPerPage = 12;
     const totalPages = Math.ceil(recentTxs.length / txPerPage);
     const [activePage, setPage] = React.useState(0);
     const pageForward = () => setPage(s => s + 1);
     const pageBackward = () => setPage(s => s - 1);
 
     const activeSlice = recentTxs.slice(activePage * txPerPage, (activePage * txPerPage) + txPerPage)
+
+    // TxHash Input
+    const [txHash, setTxHash] = React.useState({ value: "", error: "" });
+
+    const viewTxHash = async () => {
+        if (!txHash) { setTxHash(s => ({ ...s, error: "Tx Hash Required!" })) }
+        setLoading("hashSearch");
+        let Tx = await madNetAdapter.viewTransaction(txHash.value)
+        setLoading(false);
+    }
 
     React.useEffect(() => {
         // fetchRecentTxs();
@@ -135,18 +147,32 @@ export default function RecentTxs({ wallet }) {
     }
 
     return (
-        <Segment placeholder={recentTxs?.length === 0} className="m-4" style={{height: "450px"}}>
-            {loading && <Loader active size="large" />}
-            {!loading && recentTxs?.length > 0 && (<>
+        <Segment placeholder={recentTxs?.length === 0} className="m-4" style={{ height: "450px" }}>
+            {loading === "fetching" && <Loader active size="large" />}
+            {loading !== "fetching" && recentTxs?.length > 0 && (<>
 
                 <div className="flex flex-col justify-between h-full">
+
                     <div>
-                        {getTxTable()}
+                        <div>
+                            <Input fluid size="mini" className="mb-2" placeholder="Lookup TX By Hash" action={{
+                                content: "Get TX",
+                                size: "mini",
+                                onClick: viewTxHash,
+                                basic: true,
+                                loading: loading === "hashSearch"
+                            }} />
+                        </div>
+
+                        <div>
+                            {getTxTable()}
+                        </div>
                     </div>
+
                     <div className="flex justify-between items-center">
                         <Button disabled={activePage === 0} content="Back" size="mini" onClick={pageBackward} />
-                        <div className="text-xs">{activePage+1} / {totalPages} </div>
-                        <Button disabled={activePage >= totalPages-1} content="Next" size="mini" onClick={pageForward} />
+                        <div className="text-xs">{activePage + 1} / {totalPages} </div>
+                        <Button disabled={activePage >= totalPages - 1} content="Next" size="mini" onClick={pageForward} />
                     </div>
                 </div>
             </>)}

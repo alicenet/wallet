@@ -7,8 +7,6 @@ import { Button, Container, Divider, Grid, Header, Loader, Tab } from 'semantic-
 import Page from 'layout/Page';
 import { classNames } from 'util/generic';
 import { Datastores, Overview, RecentTxs } from './tabPanes/_tabPanes';
-import { INTERFACE_ACTIONS } from 'redux/actions/_actions';
-import { tabPaneIndex } from 'layout/HeaderMenu';
 import { SelectedWalletContext } from 'context/Hub_SelectedWalletContext';
 
 export default function Hub() {
@@ -37,7 +35,7 @@ export default function Hub() {
     }, [vaultExistsAndIsLocked, history])
 
     React.useEffect(() => {
-        if (wallets.length > 0) {
+        if (wallets.length > 0 && !selectedWallet) {
             setSelectedWallet(head(wallets));
         }
     }, [wallets])

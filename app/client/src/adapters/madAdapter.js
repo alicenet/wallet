@@ -342,6 +342,8 @@ class MadNetAdapter {
             await this.pendingTxStatus.set("Pending TxHash: " + this.trimTxHash(tx));
             await this.wallet().Transaction._reset();
             toast.success(<SyncToastMessageWarning basic title="TX Pending" message={tx} hideIcon />)
+            // Clear any TXOuts on a successful mine
+            this.txOuts.set([]); 
             return await this.monitorPending();
         }
         catch (ex) {

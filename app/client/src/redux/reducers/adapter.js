@@ -89,12 +89,17 @@ export default function adapterReducer(state = initialAdapterState, action) {
          * Requires payload.keyChain and payload.value
          */
         case ADAPTER_ACTION_TYPES.SET_MADNET_KEYCHAIN_VALUE:
+            console.log(action);
             let keyDepth = action.payload.keyChain.length;
             let keyTargets = action.payload.keyChain;
             let newAdapterState = { ...state.madNetAdapter };
             if (keyDepth === 1) {
                 newAdapterState[keyTargets[0]] = action.payload.value;
             } else if (keyDepth === 2) {
+                // Create none existent object if needed
+                if (!newAdapterState[keyTargets[0]]) {
+                    newAdapterState[keyTargets[0]] = {};
+                }
                 newAdapterState[keyTargets[0]][keyTargets[1]] = action.payload.value;
             } else if (keyDepth === 3) {
                 newAdapterState[keyTargets[0]][keyTargets[1]][keyTargets[2]] = action.payload.value;
