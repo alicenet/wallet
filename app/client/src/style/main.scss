@@ -39,7 +39,8 @@ html, body, #root {
 .overwrite-tab {
     div:first-child {
         border: 0 !important;
-        justify-content: space-evenly !important;
+        justify-content: center !important;
+        gap: 2rem;
         .active {
             color: #A333C8 !important;
             border-color: #A333C8 !important;
@@ -50,6 +51,7 @@ html, body, #root {
 .smaller {
     div:first-child {
         min-height: auto !important;
+        gap: initial;
         >a {
             margin: 3px 10px !important;
             padding: 0 !important;
