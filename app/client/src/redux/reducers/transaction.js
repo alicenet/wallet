@@ -6,6 +6,15 @@ export const initialTransactionState = {
     status: transactionStatus.CREATION, //The status reflects the transaction workflow
     list: [], //The list of transactions before being sent to the chain
     changeReturnAddress: null, //The address to which the change might be returned if any
+    receipt: [
+        { key: 'TX Hash', value: '0xe000144fdb8d14a833d4b70fd743f16a7039103f' },
+        { key: 'Status', value: 'Success | Pending' },
+        { key: 'Consumed Tx', value: '0xea145322d844c4e05709e557ca8873b13066dfdda6cc812d717ef5abcf3c6205' },
+        { key: 'Consumed TxIdx', value: '0' },
+        { key: 'Object Signature', value: '0x03014215fdc2463e389de09460a1d...e699827f9964546cb84118f800' },
+        { key: 'Value Stores', value: '123' },
+        { key: 'Data Stores', value: '456' },
+    ], //Receipt loaded right after the transaction gets completed
 }
 
 /* Transaction Reducer */
