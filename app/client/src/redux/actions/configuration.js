@@ -1,12 +1,7 @@
+import { electronStoreCommonActions } from 'store/electronStoreHelper';
 import { CONFIG_ACTION_TYPES } from '../constants/_constants';
-
-/**
- * Toggle default_curve setting in configuration reducer
- * @returns { Object } - Action object to be passed as first parameter within Redux.dispatch()
- */
-export function toggleDefaultCurve() {
-    return { type: CONFIG_ACTION_TYPES.TOGGLE_DEFAULT_CURVE }
-}
+import { initialConfigurationState } from '../reducers/configuration'
+import { reduxState_logger as log } from 'log/logHelper'
 
 /**
  * Update ethereum_provider within the configuration reducer
@@ -41,7 +36,7 @@ export function updateMadNetProvider(newMadNetProvider) {
  * @returns { Object } - Action object to be passed as first parameter within Redux.dispatch()
  */
 export function updateRegistryContractAddress(newRegistryContractAddress) {
-    return { type: CONFIG_ACTION_TYPES.TOGGLE_DEFAULT_CURVE };
+    return { type: CONFIG_ACTION_TYPES.UPDATE_REGISTRY_CONTRACT_ADDR, payload: newRegistryContractAddress };
 }
 
 /**
@@ -50,6 +45,8 @@ export function updateRegistryContractAddress(newRegistryContractAddress) {
  */
 export function loadDefaultValues() {
     return async function (dispatch) {
+        // Anytime we load defaults -- Make sure we update the electron store to reflect it
+        electronStoreCommonActions.storeConfigurationValues(initialConfigurationState);
         dispatch({ type: CONFIG_ACTION_TYPES.LOAD_DEFAULT_VALUES });
         return true;
     }
@@ -66,15 +63,37 @@ export function loadDefaultValues() {
 export function saveConfigurationValues(chainId, madNetProvider, ethProvider, registryContractAddress) {
     return async function (dispatch) {
         try {
-            // CAT-TODO: Attempt write to electron store, and fail if necessary
-            dispatch({
-                type: CONFIG_ACTION_TYPES.SAVE_CONFIGURATION, payload: {
-                    mad_net_chainID: chainId,
-                    mad_net_provider: madNetProvider,
-                    ethereum_provider: ethProvider,
-                    registry_contract_address: registryContractAddress,
-                }
-            });
+            let updateObject = {
+                mad_net_chainID: chainId,
+                mad_net_provider: madNetProvider,
+                ethereum_provider: ethProvider,
+                registry_contract_address: registryContractAddress,
+            }
+            // Write any config saves to the electron store and dispatch the config update
+            electronStoreCommonActions.storeConfigurationValues(updateObject);
+            dispatch({ type: CONFIG_ACTION_TYPES.SAVE_CONFIGURATION, payload: updateObject });
+            return true;
+        } catch (ex) {
+            return { error: ex };
+        }
+    }
+}
+
+/**
+ * Load confuguration values from the store to current redux state
+ * @returns 
+ */
+export function loadConfigurationValuesFromStore() {
+    return async function (dispatch) {
+        try {
+            let loadedConfig = await electronStoreCommonActions.readConfigurationValues();
+            if (loadedConfig.error === "Key is not in secure-electron-storage!") {
+                log.debug("Configuration doesn't exist -- Using initial configuration state")
+                return false;
+            } else if (loadedConfig.error) {
+                throw new Error(loadedConfig.error)
+            }
+            dispatch({ type: CONFIG_ACTION_TYPES.SAVE_CONFIGURATION, payload: loadedConfig });
             return true;
         } catch (ex) {
             return { error: ex };

@@ -14,10 +14,6 @@ function Construct() {
 
     const { list } = useSelector(state => ({ list: state.transaction.list }));
 
-    useEffect(() => {
-        dispatch(INTERFACE_ACTIONS.updateActiveTabPane(tabPaneIndex.Transactions));
-    }, [dispatch]);
-
     return (
         <Page showMenu>
 

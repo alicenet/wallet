@@ -9,6 +9,7 @@ import { classNames } from 'util/generic';
 import { Datastores, Overview, RecentTxs } from './tabPanes/_tabPanes';
 import { INTERFACE_ACTIONS } from 'redux/actions/_actions';
 import { tabPaneIndex } from 'layout/HeaderMenu';
+import { SelectedWalletContext } from 'context/Hub_SelectedWalletContext';
 
 export default function Hub() {
 
@@ -21,7 +22,7 @@ export default function Hub() {
     const history = useHistory();
 
     const [openDrawer, setOpenDrawer] = React.useState(true);
-    const [selectedWallet, setSelectedWallet] = React.useState(null);
+    const {selectedWallet, setSelectedWallet} = React.useContext(SelectedWalletContext);
 
     const { vaultExistsAndIsLocked } = useSelector(s => ({ vaultExistsAndIsLocked: s.vault.is_locked }))
 
@@ -41,10 +42,6 @@ export default function Hub() {
         }
     }, [wallets])
 
-    useEffect(() => {
-        dispatch(INTERFACE_ACTIONS.updateActiveTabPane(tabPaneIndex.Wallets));
-    }, []); // eslint-disable-line
-
     const panes = [
         {
             menuItem: 'Overview',
@@ -59,6 +56,8 @@ export default function Hub() {
             render: () => <Datastores wallet={selectedWallet}/>,
         },
     ];
+
+    console.log(selectedWallet)
 
     return (
         <Page showMenu>
@@ -86,7 +85,8 @@ export default function Hub() {
                                         key={wallet.address}
                                         color="purple"
                                         content={openDrawer ? wallet.name : index + 1}
-                                        className={classNames("flex-shrink-0 m-0 p-2.5")}
+                                        className={classNames("flex-shrink-0 m-0 p-2.5 bg-purple-900 text-sm hover:bg-blue-800")}
+                                        disabled={selectedWallet && wallet.address === selectedWallet.address}
                                         basic={selectedWallet && wallet.address !== selectedWallet.address}
                                         onClick={() => setSelectedWallet(wallet)}
                                     />

@@ -1,7 +1,18 @@
 import React from 'react';
 import { Header, Icon } from 'semantic-ui-react';
 
-export const SyncToastMessageWarning = ({ title, message }) => {
+export const SyncToastMessageWarning = ({ title, message, basic, hideIcon }) => {
+
+    if (basic) {
+        return (
+            <div className="w-full">
+                <div className="text-orange-600 text-left" as="h5">
+                    <Icon name="exclamation" color="orange" className="mr-4"/> {title && title + ":"} {message}
+                </div>
+            </div>
+        )
+    }
+
     return (
         <div className="w-full">
             <Header color="orange" as="h5" textAlign="left">

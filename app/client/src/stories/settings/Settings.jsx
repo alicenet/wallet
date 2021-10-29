@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 
 import { useHistory } from 'react-router-dom';
 
@@ -9,6 +10,7 @@ import Page from '../../layout/Page';
 function Settings() {
 
     const history = useHistory();
+    const { vaultExists } = useSelector(s => ({ vaultExists: s.vault.exists }));
 
     const [showAdvancedFeatures, setShowAdvancedFeatures] = React.useState(false);
 
@@ -19,7 +21,7 @@ function Settings() {
 
                 <Grid.Column width={16} className="p-0 self-center">
 
-                    <Header content="Settings" as="h3" className="m-0"/>
+                    <Header content="Settings" as="h3" className="m-0" />
 
                 </Grid.Column>
 
@@ -27,10 +29,12 @@ function Settings() {
 
                     <Container className="flex flex-col justify-center text-justify w-72 gap-5">
 
-                        <Button icon="add square" disabled color="purple" basic content="Create Wallet" className="m-0" onClick={() => {}}/>
-                        <Button icon="key" disabled color="purple" basic content="Import Private Key" className="m-0" onClick={() => {}}/>
+                        {vaultExists && (
+                            <Button icon="add square" color="purple" basic content="Create Wallet" className="m-0" onClick={() => history.push('/addWallet/generate')} />
+                        )}
+                        <Button icon="key" color="purple" basic content="Import Private Key" className="m-0" onClick={() => history.push('/addWallet/importPrivateKey')} />
                         <Button icon="cog" disabled={!showAdvancedFeatures} color="purple" basic content="Advanced Settings" className="m-0"
-                                onClick={() => history.push('/wallet/advancedSettings')}/>
+                            onClick={() => history.push('/wallet/advancedSettings')} />
 
                     </Container>
 
@@ -41,8 +45,8 @@ function Settings() {
                     <Container className="flex flex-col justify-center text-justify w-72 gap-5">
 
                         <Radio label="Show Advanced Features" toggle color="purple" onChange={() => setShowAdvancedFeatures(prevState => !prevState)}
-                               checked={showAdvancedFeatures}/>
-                        <Radio disabled label="Dark Mode" toggle color="purple" className="hidden"/>
+                            checked={showAdvancedFeatures} />
+                        <Radio disabled label="Dark Mode" toggle color="purple" className="hidden" />
 
                     </Container>
 
@@ -52,7 +56,7 @@ function Settings() {
 
                     <Container className="flex flex-col justify-center text-justify w-72">
 
-                        <Button color="orange" basic content="Go Back" className="m-0 w-72" onClick={history.goBack}/>
+                        <Button color="orange" basic content="Go Back" className="m-0 w-72" onClick={history.goBack} />
 
                     </Container>
 

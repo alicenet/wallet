@@ -4,6 +4,7 @@ import { default_log as log } from 'log/logHelper';
 import madNetAdapter from 'adapters/madAdapter';
 import { toast } from 'react-toastify';
 import { SyncToastMessageSuccess } from 'components/customToasts/CustomToasts';
+import { add } from 'lodash';
 
 export const setWeb3Connected = (isConnected) => {
     return dispatch => {
@@ -26,6 +27,18 @@ export const setWeb3Info = (epoch, validators, max_validators) => {
 export const setWeb3Epoch = epoch => {
     return dispatch => {
         dispatch({ type: ADAPTER_ACTION_TYPES.SET_WEB3_EPOCH, payload: epoch })
+    }
+}
+
+export const setWeb3Busy = busyState => {
+    return dispatch => {
+        dispatch({ type: ADAPTER_ACTION_TYPES.SET_WEB3_BUSY, payload: busyState })
+    }
+}
+
+export const setMadNetBusy = busyState => {
+    return dispatch => {
+        dispatch({ type: ADAPTER_ACTION_TYPES.SET_MADNET_BUSY, payload: busyState })
     }
 }
 
@@ -93,9 +106,17 @@ export const initMadNet = (initConfig) => {
 // Single dispatch to call for initiating both Web3 and MadNet adapters after vault unlocking / wallet loads
 export const initAdapters = () => {
     return async (dispatch) => {
+        // TODO: Check both states -- throw different errors!
         let web3Connected = await dispatch(initWeb3({ preventToast: true })); // Attempt to init web3Adapter -- Adapter will handle error toasts
         let madConnected = await dispatch(initMadNet({ preventToast: true })); // Attempt to init madAdapter -- Adapter will handle error toasts
-        if (web3Connected && madConnected) {
+        if (web3Connected.error && madConnected) {
+            toast.success(<SyncToastMessageSuccess basic message="MadNet Connected" />, { className: "basic", "autoClose": 2400 })
+            return { success: true } // This is a partial success but the above adapter will issue the error
+        } else if (web3Connected && madConnected.error) {
+            toast.success(<SyncToastMessageSuccess basic message="Web3 Connected" />, { className: "basic", "autoClose": 2400 })
+            return { success: true } // This is a partial success but the above adapter will issue the error       
+        }
+        else if (web3Connected && madConnected) {
             toast.success(<SyncToastMessageSuccess basic message="MadNet & Web3 Connected" />, { className: "basic", "autoClose": 2400 })
             return { success: true }
         } else {
@@ -113,7 +134,7 @@ export const initAdapters = () => {
 // Mark adapters as disconnected
 export const disconnectAdapters = () => {
     return async (dispatch) => {
-        dispatch({type: ADAPTER_ACTION_TYPES.SET_DISCONNECTED});
+        dispatch({ type: ADAPTER_ACTION_TYPES.SET_DISCONNECTED });
     }
 }
 
@@ -156,7 +177,7 @@ export const getAndStoreLatestBalancesForAddress = (address) => {
         }
         // Push an IIFE for a false resolving promise to position 0, to maintain array positions for the Promise.all resolve
         else {
-            balancePromises.push((() => (new Promise(res => (res(false))))())); 
+            balancePromises.push((() => (new Promise(res => (res(false)))))());
             log.debug("Skipping eth/staking/util balance fetch for address: " + address + " :: Web3 not connected.")
         }
         // Second get madBytes balance/utxos -- Only if madNet connected
@@ -199,5 +220,25 @@ export const getAndStoreLatestBalancesForAddress = (address) => {
         // Return latest found balances and the complete updated balance state
         return [addressBalances, updatedBalanceState];
 
+    }
+}
+
+/**
+ * Get and store recent TXs for a specific address into vault.recentTxs
+ * @param { String } address - Address to fetch TXs for
+ */
+export const getAndStoreRecentTXsForAddress = (address, curve) => {
+    return async (dispatch, useState) => {
+        log.debug("Fetching recent TXs for addresses: ", address);
+        let [txs, currentBlock] = await madNetAdapter.getPrevTransactions([{
+            address: address,
+            curve: curve,
+        }])
+        dispatch({type: VAULT_ACTION_TYPES.UPDATE_RECENT_TXS_BY_ADDRESS, payload: {
+            address: address,
+            txs: txs,
+        }})
+        log.debug("Recent TXs fetched and updated to state for address: ", address)
+        return true;
     }
 }

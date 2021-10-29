@@ -11,6 +11,7 @@ import { VAULT_ACTIONS } from 'redux/actions/_actions'
 import { electronStoreCommonActions } from 'store/electronStoreHelper'
 
 import Page from 'layout/Page';
+import { toast } from 'react-toastify';
 
 function UnlockExistingVault() {
 
@@ -35,16 +36,14 @@ function UnlockExistingVault() {
     // Make sure vault is actually locked
     React.useEffect(() => {
         if (!vaultLocked && vaultExists) {
+            console.log("PUSH abc")
             history.push('/hub');
         }
     });
 
     const handleFormSubmit = async () => {
         setLoading(true);
-        let loaded = await dispatch(VAULT_ACTIONS.loadSecureHDVaultFromStorage(formState.password.value))
-        if (loaded) {
-            history.push('/hub')
-        }
+        dispatch(VAULT_ACTIONS.loadSecureHDVaultFromStorage(formState.password.value))
     }
 
     React.useEffect(() => {

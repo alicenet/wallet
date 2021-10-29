@@ -5,6 +5,7 @@ import { reduxState_logger as log } from '../../log/logHelper';
 export const initialAdapterState = {
     web3Adapter: {
         connected: false, // Has the web3 instance been initiated and is it connected?
+        busy: false,
         error: false, // If an error has occurred when interracting with the ethereum provider
         epoch: false, // Current epoch time -- False if not able to || hasn't been polled
         validators: false, // Current number of validators -- False if not able to || hasn't been polled
@@ -12,6 +13,7 @@ export const initialAdapterState = {
     },
     madNetAdapter: {
         connected: false,
+        busy: false,
         error: false,
         transactions: {
             txOuts: [],
@@ -70,6 +72,16 @@ export default function adapterReducer(state = initialAdapterState, action) {
         // On disconnect set initial adapter state
         case ADAPTER_ACTION_TYPES.SET_DISCONNECTED:
             return Object.assign({}, initialAdapterState);
+
+        case ADAPTER_ACTION_TYPES.SET_WEB3_BUSY:
+            return Object.assign({}, state, {
+                web3Adapter: { ...state.web3Adapter, busy: action.payload }
+            });
+
+        case ADAPTER_ACTION_TYPES.SET_MADNET_BUSY:
+            return Object.assign({}, state, {
+                madNetAdapter: { ...state.madNetAdapter, busy: action.payload }
+            });
 
         /**
          * A payload dependant state setter action for the madNetAdapter state 

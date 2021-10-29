@@ -4,7 +4,7 @@ import { Button, Container, Grid, Header, Image, Modal } from 'semantic-ui-react
 
 import MadIcon from '../../Assets/icon.png';
 
-import { USER_ACTIONS } from "../../redux/actions/_actions";
+import { CONFIG_ACTIONS, USER_ACTIONS } from "../../redux/actions/_actions";
 import { useDispatch } from "react-redux";
 
 function NewUserHub() {
@@ -36,11 +36,11 @@ function NewUserHub() {
 
                 <Grid.Column width={16}>
 
-                    <Header content="Welcome to" as="h3" className="my-0"/>
+                    <Header content="Welcome to" as="h3" className="my-0" />
 
-                    <Image src={MadIcon} size="tiny" centered/>
+                    <Image src={MadIcon} size="tiny" centered />
 
-                    <Header content="MadWallet" as="h3" className="my-0"/>
+                    <Header content="MadWallet" as="h3" className="my-0" />
 
                 </Grid.Column>
 
@@ -66,7 +66,7 @@ function NewUserHub() {
 
                             <Modal.Description className="flex flex-col items-center gap-10">
 
-                                <Header content="MadBase Wallet Vault" as="h3" className="my-0"/>
+                                <Header content="MadBase Wallet Vault" as="h3" className="my-0" />
 
                                 <Container className="flex flex-auto flex-col gap-3 p-5 text-center">
 
@@ -85,7 +85,7 @@ function NewUserHub() {
 
                                 </Container>
 
-                                <Button color="purple" onClick={() => setOpenModal(false)} content="Got it!"/>
+                                <Button color="purple" onClick={() => setOpenModal(false)} content="Got it!" />
 
                             </Modal.Description>
 
@@ -99,9 +99,9 @@ function NewUserHub() {
 
                     <Container fluid className="flex flex-auto flex-col items-center gap-3 w-72">
 
-                        <Button color="purple" basic content="Create a Vault*" className="m-0" fluid onClick={() => history.push('/newVault/createVault')}/>
+                        <Button color="purple" basic content="Create a Vault*" className="m-0" fluid onClick={() => history.push('/newVault/createVault')} />
 
-                        <Button color="orange" basic content="I have a vault seed" className="m-0" fluid onClick={useRecoveryPhrase}/>
+                        <Button color="orange" basic content="I have a vault seed" className="m-0" fluid onClick={useRecoveryPhrase} />
 
                     </Container>
 

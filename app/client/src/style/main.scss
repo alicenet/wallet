@@ -37,7 +37,7 @@ html, body, #root {
 
 /* To be used as customization for tab panes */
 .overwrite-tab {
-    div:first-child {
+    >div:first-child {
         border: 0 !important;
         justify-content: space-evenly !important;
         .active {

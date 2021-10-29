@@ -1,17 +1,29 @@
 import store from '../redux/store/store';
 import BigInt from "big-integer";
 import { ADAPTER_ACTION_TYPES } from 'redux/constants/_constants';
+import { ADAPTER_ACTIONS } from 'redux/actions/_actions';
 import { getMadWalletInstance } from 'redux/middleware/WalletManagerMiddleware'
+import { default_log as log } from 'log/logHelper'
 import { SyncToastMessageWarning, SyncToastMessageSuccess } from 'components/customToasts/CustomToasts'
 import { toast } from 'react-toastify';
 import { curveTypes } from 'util/wallet';
+import { history } from 'history/history';
 
 class MadNetAdapter {
 
     constructor() {
 
         this.wallet = () => getMadWalletInstance(); // Get latest madWallet for any actions needing it.
-        this.provider = store.getState().config.mad_net_provider;
+        this.provider = () => (store.getState().config.mad_net_provider);
+        this.chainID = () => (store.getState().config.mad_net_chainID);
+
+        this.subscribed = false;
+        this.isInitializing = false; // Is the instance currently initializing? -- Used to prevent repeat initializations
+
+        this.lastNotedConfig = {
+            mad_net_chainID: false,
+            mad_net_provider: false,
+        }
 
         this.connected = this._handleReduxStateValue(["connected"]);
         this.failed = this._handleReduxStateValue(["error"]);
@@ -53,22 +65,36 @@ class MadNetAdapter {
      * Initiate the madNet Adapater and verify a connection is possible 
      * @param {Object} config - Init Config
      * @property { Bool } config.preventToast - Should the success toast be prevented?
+     * @property { Bool } config.reinit - Is this a reinit cycle?
      */
     async __init(config = {}) {
+        store.dispatch(ADAPTER_ACTIONS.setMadNetBusy(true));
+        this._listenToStore();
         try {
-            await this.wallet().Rpc.setProvider(this.provider)
+            this._updateLastNotedConfig();
+            await this.wallet().Rpc.setProvider(this.provider())
             this.connected.set(true);
             this.failed.set(false);
             if (!config.preventToast) {
                 toast.success(<SyncToastMessageSuccess basic title="Success" message="MadNet Connected" />, { className: "basic", "autoClose": 2400 })
             }
-            this._listenToStore();
+            store.dispatch(ADAPTER_ACTIONS.setMadNetBusy(false));
             return { success: true }
         }
         catch (ex) {
             this.failed.set(ex.message);
-            toast.error(<SyncToastMessageWarning title="Error Connecting To Madnet!" message="Check network settings" />)
+            toast.error(<SyncToastMessageWarning title="Madnet Error!" message="Check network settings" />,
+                { className: "basic", "autoClose": 5000, "onClick": () => { history.push("/wallet/advancedSettings") } })
+            store.dispatch(ADAPTER_ACTIONS.setMadNetBusy(false));
+            store.dispatch(ADAPTER_ACTIONS.setMadNetConnected(false));
             return ({ error: ex })
+        }
+    }
+
+    _updateLastNotedConfig(mad_net_chainID = this.chainID(), mad_net_provider = this.provider()) {
+        this.lastNotedConfig = {
+            mad_net_chainID: mad_net_chainID,
+            mad_net_provider: mad_net_provider,
         }
     }
 
@@ -76,9 +102,43 @@ class MadNetAdapter {
      * Setup listeners on the redux store for configuration changes -- This may not be needed at the moment 
      */
     async _listenToStore() {
-        // TBD: On store changes for any configuration settings rerun:
-        // await this._setAndGetUptoDateContracts();
-        // await this._setAndGetInfo();
+        // Alwats cancel previous subscription
+        if (this.subscribed) {
+            return; // Call the subscribed function to unsubscribe from the store if a previous subscription exists
+        }
+        // On any state updates if the last notable config state does not pass equality, force reinitialization of the adapter
+        this.subscribed = store.subscribe(async () => {
+            let state = store.getState();
+            let latestConfig = state.config;
+            let isLocked = state.vault.is_locked;
+            // If at any point attempts are made when the vault is locked -- Ignore them
+            if (isLocked) {
+                log.debug("Skipping subscription checks on MadNet Adapter -- Account is locked")
+                return
+            }
+            let newNotableState = {
+                mad_net_chainID: latestConfig.mad_net_chainID,
+                mad_net_provider: latestConfig.mad_net_provider,
+            }
+            let updateOccurance = await (() => {
+                return new Promise(res => {
+                    Object.keys(newNotableState).forEach(key => {
+                        if (newNotableState[key] !== this.lastNotedConfig[key]) {
+                            res(true);
+                        }
+                    })
+                    res(false);
+                })
+            })()
+            if (updateOccurance) {
+                if (!this.isInitializing) { // Guard againt re-entrancies on initializing
+                    log.debug("Configuration change for MadAdapter Adapter -- Reinitializing")
+                    this.isInitializing = true;
+                    await this.__init({ preventToast: true, reinit: true });
+                    this.isInitializing = false;
+                }
+            }
+        })
     }
 
     /** Fetch upto date balances for MadNetWallets
@@ -108,8 +168,6 @@ class MadNetAdapter {
             newBalances[address].madBytes = addressBalancesAndUtxos["balance"];
             newBalances[address].madUTXOs = addressBalancesAndUtxos["utxos"];
         }
-
-        console.log(newBalances)
 
         // Return newly updated balances and utxos
         return newBalances;
@@ -283,6 +341,7 @@ class MadNetAdapter {
             this.pendingTx.set(tx);
             await this.pendingTxStatus.set("Pending TxHash: " + this.trimTxHash(tx));
             await this.wallet().Transaction._reset();
+            toast.success(<SyncToastMessageWarning basic title="TX Pending" message={tx} hideIcon />)
             return await this.monitorPending();
         }
         catch (ex) {
@@ -306,6 +365,8 @@ class MadNetAdapter {
             await this.wallet().Rpc.getMinedTransaction(tx);
             await this.backOffRetry('pending-' + JSON.stringify(tx), true)
             this.pendingTx.set(false);
+            // Success TX Mine
+            toast.success(<SyncToastMessageSuccess title="TX Mined" message={tx} hideIcon basic />)
             return { "txHash": tx, "msg": "Mined: " + this.trimTxHash(tx) };
         }
         catch (ex) {
@@ -484,6 +545,19 @@ class MadNetAdapter {
             let newTxOuts = [...this.txOuts.get()];
             newTxOuts.push(txOut)
             this.txOuts.set(newTxOuts);
+            log.debug("Mad Net Adapter: Added new TXOut: ", txOut)
+            return newTxOuts;
+        }
+        catch (ex) {
+            return { error: ex }
+        }
+    }
+
+    clearTXouts() {
+        try {
+            let newTxOuts = [];
+            this.txOuts.set(newTxOuts);
+            log.debug("Mad Net Adapter: Cleared TXOuts")
             return newTxOuts;
         }
         catch (ex) {

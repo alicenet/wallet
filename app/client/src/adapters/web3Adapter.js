@@ -2,6 +2,8 @@ import store from '../redux/store/store';
 import Web3 from 'web3';
 import ABI from './abi.js';
 import { ADAPTER_ACTIONS } from 'redux/actions/_actions';
+import { default_log as log } from 'log/logHelper'
+import { history } from 'history/history';
 
 import { SyncToastMessageSuccess } from 'components/customToasts/CustomToasts';
 import { SyncToastMessageWarning } from 'components/customToasts/CustomToasts';
@@ -9,6 +11,14 @@ import { toast } from 'react-toastify';
 
 const reqContracts = ["staking", "validators", "deposit", "stakingToken", "utilityToken"]
 const REGISTRY_VERSION = "/v1"; // CHANGE OR PUT IN SETTINGS
+
+const Web3Error = ({ msg }) => {
+    return (
+        <SyncToastMessageWarning basic title="Web3 Connection Error" message={msg} />
+    )
+}
+
+const Web3ErrToastOpts = { className: "basic", "autoClose": 5000, "onClick": () => { history.push("/wallet/advancedSettings") } };
 
 /**
  * Web3Adapter that provides ethereum access acrosss the application 
@@ -24,6 +34,14 @@ class Web3Adapter {
     }
 
     __initialStateSet() {
+        // Currently subscribed to store? This will be the unsubscribe function if it exists
+        if (this.subscribed) {
+            this.subscribed();
+        }
+
+        this.subscribed = false;
+        this.isInitializing = false; // Is the instance currently initializing? -- Used to prevent repeat initializations
+
         this.web3 = [];
         this.contracts = [];
         this.info = {};
@@ -36,39 +54,62 @@ class Web3Adapter {
             },
             "validatorInfo": {}
         };
+        this.lastNotedConfig = {
+            ethereum_provider: false,
+            registry_contract_address: false,
+        }
     }
 
     /**
      * Initialize the current instance by setting up store listen and getting uptoDateContracts and information
      * @param {Object} config - Prevent toast from popping?
      * @property { Bool } config.preventToast - Should the toast be prevented?
+     * @property { Bool } config.reinit - Is this a reinitialization run?
      */
     async __init(config = {}) {
+        // On init, mark as busy
+        store.dispatch(ADAPTER_ACTIONS.setWeb3Busy(true));
+        // On init, note the last configuration state
+        this._updateLastNotedConfig();
         // Set up subscribe and listen to store events
         await this._listenToStore();
         // Set the latest contracts
         let connected = await this._setAndGetUptoDateContracts();
         if (connected.error) {
-            toast.error(<SyncToastMessageWarning basic title="Error" message="Web3 Connection Error - Verify Settings" />, { className: "basic", "autoClose": 2400 })
+            store.dispatch(ADAPTER_ACTIONS.setWeb3Connected(false)) // On any error dispatch not connected state
+            store.dispatch(ADAPTER_ACTIONS.setWeb3Busy(false));
+            toast.error(<Web3Error msg="Verify Settings" />, Web3ErrToastOpts)
             return { error: connected.error }
         }
         // Set and get the latest contract info
         await this._setAndGetInfo();
         // Verify that both provider and registry contract are available
         if (!this._getEthereumProviderFromStore()) {
-            toast.error(<SyncToastMessageWarning basic title="Error" message="Web3 Connection Error - Verify Settings" />, { className: "basic", "autoClose": 2400 })
+            store.dispatch(ADAPTER_ACTIONS.setWeb3Connected(false)) // On any error dispatch not connected state
+            store.dispatch(ADAPTER_ACTIONS.setWeb3Busy(false));
+            toast.error(<Web3Error msg="Verify Eth Provider" />, Web3ErrToastOpts)
             return { error: "No Ethereum provider found in state." };
         }
         if (!this._getRegistryContractFromStore()) {
-            toast.error(<SyncToastMessageWarning basic title="Error" message="Web3 Connection Error - Verify Settings" />, { className: "basic", "autoClose": 2400 })
+            store.dispatch(ADAPTER_ACTIONS.setWeb3Connected(false)) // On any error dispatch not connected state
+            store.dispatch(ADAPTER_ACTIONS.setWeb3Busy(false));
+            toast.error(<Web3Error msg="Verify Registry Contract" />, Web3ErrToastOpts)
             return { error: "No registry contract found in state." };
         }
         // If all of this passes, note that the instance is connected
         store.dispatch(ADAPTER_ACTIONS.setWeb3Connected(true));
-        if (!config.preventToast) {
-            toast.success(<SyncToastMessageSuccess basic title="Success" message="Web3 Connected" />, { className: "basic", "autoClose": 2400 })
+        store.dispatch(ADAPTER_ACTIONS.setWeb3Busy(false));
+        if (!config.preventToast || config.reinit) {
+            toast.success(<SyncToastMessageSuccess basic title="Success" message="Web3 Connected" />, { className: "basic", "autoClose": 2400, delay: 1000 })
         }
         return { success: true };
+    }
+
+    _updateLastNotedConfig(ethereumProvider = this._getEthereumProviderFromStore(), registryContractAddress = this._getRegistryContractFromStore()) {
+        this.lastNotedConfig = {
+            ethereum_provider: ethereumProvider,
+            registry_contract_address: registryContractAddress,
+        }
     }
 
     // Set adapter default state -- for disconnecting
@@ -80,9 +121,43 @@ class Web3Adapter {
      * Setup listeners on the redux store for configuration changes -- This may not be needed at the moment 
      */
     async _listenToStore() {
-        // TBD: On store changes for any configuration settings rerun:
-        // await this._setAndGetUptoDateContracts();
-        // await this._setAndGetInfo();
+        // Alwats cancel previous subscription
+        if (this.subscribed) {
+            return; // Call the subscribed function to unsubscribe from the store if a previous subscription exists
+        }
+        // On any state updates if the last notable config state does not pass equality, force reinitialization of the adapter
+        this.subscribed = store.subscribe(async () => {
+            let state = store.getState();
+            let latestConfig = state.config;
+            let isLocked = state.vault.is_locked;
+            // If at any point attempts are made when the vault is locked -- Ignore them
+            if (isLocked) {
+                log.debug("Skipping subscription checks on Web3 Adapter -- Account is locked")
+                return
+            }
+            let newNotableState = {
+                ethereum_provider: latestConfig.ethereum_provider,
+                registry_contract_address: latestConfig.registry_contract_address,
+            }
+            let updateOccurance = await (() => {
+                return new Promise(res => {
+                    Object.keys(newNotableState).forEach(key => {
+                        if (newNotableState[key] !== this.lastNotedConfig[key]) {
+                            res(true);
+                        }
+                    })
+                    res(false);
+                })
+            })()
+            if (updateOccurance) {
+                if (!this.isInitializing) { // Guard againt re-entrancies on initializing
+                    log.debug("Configuration change for Web3 Adapter -- Reinitializing")
+                    this.isInitializing = true;
+                    await this.__init({ preventToast: true, reinit: true });
+                    this.isInitializing = false;
+                }
+            }
+        })
     }
 
     /**
