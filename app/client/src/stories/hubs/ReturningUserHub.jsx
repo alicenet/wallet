@@ -98,7 +98,7 @@ export default function Hub() {
 
                     <Grid.Column className={`p-0 duration-300 transition-transform transition-width w-${openDrawer ? '2/3' : '7/8'}`}>
 
-                        <Container className="p-4">
+                        <Container className="px-4">
 
                             {selectedWallet ? <Tab className="overwrite-tab" menu={{ secondary: true, pointing: true }} panes={panes}/> : <Loader active/>}
 
