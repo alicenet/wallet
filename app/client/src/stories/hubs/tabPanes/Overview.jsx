@@ -1,8 +1,9 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ADAPTER_ACTIONS, MODAL_ACTIONS } from 'redux/actions/_actions';
+import copy from 'copy-to-clipboard';
 
-import { Button, Container, Grid } from 'semantic-ui-react'
+import { Button, Container, Grid, Icon } from 'semantic-ui-react'
 
 import { curveTypes } from 'util/wallet';
 
@@ -15,6 +16,7 @@ export default function Overview({ wallet }) {
     const thisWalletBalances = balances[wallet.address] ? balances[wallet.address] : false;
     const [loader, setLoader] = React.useState("");
 
+    const [copyClick, setCopyClick] = React.useState(0);
     const fetchBalances = React.useCallback(async () => {
         setLoader("balances");
         await dispatch(ADAPTER_ACTIONS.getAndStoreLatestBalancesForAddress(wallet.address))
@@ -34,9 +36,9 @@ export default function Overview({ wallet }) {
             <div className="text-xs">
                 <div className="text-right w-24 inline font-bold">{balanceType}:</div>
                 <div className="ml-2 text-left inline">
-                    {loader === "balances" ? ". . ." : 
-                        thisWalletBalances[balanceKey] ? (thisWalletBalances[balanceKey]) : "" } 
-                        {balanceAllowance ? " / " + (thisWalletBalances[balanceAllowance]) : ""}
+                    {loader === "balances" ? ". . ." :
+                        thisWalletBalances[balanceKey] ? (thisWalletBalances[balanceKey]) : ""}
+                    {balanceAllowance ? " / " + (thisWalletBalances[balanceAllowance]) : ""}
                 </div>
             </div>
         )
@@ -45,6 +47,14 @@ export default function Overview({ wallet }) {
     const openRenameWalletModal = () => { dispatch(MODAL_ACTIONS.openRenameWalletModal(wallet)) }
     // const openRemoveWalletModal = () => { dispatch(MODAL_ACTIONS.openRemoveWalletModal(wallet)) }
     const openXportPrivKModal = () => { dispatch(MODAL_ACTIONS.openXportPrivKModal(wallet)) }
+
+    const copyAddress = () => {
+        setCopyClick(true);
+        copy(wallet.address);
+        setTimeout(() => {
+            setCopyClick(false);
+        }, 2150)
+    }
 
     return (
         <Grid className="break-all text-sm p-3">
@@ -56,7 +66,15 @@ export default function Overview({ wallet }) {
                     <Container>
 
                         <label className="font-semibold">{`Public Address (${wallet.curve === curveTypes.SECP256K1 ? 'Secp256k1' : 'Barreto-Naehrig'} curve)`}</label>
-                        <div className="py-1">{`0x${wallet.address}`}</div>
+                        <div className="h-10 py-1 flex items-center cursor-pointer hover:text-gray-600" onClick={copyAddress}>
+                            {`0x${wallet.address}`}
+                            <Icon name="copy outline" className="ml-1 mb-2 cursor-pointer" />
+                            {!!copyClick && (
+                                <div className="relative inline text-xs mb-2 text-gray-500">
+                                    Copied to clipboard!
+                                </div>
+                            )}
+                        </div>
 
                     </Container>
 

@@ -4,10 +4,11 @@ import { useDispatch } from 'react-redux';
 import { ADAPTER_ACTIONS } from 'redux/actions/_actions';
 import Web3 from 'web3'
 
-import { Button, Input, Loader, Segment, Table } from 'semantic-ui-react';
+import { Button, Icon, Input, Loader, Segment, Table } from 'semantic-ui-react';
 import { stringUtils } from 'util/_util';
 import { BN } from 'bn.js';
 import { getMadWalletInstance } from 'redux/middleware/WalletManagerMiddleware';
+import copy from 'copy-to-clipboard';
 import madNetAdapter from 'adapters/madAdapter';
 
 export default function RecentTxs({ wallet }) {
@@ -17,65 +18,13 @@ export default function RecentTxs({ wallet }) {
     let { recentTxs } = useSelector(s => ({ recentTxs: s.vault.recentTxs[wallet.address] }))
     if (!recentTxs) { recentTxs = [] } // Default to empty array
 
+    const [manuallyFetchedTx, setManuallyFetchedTxs] = React.useState([]);
+    const addManuallyFetchedTx = (newTx) => setManuallyFetchedTxs(s => ([...s, newTx]));
+
     const fetchRecentTxs = async () => {
         setLoading("fetching");
         await dispatch(ADAPTER_ACTIONS.getAndStoreRecentTXsForAddress(wallet.address, wallet.curve));
         setLoading(false);
-    }
-
-    // Force fake tx data for testing. . 
-    recentTxs = [
-        {
-            "Tx": {
-                "id": "a",
-                "Vin": [
-                    {
-                        "TXInLinker": {
-                            "TXInPreImage": {
-                                "ChainID": 42,
-                                "ConsumedTxIdx": 1,
-                                "ConsumedTxHash": "55dbeaca0006723e08c09935163705dcee50a96d7e5b0da838e73af227ef93fa"
-                            },
-                            "TxHash": "141fcc641bf55916db9d00aa68c2319e5be5b46bf0264884bbcea975ceb270db"
-                        },
-                        "Signature": "01018eb60f3443f965fee75fdbb8f3360c53e124d4b922ea81a9ea79dcb2945675502efac37c20653330acd1091324c47b023993fee272e397b4b7538433f15835e701"
-                    }
-                ],
-                "Vout": [
-                    {
-                        "ValueStore": {
-                            "VSPreImage": {
-                                "ChainID": 42,
-                                "Value": "0000000000000000000000000000000000000000000000000000000000000032",
-                                "Owner": "0101c113189ad606c8dd46a783a7915483d7e9461c9a",
-                                "Fee": "0000000000000000000000000000000000000000000000000000000000000000"
-                            },
-                            "TxHash": "141fcc641bf55916db9d00aa68c2319e5be5b46bf0264884bbcea975ceb270db"
-                        }
-                    },
-                    {
-                        "ValueStore": {
-                            "VSPreImage": {
-                                "ChainID": 42,
-                                "Value": "00000000000000000000000000000000000000000000000000000000000020f8",
-                                "TXOutIdx": 1,
-                                "Owner": "0101546f99f244b7b58b855330ae0e2bc1b30b41302f",
-                                "Fee": "0000000000000000000000000000000000000000000000000000000000000000"
-                            },
-                            "TxHash": "141fcc641bf55916db9d00aa68c2319e5be5b46bf0264884bbcea975ceb270db"
-                        }
-                    }
-                ]
-            }
-        }
-    ]
-
-    // Clone it for fiddling
-    let cloneData = recentTxs[0];
-    for (let i = 0; i < 50; i++) {
-        let thisClone = { Tx: { ...cloneData["Tx"], id: i } };
-        console.log(thisClone, i);
-        recentTxs.push(thisClone);
     }
 
     // Pagination Logic
@@ -89,22 +38,26 @@ export default function RecentTxs({ wallet }) {
 
     // TxHash Input
     const [txHash, setTxHash] = React.useState({ value: "", error: "" });
+    const updateTxHashVal = val => setTxHash(s => ({ ...s, value: val }));
 
     const viewTxHash = async () => {
         if (!txHash) { setTxHash(s => ({ ...s, error: "Tx Hash Required!" })) }
+        console.log(txHash);
         setLoading("hashSearch");
-        let Tx = await madNetAdapter.viewTransaction(txHash.value)
+        let res = await madNetAdapter.viewTransaction(txHash.value)
+        addManuallyFetchedTx(res.tx);
         setLoading(false);
     }
 
     React.useEffect(() => {
-        // fetchRecentTxs();
+        fetchRecentTxs();
     }, [wallet])
 
     const getTxTable = () => {
 
+        let manuallyFetchedAndSlice = [...manuallyFetchedTx, ...activeSlice];
 
-        let rows = activeSlice.map(tx => {
+        let rows = manuallyFetchedAndSlice.map((tx, i) => {
 
             let tVal = Web3.utils.toBN("0x00"); // Total value of any value stores in the tx
             let tStores = 0 // Total amount of data stores
@@ -118,13 +71,16 @@ export default function RecentTxs({ wallet }) {
                 // TODO: Add Datastore parsing
             })
 
-            return (<Table.Row className="cursor-pointer hover:bg-gray-100">
-                <Table.Cell>{tx["Tx"].id}</Table.Cell>
-                <Table.Cell>{stringUtils.splitStringWithEllipsis(tx["Tx"]["Vin"][0]["TXInLinker"].TxHash, "10")}</Table.Cell>
+            return (<Table.Row className="">
+                <Table.Cell>{i}</Table.Cell>
+                <Table.Cell className="cursor-pointer hover:bg-gray-100" onClick={() => copy(tx["Tx"]["Vin"][0]["TXInLinker"].TxHash)}>
+                    {stringUtils.splitStringWithEllipsis(tx["Tx"]["Vin"][0]["TXInLinker"].TxHash, "10")}
+                </Table.Cell>
                 <Table.Cell>{tx["Tx"]["Vin"].length}</Table.Cell>
                 <Table.Cell>{tx["Tx"]["Vout"].length}</Table.Cell>
                 <Table.Cell>{tVal.toString()}</Table.Cell>
                 <Table.Cell>0</Table.Cell>
+                <Table.Cell textAlign="center" className="cursor-pointer hover:bg-gray-100"><Icon name="arrow right" /></Table.Cell>
             </Table.Row>)
         })
 
@@ -137,6 +93,7 @@ export default function RecentTxs({ wallet }) {
                     <Table.HeaderCell>VOuts</Table.HeaderCell>
                     <Table.HeaderCell>Value</Table.HeaderCell>
                     <Table.HeaderCell>Data Stores</Table.HeaderCell>
+                    <Table.HeaderCell>Inspect</Table.HeaderCell>
                 </Table.Header>
                 <Table.Body>
                     {rows}
@@ -147,7 +104,7 @@ export default function RecentTxs({ wallet }) {
     }
 
     return (
-        <Segment placeholder={recentTxs?.length === 0} className="m-4" style={{ height: "450px" }}>
+        <Segment placeholder={recentTxs?.length === 0} className="m-4" style={{ height: "472px" }}>
             {loading === "fetching" && <Loader active size="large" />}
             {loading !== "fetching" && recentTxs?.length > 0 && (<>
 
@@ -155,13 +112,16 @@ export default function RecentTxs({ wallet }) {
 
                     <div>
                         <div>
-                            <Input fluid size="mini" className="mb-2" placeholder="Lookup TX By Hash" action={{
-                                content: "Get TX",
-                                size: "mini",
-                                onClick: viewTxHash,
-                                basic: true,
-                                loading: loading === "hashSearch"
-                            }} />
+                            <Input fluid size="mini" className="mb-2" placeholder="Lookup TX By Hash"
+                                onChange={(e) => updateTxHashVal(e.target.value)}
+                                value={txHash.value}
+                                action={{
+                                    content: "Get TX",
+                                    size: "mini",
+                                    onClick: viewTxHash,
+                                    basic: true,
+                                    loading: loading === "hashSearch"
+                                }} />
                         </div>
 
                         <div>

@@ -6,6 +6,7 @@ export const initialTransactionState = {
     status: transactionStatus.CREATION, //The status reflects the transaction workflow
     list: [], //The list of transactions before being sent to the chain
     changeReturnAddress: null, //The address to which the change might be returned if any
+    lastSentAndMinedTx: false,
     receipt: [
         { key: 'TX Hash', value: '0xe000144fdb8d14a833d4b70fd743f16a7039103f' },
         { key: 'Status', value: 'Success | Pending' },
@@ -55,6 +56,12 @@ export default function transactionReducer(state = initialTransactionState, acti
                     }
                     return item;
                 }),
+            });
+
+        case TRANSACTION_ACTION_TYPES.SET_LAST_SENT_MINED_TX:
+            log.debug("Updating latest sent and mined tx: ", action.payload);
+            return Object.assign({}, state, {
+                lastSentAndMinedTx: action.payload,
             });
 
         case TRANSACTION_ACTION_TYPES.REMOVE_FROM_LIST:

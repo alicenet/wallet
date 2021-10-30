@@ -17,10 +17,6 @@ function Construct() {
         status: state.transaction.status
     }));
 
-    useEffect(() => {
-        dispatch(INTERFACE_ACTIONS.updateActiveTabPane(tabPaneIndex.Transactions));
-    }, []);
-
     switch (status) {
         case transactionStatus.CREATION:
             return <ConstructionModule/>;

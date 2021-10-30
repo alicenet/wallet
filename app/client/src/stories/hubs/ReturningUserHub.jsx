@@ -55,8 +55,6 @@ export default function Hub() {
         },
     ];
 
-    console.log(selectedWallet)
-
     return (
         <Page showMenu>
 

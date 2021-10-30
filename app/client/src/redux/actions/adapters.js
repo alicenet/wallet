@@ -5,6 +5,9 @@ import madNetAdapter from 'adapters/madAdapter';
 import { toast } from 'react-toastify';
 import { SyncToastMessageSuccess } from 'components/customToasts/CustomToasts';
 import { add } from 'lodash';
+import { transactionTypes } from 'util/transaction';
+import { transactionUtils, walletUtils } from 'util/_util';
+import { TRANSACTION_ACTIONS } from './_actions';
 
 export const setWeb3Connected = (isConnected) => {
     return dispatch => {
@@ -240,5 +243,40 @@ export const getAndStoreRecentTXsForAddress = (address, curve) => {
         }})
         log.debug("Recent TXs fetched and updated to state for address: ", address)
         return true;
+    }
+}
+
+/**
+ * Aggregate the TXs from the transaction reduce into the madNetAdapter state and send the grouped tx
+ */
+export const sendTransactionReducerTXs = () => {
+    return async (dispatch, getState) => {
+        let txReducerTxs = getState().transaction.list;
+        let preppedTxObjs = [] // Convert to proper tx format for madNetAdapter
+        txReducerTxs.forEach( (tx) => {
+            if (tx.type === transactionTypes.DATA_STORE) {
+                preppedTxObjs.push(
+                    transactionUtils.createDataStoreObject(tx.from, tx.key, tx.value, tx.duration)
+                );
+            } else if (tx.type === transactionTypes.VALUE_STORE) {
+                preppedTxObjs.push(
+                    transactionUtils.createValueStoreObject(tx.from, tx.to, tx.value, false )
+                );
+            } else {
+                throw new Error("sendTransactionReducerTXs received incorrect txType of type: ", tx.type);
+            }
+        })
+        // Add each tx to the txOutList of the madNetAdapter
+        preppedTxObjs.forEach(tx => {
+            madNetAdapter.addTxOut(tx);
+        })
+        
+        let tx = await madNetAdapter.createTx();
+
+        // Set latest tx to lastSentAndMinedTx in transaction reducer
+        dispatch(TRANSACTION_ACTIONS.setLastSentAndMinedTx(tx)) 
+        dispatch(TRANSACTION_ACTIONS.toggleStatus());
+
+        return tx;
     }
 }

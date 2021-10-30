@@ -5,7 +5,7 @@ import isEmpty from 'lodash/isEmpty';
 import chunk from 'lodash/chunk';
 
 import { transactionTypes } from 'util/_util';
-import { TRANSACTION_ACTIONS } from 'redux/actions/_actions';
+import { ADAPTER_ACTIONS, TRANSACTION_ACTIONS } from 'redux/actions/_actions';
 import TransactionRow from './TransactionRow';
 import ConstructingATransactionModal from './ConstructingATransactionModal';
 import AddEditDataStoreModal from './AddEditDataStoreModal';
@@ -34,7 +34,9 @@ function ConstructionModule() {
 
     const handlePaginationChange = (e, { activePage }) => setActivePage(activePage);
 
-    const handleSendTransaction = () => {
+    const handleSendTransaction = async () => {
+        // Send the TX via the main tx action -- Just fire it off, latest TX will appear in transaction reducer as lastSentAndMinedTx
+        dispatch(ADAPTER_ACTIONS.sendTransactionReducerTXs())
         dispatch(TRANSACTION_ACTIONS.toggleStatus());
     };
 
@@ -71,8 +73,8 @@ function ConstructionModule() {
 
                                         <Container className="flex justify-center items-center">
 
-                                            <Header content="How to construct a transaction" as="h3" className="m-0"/>
-                                            <Icon size="small" name="question circle" className="px-2 cursor-pointer"/>
+                                            <Header content="How to construct a transaction" as="h3" className="m-0" />
+                                            <Icon size="small" name="question circle" className="px-2 cursor-pointer" />
 
                                         </Container>
 
@@ -84,9 +86,9 @@ function ConstructionModule() {
 
                                     <Menu compact icon='labeled' size="small">
 
-                                        <Menu.Item name='add-data-store' onClick={() => setDataStore(emptyDataStore)}><Icon name='chart bar'/>Add Data Store</Menu.Item>
+                                        <Menu.Item name='add-data-store' onClick={() => setDataStore(emptyDataStore)}><Icon name='chart bar' />Add Data Store</Menu.Item>
 
-                                        <Menu.Item name='add-value-store' onClick={() => setValueStore(emptyValueStore)}><Icon name='currency'/>Add Value Store</Menu.Item>
+                                        <Menu.Item name='add-value-store' onClick={() => setValueStore(emptyValueStore)}><Icon name='currency' />Add Value Store</Menu.Item>
 
                                     </Menu>
 
@@ -181,7 +183,7 @@ function ConstructionModule() {
                                 <Grid.Column width={12} textAlign="center">
 
                                     <label className="font-semibold">Address to Return UTXOs to</label>
-                                    <ChangeReturnAddress disabled={!changeReturnAddress}/>
+                                    <ChangeReturnAddress disabled={!changeReturnAddress} />
                                     <Checkbox
                                         fitted
                                         checked={changeReturnAddress}
@@ -194,9 +196,9 @@ function ConstructionModule() {
 
                             </Grid.Row>
 
-                            {dataStore && <AddEditDataStoreModal dataStore={dataStore} onClose={() => setDataStore(null)}/>}
+                            {dataStore && <AddEditDataStoreModal dataStore={dataStore} onClose={() => setDataStore(null)} />}
 
-                            {valueStore && <AddEditValueStoreModal valueStore={valueStore} onClose={() => setValueStore(null)}/>}
+                            {valueStore && <AddEditValueStoreModal valueStore={valueStore} onClose={() => setValueStore(null)} />}
 
                         </Grid>
 
@@ -206,7 +208,7 @@ function ConstructionModule() {
 
                 <Grid.Column width={16} className="p-0 self-center">
 
-                    <Button color="teal" content='Send Transaction' disabled={isEmpty(list)} onClick={handleSendTransaction} className="m-0"/>
+                    <Button color="teal" content='Send Transaction' disabled={isEmpty(list)} onClick={handleSendTransaction} className="m-0" />
 
                 </Grid.Column>
 

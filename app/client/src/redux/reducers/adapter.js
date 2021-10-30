@@ -89,7 +89,6 @@ export default function adapterReducer(state = initialAdapterState, action) {
          * Requires payload.keyChain and payload.value
          */
         case ADAPTER_ACTION_TYPES.SET_MADNET_KEYCHAIN_VALUE:
-            console.log(action);
             let keyDepth = action.payload.keyChain.length;
             let keyTargets = action.payload.keyChain;
             let newAdapterState = { ...state.madNetAdapter };
