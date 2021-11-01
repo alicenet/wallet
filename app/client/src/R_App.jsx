@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container } from 'semantic-ui-react';
-import { Router as Router, Route, Switch } from 'react-router-dom';
+import { Router, Route, Switch } from 'react-router-dom';
 import DebugPanel, { handleDebugListener } from 'redux/debug/DebugPanel';
 import { ToastContainer } from 'react-toastify';
 import { history } from 'history/history';
@@ -16,7 +16,7 @@ import * as Transactions from 'stories/transactions/_transactions';
 import * as NewVaultFlows from 'stories/newVault/_newVault';
 import * as OptOutFlow from 'stories/optOut/_optOut';
 import * as ReturningUserLoadFlows from 'stories/returningUserLoad/_returnUserLoad';
-import * as WalletActionModals from 'modals/_walletActionModals';
+import * as WalletActionModals from 'components/modals/_walletActionModals';
 
 // Global Modals
 import PasswordRequestModal from 'components/modals/PasswordRequestModal';

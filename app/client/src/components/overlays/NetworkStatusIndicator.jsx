@@ -1,8 +1,5 @@
-import { red } from 'bn.js';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { classNames } from 'util/generic';
-import lstyle from './NetworkStatusIndicator.module.scss'
 
 export default function NetworkStatusIndicator() {
 

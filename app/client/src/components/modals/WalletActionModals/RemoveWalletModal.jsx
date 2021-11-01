@@ -1,9 +1,8 @@
 import React from 'react';
-import { Modal, Header, Form, Icon, Button, Placeholder } from 'semantic-ui-react'
+import { Modal, Header, Form, Icon, Button } from 'semantic-ui-react'
 import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux';
 import { MODAL_ACTIONS } from 'redux/actions/_actions';
-import { electronStoreCommonActions } from 'store/electronStoreHelper';
 
 export default function ExportPrivateKeyModal() {
 
@@ -17,10 +16,6 @@ export default function ExportPrivateKeyModal() {
 
     const [password, setPassword] = React.useState({ value: "", error: "" });
     const [showPass, setShowPass] = React.useState(false);
-    const [keyVisible, setKeyVisible] = React.useState(false);
-
-    const [visibleTime, setVisibleTime] = React.useState(0);
-    const [copyClick, setCopyClick] = React.useState(0);
 
     // Clear on open changes
     React.useEffect(() => {
@@ -57,7 +52,7 @@ export default function ExportPrivateKeyModal() {
 
                     <Form.Group widths>
 
-                        <Form.Input width={6} type={showPass ? "text" : "password"} size="small" value="" label={(vaultExists ? "Vault " : "Admin ") + "Password"} placeholder="Password"
+                        <Form.Input width={6} type={showPass ? "text" : "password"} size="small" label={(vaultExists ? "Vault " : "Admin ") + "Password"} placeholder="Password"
                             value={password.value}
                             onChange={e => setPassword({ value: e.target.value })}
                             error={!!password.error && { content: password.error }}
