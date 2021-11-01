@@ -4,9 +4,8 @@ import { default_log as log } from 'log/logHelper';
 import madNetAdapter from 'adapters/madAdapter';
 import { toast } from 'react-toastify';
 import { SyncToastMessageSuccess } from 'components/customToasts/CustomToasts';
-import { add } from 'lodash';
 import { transactionTypes } from 'util/transaction';
-import { transactionUtils, walletUtils } from 'util/_util';
+import { transactionUtils } from 'util/_util';
 import { TRANSACTION_ACTIONS } from './_actions';
 
 export const setWeb3Connected = (isConnected) => {
@@ -233,7 +232,7 @@ export const getAndStoreLatestBalancesForAddress = (address) => {
 export const getAndStoreRecentTXsForAddress = (address, curve) => {
     return async (dispatch, useState) => {
         log.debug("Fetching recent TXs for addresses: ", address);
-        let [txs, currentBlock] = await madNetAdapter.getPrevTransactions([{
+        let [txs, currentBlock] = await madNetAdapter.getPrevTransactions([{ //eslint-disable-line
             address: address,
             curve: curve,
         }])

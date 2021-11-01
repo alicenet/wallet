@@ -57,162 +57,159 @@ function ConstructionModule() {
     return (
         <Page showMenu>
 
-            <Grid textAlign="center" className="m-0">
+            <Container>
 
-                <Grid.Column width={16} className="p-0 self-center">
+                <Grid textAlign="center" className="m-0">
 
-                    <Container>
+                    <Grid.Row className="py-3">
 
-                        <Grid padded="vertically">
+                        <Grid.Column verticalAlign="middle" width={10} className="pl-0">
 
-                            <Grid.Row className="py-3">
+                            <ConstructingATransactionModal>
 
-                                <Grid.Column verticalAlign="middle" width={11}>
+                                <Container>
 
-                                    <ConstructingATransactionModal>
+                                    <div className="cursor-pointer hover:text-gray-500 flex items-center text-xl">
+                                        <div className="m-0 font-bold" > How to construct a transaction </div>
+                                        <Icon size="small" name="question circle" className="px-4 cursor-pointer" />
+                                    </div>
 
-                                        <Container className="flex justify-center items-center">
+                                </Container>
 
-                                            <Header content="How to construct a transaction" as="h3" className="m-0" />
-                                            <Icon size="small" name="question circle" className="px-2 cursor-pointer" />
+                            </ConstructingATransactionModal>
 
-                                        </Container>
+                        </Grid.Column>
 
-                                    </ConstructingATransactionModal>
+                        <Grid.Column textAlign="right" className="p-0" width={6}>
 
-                                </Grid.Column>
+                            <Menu compact icon='labeled' size="small">
 
-                                <Grid.Column textAlign="right" className="p-0" width={5}>
+                                <Menu.Item name='add-data-store' onClick={() => setDataStore(emptyDataStore)}><Icon name='chart bar' />Add Data Store</Menu.Item>
 
-                                    <Menu compact icon='labeled' size="small">
+                                <Menu.Item name='add-value-store' onClick={() => setValueStore(emptyValueStore)}><Icon name='currency' />Add Value Store</Menu.Item>
 
-                                        <Menu.Item name='add-data-store' onClick={() => setDataStore(emptyDataStore)}><Icon name='chart bar' />Add Data Store</Menu.Item>
+                            </Menu>
 
-                                        <Menu.Item name='add-value-store' onClick={() => setValueStore(emptyValueStore)}><Icon name='currency' />Add Value Store</Menu.Item>
+                        </Grid.Column>
 
-                                    </Menu>
+                    </Grid.Row>
 
-                                </Grid.Column>
+                    <Grid.Row className="p-0">
 
-                            </Grid.Row>
+                        <Table color="teal" size="small" className="break-all h-80">
 
-                            <Grid.Row className="p-0">
+                            <Table.Header>
 
-                                <Table color="teal" size="small" className="break-all h-60">
+                                <Table.Row>
 
-                                    <Table.Header>
-
-                                        <Table.Row>
-
-                                            {columns.map(
-                                                (item, index) =>
-                                                    <Table.HeaderCell key={`header-${item}-${index}`}>{item}</Table.HeaderCell>
-                                            )}
-
-                                        </Table.Row>
-
-                                    </Table.Header>
-
-                                    <Table.Body>
-
-                                        {isEmpty(list) ?
-
-                                            <Table.Row>
-
-                                                <Table.Cell colSpan={7} className="p-5">
-
-                                                    <Segment placeholder className="min-h-0 h-48">
-
-                                                        <Header icon className="m-0">No records found</Header>
-
-                                                    </Segment>
-
-                                                </Table.Cell>
-
-                                            </Table.Row> :
-
-                                            paginatedList.map(
-                                                (transaction, index) => {
-                                                    const absoluteIndex = (activePage - 1) * recordsPerPage + index;
-                                                    return <TransactionRow
-                                                        key={`transaction-row-${absoluteIndex}`}
-                                                        transaction={transaction}
-                                                        index={absoluteIndex}
-                                                        onUpdate={transaction.type === transactionTypes.DATA_STORE ? setDataStore : setValueStore}
-                                                    />;
-                                                }
-                                            )
-                                        }
-
-                                    </Table.Body>
-
-                                    {list.length > recordsPerPage && (
-
-                                        <Table.Footer>
-
-                                            <Table.Row textAlign="right">
-
-                                                <Table.HeaderCell colSpan={7} className="p-2">
-
-                                                    <Pagination
-                                                        activePage={activePage}
-                                                        onPageChange={handlePaginationChange}
-                                                        boundaryRange={0}
-                                                        ellipsisItem={null}
-                                                        firstItem={null}
-                                                        lastItem={null}
-                                                        siblingRange={1}
-                                                        totalPages={Math.ceil(list.length / recordsPerPage)}
-                                                        size='mini'
-                                                    />
-
-                                                </Table.HeaderCell>
-
-                                            </Table.Row>
-
-                                        </Table.Footer>
-
+                                    {columns.map(
+                                        (item, index) =>
+                                            <Table.HeaderCell key={`header-${item}-${index}`}>{item}</Table.HeaderCell>
                                     )}
 
-                                </Table>
+                                </Table.Row>
 
-                            </Grid.Row>
+                            </Table.Header>
 
-                            <Grid.Row centered>
+                            <Table.Body>
 
-                                <Grid.Column width={12} textAlign="center">
+                                {isEmpty(list) ?
 
-                                    <label className="font-semibold">Address to Return UTXOs to</label>
-                                    <ChangeReturnAddress disabled={!changeReturnAddress} />
-                                    <Checkbox
-                                        fitted
-                                        checked={changeReturnAddress}
-                                        onChange={() => setChangeReturnAddress(prevState => !prevState)}
-                                        label="Change UTXO Return Address"
-                                        className="text-xs py-1"
-                                    />
+                                    <Table.Row>
 
-                                </Grid.Column>
+                                        <Table.Cell colSpan={7} className="p-5">
 
-                            </Grid.Row>
+                                            <Segment placeholder className="min-h-0 h-60">
 
-                            {dataStore && <AddEditDataStoreModal dataStore={dataStore} onClose={() => setDataStore(null)} />}
+                                                <Header icon className="m-0">No records found</Header>
 
-                            {valueStore && <AddEditValueStoreModal valueStore={valueStore} onClose={() => setValueStore(null)} />}
+                                            </Segment>
 
-                        </Grid>
+                                        </Table.Cell>
 
-                    </Container>
+                                    </Table.Row> :
 
-                </Grid.Column>
+                                    paginatedList.map(
+                                        (transaction, index) => {
+                                            const absoluteIndex = (activePage - 1) * recordsPerPage + index;
+                                            return <TransactionRow
+                                                key={`transaction-row-${absoluteIndex}`}
+                                                transaction={transaction}
+                                                index={absoluteIndex}
+                                                onUpdate={transaction.type === transactionTypes.DATA_STORE ? setDataStore : setValueStore}
+                                            />;
+                                        }
+                                    )
+                                }
 
-                <Grid.Column width={16} className="p-0 self-center">
+                            </Table.Body>
 
-                    <Button color="teal" content='Send Transaction' disabled={isEmpty(list)} onClick={handleSendTransaction} className="m-0" />
+                            {list.length > recordsPerPage && (
 
-                </Grid.Column>
+                                <Table.Footer>
 
-            </Grid>
+                                    <Table.Row textAlign="right">
+
+                                        <Table.HeaderCell colSpan={7} className="p-2">
+
+                                            <Pagination
+                                                activePage={activePage}
+                                                onPageChange={handlePaginationChange}
+                                                boundaryRange={0}
+                                                ellipsisItem={null}
+                                                firstItem={null}
+                                                lastItem={null}
+                                                siblingRange={1}
+                                                totalPages={Math.ceil(list.length / recordsPerPage)}
+                                                size='mini'
+                                            />
+
+                                        </Table.HeaderCell>
+
+                                    </Table.Row>
+
+                                </Table.Footer>
+
+                            )}
+
+                        </Table>
+
+                    </Grid.Row>
+
+                    {dataStore && <AddEditDataStoreModal dataStore={dataStore} onClose={() => setDataStore(null)} />}
+
+                    {valueStore && <AddEditValueStoreModal valueStore={valueStore} onClose={() => setValueStore(null)} />}
+
+                    <Grid.Row>
+
+                        <Grid.Column width={12} textAlign="left" className="pl-0">
+                            <div className="flex flex-col items-start">
+                                <div className="flex text-xl font-bold">
+                                    Change Addresss
+                                    <label className="flex justify-between text-xs font-bold mb-0.5 ml-5">
+                                        <Checkbox
+                                            checked={changeReturnAddress}
+                                            onChange={() => setChangeReturnAddress(prevState => !prevState)}
+                                            label={<label className={"labelCheckbox"}>Use Custom Address</label>}
+                                            className="small-checkbox flex justify-center items-center text-xs uppercase font-bold relative -top-0" />
+                                    </label>
+                                </div>
+                                <div className="text-sm">Your change address is where remaing UTXOs will go <br /> This defaults to the first sending wallet, though you may choose which wallet to use.</div>
+                            </div>
+                            <div className="flex justify-start mt-4">
+                                <ChangeReturnAddress disabled={!changeReturnAddress} />
+                            </div>
+                        </Grid.Column>
+
+                        <Grid.Column width={4} className="p-0 flex flex-col justify-end items-end ">
+                            <Button color="teal" content='Send Transaction' disabled={isEmpty(list)} onClick={handleSendTransaction} className="m-0" />
+                        </Grid.Column>
+
+                    </Grid.Row>
+
+                </Grid>
+
+            </Container>
 
         </Page>
     )

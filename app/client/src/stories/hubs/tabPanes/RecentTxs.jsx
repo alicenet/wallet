@@ -6,8 +6,6 @@ import Web3 from 'web3'
 
 import { Button, Icon, Input, Loader, Segment, Table } from 'semantic-ui-react';
 import { stringUtils } from 'util/_util';
-import { BN } from 'bn.js';
-import { getMadWalletInstance } from 'redux/middleware/WalletManagerMiddleware';
 import copy from 'copy-to-clipboard';
 import madNetAdapter from 'adapters/madAdapter';
 
@@ -16,25 +14,25 @@ export default function RecentTxs({ wallet }) {
     const [loading, setLoading] = React.useState(false);
     const dispatch = useDispatch();
     let { recentTxs } = useSelector(s => ({ recentTxs: s.vault.recentTxs[wallet.address] }))
-    if (!recentTxs) { recentTxs = [] } // Default to empty array
+    if (!recentTxs || recentTxs.error) { recentTxs = [] } // Default to empty array
 
     const [manuallyFetchedTx, setManuallyFetchedTxs] = React.useState([]);
     const addManuallyFetchedTx = (newTx) => setManuallyFetchedTxs(s => ([...s, newTx]));
 
-    const fetchRecentTxs = async () => {
+    const fetchRecentTxs = React.useCallback(async () => {
         setLoading("fetching");
         await dispatch(ADAPTER_ACTIONS.getAndStoreRecentTXsForAddress(wallet.address, wallet.curve));
         setLoading(false);
-    }
+    }, [wallet, dispatch]);
 
     // Pagination Logic
     const txPerPage = 12;
-    const totalPages = Math.ceil(recentTxs.length / txPerPage);
+    const totalPages = Math.ceil((recentTxs.length + manuallyFetchedTx.length) / txPerPage);
     const [activePage, setPage] = React.useState(0);
     const pageForward = () => setPage(s => s + 1);
     const pageBackward = () => setPage(s => s - 1);
 
-    const activeSlice = recentTxs.slice(activePage * txPerPage, (activePage * txPerPage) + txPerPage)
+    const activeSlice = [...manuallyFetchedTx, ...recentTxs].slice(activePage * txPerPage, (activePage * txPerPage) + txPerPage)
 
     // TxHash Input
     const [txHash, setTxHash] = React.useState({ value: "", error: "" });
@@ -42,7 +40,6 @@ export default function RecentTxs({ wallet }) {
 
     const viewTxHash = async () => {
         if (!txHash) { setTxHash(s => ({ ...s, error: "Tx Hash Required!" })) }
-        console.log(txHash);
         setLoading("hashSearch");
         let res = await madNetAdapter.viewTransaction(txHash.value)
         addManuallyFetchedTx(res.tx);
@@ -51,13 +48,11 @@ export default function RecentTxs({ wallet }) {
 
     React.useEffect(() => {
         fetchRecentTxs();
-    }, [wallet])
+    }, [wallet, fetchRecentTxs])
 
     const getTxTable = () => {
 
-        let manuallyFetchedAndSlice = [...manuallyFetchedTx, ...activeSlice];
-
-        let rows = manuallyFetchedAndSlice.map((tx, i) => {
+        let rows = activeSlice.map((tx, i) => {
 
             let tVal = Web3.utils.toBN("0x00"); // Total value of any value stores in the tx
             let tStores = 0 // Total amount of data stores
@@ -104,8 +99,8 @@ export default function RecentTxs({ wallet }) {
     }
 
     return (
-        <Segment placeholder={recentTxs?.length === 0} className="m-4" style={{ height: "472px" }}>
-            {loading === "fetching" && <Loader active size="large" />}
+        <Segment placeholder={recentTxs?.length === 0} className="m-0 mt-4 ml-0" style={{ height: "456px", maxHeight: "456px" }}>
+            {loading === "fetching" && <Loader active size="large" content="Searching For TXs" className="text-sm text-gray-500" />}
             {loading !== "fetching" && recentTxs?.length > 0 && (<>
 
                 <div className="flex flex-col justify-between h-full">
@@ -136,6 +131,16 @@ export default function RecentTxs({ wallet }) {
                     </div>
                 </div>
             </>)}
+
+            {!loading && recentTxs.length === 0 && (
+                <div className="flex flex-col justify-center items-center text-2xl font-semibold text-gray-500">
+                    No TXs Found
+                    <div className="text-gray-400 text-xs">
+                        Only last 256 Blocks are parsed for recent TXs
+                    </div>
+                </div>
+            )}
+
         </Segment>
     );
 }

@@ -26,7 +26,7 @@ export default function RenameWalletModal() {
     React.useEffect( () => {
         formSetter.setName("");
         formSetter.setPassword("");
-    }, isOpen)
+    }, [isOpen])
 
     const closeModal = () => { 
         dispatch(MODAL_ACTIONS.closeRenameWalletModal())

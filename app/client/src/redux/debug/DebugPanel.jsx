@@ -16,6 +16,7 @@ import { INTERFACE_ACTIONS, USER_ACTIONS } from 'redux/actions/_actions';
 
 import lstyle from './DebugPanel.module.scss';
 import log from 'loglevel';
+import ToastPanel from './panels/ToastPanel.jsx';
 
 export const DButton = (props) => <Form.Button basic size="mini" fluid {...props} className={"m-1 ml-0 " + props.className} />
 
@@ -44,6 +45,7 @@ function DebugPanel() {
             case views.USER_STORIES: return <UserStoriesPanel />;
             case views.WEB3: return <Web3Panel />;
             case views.MADNET: return <MadNetPanel />;
+            case views.TOAST: return <ToastPanel/>;
             default: return null;
         }
     }

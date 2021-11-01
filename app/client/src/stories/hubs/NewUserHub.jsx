@@ -4,7 +4,7 @@ import { Button, Container, Grid, Header, Image, Modal } from 'semantic-ui-react
 
 import MadIcon from '../../Assets/icon.png';
 
-import { CONFIG_ACTIONS, USER_ACTIONS } from "../../redux/actions/_actions";
+import { USER_ACTIONS } from "../../redux/actions/_actions";
 import { useDispatch } from "react-redux";
 
 function NewUserHub() {

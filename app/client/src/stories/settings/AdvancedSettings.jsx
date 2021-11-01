@@ -17,8 +17,7 @@ function AdvancedSettings() {
     const history = useHistory();
     const dispatch = useDispatch();
 
-    const { madNetChainId, madNetProvider, ethereumProvider, registryContractAddress, loading } = useSelector(state => ({
-        madNetChainId: state.config.mad_net_chainID,
+    const { madNetProvider, ethereumProvider, registryContractAddress, loading } = useSelector(state => ({
         madNetProvider: state.config.mad_net_provider,
         ethereumProvider: state.config.ethereum_provider,
         registryContractAddress: state.config.registry_contract_address,

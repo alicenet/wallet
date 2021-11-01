@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Dropdown } from 'semantic-ui-react';
+import { Form } from 'semantic-ui-react';
 import { useDispatch, useSelector } from 'react-redux';
 import head from 'lodash/head';
 import utils from 'util/_util';
@@ -9,7 +9,7 @@ import { TRANSACTION_ACTIONS } from 'redux/actions/_actions';
 
 import { SyncToastMessageWarning } from 'components/customToasts/CustomToasts';
 
-function ChangeReturnAddress({ disabled = false }) {
+function ChangeReturnAddress({ disabled = false, checkBoxOnChange, checkBoxChecked }) {
 
     const dispatch = useDispatch();
 
@@ -32,14 +32,14 @@ function ChangeReturnAddress({ disabled = false }) {
         if (wallets.length > 0 && !selectedReturnWallet) {
             setSelectedReturnWallet(head(wallets).value);
         }
-    }, [wallets]);
+    }, [wallets, selectedReturnWallet]);
 
     useEffect(() => {
         if (Web3.utils.isAddress(selectedReturnWallet)) {
             dispatch(TRANSACTION_ACTIONS.saveChangeReturnAddress(selectedReturnWallet));
 
         }
-    }, [selectedReturnWallet]);
+    }, [selectedReturnWallet, dispatch]);
 
     const handleAddressChange = (e, { value }) => setSelectedReturnWallet(value);
 
@@ -48,24 +48,26 @@ function ChangeReturnAddress({ disabled = false }) {
             setAdHocWallets(prevState => prevState.concat([{ name: value, address: value }]))
         }
         else {
-            toast.error(<SyncToastMessageWarning title="Error " message="Not a valid return address"/>, { className: "basic", "autoClose": 1500 })
+            toast.error(<SyncToastMessageWarning title="Error " message="Not a valid return address" />, { className: "basic", "autoClose": 1500 })
         }
     };
 
     return (
-        <Dropdown
-            disabled={disabled}
-            options={wallets}
-            placeholder='Choose UTXO Return Address'
-            search
-            selection
-            fluid
-            allowAdditions
-            closeOnChange
-            defaultValue={head(wallets)?.value}
-            onAddItem={handleAddressAdded}
-            onChange={handleAddressChange}
-        />
+        <Form size="small" className="small-checkbox">
+
+            <Form.Dropdown
+                disabled={disabled}
+                options={wallets}
+                placeholder='Choose UTXO Return Address'
+                search
+                selection
+                allowAdditions
+                closeOnChange
+                defaultValue={head(wallets)?.value}
+                onAddItem={handleAddressAdded}
+                onChange={handleAddressChange}
+            />
+        </Form>
     )
 
 }

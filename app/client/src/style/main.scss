@@ -100,7 +100,7 @@ html, body, #root {
 
 .small-checkbox {
 
-    .ui.checkbox {
+    .ui.checkbox, &.ui.checkbox {
         min-height: 14px;
         label {
             display: flex;
@@ -118,6 +118,32 @@ html, body, #root {
 
 }
 
+.menu-tabs {
+
+    .ui.secondary.menu .item {
+        font-weight: 600;
+        background: rgba(127, 82, 185, 0.025) !important;
+        transition: all .15s ease-in-out;
+        color: rgba(100,100,100,1);
+        border-radius: 0px;
+        &:hover {
+            color: rgba(100,100,100,1);
+            background: rgba(127, 82, 185, 0.15) !important;
+        }
+    }
+
+    .ui.secondary.menu .active.item {
+        color: rgba(100,100,140,1);
+        background: rgba(127, 82, 185, 0.15) !important;
+    }
+
+}
+
+// Prevent disabled fields from being unreadable against background
+.disabled.field {
+    opacity: 1 !important;
+    background: white !important; 
+}
 
 //////////////////
 // No scrollbar //

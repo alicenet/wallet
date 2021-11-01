@@ -18,19 +18,6 @@ export default function Web3Panel() {
 
     const [valueFormState, valueFormSetters, valueFormErrors, onValueSubmit] = useValueStoreFormState();
 
-    const initMadNetAdapter = async () => {
-        setLoading("instance");
-        await madNetAdapter.__init();
-        setLoading(false);
-    }
-
-    const printBalances = async () => {
-        setLoading("balances");
-        let balancesAndUTXOs = await madNetAdapter.getAllMadWalletBalancesWithUTXOs();
-        console.log(balancesAndUTXOs); // For debug
-        setLoading("false");
-    }
-
     const addValueStore = (state) => {
         console.log("HIT!")
         let txObject = {}

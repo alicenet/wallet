@@ -1,5 +1,4 @@
 import { INTERFACE_ACTION_TYPES } from '../constants/_constants';
-import { tabPaneIndex } from 'layout/HeaderMenu';
 
 // Global UI Component States
 const initialInterfaceState = {

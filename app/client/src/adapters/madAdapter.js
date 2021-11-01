@@ -8,6 +8,7 @@ import { SyncToastMessageWarning, SyncToastMessageSuccess } from 'components/cus
 import { toast } from 'react-toastify';
 import { curveTypes } from 'util/wallet';
 import { history } from 'history/history';
+import utils from 'util/_util';
 
 class MadNetAdapter {
 
@@ -341,7 +342,7 @@ class MadNetAdapter {
             this.pendingTx.set(tx);
             await this.pendingTxStatus.set("Pending TxHash: " + this.trimTxHash(tx));
             await this.wallet().Transaction._reset();
-            toast.success(<SyncToastMessageWarning basic title="TX Pending" message={tx} hideIcon />)
+            toast.success(<SyncToastMessageWarning basic title="TX Pending" message={utils.string.splitStringWithEllipsis(tx, 6)} hideIcon />)
             // Clear any TXOuts on a successful mine
             this.txOuts.set([]); 
             return await this.monitorPending();
@@ -368,7 +369,7 @@ class MadNetAdapter {
             await this.backOffRetry('pending-' + JSON.stringify(tx), true)
             this.pendingTx.set(false);
             // Success TX Mine
-            toast.success(<SyncToastMessageSuccess title="TX Mined" message={tx} hideIcon basic />)
+            toast.success(<SyncToastMessageSuccess title="TX Mined" message={utils.string.splitStringWithEllipsis(tx, 6)} hideIcon basic />)
             return { "txHash": tx, "msg": "Mined: " + this.trimTxHash(tx) };
         }
         catch (ex) {

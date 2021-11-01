@@ -35,10 +35,10 @@ export default function Overview({ wallet }) {
         return (
             <div className="text-xs">
                 <div className="text-right w-24 inline font-bold">{balanceType}:</div>
-                <div className="ml-2 text-left inline">
+                <div className="ml-2 text-left inline text-gray-500">
                     {loader === "balances" ? ". . ." :
                         thisWalletBalances[balanceKey] ? (thisWalletBalances[balanceKey]) : ""}
-                    {balanceAllowance ? " / " + (thisWalletBalances[balanceAllowance]) : ""}
+                        {balanceAllowance ? " / " + (thisWalletBalances[balanceAllowance]) : ""}
                 </div>
             </div>
         )
@@ -57,16 +57,16 @@ export default function Overview({ wallet }) {
     }
 
     return (
-        <Grid className="break-all text-sm p-3">
+        <Grid className="break-all text-sm p-3 text-gray-700">
 
             <Grid.Row>
 
-                <Grid.Column width={16}>
+                <Grid.Column width={16} className="pl-1">
 
                     <Container>
 
-                        <label className="font-semibold">{`Public Address (${wallet.curve === curveTypes.SECP256K1 ? 'Secp256k1' : 'Barreto-Naehrig'} curve)`}</label>
-                        <div className="h-10 py-1 flex items-center cursor-pointer hover:text-gray-600" onClick={copyAddress}>
+                        <label className="font-semibold text-gray-800 underline">{`Public Address (${wallet.curve === curveTypes.SECP256K1 ? 'Secp256k1' : 'Barreto-Naehrig'} curve)`}</label>
+                        <div className="h-10 py-1 flex items-center cursor-pointer hover:text-gray-500" onClick={copyAddress}>
                             {`0x${wallet.address}`}
                             <Icon name="copy outline" className="ml-1 mb-2 cursor-pointer" />
                             {!!copyClick && (
@@ -84,26 +84,26 @@ export default function Overview({ wallet }) {
 
             <Grid.Row>
 
-                <Grid.Column width={8}>
+                <Grid.Column width={8} className="pl-1">
 
                     <Container>
 
-                        <label className="font-semibold">Ethereum Balances</label>
+                        <label className="font-semibold text-gray-800 underline">Ethereum Balances</label>
                         <div className="py-1 flex flex-col">
                             <MicroBalanceLoader balanceType="ETH" balanceKey={"eth"} />
-                            <MicroBalanceLoader balanceType="STAKE" balanceKey={"stake"} balanceKey2={"stakeAllowance"} />
-                            <MicroBalanceLoader balanceType="UTIL" balanceKey={"util"} balanceKey2={"utilAllowance"} />
+                            <MicroBalanceLoader balanceType="STAKE" balanceKey={"stake"} balanceAllowance={"stakeAllowance"} />
+                            <MicroBalanceLoader balanceType="UTIL" balanceKey={"util"} balanceAllowance={"utilAllowance"} />
                         </div>
 
                     </Container>
 
                 </Grid.Column>
 
-                <Grid.Column width={8}>
+                <Grid.Column width={8} className="pl-1">
 
                     <Container>
 
-                        <label className="font-semibold">MadNet Balances</label>
+                        <label className="font-semibold text-gray-800 underline">MadNet Balances</label>
                         <div className="py-1">
                             <MicroBalanceLoader balanceType="MadBytes" balanceKey={"madBytes"} />
                         </div>
@@ -116,22 +116,22 @@ export default function Overview({ wallet }) {
 
             <Grid.Row>
 
-                <Grid.Column width={8}>
+                <Grid.Column width={8} className="pl-1">
 
                     <Container>
 
-                        <label className="font-semibold">Origin</label>
-                        <div className="py-1">{wallet.isInternal ? 'Internal (From Seed)' : 'External'}</div>
+                        <label className="font-semibold text-gray-800 underline">Origin</label>
+                        <div className="py-1 text-gray-500">{wallet.isInternal ? 'Internal (From Seed)' : 'External'}</div>
 
                     </Container>
 
                 </Grid.Column>
 
-                <Grid.Column width={8}>
+                <Grid.Column width={8} className="pl-1">
 
                     <Container>
 
-                        <label className="font-semibold">Wallet Actions</label>
+                        <label className="font-semibold text-gray-800 underline">Wallet Actions</label>
                         <Container className="flex flex-col items-baseline text-deco py-1 gap-1">
                             <Button className="text-green-500 text-sm bg-transparent p-0.5 pl-0 hover:underline" onClick={fetchBalances}>Refresh Balances</Button>
                             {vaultExists && (

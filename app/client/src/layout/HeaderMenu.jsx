@@ -5,7 +5,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import MadIcon from '../Assets/icon.png';
-import { INTERFACE_ACTIONS, VAULT_ACTIONS } from '../redux/actions/_actions';
+import { VAULT_ACTIONS } from '../redux/actions/_actions';
 
 export const tabPaneIndex = {
     Wallets: 0,
@@ -81,22 +81,23 @@ function HeaderMenu({ showMenu }) {
 
                 </Menu.Item>
 
-            </Container>
-
-            <Container fluid className="flex flex-row content-center justify-center items-center">
+                <Container className="w-20" />
 
                 {showMenu && existingAccount && (
 
-                    <Tab
-                        className="overwrite-tab smaller text-xs"
-                        menu={{ secondary: true, pointing: true }}
-                        panes={tabPanes}
-                        activeIndex={activeTabPane}
-                        onTabChange={handleTabChange}
-                    />
+                    <div className="flex justify-center items-centers">
+                        <Tab
+                            className="text-lg menu-tabs relative left-1"
+                            menu={{ secondary: true }}
+                            panes={tabPanes}
+                            activeIndex={activeTabPane}
+                            onTabChange={handleTabChange}
+                        />
+                    </div>
                 )}
 
             </Container>
+
 
             <Container fluid className="flex flex-row content-center justify-end">
 

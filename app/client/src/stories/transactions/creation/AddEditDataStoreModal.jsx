@@ -27,7 +27,6 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
 
     const [formState, formSetter, onSubmit] = useFormState([
         { name: 'From', display: 'From address', type: 'address', isRequired: true, value: dataStore.from },
-        { name: 'To', display: 'To address', type: 'address', isRequired: true, value: dataStore.to },
         { name: 'Duration', type: 'integer', isRequired: true, value: dataStore.duration },
         { name: 'Key', type: 'string', isRequired: true, value: dataStore.key },
         { name: 'Value', type: 'string', isRequired: true, value: dataStore.value },
@@ -40,7 +39,6 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
             dispatch(TRANSACTION_ACTIONS.editStore({
                 ...dataStore,
                 from: formState.From.value,
-                to: formState.To.value,
                 key: formState.Key.value,
                 value: formState.Value.value,
                 duration: formState.Duration.value,
@@ -49,7 +47,6 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
         else {
             dispatch(TRANSACTION_ACTIONS.addStore({
                 from: formState.From.value,
-                to: formState.To.value,
                 key: formState.Key.value,
                 value: formState.Value.value,
                 duration: formState.Duration.value,
@@ -57,7 +54,7 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
             }));
         }
         toast.success(
-            <SyncToastMessageSuccess basic title="Success" message={`Data Store was ${isEditing ? 'updated' : 'added'}`}/>,
+            <SyncToastMessageSuccess basic title="Success" message={`Data Store was ${isEditing ? 'updated' : 'added'}`} />,
             { className: "basic", "autoClose": 1000 }
         );
         onClose();
@@ -103,12 +100,12 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
                             <Grid.Column>
 
                                 <Form.Input
-                                    id='To'
-                                    label='To'
+                                    id='Duration'
+                                    label='Duration'
                                     required
-                                    value={formState.To.value}
-                                    onChange={e => formSetter.setTo(e.target.value)}
-                                    error={!!formState.To.error && { content: formState.To.error }}
+                                    value={formState.Duration.value}
+                                    onChange={e => formSetter.setDuration(e.target.value)}
+                                    error={!!formState.Duration.error && { content: formState.Duration.error }}
                                 />
 
                             </Grid.Column>
@@ -145,23 +142,6 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
 
                         </Grid.Row>
 
-                        <Grid.Row columns={2} className="p-0">
-
-                            <Grid.Column>
-
-                                <Form.Input
-                                    id='Duration'
-                                    label='Duration'
-                                    required
-                                    value={formState.Duration.value}
-                                    onChange={e => formSetter.setDuration(e.target.value)}
-                                    error={!!formState.Duration.error && { content: formState.Duration.error }}
-                                />
-
-                            </Grid.Column>
-
-                        </Grid.Row>
-
                     </Grid>
                 </Form>
 
@@ -169,10 +149,10 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
 
             <Modal.Actions className="flex justify-between">
 
-                <Button color="orange" className="m-0" basic onClick={onClose} content="Close"/>
+                <Button color="orange" className="m-0" basic onClick={onClose} content="Close" />
 
                 <Button
-                    icon={<Icon name='chart bar'/>}
+                    icon={<Icon name='chart bar' />}
                     className="m-0"
                     content={`${isEditing ? 'Edit' : 'Add'} Data Store`}
                     basic
