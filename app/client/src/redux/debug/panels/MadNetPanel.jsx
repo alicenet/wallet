@@ -19,7 +19,6 @@ export default function Web3Panel() {
     const [valueFormState, valueFormSetters, valueFormErrors, onValueSubmit] = useValueStoreFormState();
 
     const addValueStore = (state) => {
-        console.log("HIT!")
         let txObject = {}
         txObject["type"] = "VS";
         txObject["name"] = "Value Store";

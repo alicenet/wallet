@@ -1,5 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { classNames } from 'util/_util';
 
 export default function NetworkStatusIndicator() {
 
@@ -50,7 +51,7 @@ function StatusLight({ className, color, ...props }) {
     let colorClass = color === "red" ? "bg-red-500" : color === "yellow" ? "bg-yellow-500 animate-pulse" : color === "green" ? "bg-green-400" : "bg-gray-400";
     let colorBorderClass = color === "red" ? "border-red-400" : color === "yellow" ? "border-yellow-400" : color === "green" ? "border-green-300" : "border-gray-500";
 
-    let fullClass = [baseClass, colorClass, colorBorderClass].join(" ");
+    let fullClass = classNames(baseClass, colorClass, colorBorderClass);
 
     return (
         <div className={fullClass} style={{width: "7px", height: "7px"}} />
