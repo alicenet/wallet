@@ -1,6 +1,6 @@
 import store from '../redux/store/store';
 import BigInt from "big-integer";
-import { ADAPTER_ACTION_TYPES } from 'redux/constants/_constants';
+import { ADAPTER_ACTION_TYPES, TRANSACTION_ACTION_TYPES } from 'redux/constants/_constants';
 import { ADAPTER_ACTIONS } from 'redux/actions/_actions';
 import { getMadWalletInstance } from 'redux/middleware/WalletManagerMiddleware'
 import { default_log as log } from 'log/logHelper'
@@ -340,11 +340,12 @@ class MadNetAdapter {
             let tx = await this.wallet().Rpc.sendTransaction(this.wallet().Transaction.Tx.getTx())
             await this.backOffRetry('sendTx', true)
             this.pendingTx.set(tx);
+            store.dispatch({ type: TRANSACTION_ACTION_TYPES.SET_LAST_SENT_TX_HASH, payload: tx });
             await this.pendingTxStatus.set("Pending TxHash: " + this.trimTxHash(tx));
             await this.wallet().Transaction._reset();
             toast.success(<SyncToastMessageWarning basic title="TX Pending" message={utils.string.splitStringWithEllipsis(tx, 6)} hideIcon />)
             // Clear any TXOuts on a successful mine
-            this.txOuts.set([]); 
+            this.txOuts.set([]);
             return await this.monitorPending();
         }
         catch (ex) {
@@ -365,12 +366,12 @@ class MadNetAdapter {
     async monitorPending() {
         let tx = this.pendingTx.get();
         try {
-            await this.wallet().Rpc.getMinedTransaction(tx);
+            let txDetails = await this.wallet().Rpc.getMinedTransaction(tx);
             await this.backOffRetry('pending-' + JSON.stringify(tx), true)
             this.pendingTx.set(false);
             // Success TX Mine
             toast.success(<SyncToastMessageSuccess title="TX Mined" message={utils.string.splitStringWithEllipsis(tx, 6)} hideIcon basic />)
-            return { "txHash": tx, "msg": "Mined: " + this.trimTxHash(tx) };
+            return { "txDetails": txDetails.Tx, "txHash": tx, "msg": "Mined: " + this.trimTxHash(tx) };
         }
         catch (ex) {
             await this.backOffRetry('pending-' + JSON.stringify(tx))

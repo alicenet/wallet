@@ -8,9 +8,11 @@ import { Button, Icon, Input, Loader, Segment, Table } from 'semantic-ui-react';
 import { stringUtils } from 'util/_util';
 import copy from 'copy-to-clipboard';
 import madNetAdapter from 'adapters/madAdapter';
+import { useHistory } from 'react-router';
 
 export default function RecentTxs({ wallet }) {
 
+    const history = useHistory();
     const [loading, setLoading] = React.useState(false);
     const dispatch = useDispatch();
     let { recentTxs } = useSelector(s => ({ recentTxs: s.vault.recentTxs[wallet.address] }))
@@ -33,6 +35,12 @@ export default function RecentTxs({ wallet }) {
     const pageBackward = () => setPage(s => s - 1);
 
     const activeSlice = [...manuallyFetchedTx, ...recentTxs].slice(activePage * txPerPage, (activePage * txPerPage) + txPerPage)
+
+    const inspectTx = async (txObj) => {
+        history.push('/inspectTx', {
+            tx: txObj,
+        })
+    }
 
     // TxHash Input
     const [txHash, setTxHash] = React.useState({ value: "", error: "" });
@@ -75,7 +83,10 @@ export default function RecentTxs({ wallet }) {
                 <Table.Cell>{tx["Tx"]["Vout"].length}</Table.Cell>
                 <Table.Cell>{tVal.toString()}</Table.Cell>
                 <Table.Cell>0</Table.Cell>
-                <Table.Cell textAlign="center" className="cursor-pointer hover:bg-gray-100"><Icon name="arrow right" /></Table.Cell>
+                <Table.Cell textAlign="center" className="cursor-pointer hover:bg-gray-100" disabled={loading === "inspectFetch"}
+                    onClick={() => inspectTx(tx.Tx)}>
+                    <Icon name="arrow right" />
+                </Table.Cell>
             </Table.Row>)
         })
 

@@ -76,6 +76,7 @@ function App() {
 
                 {/* Construct Hub */}
                 <Route exact path="/transactions" component={Transactions.Construct} />
+                <Route exact path="/inspectTx" component={Transactions.InspectionModule} />
 
                 {/* Settings */}
                 <Route exact path="/wallet/settings" component={Settings.Settings} />

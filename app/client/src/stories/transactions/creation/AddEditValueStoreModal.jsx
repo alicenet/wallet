@@ -2,11 +2,9 @@ import React from 'react';
 import { Button, Form, Grid, Header, Icon, Modal } from 'semantic-ui-react';
 import { useFormState } from 'hooks/_hooks';
 import { useDispatch, useSelector } from 'react-redux';
-import { toast } from 'react-toastify';
 import has from 'lodash/has';
 
 import { TRANSACTION_ACTIONS } from 'redux/actions/_actions';
-import { SyncToastMessageSuccess } from 'components/customToasts/CustomToasts';
 import utils, { transactionTypes } from 'util/_util';
 
 export default function AddEditValueStoreModal({ valueStore, onClose }) {
@@ -28,7 +26,7 @@ export default function AddEditValueStoreModal({ valueStore, onClose }) {
     const [formState, formSetter, onSubmit] = useFormState([
         { name: 'From', display: 'From address', type: 'address', isRequired: true, value: valueStore.from },
         { name: 'To', display: 'To address', type: 'address', isRequired: true, value: valueStore.to },
-        { name: 'Value', type: 'string', isRequired: true, value: valueStore.value },
+        { name: 'Value', type: 'int', isRequired: true, value: valueStore.value },
     ]);
 
     const isEditing = has(valueStore, 'index');
@@ -50,10 +48,6 @@ export default function AddEditValueStoreModal({ valueStore, onClose }) {
                 type: transactionTypes.VALUE_STORE,
             }));
         }
-        toast.success(
-            <SyncToastMessageSuccess basic title="Success" message={`Value Store was ${isEditing ? 'updated' : 'added'}`}/>,
-            { className: "basic", "autoClose": 1000 }
-        );
         onClose();
     };
 
@@ -72,7 +66,7 @@ export default function AddEditValueStoreModal({ valueStore, onClose }) {
 
             <Modal.Content>
 
-                <Form className="text-sm" onSubmit={() => onSubmit(handleSubmit)}>
+                <Form size="small" className="text-sm mini-error-form" onSubmit={() => onSubmit(handleSubmit)}>
 
                     <Grid className="m-0 content-evenly gap-2">
 

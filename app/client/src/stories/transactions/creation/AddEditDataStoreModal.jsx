@@ -2,11 +2,9 @@ import React from 'react';
 import { Button, Form, Grid, Header, Icon, Modal } from 'semantic-ui-react';
 import { useFormState } from 'hooks/_hooks';
 import { useDispatch, useSelector } from 'react-redux';
-import { toast } from 'react-toastify';
 import has from 'lodash/has';
 
 import { TRANSACTION_ACTIONS } from 'redux/actions/_actions';
-import { SyncToastMessageSuccess } from 'components/customToasts/CustomToasts';
 import utils, { transactionTypes } from 'util/_util';
 
 export default function AddEditDataStoreModal({ dataStore, onClose }) {
@@ -53,10 +51,6 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
                 type: transactionTypes.DATA_STORE,
             }));
         }
-        toast.success(
-            <SyncToastMessageSuccess basic title="Success" message={`Data Store was ${isEditing ? 'updated' : 'added'}`} />,
-            { className: "basic", "autoClose": 1000 }
-        );
         onClose();
     };
 
@@ -75,7 +69,7 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
 
             <Modal.Content>
 
-                <Form className="text-sm" onSubmit={() => onSubmit(handleSubmit)}>
+                <Form size="small" className="text-sm mini-error-form" onSubmit={() => onSubmit(handleSubmit)}>
 
                     <Grid className="m-0 content-evenly gap-2">
 

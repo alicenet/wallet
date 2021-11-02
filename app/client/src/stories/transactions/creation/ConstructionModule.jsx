@@ -69,7 +69,7 @@ function ConstructionModule() {
 
                                 <Container>
 
-                                    <div className="cursor-pointer hover:text-gray-500 flex items-center text-xl">
+                                    <div className="cursor-pointer text-blue-400 hover:text-blue-500 flex items-center text-xl">
                                         <div className="m-0 font-bold" > How to construct a transaction </div>
                                         <Icon size="small" name="question circle" className="px-4 cursor-pointer" />
                                     </div>
@@ -84,9 +84,9 @@ function ConstructionModule() {
 
                             <Menu compact icon='labeled' size="small">
 
-                                <Menu.Item name='add-data-store' onClick={() => setDataStore(emptyDataStore)}><Icon name='chart bar' />Add Data Store</Menu.Item>
+                                <Menu.Item name='add-data-store' onClick={() => setDataStore(emptyDataStore)}><Icon name='chart bar text-gray-600' />Add Data Store</Menu.Item>
 
-                                <Menu.Item name='add-value-store' onClick={() => setValueStore(emptyValueStore)}><Icon name='currency' />Add Value Store</Menu.Item>
+                                <Menu.Item name='add-value-store' onClick={() => setValueStore(emptyValueStore)}><Icon name='currency text-gray-600' />Add Value Store</Menu.Item>
 
                             </Menu>
 
@@ -94,9 +94,9 @@ function ConstructionModule() {
 
                     </Grid.Row>
 
-                    <Grid.Row className="p-0">
+                    <Grid.Row className="p-0" style={{height:"300px"}}>
 
-                        <Table color="teal" size="small" className="break-all h-80">
+                        <Table size="small" celled color="teal" className="break-all text-sm">
 
                             <Table.Header>
 
@@ -111,11 +111,11 @@ function ConstructionModule() {
 
                             </Table.Header>
 
-                            <Table.Body>
+                            <Table.Body >
 
                                 {isEmpty(list) ?
 
-                                    <Table.Row>
+                                    <Table.Row >
 
                                         <Table.Cell colSpan={7} className="p-5">
 
@@ -150,7 +150,7 @@ function ConstructionModule() {
 
                                     <Table.Row textAlign="right">
 
-                                        <Table.HeaderCell colSpan={7} className="p-2">
+                                        <Table.HeaderCell colSpan={7} className="p-0">
 
                                             <Pagination
                                                 activePage={activePage}

@@ -67,9 +67,9 @@ export default function Hub() {
 
                             <Container className="gap-3 flex flex-row justify-center items-center text-justify">
 
-                                <Button circular size={openDrawer ? 'mini' : 'small'} className="m-0" icon="add" onClick={gotoAddWallet} />
+                                <Button circular size={openDrawer ? 'mini' : 'mini'} className="m-0" icon="add" onClick={gotoAddWallet} />
 
-                                {openDrawer && <Header as='h3' className="m-0">Wallets</Header>}
+                                {openDrawer && <Header as='h4' className="m-0 text-gray-700">Wallets</Header>}
 
                             </Container>
 
