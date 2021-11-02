@@ -324,7 +324,7 @@ class MadNetAdapter {
                 }
             }
             catch (ex) {
-                this.txOuts.set([]);
+                this.clearTXouts();
                 this.changeAddress.set({});
                 await this.wallet().Transaction._reset();
                 return ({ error: ex.message })

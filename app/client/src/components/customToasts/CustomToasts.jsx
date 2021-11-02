@@ -1,7 +1,7 @@
 import React from 'react';
 import { Header, Icon } from 'semantic-ui-react';
 
-export const SyncToastMessageWarning = ({ title, message, basic, hideIcon }) => {
+export const SyncToastMessageWarning = ({ title, message, basic }) => {
 
     if (basic) {
         return (

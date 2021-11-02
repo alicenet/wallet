@@ -42,8 +42,6 @@ export default function useValueStoreFormState(postVerifyCallback = () => { }, f
     const onSubmit = (callback = false) => {
         let error = false;
 
-        console.log("HIT");
-
         if (!Web3.utils.isAddress("0x" + state.fromAddress)) {
             error = true;
             setErrorByKey("fromAddress", "Must be a valid address")
