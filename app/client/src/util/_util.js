@@ -20,5 +20,6 @@ export const transactionStatus = transaction.transactionStatus;
 export const genericUtils = generic;
 export const stringUtils = string;
 export const walletUtils = wallet;
+export const transactionUtils = transaction;
 
 export default utils;

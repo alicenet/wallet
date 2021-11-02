@@ -1,5 +1,6 @@
 import { useSelector } from "react-redux";
 import { Table, Grid, Header, Segment } from "semantic-ui-react";
+import { classNames } from "util/generic";
 
 export default function ReduxState() {
 
@@ -18,7 +19,12 @@ export default function ReduxState() {
                 rows.push(
                     <Table.Row key={key}>
                         <Table.Cell>{key}</Table.Cell>
-                        <Table.Cell>{typeof redux[reducer][key] !== "object" ? String(redux[reducer][key]) : 'object'}</Table.Cell>
+                        <Table.Cell  
+                            className={classNames({"cursor-pointer hover:text-blue-500 ": typeof redux[reducer][key] === "object" })}
+                            onClick={typeof redux[reducer][key] === "object" ? () => console.log(redux[reducer][key]) : null}
+                        >
+                            {typeof redux[reducer][key] !== "object" ? String(redux[reducer][key]) : 'object (click=>print)'}
+                        </Table.Cell>
                     </Table.Row>
                 )
             }

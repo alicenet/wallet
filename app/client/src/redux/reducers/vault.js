@@ -36,7 +36,10 @@ export const buildVaultStateObject = ({ exists = null, isLocked = null, optout =
             // stakeAllowance: 0
             // madBytes: 0
             // madUTXOs: []
-        } // K:V store of address:balances,utxos -- Updated via madNetWallet and web3Wallet actions
+        }, // K:V store of address:balances,utxos -- Updated via madNetWallet and web3Wallet actions
+        recentTxs: {
+            // Recent TXs K:V per address:[..txs]
+        }
     }
 }
 
@@ -86,6 +89,12 @@ export default function vaultReducer(state = initialVaultState, action) {
             log.debug("Setting new balances state:", action.payload);
             return Object.assign({}, state, {
                 balances: action.payload
+            })
+
+        case VAULT_ACTION_TYPES.UPDATE_RECENT_TXS_BY_ADDRESS:
+            log.debug("Setting new recent txs state:", action.payload);
+            return Object.assign({}, state, {
+                recentTxs: { ...state.recentTxs, [action.payload.address]: action.payload.txs }
             })
 
         case VAULT_ACTION_TYPES.SET_CURVE:

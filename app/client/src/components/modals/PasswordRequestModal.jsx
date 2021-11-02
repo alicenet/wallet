@@ -2,7 +2,7 @@ import React from 'react';
 import useFormState from 'hooks/useFormState';
 import { useDispatch, useSelector } from 'react-redux';
 import { MODAL_ACTION_TYPES } from 'redux/constants/_constants';
-import { Button, Form, Header, Modal } from 'semantic-ui-react';
+import { Button, Form, Header, Modal, Icon } from 'semantic-ui-react';
 import { electronStoreCommonActions } from 'store/electronStoreHelper';
 import { classNames } from 'util/_util';
 
@@ -24,6 +24,8 @@ export default function PasswordRequestModal() {
         }
     ]);
     const [isOpen, reason, callback] = useSelector(s => ([s.modal.password_req_modal, s.modal.password_req_reason, s.modal.password_req_cb]));
+
+    const [showPassword, setShowPassword] = React.useState(false);
 
     const tryPassword = async () => {
         formSetter.setPassword('');
@@ -56,7 +58,9 @@ export default function PasswordRequestModal() {
                 </div>
 
                 <Form size="small" className="mt-4" onSubmit={() => onSubmit(tryPassword)} error={!!formState.password.error}>
-                    <Form.Input error={!!formState.password.error} icon="key" value={formState.password.value} onChange={e => formSetter.setPassword(e.target.value)}/>
+                    <Form.Input type={showPassword ? "text" : "password"} error={!!formState.password.error} value={formState.password.value} onChange={e => formSetter.setPassword(e.target.value)}
+                        icon={<Icon link name={showPassword ? "eye" : "eye slash"} onClick={ () => setShowPassword(s => !s)} />}
+                    />
                 </Form>
 
             </Modal.Content>

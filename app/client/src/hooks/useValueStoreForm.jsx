@@ -18,7 +18,7 @@ export default function useValueStoreFormState(postVerifyCallback = () => { }, f
         fromAddress: fromInit,
         toAddress: toInit,
         value: valueInit,
-        isBn: isBnInit
+        isBn: isBnInit ? isBnInit : false,
     });
 
     const [errors, setError] = React.useState({
@@ -68,6 +68,7 @@ export default function useValueStoreFormState(postVerifyCallback = () => { }, f
         } else { setErrorByKey("any", "") }
 
         return !!callback ? callback(state) : postVerifyCallback(state);
+
     }
 
     return [state, setters, errors, onSubmit];

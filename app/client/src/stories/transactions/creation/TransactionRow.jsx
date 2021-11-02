@@ -44,26 +44,36 @@ export default function TransactionRow({ transaction, index, onUpdate }) {
     return (
         <Table.Row>
 
-            <Table.Cell className="p-2">{storeType}</Table.Cell>
+            <Table.Cell className="py-0 px-2">{storeType}</Table.Cell>
 
-            <Table.Cell className="p-2">{utils.string.splitStringWithEllipsis(transaction.from, 5)}</Table.Cell>
+            <Popup size="mini" offset={"0,1"} className="text-xs"
+                trigger={
+                    <Table.Cell className="py-0 px-2">{utils.string.splitStringWithEllipsis(transaction.to, 5)}</Table.Cell>
+                }
+                content={<> <span className="font-bold">To</span> <br /> {transaction.to}</>}
+            />
 
-            <Table.Cell className="p-2">{utils.string.splitStringWithEllipsis(transaction.to, 5)}</Table.Cell>
+            <Popup size="mini" offset={"0,1"} className="text-xs"
+                trigger={
+                    <Table.Cell className="py-0 px-2">{utils.string.splitStringWithEllipsis(transaction.from, 5)}</Table.Cell>
+                }
+                content={<> <span className="font-bold">From</span> <br /> {transaction.from}</>}
+            />
 
-            <Table.Cell className="p-2">{transaction.key}</Table.Cell>
+            <Table.Cell className="py-0 px-2">{transaction.key}</Table.Cell>
 
-            <Table.Cell className="p-2">{transaction.value}</Table.Cell>
+            <Table.Cell className="py-0 px-2">{transaction.value}</Table.Cell>
 
-            <Table.Cell className="p-2">{transaction.duration}</Table.Cell>
+            <Table.Cell className="py-0 px-2">{transaction.duration}</Table.Cell>
 
-            <Table.Cell className="p-2" textAlign="center">
+            <Table.Cell className="py-0 px-2" textAlign="center">
 
                 <Menu compact secondary size="small">
 
                     <Popup
                         trigger={
                             <Menu.Item name='edit' fitted onClick={() => handleEdit(transaction, index)}>
-                                <Icon name='edit'/>
+                                <Icon name='edit' />
                             </Menu.Item>
                         }
                         content={`Edit ${storeType}`}
@@ -74,7 +84,7 @@ export default function TransactionRow({ transaction, index, onUpdate }) {
                     <Popup
                         trigger={
                             <Menu.Item name='clone' fitted onClick={() => handleClone(transaction)}>
-                                <Icon name='clone'/>
+                                <Icon name='clone' />
                             </Menu.Item>
                         }
                         content={`Clone ${storeType}`}
@@ -85,7 +95,7 @@ export default function TransactionRow({ transaction, index, onUpdate }) {
                     <Popup
                         trigger={
                             <Menu.Item name='delete' fitted onClick={() => handleDelete(index)}>
-                                <Icon name='delete'/>
+                                <Icon name='delete' />
                             </Menu.Item>
                         }
                         content={`Delete ${storeType}`}

@@ -21,11 +21,12 @@ export default function ImportPrivateKeyForm({ submitText, submitFunction, cance
 
     const [error, setError] = React.useState(false);
     const [success] = React.useState(false); 
-    const [loading] = React.useState(false);
+    const [loading, setLoading] = React.useState(false);
     const [curveType, setCurveType] = React.useState(curveTypes.SECP256K1);
     const toggleCurveType = () => setCurveType(s => s === curveTypes.SECP256K1 ? curveTypes.BARRETO_NAEHRIG : curveTypes.SECP256K1)
 
     const verifyPrivKey = () => {
+        setLoading(true);
         try {
             // Passback a temporarily wrapped keystore for simplicity with password ""
             let ks = walletUtils.generateKeystoreFromPrivK(formState.privateKey.value, "", curveType)
@@ -41,6 +42,7 @@ export default function ImportPrivateKeyForm({ submitText, submitFunction, cance
             log.error(ex);
             setError(ex.message);
         }
+        setLoading(false);
     }
 
     return (
@@ -88,7 +90,7 @@ export default function ImportPrivateKeyForm({ submitText, submitFunction, cance
                 icon={error ? "exclamation" : success ? "checkmark" : "plus"}
             />
 
-            <Form.Button fluid size="small" basic
+            <Form.Button fluid size="small" basic loading={loading}
                 icon={success ? "thumbs up" : "x"}
                 color={success ? "green" : "orange"}
                 onClick={success ? e => e.preventDefault() : (e) => { e.preventDefault(); cancelFunction() }}

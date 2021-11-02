@@ -7,6 +7,7 @@ export const views = {
     VAULT_WALLETS: "Vault & Wallets",
     WEB3: "Web3 Provider",
     MADNET: "MadNet Adapter",
+    TOAST: "Toasts",
 }
 
 const defaultContextState = {

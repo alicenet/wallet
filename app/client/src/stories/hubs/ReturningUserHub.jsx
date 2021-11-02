@@ -1,14 +1,13 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useHistory } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import head from 'lodash/head';
 import { Button, Container, Divider, Grid, Header, Loader, Tab } from 'semantic-ui-react'
 
 import Page from 'layout/Page';
 import { classNames } from 'util/generic';
 import { Datastores, Overview, RecentTxs } from './tabPanes/_tabPanes';
-import { INTERFACE_ACTIONS } from 'redux/actions/_actions';
-import { tabPaneIndex } from 'layout/HeaderMenu';
+import { SelectedWalletContext } from 'context/Hub_SelectedWalletContext';
 
 export default function Hub() {
 
@@ -17,11 +16,10 @@ export default function Hub() {
     ));
 
     const wallets = React.useMemo(() => internal.concat(external) || [], [internal, external]);
-    const dispatch = useDispatch();
     const history = useHistory();
 
     const [openDrawer, setOpenDrawer] = React.useState(true);
-    const [selectedWallet, setSelectedWallet] = React.useState(null);
+    const { selectedWallet, setSelectedWallet } = React.useContext(SelectedWalletContext);
 
     const { vaultExistsAndIsLocked } = useSelector(s => ({ vaultExistsAndIsLocked: s.vault.is_locked }))
 
@@ -36,27 +34,23 @@ export default function Hub() {
     }, [vaultExistsAndIsLocked, history])
 
     React.useEffect(() => {
-        if (wallets.length > 0) {
+        if (wallets.length > 0 && !selectedWallet) {
             setSelectedWallet(head(wallets));
         }
-    }, [wallets])
-
-    useEffect(() => {
-        dispatch(INTERFACE_ACTIONS.updateActiveTabPane(tabPaneIndex.Wallets));
-    }, []); // eslint-disable-line
+    }, [wallets, selectedWallet, setSelectedWallet])
 
     const panes = [
         {
             menuItem: 'Overview',
-            render: () => <Overview wallet={selectedWallet}/>,
+            render: () => <div className="bg-white p-4 border-solid border border-gray-300 rounded-b border-t-0 rounded-tr"><Overview wallet={selectedWallet} /></div>,
         },
         {
             menuItem: 'Recent TXs',
-            render: () => <RecentTxs wallet={selectedWallet}/>,
+            render: () => <RecentTxs wallet={selectedWallet} />,
         },
         {
             menuItem: 'Datastores',
-            render: () => <Datastores wallet={selectedWallet}/>,
+            render: () => <Datastores wallet={selectedWallet} />,
         },
     ];
 
@@ -67,28 +61,32 @@ export default function Hub() {
 
                 <Grid columns={2} className="m-0 h-full">
 
-                    <Grid.Column className={`duration-300 transition-transform transition-width w-1/${openDrawer ? '3' : '8'}`}>
+                    <Grid.Column width={openDrawer ? 3 : 1} className={`duration-300 pl-6 transition-transform transition-width pr-0`}>
 
                         <Container className="flex flex-col gap-10 h-full">
 
                             <Container className="gap-3 flex flex-row justify-center items-center text-justify">
 
-                                <Button circular size={openDrawer ? 'mini' : 'small'} className="m-0" icon="add" onClick={gotoAddWallet} />
+                                <Button circular size={openDrawer ? 'mini' : 'mini'} className="m-0" icon="add" onClick={gotoAddWallet} />
 
-                                {openDrawer && <Header as='h3' className="m-0">Wallets</Header>}
+                                {openDrawer && <Header as='h4' className="m-0 text-gray-700">Wallets</Header>}
 
                             </Container>
 
-                            <Container className="flex flex-col gap-3 px-3 max-h-104 overflow-y-auto overscroll-contain no-scrollbar items-stretch">
+                            <Container className="flex flex-col gap-3 p-0 max-h-104 overflow-y-auto overscroll-contain no-scrollbar items-stretch">
 
                                 {wallets.map((wallet, index) =>
                                     <Button
                                         key={wallet.address}
                                         color="purple"
                                         content={openDrawer ? wallet.name : index + 1}
-                                        className={classNames("flex-shrink-0 m-0 p-2.5")}
+                                        className={classNames("flex-shrink-0 m-0 p-2 bg-purple-900 hover:bg-blue-800 rounded-sm",
+                                            { "text-xs": !openDrawer }, { "text-sm": openDrawer })}
+                                        style={{ minWidth: "28px" }}
+                                        disabled={selectedWallet && wallet.address === selectedWallet.address}
                                         basic={selectedWallet && wallet.address !== selectedWallet.address}
                                         onClick={() => setSelectedWallet(wallet)}
+                                        size="mini"
                                     />
                                 )}
 
@@ -98,34 +96,36 @@ export default function Hub() {
 
                     </Grid.Column>
 
-                    <Grid.Column className={`p-0 duration-300 transition-transform transition-width w-${openDrawer ? '2/3' : '7/8'}`}>
+                    <Grid.Column width={1} className="p-0">
 
-                        <Container className="px-4">
+                        <Divider vertical className={`duration-300 transition-transform transition-left}`}>
 
-                            {selectedWallet ? <Tab className="overwrite-tab" menu={{ secondary: true, pointing: true }} panes={panes}/> : <Loader active/>}
+                            <div className="flex">
 
+                                <Button
+                                    className="-mt-4 mr-0 z-10 transition-bg hover:bg-gray-300"
+                                    style={{ backgroundColor: '#E0E1E2' }}
+                                    circular
+                                    size="mini"
+                                    icon={`triangle ${openDrawer ? 'left' : 'right'}`}
+                                    onClick={() => setOpenDrawer(prevState => !prevState)}
+                                />
+
+                            </div>
+
+                        </Divider>
+
+                    </Grid.Column>
+
+                    <Grid.Column width={openDrawer ? 12 : 14} className={`duration-300 transition-transform transition-width`}>
+
+                        <Container className="pr-4">
+                            {selectedWallet ? <Tab panes={panes} className="" /> : <Loader active />}
                         </Container>
 
                     </Grid.Column>
 
                 </Grid>
-
-                <Divider vertical className={`duration-300 transition-transform transition-left left-1/${openDrawer ? 3 : 8}`}>
-
-                    <div className="flex">
-
-                        <Button
-                            className="-mt-4 mr-0 z-10 transition-bg hover:bg-gray-300"
-                            style={{ backgroundColor: '#E0E1E2' }}
-                            circular
-                            size="mini"
-                            icon={`triangle ${openDrawer ? 'left' : 'right'}`}
-                            onClick={() => setOpenDrawer(prevState => !prevState)}
-                        />
-
-                    </div>
-
-                </Divider>
 
             </div>
 

@@ -23,11 +23,12 @@ module.exports = {
     },
     variants: {
         extend: {
-            margin: ['last'],
+            margin: ['last', 'first'],
         },
     },
     plugins: [],
     corePlugins: [
+        'animation',
         'alignContent',
         'alignItems',
         'alignSelf',
@@ -45,6 +46,7 @@ module.exports = {
         'fontSize',
         'fontStyle',
         'fontWeight',
+        'fontFamily',
         'gap',
         'height',
         'inset',
@@ -59,6 +61,7 @@ module.exports = {
         'minWidth',
         'outline',
         'overflow',
+        'opacity',
         'overscrollBehavior',
         'padding',
         'position',

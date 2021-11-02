@@ -6,6 +6,8 @@ export const initialTransactionState = {
     status: transactionStatus.CREATION, //The status reflects the transaction workflow
     list: [], //The list of transactions before being sent to the chain
     changeReturnAddress: null, //The address to which the change might be returned if any
+    lastSentAndMinedTx: false, // Last mined tx data
+    lastSentTxHash: "", // Last sent TX Hash -- Received from RPC - send-transaction on successful send -- Can be used to check pending TX
     receipt: [
         { key: 'TX Hash', value: '0xe000144fdb8d14a833d4b70fd743f16a7039103f' },
         { key: 'Status', value: 'Success | Pending' },
@@ -57,10 +59,22 @@ export default function transactionReducer(state = initialTransactionState, acti
                 }),
             });
 
+        case TRANSACTION_ACTION_TYPES.SET_LAST_SENT_MINED_TX:
+            log.debug("Updating latest sent and mined tx: ", action.payload);
+            return Object.assign({}, state, {
+                lastSentAndMinedTx: action.payload,
+            });
+
         case TRANSACTION_ACTION_TYPES.REMOVE_FROM_LIST:
             log.debug("Removing an element from the list at position", action.payload);
             return Object.assign({}, state, {
                 list: state.list.filter((value, index) => index !== action.payload),
+            });
+
+        case TRANSACTION_ACTION_TYPES.SET_LAST_SENT_TX_HASH:
+            log.debug("Setting last sent tx hash", action.payload);
+            return Object.assign({}, state, {
+                lastSentTxHash: action.payload,
             });
 
         default:

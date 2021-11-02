@@ -17,8 +17,7 @@ function AdvancedSettings() {
     const history = useHistory();
     const dispatch = useDispatch();
 
-    const { madNetChainId, madNetProvider, ethereumProvider, registryContractAddress, loading } = useSelector(state => ({
-        madNetChainId: state.config.mad_net_chainID,
+    const { madNetProvider, ethereumProvider, registryContractAddress, loading } = useSelector(state => ({
         madNetProvider: state.config.mad_net_provider,
         ethereumProvider: state.config.ethereum_provider,
         registryContractAddress: state.config.registry_contract_address,
@@ -26,16 +25,18 @@ function AdvancedSettings() {
     }));
 
     const [formState, formSetter, onSubmit] = useFormState([
-        { name: 'MadNetChainId', display: 'MadNet ChainId', type: 'integer', isRequired: true, value: madNetChainId },
         { name: 'MadNetProvider', display: 'MadNet Provider', type: 'url', isRequired: true, value: madNetProvider },
         { name: 'EthereumProvider', display: 'Ethereum Provider', type: 'url', isRequired: true, value: ethereumProvider },
         { name: 'RegistryContractAddress', display: 'Registry Contract Address', type: 'address', isRequired: true, value: registryContractAddress }
     ]);
 
     const handleSubmit = async () => {
+        
+        console.log("HIT")
+        
         dispatch(INTERFACE_ACTIONS.toggleGlobalLoadingBool(true));
         const result = await dispatch(CONFIG_ACTIONS.saveConfigurationValues(
-            formState.MadNetChainId.value,
+            false,
             formState.MadNetProvider.value,
             formState.EthereumProvider.value,
             formState.RegistryContractAddress.value
@@ -61,7 +62,6 @@ function AdvancedSettings() {
 
     // Instead we can pull in the default values from the context and use it as a local setter, and propagate those changes upwards to redux
     const handleLoadDefaultValues = async () => {
-        formSetter.setMadNetChainId(initialConfigurationState.mad_net_chainID);
         formSetter.setMadNetProvider(initialConfigurationState.mad_net_provider);
         formSetter.setEthereumProvider(initialConfigurationState.ethereum_provider);
         formSetter.setRegistryContractAddress(initialConfigurationState.registry_contract_address);
@@ -86,16 +86,6 @@ function AdvancedSettings() {
                 <Grid.Column width={12} className="self-center p-0 m-0 text-left">
 
                     <Form className="text-sm">
-
-                        <Form.Input
-                            id='madNetChainId'
-                            label='MadNet ChainID'
-                            placeholder='Enter MadNet ChainID'
-                            required
-                            value={formState.MadNetChainId.value}
-                            onChange={e => formSetter.setMadNetChainId(e.target.value)}
-                            error={!!formState.MadNetChainId.error && { content: formState.MadNetChainId.error }}
-                        />
 
                         <Form.Input
                             id='madNetProvider'

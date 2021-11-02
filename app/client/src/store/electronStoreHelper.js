@@ -280,14 +280,41 @@ function checkPasswordAgainstPreflightHash(password) {
     })
 }
 
+/** -- Write configuration values to electron store
+ * @param { Object } configValues 
+ * @property { String } configValues.mad_net_chainID - Mad net chain id to save
+ * @property { String } configValues.mad_net_provider - Mad net chain id to save 
+ * @property { String } ethereum_provider - Mad net chain id to save 
+ * @property { String } registry_contract_address - Mad net chain id to save  
+ */
+function storeConfigurationValues(configValues) {
+    let updateObject = {
+        mad_net_chainID: configValues.mad_net_chainID,
+        mad_net_provider: configValues.mad_net_provider,
+        ethereum_provider: configValues.ethereum_provider,
+        registry_contract_address: configValues.registry_contract_address,
+    }
+    writePlainValueToStore('configuration', updateObject);
+}
+
+/**
+ * Read the configuration values from the electron store
+ * @returns { Object } - The read configuration object 
+ */
+async function readConfigurationValues() {
+    return await readPlainValueFromStore('configuration');
+}
+
 export const electronStoreCommonActions = {
-    createNewSecureHDVault: createNewSecureHDVault,
-    storePreflightHash: storePreflightHash,
-    getPreflightHash: getPreflightHash,
-    checkIfUserHasVault: checkIfUserHasVault,
+    addOptOutKeystore: addOptOutKeystore,
     checkForOptoutStores: checkForOptoutStores,
+    checkIfUserHasVault: checkIfUserHasVault,
     checkPasswordAgainstPreflightHash: checkPasswordAgainstPreflightHash,
+    createNewSecureHDVault: createNewSecureHDVault,
+    getPreflightHash: getPreflightHash,
+    readConfigurationValues: readConfigurationValues,
+    storeConfigurationValues: storeConfigurationValues,
+    storePreflightHash: storePreflightHash,
     unlockAndGetSecuredHDVault: unlockAndGetSecuredHDVault,
     updateVaultWallets: updateVaultWallets,
-    addOptOutKeystore: addOptOutKeystore,
 }

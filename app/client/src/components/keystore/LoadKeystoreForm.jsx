@@ -3,7 +3,6 @@ import { useFormState } from 'hooks/_hooks';
 import { Form, Header, Message, Icon, Popup, Checkbox } from 'semantic-ui-react';
 import { walletUtils } from 'util/_util';
 import { curveTypes } from 'util/wallet';
-import { isDebug } from 'util/generic';
 
 /**
  * Verifies a keystore can be unlocked with the given password -- Returns the keystore and password used to unlock it

@@ -26,7 +26,7 @@ export default function RenameWalletModal() {
     React.useEffect( () => {
         formSetter.setName("");
         formSetter.setPassword("");
-    }, isOpen)
+    }, [isOpen]) // eslint-disable-line
 
     const closeModal = () => { 
         dispatch(MODAL_ACTIONS.closeRenameWalletModal())
@@ -79,7 +79,7 @@ export default function RenameWalletModal() {
                             onChange={e => formSetter.setName(e.target.value)}
                             error={!!formState.name.error && { content: formState.name.error }}
                         />
-                        <Form.Input width={6} type="password" size="small" value="" label={(vaultExists ? "Vault " : "Admin ") + "Password"} placeholder="Password"
+                        <Form.Input width={6} type="password" size="small" label={(vaultExists ? "Vault " : "Admin ") + "Password"} placeholder="Password"
                             value={formState.password.value}
                             onChange={e => formSetter.setPassword(e.target.value)}
                             error={!!formState.password.error && { content: formState.password.error }}

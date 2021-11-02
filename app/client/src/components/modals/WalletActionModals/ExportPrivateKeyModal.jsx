@@ -115,7 +115,7 @@ export default function ExportPrivateKeyModal() {
 
                     <Form.Group widths>
 
-                        <Form.Input width={6} type={showPass ? "text" : "password"} size="small" value="" label={(vaultExists ? "Vault " : "Admin ") + "Password"} placeholder="Password"
+                        <Form.Input width={6} type={showPass ? "text" : "password"} size="small" label={(vaultExists ? "Vault " : "Admin ") + "Password"} placeholder="Password"
                             value={password.value}
                             onChange={e => setPassword({ value: e.target.value })}
                             error={!!password.error && { content: password.error }}

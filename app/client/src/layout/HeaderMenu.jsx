@@ -5,7 +5,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import MadIcon from '../Assets/icon.png';
-import { INTERFACE_ACTIONS, VAULT_ACTIONS } from '../redux/actions/_actions';
+import { VAULT_ACTIONS } from '../redux/actions/_actions';
 
 export const tabPaneIndex = {
     Wallets: 0,
@@ -33,18 +33,22 @@ function HeaderMenu({ showMenu }) {
         return false;
     }
 
-    const { exists, optout, activeTabPane, vaultLocked } = useSelector(s => ({
+    const activeTabPane = ((() => {
+        if (pathname.indexOf("/hub") !== -1) { return tabPaneIndex.Wallets }
+        if (pathname.indexOf("/transactions") !== -1) { return tabPaneIndex.Transactions }
+        return tabPaneIndex.Wallets;
+    })())
+
+    const { exists, optout, vaultLocked } = useSelector(s => ({
         vaultLocked: s.vault.is_locked,
         exists: s.vault.exists,
         optout: s.vault.optout,
-        activeTabPane: s.interface.activeTabPane,
     }));
 
     const existingAccount = exists || optout;
 
     const handleTabChange = (e, { activeIndex, panes }) => {
         if (panes[activeIndex].destination) {
-            dispatch(INTERFACE_ACTIONS.updateActiveTabPane(activeIndex));
             history.push(panes[activeIndex].destination);
         }
     };
@@ -52,8 +56,8 @@ function HeaderMenu({ showMenu }) {
     const tabPanes = [
         { menuItem: 'Wallets', destination: '/hub' },
         { menuItem: 'Transactions', destination: '/transactions' },
-        { menuItem: 'MadNet' },
-        { menuItem: 'Ethereum' }
+        // { menuItem: 'MadNet' },
+        // { menuItem: 'Ethereum' }
     ];
 
     return (
@@ -77,28 +81,29 @@ function HeaderMenu({ showMenu }) {
 
                 </Menu.Item>
 
-            </Container>
-
-            <Container fluid className="flex flex-row content-center justify-center items-center">
+                <Container className="w-20" />
 
                 {showMenu && existingAccount && (
 
-                    <Tab
-                        className="overwrite-tab smaller text-xs"
-                        menu={{ secondary: true, pointing: true }}
-                        panes={tabPanes}
-                        activeIndex={activeTabPane}
-                        onTabChange={handleTabChange}
-                    />
+                    <div className="flex justify-center items-centers">
+                        <Tab
+                            className="text-lg menu-tabs relative left-1"
+                            menu={{ secondary: true }}
+                            panes={tabPanes}
+                            activeIndex={activeTabPane}
+                            onTabChange={handleTabChange}
+                        />
+                    </div>
                 )}
 
             </Container>
+
 
             <Container fluid className="flex flex-row content-center justify-end">
 
                 {!vaultLocked && !pathIsLockExempt() && <Menu.Item as='a' header onClick={() => dispatch(VAULT_ACTIONS.lockVault())} className="mx-0 hover:bg-transparent">
 
-                    <Icon onMouseEnter={ () => setLockIcon("lock")} onMouseLeave={ () => setLockIcon("unlock")} name={lockIcon} size="large" className="mx-0 transform duration-300 rotate-12 hover:rotate-0" />
+                    <Icon onMouseEnter={() => setLockIcon("lock")} onMouseLeave={() => setLockIcon("unlock")} name={lockIcon} size="large" className="mx-0 transform duration-300 rotate-12 hover:rotate-0" />
 
                 </Menu.Item>}
 

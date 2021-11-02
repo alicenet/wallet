@@ -66,3 +66,15 @@ export function removeItem(index) {
         dispatch({ type: TRANSACTION_ACTION_TYPES.REMOVE_FROM_LIST, payload: index });
     }
 }
+
+export function setLastSentAndMinedTx(tx) {
+    return async function (dispatch) {
+        dispatch({ type: TRANSACTION_ACTION_TYPES.SET_LAST_SENT_MINED_TX, payload: tx });
+    }
+}
+
+export function setLastSentTxHash(txHash) {
+    return async function (dispatch) {
+        dispatch({ type: TRANSACTION_ACTION_TYPES.SET_LAST_SENT_TX_HASH, payload: txHash });
+    }
+}

@@ -1,6 +1,7 @@
 import Web3 from 'web3';
 import { v4 as uuidv4 } from 'uuid';
 import { utilsWallet_logger as log } from 'log/logHelper';
+import store from 'redux/store/store'
 const bip39 = require('bip39');
 var HDKey = require('hdkey');
 
@@ -223,6 +224,19 @@ export const strip0x = (pKeyOrAddress) => {
     let stripped1 = strip0x(address1).toLowerCase();
     let stripped2 = strip0x(address2).toLowerCase();
     return stripped1 === stripped2;
+}
+
+// Returns a wallet name from state by address or null of it isn't available
+export function getWalletNameFromAddress(address) {
+    let walletState = store.getState().vault.wallets
+    let wallets = [...walletState.internal, ...walletState.external]
+    let found = null;
+    wallets.forEach( w => {
+        if (w.address === address) {
+            found = w.name;
+        }
+    })
+    return found;
 }
 
 export const curveTypes = {

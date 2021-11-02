@@ -41,10 +41,7 @@ function UnlockExistingVault() {
 
     const handleFormSubmit = async () => {
         setLoading(true);
-        let loaded = await dispatch(VAULT_ACTIONS.loadSecureHDVaultFromStorage(formState.password.value))
-        if (loaded) {
-            history.push('/hub')
-        }
+        dispatch(VAULT_ACTIONS.loadSecureHDVaultFromStorage(formState.password.value))
     }
 
     React.useEffect(() => {

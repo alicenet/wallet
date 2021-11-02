@@ -6,7 +6,7 @@ import util from 'util/_util';
 import { ACTION_ELECTRON_SYNC } from 'redux/middleware/VaultUpdateManagerMiddleware';
 import { curveTypes } from 'util/wallet';
 import utils from 'util/_util';
-import { ADAPTER_ACTIONS } from './_actions';
+import { ADAPTER_ACTIONS, CONFIG_ACTIONS } from './_actions';
 import web3Adapter from 'adapters/web3Adapter';
 import { toast } from 'react-toastify';
 import { SyncToastMessageSuccess } from 'components/customToasts/CustomToasts';
@@ -34,6 +34,9 @@ the mutable Wallet objects themselves are handled within MadNetWalletJS's instan
  */
 export function generateNewSecureHDVault(mnemonic, password, curveType = util.wallet.curveTypes.SECP256K1) {
     return async function (dispatch) {
+        // Anytime we generate a vault make sure to note the curve in the vault store as well 
+        // -- This prevents immediately generated vault from not having the correct curve for new wallet generations
+        dispatch({type: VAULT_ACTION_TYPES.SET_CURVE, payload: curveType})
         let [preflightHash, firstWalletNode] = await electronStoreCommonActions.createNewSecureHDVault(mnemonic, password, curveType);
         electronStoreCommonActions.storePreflightHash(preflightHash); // Store preflight hash for pre-action auth checking
         let firstWallet = utils.wallet.generateBasicWalletObject("Main Wallet", firstWalletNode.privateKey.toString('hex'), curveType)
@@ -94,6 +97,14 @@ export function loadSecureHDVaultFromStorage(password) {
             }
             preInitPayload.wallets.external.push(internalWalletObj); // Add it to the wallet init
         })
+
+        // Load any stored configuration values
+        let configLoaded = await dispatch(CONFIG_ACTIONS.loadConfigurationValuesFromStore());
+        if (configLoaded.error) {
+            log.debug(configLoaded.error);
+            toast.error("Error loading configuration values.");
+        }
+
         let res = await dispatch({ type: MIDDLEWARE_ACTION_TYPES.INIT_MAD_WALLET, payload: preInitPayload }); // Pass off to MadWalletMiddleware to finish state initiation
         dispatch({ type: VAULT_ACTION_TYPES.MARK_EXISTS_AND_UNLOCKED });
         dispatch({ type: VAULT_ACTION_TYPES.SET_CURVE, payload: hdCurve })
@@ -186,7 +197,7 @@ export function lockVault() {
             // Additionally mark web3 and madnet as not connected so they can be reinstanced on reconnect
             web3Adapter.setDefaultState(); // Mark default state on web3 adapter --
             await dispatch(ADAPTER_ACTIONS.disconnectAdapters()) // Mark adapter state back to default and disconnected
-            toast.success(<SyncToastMessageSuccess hideIcon basic message="Locked & Disconnected" />, {autoClose: 1750, className: "basic"})
+            toast.success(<SyncToastMessageSuccess hideIcon basic message="Locked & Disconnected" />, { autoClose: 1750, className: "basic" })
             res(true);
         })
     }
