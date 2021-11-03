@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, Grid, Header, Button, Message, Loader } from 'semantic-ui-react'
-import { useHistory } from 'react-router';
+import { useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { VAULT_ACTIONS } from 'redux/actions/_actions';
 import { default_log as log } from 'log/logHelper';

@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { TRANSACTION_ACTIONS } from 'redux/actions/_actions';
 import Page from 'layout/Page';
-import { useHistory } from 'react-router';
+import { useHistory } from 'react-router-dom';
 import utils, { stringUtils } from 'util/_util';
 
 function InspectionModule() {
