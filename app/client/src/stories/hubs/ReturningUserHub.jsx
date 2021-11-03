@@ -42,7 +42,7 @@ export default function Hub() {
     const panes = [
         {
             menuItem: 'Overview',
-            render: () => <div className="bg-white p-4 border-solid border border-gray-300 rounded-b border-t-0 rounded-tr"><Overview wallet={selectedWallet}/></div>,
+            render: () => <Overview wallet={selectedWallet}/>,
         },
         {
             menuItem: 'Recent TXs',

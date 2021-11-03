@@ -1,12 +1,14 @@
 import React from 'react';
 import { Header, Segment } from 'semantic-ui-react';
 
-export default function Datastores({ wallet }) {
+export default function Datastores() {
     return (
-        <Segment placeholder className="m-0 mt-4">
-            <Header icon>
+        <Segment placeholder className="bg-white m-0 border-solid border border-gray-300 rounded-b border-t-0 rounded-tr">
+
+            <Header icon className="m-0">
                 No datastores were found.
             </Header>
+
         </Segment>
     );
 }

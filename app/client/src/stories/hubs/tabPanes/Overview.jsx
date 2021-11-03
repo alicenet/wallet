@@ -1,22 +1,26 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { ADAPTER_ACTIONS, MODAL_ACTIONS } from 'redux/actions/_actions';
+import { Button, Container, Grid, Icon } from 'semantic-ui-react'
 import copy from 'copy-to-clipboard';
 
-import { Button, Container, Grid, Icon } from 'semantic-ui-react'
-
+import { ADAPTER_ACTIONS, MODAL_ACTIONS } from 'redux/actions/_actions';
 import { curveTypes } from 'util/wallet';
 
 export default function Overview({ wallet }) {
 
     const dispatch = useDispatch();
-    const balances = useSelector(state => ({ ...state.vault.balances }));
-    const vaultExists = useSelector(state => state.vault.exists);
-    const { madNetConnected, web3Connected } = useSelector(state => ({ web3Conncted: state.adapter.web3Adapter.connected, madNetConnected: state.adapter.madNetAdapter.connected }));
-    const thisWalletBalances = balances[wallet.address] ? balances[wallet.address] : false;
     const [loader, setLoader] = React.useState("");
-
     const [copyClick, setCopyClick] = React.useState(0);
+
+    const { madNetConnected, web3Connected, vaultExists, balances } = useSelector(state => (
+        {
+            web3Conncted: state.adapter.web3Adapter.connected,
+            madNetConnected: state.adapter.madNetAdapter.connected,
+            vaultExists: state.vault.exists,
+            balances: state.vault.balances,
+        }));
+
+    const thisWalletBalances = balances[wallet.address] ? balances[wallet.address] : false;
     const fetchBalances = React.useCallback(async () => {
         setLoader("balances");
         await dispatch(ADAPTER_ACTIONS.getAndStoreLatestBalancesForAddress(wallet.address))
@@ -38,14 +42,14 @@ export default function Overview({ wallet }) {
                 <div className="ml-2 text-left inline text-gray-500">
                     {loader === "balances" ? ". . ." :
                         thisWalletBalances[balanceKey] ? (thisWalletBalances[balanceKey]) : ""}
-                        {balanceAllowance ? " / " + (thisWalletBalances[balanceAllowance]) : ""}
+                    {balanceAllowance ? " / " + (thisWalletBalances[balanceAllowance]) : ""}
                 </div>
             </div>
         )
     }
 
     const openRenameWalletModal = () => { dispatch(MODAL_ACTIONS.openRenameWalletModal(wallet)) }
-    // const openRemoveWalletModal = () => { dispatch(MODAL_ACTIONS.openRemoveWalletModal(wallet)) }
+
     const openXportPrivKModal = () => { dispatch(MODAL_ACTIONS.openXportPrivKModal(wallet)) }
 
     const copyAddress = () => {
@@ -57,7 +61,7 @@ export default function Overview({ wallet }) {
     }
 
     return (
-        <Grid className="break-all text-sm p-3 text-gray-700">
+        <Grid className="bg-white break-all text-sm m-0 p-4 text-gray-700 border-solid border border-gray-300 rounded-b border-t-0 rounded-tr">
 
             <Grid.Row>
 
@@ -65,10 +69,12 @@ export default function Overview({ wallet }) {
 
                     <Container>
 
-                        <label className="font-semibold text-gray-800 underline">{`Public Address (${wallet.curve === curveTypes.SECP256K1 ? 'Secp256k1' : 'Barreto-Naehrig'} curve)`}</label>
+                        <label className="font-semibold text-gray-800 underline">
+                            {`Public Address (${wallet.curve === curveTypes.SECP256K1 ? 'Secp256k1' : 'Barreto-Naehrig'} curve)`}
+                        </label>
                         <div className="h-10 py-1 flex items-center cursor-pointer hover:text-gray-500" onClick={copyAddress}>
                             {`0x${wallet.address}`}
-                            <Icon name="copy outline" className="ml-1 mb-2 cursor-pointer" />
+                            <Icon name="copy outline" className="ml-1 mb-2 cursor-pointer"/>
                             {!!copyClick && (
                                 <div className="relative inline text-xs mb-2 text-gray-500">
                                     Copied to clipboard!
@@ -90,9 +96,9 @@ export default function Overview({ wallet }) {
 
                         <label className="font-semibold text-gray-800 underline">Ethereum Balances</label>
                         <div className="py-1 flex flex-col">
-                            <MicroBalanceLoader balanceType="ETH" balanceKey={"eth"} />
-                            <MicroBalanceLoader balanceType="STAKE" balanceKey={"stake"} balanceAllowance={"stakeAllowance"} />
-                            <MicroBalanceLoader balanceType="UTIL" balanceKey={"util"} balanceAllowance={"utilAllowance"} />
+                            <MicroBalanceLoader balanceType="ETH" balanceKey={"eth"}/>
+                            <MicroBalanceLoader balanceType="STAKE" balanceKey={"stake"} balanceAllowance={"stakeAllowance"}/>
+                            <MicroBalanceLoader balanceType="UTIL" balanceKey={"util"} balanceAllowance={"utilAllowance"}/>
                         </div>
 
                     </Container>
@@ -105,7 +111,7 @@ export default function Overview({ wallet }) {
 
                         <label className="font-semibold text-gray-800 underline">MadNet Balances</label>
                         <div className="py-1">
-                            <MicroBalanceLoader balanceType="MadBytes" balanceKey={"madBytes"} />
+                            <MicroBalanceLoader balanceType="MadBytes" balanceKey={"madBytes"}/>
                         </div>
 
                     </Container>
@@ -135,14 +141,14 @@ export default function Overview({ wallet }) {
                         <Container className="flex flex-col items-baseline text-deco py-1 gap-1">
                             <Button className="text-green-500 text-sm bg-transparent p-0.5 pl-0 hover:underline" onClick={fetchBalances}>Refresh Balances</Button>
                             {vaultExists && (
-                                <Button className="text-purple-700 text-sm bg-transparent p-0.5 pl-0 hover:underline" onClick={openRenameWalletModal} >Rename Wallet</Button>
+                                <Button className="text-purple-700 text-sm bg-transparent p-0.5 pl-0 hover:underline" onClick={openRenameWalletModal}>Rename Wallet</Button>
                             )} {/* Currently Vault Only */}
                             <Button className="text-purple-700 text-sm bg-transparent p-0.5 pl-0 hover:underline" onClick={openXportPrivKModal}>Export Private Key</Button>
-                            {/** -- Placeholder for feature addition 
-                            {!wallet.isInternal && (
+                            {/** -- Placeholder for feature addition
+                             {!wallet.isInternal && (
                                 <Button className="text-red-700 text-sm bg-transparent p-0.5" onClick={openRemoveWalletModal}>Remove Wallet</Button>
                             )}
-                            */}
+                             */}
                         </Container>
 
                     </Container>

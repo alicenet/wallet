@@ -1,20 +1,20 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
-import { useDispatch } from 'react-redux';
-import { ADAPTER_ACTIONS } from 'redux/actions/_actions';
+import { useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import Web3 from 'web3'
 
+import { ADAPTER_ACTIONS } from 'redux/actions/_actions';
 import { Button, Icon, Input, Loader, Segment, Table } from 'semantic-ui-react';
 import { stringUtils } from 'util/_util';
 import copy from 'copy-to-clipboard';
 import madNetAdapter from 'adapters/madAdapter';
-import { useHistory } from 'react-router';
 
 export default function RecentTxs({ wallet }) {
 
     const history = useHistory();
-    const [loading, setLoading] = React.useState(false);
     const dispatch = useDispatch();
+
+    const [loading, setLoading] = React.useState(false);
     let { recentTxs } = useSelector(s => ({ recentTxs: s.vault.recentTxs[wallet.address] }))
     if (!recentTxs || recentTxs.error) { recentTxs = [] } // Default to empty array
 
@@ -63,7 +63,6 @@ export default function RecentTxs({ wallet }) {
         let rows = activeSlice.map((tx, i) => {
 
             let tVal = Web3.utils.toBN("0x00"); // Total value of any value stores in the tx
-            let tStores = 0 // Total amount of data stores
 
             // Parse for value and stores
             tx["Tx"]["Vout"].forEach((vout) => {
@@ -84,15 +83,15 @@ export default function RecentTxs({ wallet }) {
                 <Table.Cell>{tVal.toString()}</Table.Cell>
                 <Table.Cell>0</Table.Cell>
                 <Table.Cell textAlign="center" className="cursor-pointer hover:bg-gray-100" disabled={loading === "inspectFetch"}
-                    onClick={() => inspectTx(tx.Tx)}>
-                    <Icon name="arrow right" />
+                            onClick={() => inspectTx(tx.Tx)}>
+                    <Icon name="arrow right"/>
                 </Table.Cell>
             </Table.Row>)
         })
 
         return (
             <Table basic celled compact className="text-xs">
-                <Table.Header fullWidth >
+                <Table.Header fullWidth>
                     <Table.HeaderCell>Index</Table.HeaderCell>
                     <Table.HeaderCell>TX Hash</Table.HeaderCell>
                     <Table.HeaderCell>VINs</Table.HeaderCell>
@@ -110,15 +109,16 @@ export default function RecentTxs({ wallet }) {
     }
 
     return (
-        <Segment placeholder={recentTxs?.length === 0} className="m-0 mt-4 ml-0" style={{ height: "456px", maxHeight: "456px" }}>
-            {loading === "fetching" && <Loader active size="large" content="Searching For TXs" className="text-sm text-gray-500" />}
+        <Segment placeholder={recentTxs?.length === 0} className="bg-white m-0 border-solid border border-gray-300 rounded-b border-t-0 rounded-tr" style={{ height: "456px", maxHeight: "456px" }}>
+            {loading === "fetching" && <Loader active size="large" content="Searching For TXs" className="text-sm text-gray-500"/>}
             {loading !== "fetching" && recentTxs?.length > 0 && (<>
 
                 <div className="flex flex-col justify-between h-full">
 
                     <div>
                         <div>
-                            <Input fluid size="mini" className="mb-2" placeholder="Lookup TX By Hash"
+                            <Input
+                                fluid size="mini" className="mb-2" placeholder="Lookup TX By Hash"
                                 onChange={(e) => updateTxHashVal(e.target.value)}
                                 value={txHash.value}
                                 action={{
@@ -127,7 +127,8 @@ export default function RecentTxs({ wallet }) {
                                     onClick: viewTxHash,
                                     basic: true,
                                     loading: loading === "hashSearch"
-                                }} />
+                                }}
+                            />
                         </div>
 
                         <div>
@@ -136,9 +137,9 @@ export default function RecentTxs({ wallet }) {
                     </div>
 
                     <div className="flex justify-between items-center">
-                        <Button disabled={activePage === 0} content="Back" size="mini" onClick={pageBackward} />
+                        <Button disabled={activePage === 0} content="Back" size="mini" onClick={pageBackward}/>
                         <div className="text-xs">{activePage + 1} / {totalPages} </div>
-                        <Button disabled={activePage >= totalPages - 1} content="Next" size="mini" onClick={pageForward} />
+                        <Button disabled={activePage >= totalPages - 1} content="Next" size="mini" onClick={pageForward}/>
                     </div>
                 </div>
             </>)}
