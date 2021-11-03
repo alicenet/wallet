@@ -42,15 +42,15 @@ export default function Hub() {
     const panes = [
         {
             menuItem: 'Overview',
-            render: () => <div className="bg-white p-4 border-solid border border-gray-300 rounded-b border-t-0 rounded-tr"><Overview wallet={selectedWallet} /></div>,
+            render: () => <div className="bg-white p-4 border-solid border border-gray-300 rounded-b border-t-0 rounded-tr"><Overview wallet={selectedWallet}/></div>,
         },
         {
             menuItem: 'Recent TXs',
-            render: () => <RecentTxs wallet={selectedWallet} />,
+            render: () => <RecentTxs wallet={selectedWallet}/>,
         },
         {
             menuItem: 'Datastores',
-            render: () => <Datastores wallet={selectedWallet} />,
+            render: () => <Datastores wallet={selectedWallet}/>,
         },
     ];
 
@@ -67,7 +67,7 @@ export default function Hub() {
 
                             <Container className="gap-3 flex flex-row justify-center items-center text-justify">
 
-                                <Button circular size={openDrawer ? 'mini' : 'mini'} className="m-0" icon="add" onClick={gotoAddWallet} />
+                                <Button circular size={openDrawer ? 'mini' : 'mini'} className="m-0" icon="add" onClick={gotoAddWallet}/>
 
                                 {openDrawer && <Header as='h4' className="m-0 text-gray-700">Wallets</Header>}
 
@@ -117,10 +117,10 @@ export default function Hub() {
 
                     </Grid.Column>
 
-                    <Grid.Column width={openDrawer ? 12 : 14} className={`duration-300 transition-transform transition-width`}>
+                    <Grid.Column width={openDrawer ? 12 : 14} className="duration-300 transition-transform transition-width p-0 pr-4 pt-4">
 
-                        <Container className="pr-4">
-                            {selectedWallet ? <Tab panes={panes} className="" /> : <Loader active />}
+                        <Container>
+                            {selectedWallet ? <Tab panes={panes} className=""/> : <Loader active/>}
                         </Container>
 
                     </Grid.Column>
