@@ -69,8 +69,9 @@ export default function Overview({ wallet }) {
 
                     <Container>
 
-                        <label className="font-semibold text-gray-800 underline">
-                            {`Public Address (${wallet.curve === curveTypes.SECP256K1 ? 'Secp256k1' : 'Barreto-Naehrig'} curve)`}
+                        <label className="text-gray-800">
+                            <span className="font-semibold underline">{`${wallet.name} Public Address`}</span>
+                            {` (${wallet.curve === curveTypes.SECP256K1 ? 'Secp256k1' : 'Barreto-Naehrig'} curve)`}
                         </label>
                         <div className="h-10 py-1 flex items-center cursor-pointer hover:text-gray-500" onClick={copyAddress}>
                             {`0x${wallet.address}`}
