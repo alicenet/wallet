@@ -37,6 +37,7 @@ module.exports = {
         'borderRadius',
         'borderStyle',
         'borderWidth',
+        'boxShadow',
         'cursor',
         'display',
         'flex',

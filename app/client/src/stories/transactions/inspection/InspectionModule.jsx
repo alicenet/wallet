@@ -1,17 +1,24 @@
 import React from 'react';
-import { Button, Grid, Header, Table } from 'semantic-ui-react';
+import { Button, Grid, Header, Table, Message, Label, Popup } from 'semantic-ui-react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { TRANSACTION_ACTIONS } from 'redux/actions/_actions';
 import Page from 'layout/Page';
 import { useHistory } from 'react-router';
 import utils, { stringUtils } from 'util/_util';
+import { getMadWalletInstance } from 'redux/middleware/WalletManagerMiddleware';
+import { classNames } from 'util/generic';
+
+const madWalletJS = getMadWalletInstance();
 
 function InspectionModule() {
 
     const dispatch = useDispatch();
     const history = useHistory();
     const [subFocus, setSubFocus] = React.useState([false, false]); // 0|1 vin/vout , vin||vout IDX position
+
+    const [vinFocus, setVinFocus] = React.useState(0); // IDX of the focused VIN
+    const [voutFocus, setVoutFocus] = React.useState(0); // IDX of the focused vOUT
 
     // Anytime this component mounts, reset sub focus
     React.useEffect(() => {
@@ -22,15 +29,13 @@ function InspectionModule() {
 
     // If forwarded to this view with state, fetch the TX from the RPC else use latest mined TX state
     const tx = useSelector(state => {
-        if (history?.location?.state?.tx) {            
+        if (history?.location?.state?.tx) {
             showBackButton = true;
             return history.location.state.tx;
         } else {
-            return state.transaction.lastSentAndMinedTx.txDetails;
+            return state.transaction.lastSentAndMinedTx;
         }
     });
-
-
 
     const handleOnClick = () => {
 
@@ -43,13 +48,46 @@ function InspectionModule() {
 
     };
 
-    const txObj = utils.transaction.parseRpcTxObject(tx);
+    console.log(tx);
+    const txObj = !tx.error ? utils.transaction.parseRpcTxObject(tx.txDetails || tx) : tx;
 
+    // Need a state for the async owner extraction
+    const [voutOwners, setVoutOwners] = React.useState(Array(txObj && txObj.voutCount));
+
+    // On mount extract the owners for any vouts and vins
+    React.useEffect(() => {
+
+        const getOwners = async () => {
+            let newVoutOwners = [];
+            for (let i = 0; i < txObj.voutCount; i++) {
+                let idxOwner = await madWalletJS.Transaction.Utils.extractOwner(txObj.vouts[i].owner);
+                newVoutOwners.push(idxOwner);
+            }
+            setVoutOwners(newVoutOwners);
+        }
+
+        if (!txObj.error) {
+            getOwners();
+        }
+
+    }, [])
+
+
+    /* -- Just in case we do need for a data chunk
     const getDetailRows = () => {
+
+        if (txObj.error) {
+            return <Message error className="flex justify-center items-center h-20 m-2">
+                {txObj.error}
+            </Message>
+        }
+
+        // Keys to skip on the TX Obj
+        let skipKeys = ["wholeTx", "vins", "vouts", "vinCount", "voutCount"];
 
         let rows = Object.keys(txObj).map((key) => {
 
-            if (key === "wholeTx") { return null }
+            if (skipKeys.indexOf(key) !== -1) { return null }
 
             let value = txObj[key];
 
@@ -59,25 +97,6 @@ function InspectionModule() {
                     <Table.Cell>{key}</Table.Cell>
                     <Table.Cell className="flex items-center">
                         {typeof value !== "object" && value}
-
-                        {(key === "vins" || key === "vouts") && (
-                            // Used to set sub focus of vin or vout relative to index in vins or vouts array
-                            value.map((obj, i) => {
-                                return (
-                                    <div className="ml-2 first:ml-0">
-                                        <Button basic color
-                                            disabled={key === "vins" ? (
-                                                subFocus[0] === 0 && subFocus[1] === i
-                                            ) : (
-                                                subFocus[0] === 1 && subFocus[1] === i
-                                            )}
-                                            onClick={() => setSubFocus([key === "vins" ? 0 : 1, i])} 
-                                            size="mini" compact content={i} 
-                                        />
-                                    </div>
-                                )
-                            })
-                        )}
                     </Table.Cell>
 
                 </Table.Row>
@@ -87,53 +106,132 @@ function InspectionModule() {
 
         return rows.length === 0 ? "No Data" : rows;
     }
+    */
 
-    const genSubFocusTable = () => {
+    const PopupWithParsedValue = ({ value, isString }) => {
+        return (
+            <Popup trigger={<div className="cursor-pointer hover:bg-gray-100">{String(value)}</div>} offset="0,0" basic position="right center" size="mini"
+                className="flex text-xs p-1 px-2"
+                content={<div className="relative"><span className="font-bold">From Hex: </span>
+                    {isString ? utils.generic.hexToUtf8Str(value) : parseInt(value, 16)}
+                </div>}
+            />
+        )
+    }
 
-        if (subFocus[0] === false || subFocus[1] === false) { return }
+    /** Table view for TX VINs */
+    const VinTable = () => {
 
-        let focusObj = txObj[subFocus[0] === 0 ? "vins" : "vouts"][subFocus[1]];
+        if (txObj.error) { return null }
 
-        const genSubFocusRows = () => {
-            return Object.keys(focusObj).map(key => {
-                let value = focusObj[key];
+        const genRows = () => {
+
+            let focusVin = txObj.vins[vinFocus];
+
+            return Object.keys(focusVin).map(key => {
+
+                let value = focusVin[key];
 
                 return (
                     <Table.Row key={`row-detail-${key}`}>
 
                         <Table.Cell>{key}</Table.Cell>
                         <Table.Cell className="flex items-center">
-                            {typeof value !== "object" && value && value.length > 30 ? stringUtils.splitStringWithEllipsis(value, 48) : value}
-
-                            {(key === "vins" || key === "vouts") && (
-                                // Used to set sub focus of vin or vout relative to index in vins or vouts array
-                                value.map((obj, i) => {
-                                    return (
-                                        <div className="ml-2 first:ml-0">
-                                            <Button size="mini" compact content={i} onClick={() => setSubFocus([key === "vins" ? 0 : 1, i])} />
-                                        </div>
-                                    )
-                                })
-                            )}
+                            {typeof value !== "object" && value && value.length > 52 ? stringUtils.splitStringWithEllipsis(value, 52) : value}
                         </Table.Cell>
 
                     </Table.Row>
                 )
-
             })
         }
 
         return (<>
-            <Header sub className="text-xs m-0">
-                {subFocus[0] === 0 ? "VIN" : "VOUT"} : {subFocus[1]}
+            <Header sub className="text-xs m-0 flex items-center">
+                VINs {txObj.vins.map((vin, idx) => (
+                    <div onClick={() => setVinFocus(idx)}
+                        className={classNames("first:ml-4 ml-4 cursor-pointer border-solid border border-gray-300 px-2 py-1 rounded hover:text-blue-500 hover:border-blue-400",
+                            { "text-blue-500": idx === vinFocus },
+                            { "border-blue-400": idx === vinFocus },
+                        )}>
+                        {idx}
+                    </div>
+                ))}
             </Header>
-            <Table definition color="red" size="small" basic compact className="text-xs">
+            <Table definition color="blue" size="small" compact className="text-xs m-0 my-2">
                 <Table.Body>
-                    {genSubFocusRows()}
+                    {genRows()}
                 </Table.Body>
             </Table>
         </>)
+    }
 
+    /** Table view for TX VOUTs */
+    const VoutTable = () => {
+
+        if (txObj.error) { return null }
+
+        const genRows = () => {
+
+            let focusVout = txObj.vouts[voutFocus];
+            let skipKeys = ["type"];
+
+            return Object.keys(focusVout).map(key => {
+
+                let value = focusVout[key];
+
+                if (skipKeys.indexOf(key) !== -1) { return }
+
+                return (
+                    <Table.Row key={`row-detail-${key}`}>
+
+                        <Table.Cell>{key}</Table.Cell>
+                        <Table.Cell className="flex items-center">
+                            {typeof value !== "object" && value && value.length > 70 ? stringUtils.splitStringWithEllipsis(value, 70) :
+                                // Owner key parsing
+                                (key === "owner") ? (<>
+                                    {voutOwners && voutOwners[voutFocus] && voutOwners[voutFocus][2]}
+                                    {voutOwners && voutOwners[voutFocus] && voutOwners[voutFocus][1] === 2 ?
+                                        (<Label size="mini" color="blue" className="ml-4" content="BN" />) :
+                                        (<Label size="mini" color="blue" className="ml-4" active content="SECP256k1" />)
+                                    }
+                                </>) :
+                                    // Value key parsing
+                                    (key === "deposit") || (key === "fee") || (key==="value" && focusVout.type === "ValueStore") ? (
+                                        <PopupWithParsedValue value={value} />
+                                    ) : (key === "chain_id" || key === "tx_out_idx" || key === "issued") ? value : (
+                                        <PopupWithParsedValue value={value} isString />
+                                    )
+                            }
+                        </Table.Cell>
+
+                    </Table.Row>
+                )
+            })
+        }
+
+        return (<>
+            <Header sub className="text-xs m-0 flex items-center justify-between w-full">
+                <div className="flex items-center">
+                    VOUTs {txObj.vouts.map((vout, idx) => (
+                        <div onClick={() => setVoutFocus(idx)}
+                            className={classNames("first:ml-4 ml-4 cursor-pointer border-solid border border-gray-300 px-2 py-1 rounded hover:text-blue-500 hover:border-blue-400",
+                                { "text-blue-500": idx === voutFocus },
+                                { "border-blue-400": idx === voutFocus },
+                            )}>
+                            {idx}
+                        </div>
+                    ))}
+                </div>
+                <div>
+                    <Label content={txObj.vouts[voutFocus].type} color={txObj.vouts[voutFocus].type === "ValueStore" ? "green" : "purple"} className="opacity-70" />
+                </div>
+            </Header>
+            <Table definition color="blue" size="small" compact className="text-xs m-0 my-2">
+                <Table.Body>
+                    {genRows()}
+                </Table.Body>
+            </Table>
+        </>)
     }
 
     return (
@@ -141,29 +239,21 @@ function InspectionModule() {
 
             <Grid textAlign="center" className="m-0" container>
 
-                <Grid.Column width={16} className="p-0 self-center">
+                <Grid.Column width={16} className="p-0 self-center text-md" style={{ height: "370px" }}>
 
-                    <Header content="TX Inspection" as="h3" className="m-0" />
+                    {!txObj.error && (<>
+                        <Header textAlign="left" sub className="mb-2 text-lg"><span className="text-gray-700">TxHash =></span> <span className="text-gray-500">{txObj["txHash"]}</span> </Header>
+                        <VinTable />
+                        <VoutTable />
+                    </>)}
 
-                </Grid.Column>
-
-                <Grid.Column width={16} className="p-0 self-center text-md" style={{height: "370px"}}>
-
-                    <Table definition color="teal" size="small" className="text-sm">
-
-                        <Table.Body>
-                            {getDetailRows()}
-                        </Table.Body>
-
-                    </Table>
-
-                    {genSubFocusTable()}
+                    {txObj.error && <Message error content={txObj.error} />}
 
                 </Grid.Column>
 
                 <Grid.Column width={16} className="p-0 self-center">
 
-                    <Button color={showBackButton ? "orange" : "teal"} content={showBackButton ? "Go Back" : "Send Another Transaction"} onClick={handleOnClick} className="m-0" />
+                    <Button color={txObj.error ? "red" : showBackButton ? "orange" : "teal"} content={txObj.error ? "Try Again" : showBackButton ? "Go Back" : "Send Another Transaction"} onClick={handleOnClick} className="m-0" />
 
                 </Grid.Column>
 

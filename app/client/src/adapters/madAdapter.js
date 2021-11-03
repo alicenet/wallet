@@ -378,7 +378,7 @@ class MadNetAdapter {
             if (this['pending-' + JSON.stringify(tx) + "-attempts"] > 30) {
                 this.pendingTx.set(false);
                 await this.backOffRetry('pending-' + JSON.stringify(tx), true)
-                return { error: ex.message }
+                return { error: ex.message, "txDetails": false, "txHash": tx.error? false : tx }
             }
             await this.sleep(this["pending-" + JSON.stringify(tx) + "-timeout"])
             return await this.monitorPending(tx)

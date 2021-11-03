@@ -7,7 +7,7 @@ import { Button, Container, Grid, Icon } from 'semantic-ui-react'
 
 import { curveTypes } from 'util/wallet';
 
-export default function Overview({ wallet }) {
+export default function Overview({ wallet, internalPanelHeightStyle }) {
 
     const dispatch = useDispatch();
     const balances = useSelector(state => ({ ...state.vault.balances }));
@@ -38,7 +38,7 @@ export default function Overview({ wallet }) {
                 <div className="ml-2 text-left inline text-gray-500">
                     {loader === "balances" ? ". . ." :
                         thisWalletBalances[balanceKey] ? (thisWalletBalances[balanceKey]) : ""}
-                        {balanceAllowance ? " / " + (thisWalletBalances[balanceAllowance]) : ""}
+                    {balanceAllowance ? " / " + (thisWalletBalances[balanceAllowance]) : ""}
                 </div>
             </div>
         )
@@ -57,101 +57,104 @@ export default function Overview({ wallet }) {
     }
 
     return (
-        <Grid className="break-all text-sm p-3 text-gray-700">
+        <div style={{...internalPanelHeightStyle}}>
 
-            <Grid.Row>
+            <Grid className="break-all text-sm p-3 text-gray-700">
 
-                <Grid.Column width={16} className="pl-1">
+                <Grid.Row>
 
-                    <Container>
+                    <Grid.Column width={16} className="pl-1">
 
-                        <label className="font-semibold text-gray-800 underline">{`Public Address (${wallet.curve === curveTypes.SECP256K1 ? 'Secp256k1' : 'Barreto-Naehrig'} curve)`}</label>
-                        <div className="h-10 py-1 flex items-center cursor-pointer hover:text-gray-500" onClick={copyAddress}>
-                            {`0x${wallet.address}`}
-                            <Icon name="copy outline" className="ml-1 mb-2 cursor-pointer" />
-                            {!!copyClick && (
-                                <div className="relative inline text-xs mb-2 text-gray-500">
-                                    Copied to clipboard!
-                                </div>
-                            )}
-                        </div>
+                        <Container>
 
-                    </Container>
+                            <label className="font-semibold text-gray-800 underline">{`Public Address (${wallet.curve === curveTypes.SECP256K1 ? 'Secp256k1' : 'Barreto-Naehrig'} curve)`}</label>
+                            <div className="h-10 py-1 flex items-center cursor-pointer hover:text-gray-500" onClick={copyAddress}>
+                                {`0x${wallet.address}`}
+                                <Icon name="copy outline" className="ml-1 mb-2 cursor-pointer" />
+                                {!!copyClick && (
+                                    <div className="relative inline text-xs mb-2 text-gray-500">
+                                        Copied to clipboard!
+                                    </div>
+                                )}
+                            </div>
 
-                </Grid.Column>
+                        </Container>
 
-            </Grid.Row>
+                    </Grid.Column>
 
-            <Grid.Row>
+                </Grid.Row>
 
-                <Grid.Column width={8} className="pl-1">
+                <Grid.Row>
 
-                    <Container>
+                    <Grid.Column width={8} className="pl-1">
 
-                        <label className="font-semibold text-gray-800 underline">Ethereum Balances</label>
-                        <div className="py-1 flex flex-col">
-                            <MicroBalanceLoader balanceType="ETH" balanceKey={"eth"} />
-                            <MicroBalanceLoader balanceType="STAKE" balanceKey={"stake"} balanceAllowance={"stakeAllowance"} />
-                            <MicroBalanceLoader balanceType="UTIL" balanceKey={"util"} balanceAllowance={"utilAllowance"} />
-                        </div>
+                        <Container>
 
-                    </Container>
+                            <label className="font-semibold text-gray-800 underline">Ethereum Balances</label>
+                            <div className="py-1 flex flex-col">
+                                <MicroBalanceLoader balanceType="ETH" balanceKey={"eth"} />
+                                <MicroBalanceLoader balanceType="STAKE" balanceKey={"stake"} balanceAllowance={"stakeAllowance"} />
+                                <MicroBalanceLoader balanceType="UTIL" balanceKey={"util"} balanceAllowance={"utilAllowance"} />
+                            </div>
 
-                </Grid.Column>
+                        </Container>
 
-                <Grid.Column width={8} className="pl-1">
+                    </Grid.Column>
 
-                    <Container>
+                    <Grid.Column width={8} className="pl-1">
 
-                        <label className="font-semibold text-gray-800 underline">MadNet Balances</label>
-                        <div className="py-1">
-                            <MicroBalanceLoader balanceType="MadBytes" balanceKey={"madBytes"} />
-                        </div>
+                        <Container>
 
-                    </Container>
+                            <label className="font-semibold text-gray-800 underline">MadNet Balances</label>
+                            <div className="py-1">
+                                <MicroBalanceLoader balanceType="MadBytes" balanceKey={"madBytes"} />
+                            </div>
 
-                </Grid.Column>
+                        </Container>
 
-            </Grid.Row>
+                    </Grid.Column>
 
-            <Grid.Row>
+                </Grid.Row>
 
-                <Grid.Column width={8} className="pl-1">
+                <Grid.Row>
 
-                    <Container>
+                    <Grid.Column width={8} className="pl-1">
 
-                        <label className="font-semibold text-gray-800 underline">Origin</label>
-                        <div className="py-1 text-gray-500">{wallet.isInternal ? 'Internal (From Seed)' : 'External'}</div>
+                        <Container>
 
-                    </Container>
+                            <label className="font-semibold text-gray-800 underline">Origin</label>
+                            <div className="py-1 text-gray-500">{wallet.isInternal ? 'Internal (From Seed)' : 'External'}</div>
 
-                </Grid.Column>
+                        </Container>
 
-                <Grid.Column width={8} className="pl-1">
+                    </Grid.Column>
 
-                    <Container>
+                    <Grid.Column width={8} className="pl-1">
 
-                        <label className="font-semibold text-gray-800 underline">Wallet Actions</label>
-                        <Container className="flex flex-col items-baseline text-deco py-1 gap-1">
-                            <Button className="text-green-500 text-sm bg-transparent p-0.5 pl-0 hover:underline" onClick={fetchBalances}>Refresh Balances</Button>
-                            {vaultExists && (
-                                <Button className="text-purple-700 text-sm bg-transparent p-0.5 pl-0 hover:underline" onClick={openRenameWalletModal} >Rename Wallet</Button>
-                            )} {/* Currently Vault Only */}
-                            <Button className="text-purple-700 text-sm bg-transparent p-0.5 pl-0 hover:underline" onClick={openXportPrivKModal}>Export Private Key</Button>
-                            {/** -- Placeholder for feature addition 
+                        <Container>
+
+                            <label className="font-semibold text-gray-800 underline">Wallet Actions</label>
+                            <Container className="flex flex-col items-baseline text-deco py-1 gap-1">
+                                <Button className="text-green-500 text-sm bg-transparent p-0.5 pl-0 hover:underline" onClick={fetchBalances}>Refresh Balances</Button>
+                                {vaultExists && (
+                                    <Button className="text-purple-700 text-sm bg-transparent p-0.5 pl-0 hover:underline" onClick={openRenameWalletModal} >Rename Wallet</Button>
+                                )} {/* Currently Vault Only */}
+                                <Button className="text-purple-700 text-sm bg-transparent p-0.5 pl-0 hover:underline" onClick={openXportPrivKModal}>Export Private Key</Button>
+                                {/** -- Placeholder for feature addition 
                             {!wallet.isInternal && (
                                 <Button className="text-red-700 text-sm bg-transparent p-0.5" onClick={openRemoveWalletModal}>Remove Wallet</Button>
                             )}
                             */}
+                            </Container>
+
                         </Container>
 
-                    </Container>
+                    </Grid.Column>
 
-                </Grid.Column>
+                </Grid.Row>
 
-            </Grid.Row>
-
-        </Grid>
+            </Grid>
+        </div>
     )
 
 }

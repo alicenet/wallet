@@ -6,7 +6,7 @@ import { Button, Container, Divider, Grid, Header, Loader, Tab } from 'semantic-
 
 import Page from 'layout/Page';
 import { classNames } from 'util/generic';
-import { Datastores, Overview, RecentTxs } from './tabPanes/_tabPanes';
+import { Datastores, Overview, RecentTxs, FetchTxs } from './tabPanes/_tabPanes';
 import { SelectedWalletContext } from 'context/Hub_SelectedWalletContext';
 
 export default function Hub() {
@@ -39,18 +39,24 @@ export default function Hub() {
         }
     }, [wallets, selectedWallet, setSelectedWallet])
 
+    const internalPanelHeightStyle = { height: "456px", maxHeight: "456px" };
+
     const panes = [
         {
             menuItem: 'Overview',
-            render: () => <div className="bg-white p-4 border-solid border border-gray-300 rounded-b border-t-0 rounded-tr"><Overview wallet={selectedWallet} /></div>,
+            render: () => <div className="bg-white p-4 border-solid border border-gray-300 rounded-b border-t-0 rounded-tr"><Overview wallet={selectedWallet} internalPanelHeightStyle={internalPanelHeightStyle} /></div>,
         },
         {
             menuItem: 'Recent TXs',
-            render: () => <RecentTxs wallet={selectedWallet} />,
+            render: () => <RecentTxs wallet={selectedWallet} internalPanelHeightStyle={internalPanelHeightStyle} />,
         },
         {
             menuItem: 'Datastores',
-            render: () => <Datastores wallet={selectedWallet} />,
+            render: () => <Datastores wallet={selectedWallet} internalPanelHeightStyle={internalPanelHeightStyle} />,
+        },
+        {
+            menuItem: 'Find Tx',
+            render: () => <FetchTxs wallet={selectedWallet} internalPanelHeightStyle={internalPanelHeightStyle} />,
         },
     ];
 
@@ -117,9 +123,9 @@ export default function Hub() {
 
                     </Grid.Column>
 
-                    <Grid.Column width={openDrawer ? 12 : 14} className={`duration-300 transition-transform transition-width`}>
+                    <Grid.Column width={openDrawer ? 12 : 14} className={`flex h-full bg-red-200 duration-300 transition-transform transition-width`}>
 
-                        <Container className="pr-4">
+                        <Container className="pr-4 flex flex-col h-full bg-red-400 force-child-100-h">
                             {selectedWallet ? <Tab panes={panes} className="" /> : <Loader active />}
                         </Container>
 

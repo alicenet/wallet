@@ -145,6 +145,11 @@ html, body, #root {
     background: white !important; 
 }
 
+.force-child-100-h {
+    display: flex;
+    height: 100%;
+}
+
 //////////////////
 // No scrollbar //
 //////////////////

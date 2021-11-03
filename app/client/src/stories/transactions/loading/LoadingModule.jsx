@@ -16,7 +16,7 @@ function LoadingModule() {
                 <Grid.Column width={16} className="p-0 self-center">
 
                     <Header as="h4" className="m-0">
-                        Awaiting Receipt For Transaction
+                        TX Hash:
                         <Header.Subheader className="mt-2">{pendingTxHash ? pendingTxHash : <Loader size="mini" inline/> }</Header.Subheader>
                     </Header>
 
@@ -24,7 +24,7 @@ function LoadingModule() {
 
                 <Grid.Column width={16} className="p-0 self-center">
 
-                    <Loader active inline='centered' size="massive" />
+                    <Loader active className="font-bold" content={!pendingTxHash ? "Awaiting TxHash" : "Awaiting Mining"} />
 
                 </Grid.Column>
 
@@ -44,7 +44,7 @@ function LoadingModule() {
 
                 <Grid.Column width={16} className="p-0 self-center">
 
-                    <Button color="teal" loading className="m-0 w-52 h-8" />
+                    <Button color="teal" content="Waiting. . ." disabled className="m-0 w-52" />
 
                 </Grid.Column>
 

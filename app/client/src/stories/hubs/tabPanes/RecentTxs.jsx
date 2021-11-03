@@ -5,7 +5,7 @@ import { ADAPTER_ACTIONS } from 'redux/actions/_actions';
 import Web3 from 'web3'
 
 import { Button, Icon, Input, Loader, Segment, Table } from 'semantic-ui-react';
-import { stringUtils } from 'util/_util';
+import utils, { stringUtils } from 'util/_util';
 import copy from 'copy-to-clipboard';
 import madNetAdapter from 'adapters/madAdapter';
 import { useHistory } from 'react-router';
@@ -50,12 +50,19 @@ export default function RecentTxs({ wallet }) {
         if (!txHash) { setTxHash(s => ({ ...s, error: "Tx Hash Required!" })) }
         setLoading("hashSearch");
         let res = await madNetAdapter.viewTransaction(txHash.value)
+        if (res.error) {
+            return null;
+        }
         addManuallyFetchedTx(res.tx);
         setLoading(false);
     }
 
     React.useEffect(() => {
-        fetchRecentTxs();
+        console.log(recentTxs);
+        // Only attempt to fetch if new TXs are needed
+        if (!recentTxs) {
+            fetchRecentTxs();
+        }
     }, [wallet, fetchRecentTxs])
 
     const getTxTable = () => {
@@ -110,24 +117,34 @@ export default function RecentTxs({ wallet }) {
     }
 
     return (
-        <Segment placeholder={recentTxs?.length === 0} className="m-0 mt-4 ml-0" style={{ height: "456px", maxHeight: "456px" }}>
+        <Segment placeholder={recentTxs?.length === 0} className="m-0 ml-0 rounded-t-none border-t-0" style={{ height: "456px", maxHeight: "456px" }}>
             {loading === "fetching" && <Loader active size="large" content="Searching For TXs" className="text-sm text-gray-500" />}
             {loading !== "fetching" && recentTxs?.length > 0 && (<>
 
                 <div className="flex flex-col justify-between h-full">
 
                     <div>
-                        <div>
-                            <Input fluid size="mini" className="mb-2" placeholder="Lookup TX By Hash"
-                                onChange={(e) => updateTxHashVal(e.target.value)}
-                                value={txHash.value}
-                                action={{
-                                    content: "Get TX",
-                                    size: "mini",
-                                    onClick: viewTxHash,
-                                    basic: true,
-                                    loading: loading === "hashSearch"
-                                }} />
+                        <div className="flex justify-between mb-2 -mt-2 items-center">
+                            <div className="text-xs">
+                                <span className="font-semibold">
+                                    {wallet.name}
+                                </span>
+                                's Recent Transactions
+                                {/* <Input fluid size="mini" className="mb-2" placeholder="Lookup TX By Hash"
+                                    onChange={(e) => updateTxHashVal(e.target.value)}
+                                    value={txHash.value}
+                                    fluid
+                                    action={{
+                                        content: "Get TX",
+                                        size: "mini",
+                                        onClick: viewTxHash,
+                                        basic: true,
+                                        loading: loading === "hashSearch"
+                                    }} /> */}
+                            </div>
+                            <div>
+                                <Button content="Refresh Txs" size="mini" color="purple" basic onClick={fetchRecentTxs} />
+                            </div>
                         </div>
 
                         <div>
