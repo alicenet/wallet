@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, Grid, Header, Message } from 'semantic-ui-react'
-import { useHistory } from 'react-router';
+import { useHistory } from 'react-router-dom';
 import LoadKeystoreForm from 'components/keystore/LoadKeystoreForm';
 
 export default function ImportKeystore() {

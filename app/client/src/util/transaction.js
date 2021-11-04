@@ -53,8 +53,6 @@ export const parseRpcTxObject = (rpcTxObject) => {
     let vins = [];
     let vouts = [];
 
-    console.log(rpcTxObject);
-
     // Parse each VIN to VIN Details accessible by index of VIN:
     rpcTxObject["Vin"].forEach( (vin) => {
         vins.push({
@@ -66,8 +64,6 @@ export const parseRpcTxObject = (rpcTxObject) => {
     })
     // Parse each VOUT to VOUT Details accessible by index of VIN:
     rpcTxObject["Vout"].forEach( (vout) => {
-
-        console.log(vout)
 
         if (!!vout["ValueStore"]) {
             vouts.push({
@@ -103,8 +99,6 @@ export const parseRpcTxObject = (rpcTxObject) => {
         "vins": vins,
         "vouts": vouts,
     }
-
-    console.log(builtTxObj)
 
     return builtTxObj;
 

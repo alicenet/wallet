@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, Grid, Header, Button } from 'semantic-ui-react'
-import { useHistory } from 'react-router';
+import { useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 export default function AddWalletMenu() {
