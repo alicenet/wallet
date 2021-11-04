@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useEffect, useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import head from 'lodash/head';
@@ -7,7 +7,7 @@ import { Button, Container, Divider, Grid, Header, Loader, Tab } from 'semantic-
 import Page from 'layout/Page';
 import { classNames } from 'util/generic';
 import { Datastores, FetchTxs, Overview, RecentTxs } from './tabPanes/_tabPanes';
-import { SelectedWalletContext } from 'context/Hub_SelectedWalletContext';
+import { WalletHubContext } from 'context/WalletHubContext';
 
 export default function Hub() {
 
@@ -15,11 +15,11 @@ export default function Hub() {
         { internal: state.vault.wallets.internal, external: state.vault.wallets.external }
     ));
 
-    const wallets = React.useMemo(() => internal.concat(external) || [], [internal, external]);
+    const wallets = useMemo(() => internal.concat(external) || [], [internal, external]);
     const history = useHistory();
 
     const [openDrawer, setOpenDrawer] = React.useState(true);
-    const { selectedWallet, setSelectedWallet } = React.useContext(SelectedWalletContext);
+    const { selectedWallet, setSelectedWallet, activeTabPane, setActiveTabPane } = useContext(WalletHubContext);
 
     const { vaultExistsAndIsLocked } = useSelector(s => ({ vaultExistsAndIsLocked: s.vault.is_locked }))
 
@@ -27,13 +27,17 @@ export default function Hub() {
         history.push('/addWallet/menu');
     }
 
-    React.useEffect(() => {
+    const handleTabChange = (e, { activeIndex }) => {
+        setActiveTabPane(activeIndex);
+    };
+
+    useEffect(() => {
         if (vaultExistsAndIsLocked) {
             history.push('/'); // Send to root for appropriate redirect
         }
     }, [vaultExistsAndIsLocked, history])
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (wallets.length > 0 && !selectedWallet) {
             setSelectedWallet(head(wallets));
         }
@@ -124,7 +128,15 @@ export default function Hub() {
                     <Grid.Column width={openDrawer ? 12 : 14} className="flex flex-col h-tabH duration-300 transition-transform transition-width p-0 pr-4 pt-4 pb-4">
 
                         <Container className="flex flex-col">
-                            {selectedWallet ? <Tab panes={panes} className="tab-panes-force-child-div-h"/> : <Loader active/>}
+                            {selectedWallet ?
+                                <Tab
+                                    panes={panes}
+                                    className="tab-panes-force-child-div-h"
+                                    activeIndex={activeTabPane}
+                                    onTabChange={handleTabChange}
+                                /> :
+                                <Loader active/>
+                            }
                         </Container>
 
                     </Grid.Column>

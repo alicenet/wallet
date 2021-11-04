@@ -20,7 +20,7 @@ import * as WalletActionModals from 'components/modals/_walletActionModals';
 
 // Global Modals
 import PasswordRequestModal from 'components/modals/PasswordRequestModal';
-import { SelectedWalletProvider } from 'context/Hub_SelectedWalletContext';
+import { WalletHubProvider } from 'context/WalletHubContext';
 
 /**
  * Main App Entrypoint
@@ -63,9 +63,9 @@ function App() {
                 <Route exact path="/returningUserLoad/hasKeystores" component={ReturningUserLoadFlows.HasExistingKeystores} />
 
                 {/* Wallet Hub -- Send here if vault exists */}
-                <SelectedWalletProvider>
+                <WalletHubProvider>
                     <Route exact path="/hub" component={Hubs.ReturningUserHub} />
-                </SelectedWalletProvider>
+                </WalletHubProvider>
 
                 {/* Add Wallet -- Add Wallet Menu && Screens */}
                 <Route exact path="/addWallet/menu" component={AddWallet.AddWalletMenu} />
