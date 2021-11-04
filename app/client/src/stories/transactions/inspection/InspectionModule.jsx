@@ -220,7 +220,7 @@ function InspectionModule() {
                 <Grid.Column width={16} className="p-0 self-center text-md" style={{ height: "370px" }}>
 
                     {!txObj.error && (<>
-                        <Header textAlign="left" sub className="mb-2 text-lg"><span className="text-gray-700">TxHash =></span> <span className="text-gray-500">{txObj["txHash"]}</span> </Header>
+                        <Header textAlign="left" sub className="mb-2 text-lg"><span className="text-gray-700">TxHash: </span> <span className="text-gray-500">{txObj["txHash"]}</span> </Header>
                         <VinTable />
                         <VoutTable />
                     </>)}
