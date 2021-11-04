@@ -1,6 +1,6 @@
 import log from 'loglevel';
-import {v4 as uuidv4} from 'uuid';
-import {splitStringWithEllipsis} from './string';
+import { v4 as uuidv4 } from 'uuid';
+import { splitStringWithEllipsis } from './string';
 
 /**
  * Conditionally joins classNames together
@@ -18,8 +18,8 @@ export const classNames = (...classNames) => {
         if (classNameType === 'string') {
             classes.push(className);
         } else if (classNameType === 'object') {
-            for(const key in className) {
-                if(className[key]) {
+            for (const key in className) {
+                if (className[key]) {
                     classes.push(key)
                 }
             }
@@ -73,6 +73,25 @@ export const safeJsonParse = (str) => {
     } catch (err) {
         return [err];
     }
+}
+
+/**
+ * Take a hex string and try to parse to utf8
+ * @param {*} hexString 
+ * @returns 
+ */
+export function hexToUtf8Str(hexString) {
+    console.log(hexString)
+    let parsed = false;
+    try {
+        parsed = decodeURIComponent(
+            hexString.replace(/\s+/g, '')
+                .replace(/[0-9a-f]{2}/g, '%$&')
+        );
+    } catch (ex) {
+        log.error(ex);
+    }
+    return parsed
 }
 
 export const isDebug = process.env.REACT_APP_DEBUG === "TRUE";

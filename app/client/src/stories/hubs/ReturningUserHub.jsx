@@ -6,7 +6,7 @@ import { Button, Container, Divider, Grid, Header, Loader, Tab } from 'semantic-
 
 import Page from 'layout/Page';
 import { classNames } from 'util/generic';
-import { Datastores, Overview, RecentTxs } from './tabPanes/_tabPanes';
+import { Datastores, Overview, RecentTxs, FetchTxs } from './tabPanes/_tabPanes';
 import { SelectedWalletContext } from 'context/Hub_SelectedWalletContext';
 
 export default function Hub() {
@@ -39,6 +39,8 @@ export default function Hub() {
         }
     }, [wallets, selectedWallet, setSelectedWallet])
 
+    const internalPanelHeightStyle = { height: "456px", maxHeight: "456px" };
+
     const panes = [
         {
             menuItem: 'Overview',
@@ -51,6 +53,10 @@ export default function Hub() {
         {
             menuItem: 'Datastores',
             render: () => <Datastores wallet={selectedWallet}/>,
+        },
+        {
+            menuItem: 'Find Tx',
+            render: () => <FetchTxs wallet={selectedWallet}/>,
         },
     ];
 

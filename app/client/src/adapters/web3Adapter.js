@@ -99,7 +99,7 @@ class Web3Adapter {
         // If all of this passes, note that the instance is connected
         store.dispatch(ADAPTER_ACTIONS.setWeb3Connected(true));
         store.dispatch(ADAPTER_ACTIONS.setWeb3Busy(false));
-        if (!config.preventToast || config.reinit) {
+        if (!config.preventToast) {
             toast.success(<SyncToastMessageSuccess basic title="Success" message="Web3 Connected" />, { className: "basic", "autoClose": 2400, delay: 1000 })
         }
         return { success: true };

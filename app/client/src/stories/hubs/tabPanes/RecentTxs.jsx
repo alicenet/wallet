@@ -50,12 +50,18 @@ export default function RecentTxs({ wallet }) {
         if (!txHash) { setTxHash(s => ({ ...s, error: "Tx Hash Required!" })) }
         setLoading("hashSearch");
         let res = await madNetAdapter.viewTransaction(txHash.value)
+        if (res.error) {
+            return null;
+        }
         addManuallyFetchedTx(res.tx);
         setLoading(false);
     }
 
     React.useEffect(() => {
-        fetchRecentTxs();
+        // Only fetch if new TXs are needed
+        if (!recentTxs) {
+            fetchRecentTxs();
+        }
     }, [wallet, fetchRecentTxs])
 
     const getTxTable = () => {

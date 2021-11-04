@@ -6,7 +6,7 @@ import copy from 'copy-to-clipboard';
 import { ADAPTER_ACTIONS, MODAL_ACTIONS } from 'redux/actions/_actions';
 import { curveTypes } from 'util/wallet';
 
-export default function Overview({ wallet }) {
+export default function Overview({ wallet, internalPanelHeightStyle }) {
 
     const dispatch = useDispatch();
     const [loader, setLoader] = React.useState("");
@@ -67,23 +67,19 @@ export default function Overview({ wallet }) {
 
                 <Grid.Column width={16} className="pl-1">
 
-                    <Container>
-
-                        <label className="text-gray-800">
-                            <span className="font-semibold underline">{`${wallet.name} Public Address`}</span>
-                            {` (${wallet.curve === curveTypes.SECP256K1 ? 'Secp256k1' : 'Barreto-Naehrig'} curve)`}
-                        </label>
-                        <div className="h-10 py-1 flex items-center cursor-pointer hover:text-gray-500" onClick={copyAddress}>
-                            {`0x${wallet.address}`}
-                            <Icon name="copy outline" className="ml-1 mb-2 cursor-pointer"/>
-                            {!!copyClick && (
-                                <div className="relative inline text-xs mb-2 text-gray-500">
-                                    Copied to clipboard!
-                                </div>
-                            )}
-                        </div>
-
-                    </Container>
+                    <label className="text-gray-800">
+                        <span className="font-semibold underline">{`${wallet.name} Public Address`}</span>
+                        {` (${wallet.curve === curveTypes.SECP256K1 ? 'Secp256k1' : 'Barreto-Naehrig'} curve)`}
+                    </label>
+                    <div className="h-10 py-1 flex items-center cursor-pointer hover:text-gray-500" onClick={copyAddress}>
+                        {`0x${wallet.address}`}
+                        <Icon name="copy outline" className="ml-1 mb-2 cursor-pointer" />
+                        {!!copyClick && (
+                            <div className="relative inline text-xs mb-2 text-gray-500">
+                                Copied to clipboard!
+                            </div>
+                        )}
+                    </div>
 
                 </Grid.Column>
 
@@ -97,9 +93,9 @@ export default function Overview({ wallet }) {
 
                         <label className="font-semibold text-gray-800 underline">Ethereum Balances</label>
                         <div className="py-1 flex flex-col">
-                            <MicroBalanceLoader balanceType="ETH" balanceKey={"eth"}/>
-                            <MicroBalanceLoader balanceType="STAKE" balanceKey={"stake"} balanceAllowance={"stakeAllowance"}/>
-                            <MicroBalanceLoader balanceType="UTIL" balanceKey={"util"} balanceAllowance={"utilAllowance"}/>
+                            <MicroBalanceLoader balanceType="ETH" balanceKey={"eth"} />
+                            <MicroBalanceLoader balanceType="STAKE" balanceKey={"stake"} balanceAllowance={"stakeAllowance"} />
+                            <MicroBalanceLoader balanceType="UTIL" balanceKey={"util"} balanceAllowance={"utilAllowance"} />
                         </div>
 
                     </Container>
@@ -112,7 +108,7 @@ export default function Overview({ wallet }) {
 
                         <label className="font-semibold text-gray-800 underline">MadNet Balances</label>
                         <div className="py-1">
-                            <MicroBalanceLoader balanceType="MadBytes" balanceKey={"madBytes"}/>
+                            <MicroBalanceLoader balanceType="MadBytes" balanceKey={"madBytes"} />
                         </div>
 
                     </Container>
