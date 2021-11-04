@@ -70,8 +70,8 @@ function ConstructionModule() {
                                 <Container>
 
                                     <div className="cursor-pointer text-blue-400 hover:text-blue-500 flex items-center text-xl">
-                                        <div className="m-0 font-bold" > How to construct a transaction </div>
-                                        <Icon size="small" name="question circle" className="px-4 cursor-pointer" />
+                                        <div className="m-0 font-bold"> How to construct a transaction</div>
+                                        <Icon size="small" name="question circle" className="px-4 cursor-pointer"/>
                                     </div>
 
                                 </Container>
@@ -84,9 +84,13 @@ function ConstructionModule() {
 
                             <Menu compact icon='labeled' size="small">
 
-                                <Menu.Item name='add-data-store' onClick={() => setDataStore(emptyDataStore)}><Icon name='chart bar text-gray-600' />Add Data Store</Menu.Item>
+                                <Menu.Item name='add-data-store' onClick={() => setDataStore(emptyDataStore)}>
+                                    <Icon name="chart bar" className="text-gray-600"/>Add DataStore
+                                </Menu.Item>
 
-                                <Menu.Item name='add-value-store' onClick={() => setValueStore(emptyValueStore)}><Icon name='currency text-gray-600' />Add Value Store</Menu.Item>
+                                <Menu.Item name='add-value-store' onClick={() => setValueStore(emptyValueStore)}>
+                                    <Icon name="currency" className="text-gray-600"/>Add Value Store
+                                </Menu.Item>
 
                             </Menu>
 
@@ -94,7 +98,7 @@ function ConstructionModule() {
 
                     </Grid.Row>
 
-                    <Grid.Row className="p-0" style={{height:"300px"}}>
+                    <Grid.Row className="p-0" style={{ height: "300px" }}>
 
                         <Table size="small" celled color="teal" className="break-all text-sm">
 
@@ -111,11 +115,11 @@ function ConstructionModule() {
 
                             </Table.Header>
 
-                            <Table.Body >
+                            <Table.Body>
 
                                 {isEmpty(list) ?
 
-                                    <Table.Row >
+                                    <Table.Row>
 
                                         <Table.Cell colSpan={7} className="p-5">
 
@@ -176,33 +180,35 @@ function ConstructionModule() {
 
                     </Grid.Row>
 
-                    {dataStore && <AddEditDataStoreModal dataStore={dataStore} onClose={() => setDataStore(null)} />}
+                    {dataStore && <AddEditDataStoreModal dataStore={dataStore} onClose={() => setDataStore(null)}/>}
 
-                    {valueStore && <AddEditValueStoreModal valueStore={valueStore} onClose={() => setValueStore(null)} />}
+                    {valueStore && <AddEditValueStoreModal valueStore={valueStore} onClose={() => setValueStore(null)}/>}
 
                     <Grid.Row>
 
                         <Grid.Column width={12} textAlign="left" className="pl-0">
                             <div className="flex flex-col items-start">
                                 <div className="flex text-xl font-bold">
-                                    Change Addresss
+                                    Change Address
                                     <label className="flex justify-between text-xs font-bold mb-0.5 ml-5">
                                         <Checkbox
                                             checked={changeReturnAddress}
                                             onChange={() => setChangeReturnAddress(prevState => !prevState)}
                                             label={<label className={"labelCheckbox"}>Use Custom Address</label>}
-                                            className="small-checkbox flex justify-center items-center text-xs uppercase font-bold relative -top-0" />
+                                            className="small-checkbox flex justify-center items-center text-xs uppercase font-bold relative -top-0"/>
                                     </label>
                                 </div>
-                                <div className="text-sm">Your change address is where remaing UTXOs will go <br /> This defaults to the first sending wallet, though you may choose which wallet to use.</div>
+                                <div className="text-sm">Your change address is where remaining UTXOs will go <br/>
+                                    This defaults to the first sending wallet, though you may choose which wallet to use.
+                                </div>
                             </div>
                             <div className="flex justify-start mt-4">
-                                <ChangeReturnAddress disabled={!changeReturnAddress} />
+                                <ChangeReturnAddress disabled={!changeReturnAddress}/>
                             </div>
                         </Grid.Column>
 
                         <Grid.Column width={4} className="p-0 flex flex-col justify-end items-end ">
-                            <Button color="teal" content='Send Transaction' disabled={isEmpty(list)} onClick={handleSendTransaction} className="m-0" />
+                            <Button color="teal" content='Send Transaction' disabled={isEmpty(list)} onClick={handleSendTransaction} className="m-0"/>
                         </Grid.Column>
 
                     </Grid.Row>
