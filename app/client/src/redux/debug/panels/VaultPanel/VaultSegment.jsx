@@ -29,7 +29,6 @@ export default function VaultSegment() {
     ////////////////////////////
     const printMadWalletInstance = () => {
         let madWallet = dispatch(VAULT_ACTIONS.getMadWallet());
-        console.log(madWallet);
     }
 
     const unlockVault = async () => {

@@ -71,43 +71,22 @@ function InspectionModule() {
 
     }, [])
 
-
-    /* -- Just in case we do need for a data chunk
-    const getDetailRows = () => {
-
-        if (txObj.error) {
-            return <Message error className="flex justify-center items-center h-20 m-2">
-                {txObj.error}
-            </Message>
-        }
-
-        // Keys to skip on the TX Obj
-        let skipKeys = ["wholeTx", "vins", "vouts", "vinCount", "voutCount"];
-
-        let rows = Object.keys(txObj).map((key) => {
-
-            if (skipKeys.indexOf(key) !== -1) { return null }
-
-            let value = txObj[key];
-
-            return (
-                <Table.Row key={`row-detail-${key}`}>
-
-                    <Table.Cell>{key}</Table.Cell>
-                    <Table.Cell className="flex items-center">
-                        {typeof value !== "object" && value}
-                    </Table.Cell>
-
-                </Table.Row>
-            )
-
-        })
-
-        return rows.length === 0 ? "No Data" : rows;
-    }
-    */
-
     const PopupWithParsedValue = ({ value, isString }) => {
+
+        return (
+            <div className="flex items-center">
+                <div>
+                    {String(value)}
+                </div>
+                <div className="ml-3">
+                    <Label size="mini"
+                        content={isString ? utils.generic.hexToUtf8Str(value) : parseInt(value, 16).toLocaleString()}
+                    />                        
+                    
+                </div>
+            </div>
+        )
+
         return (
             <Popup trigger={<div className="cursor-pointer hover:bg-gray-100">{String(value)}</div>} offset="0,0" basic position="right center" size="mini"
                 className="flex text-xs p-1 px-2"
@@ -195,7 +174,7 @@ function InspectionModule() {
                                     }
                                 </>) :
                                     // Value key parsing
-                                    (key === "deposit") || (key === "fee") || (key==="value" && focusVout.type === "ValueStore") ? (
+                                    (key === "deposit") || (key === "fee") || (key === "value" && focusVout.type === "ValueStore") ? (
                                         <PopupWithParsedValue value={value} />
                                     ) : (key === "chain_id" || key === "tx_out_idx" || key === "issued") ? value : (
                                         <PopupWithParsedValue value={value} isString />
@@ -250,9 +229,9 @@ function InspectionModule() {
 
                 </Grid.Column>
 
-                <Grid.Column width={16} className="p-0 self-center">
+                <Grid.Column width={16} className="p-0 self-center mt-16">
 
-                    <Button color={txObj.error ? "red" : showBackButton ? "orange" : "teal"} content={txObj.error ? "Try Again" : showBackButton ? "Go Back" : "Send Another Transaction"} onClick={handleOnClick} className="m-0" />
+                    <Button size="small" color={txObj.error ? "red" : showBackButton ? "orange" : "teal"} content={txObj.error ? "Try Again" : showBackButton ? "Go Back" : "Send Another Transaction"} onClick={handleOnClick} className="m-0" />
 
                 </Grid.Column>
 

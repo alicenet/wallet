@@ -15,6 +15,9 @@ module.exports = {
             maxHeight: {
                 '104': '31rem',
             },
+            height: {
+                'tabH': '554px',
+            },
             transitionProperty: {
                 'left': 'left',
                 'width': 'width',
@@ -44,6 +47,7 @@ module.exports = {
         'flexDirection',
         'flexShrink',
         'flexWrap',
+        'flexGrow',
         'fontSize',
         'fontStyle',
         'fontWeight',

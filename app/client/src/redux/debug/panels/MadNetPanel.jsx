@@ -28,12 +28,10 @@ export default function Web3Panel() {
         txObject["bnCurve"] = false;
 
         let test = madNetAdapter.addTxOut(txObject);
-        console.log(test);
     }
 
     const sendTx = async () => {
         let result = await madNetAdapter.createTx()
-        console.log(result)
     }
 
     const getWalletButtons = (cb = () => { }) => {
