@@ -1,5 +1,5 @@
 import React from 'react';
-import { Segment, Input, Button } from 'semantic-ui-react';
+import { Button, Input, Segment } from 'semantic-ui-react';
 
 export default function FetchTxs() {
 
@@ -9,17 +9,13 @@ export default function FetchTxs() {
 
     const [polledTxs, setPolledTxs] = React.useState([]);
 
-    const viewTxHash = () => {
+    const viewTxHash = () => {};
 
-    }
-
-    const getTxTable = () => {
-
-    }
+    const getTxTable = () => {};
 
     // Pagination Logic
     const txPerPage = 12;
-    const totalPages = Math.ceil(polledTxs.length / txPerPage) === 0 ? 1 : Math.ceil(polledTxs.length / txPerPage) ;
+    const totalPages = Math.ceil(polledTxs.length / txPerPage) === 0 ? 1 : Math.ceil(polledTxs.length / txPerPage);
     const [activePage, setPage] = React.useState(0);
     const pageForward = () => setPage(s => s + 1);
     const pageBackward = () => setPage(s => s - 1);
@@ -27,12 +23,16 @@ export default function FetchTxs() {
     const activeSlice = polledTxs.slice(activePage * txPerPage, (activePage * txPerPage) + txPerPage)
 
     return (
-        <Segment placeholder={polledTxs?.length === 0} className="flex flex-grow h-full m-0 ml-0 rounded-t-none border-t-0 bg-white shadow-none">
+        <Segment placeholder={polledTxs?.length === 0} className="flex flex-grow m-0 ml-0 rounded-t-none border-t-0 bg-white shadow-none">
 
             <div className="flex flex-col justify-between h-full">
 
                 <div className="mb-2 items-center">
-                    <Input fluid size="mini" className="mb-2" placeholder="Lookup TX By Hash"
+                    <Input
+                        fluid
+                        size="mini"
+                        className="mb-2"
+                        placeholder="Lookup TX By Hash"
                         onChange={(e) => updateTxHashVal(e.target.value)}
                         value={txHashVal.value}
                         fluid
@@ -42,7 +42,7 @@ export default function FetchTxs() {
                             onClick: viewTxHash,
                             basic: true,
                             loading: loading === "hashSearch"
-                        }} />
+                        }}/>
                 </div>
 
                 <div>
@@ -50,9 +50,9 @@ export default function FetchTxs() {
                 </div>
 
                 <div className="flex justify-between items-center">
-                    <Button disabled={activePage === 0} content="Back" size="mini" onClick={pageBackward} />
+                    <Button disabled={activePage === 0} content="Back" size="mini" onClick={pageBackward}/>
                     <div className="text-xs">{activePage + 1} / {totalPages} </div>
-                    <Button disabled={activePage >= totalPages - 1} content="Next" size="mini" onClick={pageForward} />
+                    <Button disabled={activePage >= totalPages - 1} content="Next" size="mini" onClick={pageForward}/>
                 </div>
             </div>
 
