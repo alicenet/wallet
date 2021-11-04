@@ -1,7 +1,7 @@
 import { CONFIG_ACTION_TYPES } from '../constants/_constants';
-import { reduxState_logger as log } from '../../log/logHelper';
+import { reduxState_logger as log } from 'log/logHelper';
 
-//  Any user editable and saveable configurations are loaded here
+//  Any user editable and savable configurations are loaded here
 export const initialConfigurationState = {
     ethereum_provider: "https://testnet.eth.mnexplore.com", // Ethereum RPC endpoint
     mad_net_chainID: "66", // Chain ID to use on MadNet
@@ -13,26 +13,6 @@ export const initialConfigurationState = {
 export default function configurationReducer(state = initialConfigurationState, action) {
 
     switch (action.type) {
-
-        case CONFIG_ACTION_TYPES.UPDATE_ETHEREUM_PROVIDER:
-            return Object.assign({}, state, {
-                ethereum_provider: action.payload
-            });
-
-        case CONFIG_ACTION_TYPES.UPDATE_MAD_NET_CHAIN_ID:
-            return Object.assign({}, state, {
-                mad_net_chainID: action.payload
-            });
-
-        case CONFIG_ACTION_TYPES.UPDATE_MAD_NET_PROVIDER:
-            return Object.assign({}, state, {
-                mad_net_provider: action.payload
-            });
-
-        case CONFIG_ACTION_TYPES.UPDATE_REGISTRY_CONTRACT_ADDR:
-            return Object.assign({}, state, {
-                registry_contract_address: action.payload
-            });
 
         case CONFIG_ACTION_TYPES.LOAD_DEFAULT_VALUES:
             log.debug(["Loading configuration default values:"]);
