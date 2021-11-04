@@ -44,19 +44,19 @@ export default function Hub() {
     const panes = [
         {
             menuItem: 'Overview',
-            render: () => <div className="bg-white p-4 border-solid border border-gray-300 rounded-b border-t-0 rounded-tr"><Overview wallet={selectedWallet} internalPanelHeightStyle={internalPanelHeightStyle} /></div>,
+            render: () => <div className="bg-white p-4 border-solid border border-gray-300 rounded-b border-t-0 rounded-tr"><Overview wallet={selectedWallet}/></div>,
         },
         {
             menuItem: 'Recent TXs',
-            render: () => <RecentTxs wallet={selectedWallet} internalPanelHeightStyle={internalPanelHeightStyle} />,
+            render: () => <RecentTxs wallet={selectedWallet}/>,
         },
         {
             menuItem: 'Datastores',
-            render: () => <Datastores wallet={selectedWallet} internalPanelHeightStyle={internalPanelHeightStyle} />,
+            render: () => <Datastores wallet={selectedWallet}/>,
         },
         {
             menuItem: 'Find Tx',
-            render: () => <FetchTxs wallet={selectedWallet} internalPanelHeightStyle={internalPanelHeightStyle} />,
+            render: () => <FetchTxs wallet={selectedWallet}/>,
         },
     ];
 
@@ -123,9 +123,9 @@ export default function Hub() {
 
                     </Grid.Column>
 
-                    <Grid.Column width={openDrawer ? 12 : 14} className={`flex h-full bg-red-200 duration-300 transition-transform transition-width`}>
+                    <Grid.Column width={openDrawer ? 12 : 14} className={`duration-300 transition-transform transition-width`}>
 
-                        <Container className="pr-4 flex flex-col h-full bg-red-400 force-child-100-h">
+                        <Container className="pr-4 flex flex-col">
                             {selectedWallet ? <Tab panes={panes} className="" /> : <Loader active />}
                         </Container>
 
