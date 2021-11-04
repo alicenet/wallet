@@ -61,7 +61,6 @@ export default function RecentTxs({ wallet }) {
         // If the wallet flips, cancel loading module, allow it to happen in the bg for the last wallet(s)
         setLoading(false);
         // Only fetch if new TXs are needed
-        console.log(recentTxs)
         if (recentTxs.length === 0) {
             fetchRecentTxs();
         }
