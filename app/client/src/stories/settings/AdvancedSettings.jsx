@@ -32,8 +32,6 @@ function AdvancedSettings() {
 
     const handleSubmit = async () => {
         
-        console.log("HIT")
-        
         dispatch(INTERFACE_ACTIONS.toggleGlobalLoadingBool(true));
         const result = await dispatch(CONFIG_ACTIONS.saveConfigurationValues(
             false,

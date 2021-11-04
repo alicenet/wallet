@@ -21,7 +21,6 @@ export default function OptOutSegment() {
     ////////////////////////////
     const printMadWalletInstance = () => {
         let madWallet = dispatch(VAULT_ACTIONS.getMadWallet());
-        console.log(madWallet);
     }
 
     const addOptOutKeystore = async (keystoreJson, password) => {
