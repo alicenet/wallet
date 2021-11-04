@@ -58,8 +58,11 @@ export default function RecentTxs({ wallet }) {
     }
 
     React.useEffect(() => {
+        // If the wallet flips, cancel loading module, allow it to happen in the bg for the last wallet(s)
+        setLoading(false);
         // Only fetch if new TXs are needed
-        if (!recentTxs) {
+        console.log(recentTxs)
+        if (recentTxs.length === 0) {
             fetchRecentTxs();
         }
     }, [wallet, fetchRecentTxs])
@@ -115,7 +118,7 @@ export default function RecentTxs({ wallet }) {
     }
 
     return (
-        <Segment placeholder={recentTxs?.length === 0} className="bg-white m-0 border-solid border border-gray-300 rounded-b border-t-0 rounded-tr" style={{ height: "456px", maxHeight: "456px" }}>
+        <Segment placeholder={recentTxs?.length === 0} className="bg-white m-0 border-solid border border-gray-300 rounded-b border-t-0 rounded-tr">
             {loading === "fetching" && <Loader active size="large" content="Searching For TXs" className="text-sm text-gray-500"/>}
             {loading !== "fetching" && recentTxs?.length > 0 && (<>
 

@@ -27,7 +27,7 @@ export default function FetchTxs() {
     const activeSlice = polledTxs.slice(activePage * txPerPage, (activePage * txPerPage) + txPerPage)
 
     return (
-        <Segment placeholder={polledTxs?.length === 0} className="flex flex-grow h-full bg-red-700 m-0 ml-0 rounded-t-none border-t-0 bg-white shadow-none">
+        <Segment placeholder={polledTxs?.length === 0} className="flex flex-grow h-full m-0 ml-0 rounded-t-none border-t-0 bg-white shadow-none">
 
             <div className="flex flex-col justify-between h-full">
 

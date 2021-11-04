@@ -145,9 +145,13 @@ html, body, #root {
     background: white !important; 
 }
 
-.force-child-100-h {
-    display: flex;
-    height: 100%;
+.tab-panes-force-child-div-h {
+    flex: 1;
+    flex-direction: column;
+    >div:nth-child(2) {
+        flex: 1;
+        height: 100%;
+    }
 }
 
 //////////////////

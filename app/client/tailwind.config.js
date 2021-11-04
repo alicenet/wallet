@@ -44,6 +44,7 @@ module.exports = {
         'flexDirection',
         'flexShrink',
         'flexWrap',
+        'flexGrow',
         'fontSize',
         'fontStyle',
         'fontWeight',

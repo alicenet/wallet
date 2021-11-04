@@ -123,10 +123,10 @@ export default function Hub() {
 
                     </Grid.Column>
 
-                    <Grid.Column width={openDrawer ? 12 : 14} className="duration-300 transition-transform transition-width p-0 pr-4 pt-4">
+                    <Grid.Column width={openDrawer ? 12 : 14} className="flex flex-col duration-300 transition-transform transition-width p-0 pr-4 pt-4" style={{maxHeight: "558px"}}>
 
-                        <Container>
-                            {selectedWallet ? <Tab panes={panes} className=""/> : <Loader active/>}
+                        <Container className="flex flex-grow flex-col">
+                            {selectedWallet ? <Tab panes={panes} className="tab-panes-force-child-div-h"/> : <Loader active/>}
                         </Container>
 
                     </Grid.Column>

@@ -61,7 +61,7 @@ export default function Overview({ wallet, internalPanelHeightStyle }) {
     }
 
     return (
-        <Grid className="bg-white break-all text-sm m-0 p-4 text-gray-700 border-solid border border-gray-300 rounded-b border-t-0 rounded-tr">
+        <Grid className="flex flex-col justify-start bg-white break-all text-sm m-0 p-4 text-gray-700 border-solid border border-gray-300 rounded-b border-t-0 rounded-tr">
 
             <Grid.Row>
 
