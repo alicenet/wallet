@@ -122,7 +122,6 @@ export const parseArrayOfTxObjs = (arrayofRpcTxObjs) => {
         if (!!rpcDataObj.Tx) {
             rpcDataObj = rpcDataObj.Tx;
         }
-
         let data = parseRpcTxObject(rpcDataObj);
         let hash = data.txHash;
         parsedData[hash] = data;

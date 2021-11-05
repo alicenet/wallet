@@ -98,13 +98,8 @@ export default function RecentTxs({ wallet }) {
 
     }
 
-    console.log({
-        loading: loading,
-        recentTxs: recentTxs
-    })
-
     return (
-        <Segment placeholder={recentTxs?.length === 0} className="flex flex-col justify-center bg-white m-0 border-solid border border-gray-300 rounded-b border-t-0 rounded-tr">
+        <Segment className="flex flex-col justify-center bg-white m-0 border-solid border border-gray-300 rounded-b border-t-0 rounded-tr-none rounded-tl-none">
             {loading === "fetching" && <Loader active size="large" content="Searching For TXs" className="text-sm text-gray-500" />}
             {loading !== "fetching" && recentTxs?.length > 0 && recentTxs[0] !== false && (<>
 

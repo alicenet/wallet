@@ -39,7 +39,6 @@ export default function FetchTxs() {
         setLoading("hashSearch");
         let res;
         res = await madNetAdapter.viewTransaction(txHashVal.value)
-        console.log(res);
         if (res.error) {
             setLoading(false);
             return updateTxHashErr(res.error.message)
@@ -109,7 +108,7 @@ export default function FetchTxs() {
     const activeSlice = polledTxs.slice(activePage * txPerPage, (activePage * txPerPage) + txPerPage)
 
     return (
-        <Segment placeholder={polledTxs?.length === 0} className="m-0 ml-0 rounded-t-none border-t-0 bg-white shadow-none">
+        <Segment className="m-0 ml-0 rounded-t-none border-t-0 bg-white">
 
             <div className="flex flex-col justify-between h-full">
 
