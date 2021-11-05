@@ -200,7 +200,7 @@ function ConstructionModule() {
                                         />
                                     </label>
                                 </div>
-                                <div className="text-sm">Your change address is where remaining UTXOs will go <br/>
+                                <div className="text-sm">Your change address is where remaining UTXOs will go.<br/>
                                     This defaults to the first sending wallet, though you may choose which wallet to use.
                                 </div>
                             </div>
