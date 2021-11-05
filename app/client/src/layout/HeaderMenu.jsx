@@ -47,33 +47,34 @@ function HeaderMenu({ showMenu }) {
 
     const existingAccount = exists || optout;
 
-    const handleTabChange = (e, { activeIndex, panes }) => {
-        if (panes[activeIndex].destination) {
-            history.push(panes[activeIndex].destination);
-        }
-    };
+    const goto = (path) => {
+        history.push(path);
+    }
 
-    const tabPanes = [
-        { menuItem: 'Wallets', destination: '/hub' },
-        { menuItem: 'Transactions', destination: '/transactions' },
-        // { menuItem: 'MadNet' },
-        // { menuItem: 'Ethereum' }
-    ];
+    const MenuTabItem = ({ name, activeId, gotoPath }) => {
+        return (
+            <Menu.Item className="cursor-pointer hover:bg-gray-200 hover:bg-opacity-50 hover:rounded-2xl"
+                content={name}
+                active={activeId === activeTabPane}
+                onClick={() => goto(gotoPath)}
+            />
+        )
+    }
 
     return (
-        <Menu secondary className="m-0 my-1">
+        <Menu size="mini" secondary compact pointing className="m-0 my-1 border-b-0">
 
-            <Container fluid className="flex flex-row content-center justify-start">
+            <div className="flex justify-between w-full">
 
-                <Menu.Item header className='p-0 mx-2'>
+                <Menu.Item header className='p-0 mx-2 border-right-none'>
 
                     <Container fluid className="flex flex-row items-center gap-4">
 
-                        <Image src={MadIcon} size="mini"/>
+                        <Image src={MadIcon} size="mini" />
 
                         <Container fluid>
 
-                            <Header content="MadWallet" as="h4"/>
+                            <Header content="MadWallet" as="h4" />
 
                         </Container>
 
@@ -81,51 +82,41 @@ function HeaderMenu({ showMenu }) {
 
                 </Menu.Item>
 
-            </Container>
+                <div className="flex mb-1">
+                    {showMenu && existingAccount && (<>
+                        <MenuTabItem name="Wallets" activeId={tabPaneIndex.Wallets} gotoPath="/hub" />
+                        <MenuTabItem name="Transactions" activeId={tabPaneIndex.Transactions} gotoPath="/transactions" />
+                        {/* <MenuTabItem name="MadNet" activeId={tabPaneIndex.MadNet} gotoPath="/madnet" />
+                        <MenuTabItem name="Ethereum" activeId={tabPaneIndex.Ethereum} gotoPath="/ethereum" /> */}
+                    </>)}
+                </div>
 
-            <Container fluid className="flex flex-row content-center justify-center">
+                <div className="flex mb-1">
 
-                {showMenu && existingAccount && (
+                    {
+                        !vaultLocked && !pathIsLockExempt() &&
+                        <Menu.Item as='a' header onClick={() => dispatch(VAULT_ACTIONS.lockVault())} className="mx-0 hover:bg-transparent">
 
-                    <div className="menu-tabs">
-                        <Tab
-                            menu={{ secondary: true, pointing: true }}
-                            panes={tabPanes}
-                            activeIndex={activeTabPane}
-                            onTabChange={handleTabChange}
-                        />
-                    </div>
-                )}
+                            <Icon
+                                onMouseEnter={() => setLockIcon("lock")}
+                                onMouseLeave={() => setLockIcon("unlock")}
+                                name={lockIcon}
+                                className="mx-0 transform duration-300 rotate-12 hover:rotate-0"
+                            />
 
-            </Container>
+                        </Menu.Item>
+                    }
 
-            <Container fluid className="flex flex-row content-center justify-end">
+                    {
+                        existingAccount &&
+                        <Menu.Item as='a' header onClick={() => history.push('/wallet/settings')} className="mx-0 hover:bg-transparent">
+                            <Icon name="cog" className="mx-0 transform duration-300 hover:rotate-90" />
+                        </Menu.Item>
+                    }
 
-                {
-                    !vaultLocked && !pathIsLockExempt() &&
-                    <Menu.Item as='a' header onClick={() => dispatch(VAULT_ACTIONS.lockVault())} className="mx-0 hover:bg-transparent">
+                </div>
 
-                        <Icon
-                            onMouseEnter={() => setLockIcon("lock")}
-                            onMouseLeave={() => setLockIcon("unlock")}
-                            name={lockIcon}
-                            size="large"
-                            className="mx-0 transform duration-300 rotate-12 hover:rotate-0"
-                        />
-
-                    </Menu.Item>
-                }
-
-                {
-                    existingAccount &&
-                    <Menu.Item as='a' header onClick={() => history.push('/wallet/settings')} className="mx-0 hover:bg-transparent">
-
-                        <Icon name="cog" size="large" className="mx-0 transform duration-300 hover:rotate-90"/>
-
-                    </Menu.Item>
-                }
-
-            </Container>
+            </div>
 
         </Menu>
     )
