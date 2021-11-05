@@ -4,8 +4,8 @@ import { Container, Header, Icon, Image, Menu, Tab } from 'semantic-ui-react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
-import MadIcon from '../Assets/icon.png';
-import { VAULT_ACTIONS } from '../redux/actions/_actions';
+import MadIcon from 'Assets/icon.png';
+import { VAULT_ACTIONS } from 'redux/actions/_actions';
 
 export const tabPaneIndex = {
     Wallets: 0,
@@ -69,11 +69,11 @@ function HeaderMenu({ showMenu }) {
 
                     <Container fluid className="flex flex-row items-center gap-4">
 
-                        <Image src={MadIcon} size="mini" />
+                        <Image src={MadIcon} size="mini"/>
 
                         <Container fluid>
 
-                            <Header content="MadWallet" as="h4" />
+                            <Header content="MadWallet" as="h4"/>
 
                         </Container>
 
@@ -81,14 +81,15 @@ function HeaderMenu({ showMenu }) {
 
                 </Menu.Item>
 
-                <Container className="w-20" />
+            </Container>
+
+            <Container fluid className="flex flex-row content-center justify-center">
 
                 {showMenu && existingAccount && (
 
-                    <div className="flex justify-center items-centers">
+                    <div className="menu-tabs">
                         <Tab
-                            className="text-lg menu-tabs relative left-1"
-                            menu={{ secondary: true }}
+                            menu={{ secondary: true, pointing: true }}
                             panes={tabPanes}
                             activeIndex={activeTabPane}
                             onTabChange={handleTabChange}
@@ -98,20 +99,31 @@ function HeaderMenu({ showMenu }) {
 
             </Container>
 
-
             <Container fluid className="flex flex-row content-center justify-end">
 
-                {!vaultLocked && !pathIsLockExempt() && <Menu.Item as='a' header onClick={() => dispatch(VAULT_ACTIONS.lockVault())} className="mx-0 hover:bg-transparent">
+                {
+                    !vaultLocked && !pathIsLockExempt() &&
+                    <Menu.Item as='a' header onClick={() => dispatch(VAULT_ACTIONS.lockVault())} className="mx-0 hover:bg-transparent">
 
-                    <Icon onMouseEnter={() => setLockIcon("lock")} onMouseLeave={() => setLockIcon("unlock")} name={lockIcon} size="large" className="mx-0 transform duration-300 rotate-12 hover:rotate-0" />
+                        <Icon
+                            onMouseEnter={() => setLockIcon("lock")}
+                            onMouseLeave={() => setLockIcon("unlock")}
+                            name={lockIcon}
+                            size="large"
+                            className="mx-0 transform duration-300 rotate-12 hover:rotate-0"
+                        />
 
-                </Menu.Item>}
+                    </Menu.Item>
+                }
 
-                {existingAccount && <Menu.Item as='a' header onClick={() => history.push('/wallet/settings')} className="mx-0 hover:bg-transparent">
+                {
+                    existingAccount &&
+                    <Menu.Item as='a' header onClick={() => history.push('/wallet/settings')} className="mx-0 hover:bg-transparent">
 
-                    <Icon name="cog" size="large" className="mx-0 transform duration-300 hover:rotate-90" />
+                        <Icon name="cog" size="large" className="mx-0 transform duration-300 hover:rotate-90"/>
 
-                </Menu.Item>}
+                    </Menu.Item>
+                }
 
             </Container>
 

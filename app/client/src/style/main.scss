@@ -33,7 +33,7 @@ html, body, #root {
         position: relative;
         top:2px !important;
     }
-} 
+}
 
 /* To be used as customization for tab panes */
 .overwrite-tab {
@@ -119,30 +119,23 @@ html, body, #root {
 }
 
 .menu-tabs {
-
-    .ui.secondary.menu .item {
-        font-weight: 600;
-        background: rgba(127, 82, 185, 0.025) !important;
-        transition: all .15s ease-in-out;
-        color: rgba(100,100,100,1);
-        border-radius: 0;
-        &:hover {
+    .ui.secondary.menu {
+        border: 0 !important;
+        .item:hover {
             color: rgba(100,100,100,1);
             background: rgba(127, 82, 185, 0.15) !important;
         }
+        .item.active {
+            color: #A333C8 !important;
+            border-color: #A333C8 !important;
+        }
     }
-
-    .ui.secondary.menu .active.item {
-        color: rgba(100,100,140,1);
-        background: rgba(127, 82, 185, 0.15) !important;
-    }
-
 }
 
 // Prevent disabled fields from being unreadable against background
 .disabled.field {
     opacity: 1 !important;
-    background: white !important; 
+    background: white !important;
 }
 
 .tab-panes-force-child-div-h {
