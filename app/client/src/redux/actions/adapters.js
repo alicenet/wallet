@@ -236,6 +236,10 @@ export const getAndStoreRecentTXsForAddress = (address, curve) => {
             address: address,
             curve: curve,
         }])
+        // Mark index 0 as false to signify that a check has happened
+        if (txs.length === 0) {
+            txs = [false];
+        }
         dispatch({type: VAULT_ACTION_TYPES.UPDATE_RECENT_TXS_BY_ADDRESS, payload: {
             address: address,
             txs: txs,

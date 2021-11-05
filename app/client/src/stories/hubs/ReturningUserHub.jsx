@@ -57,7 +57,7 @@ export default function Hub() {
             render: () => <Datastores wallet={selectedWallet}/>,
         },
         {
-            menuItem: 'Find Tx',
+            menuItem: 'Lookup Tx',
             render: () => <FetchTxs wallet={selectedWallet}/>,
         },
     ];

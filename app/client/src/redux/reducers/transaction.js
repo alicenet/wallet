@@ -17,6 +17,7 @@ export const initialTransactionState = {
         { key: 'Value Stores', value: '123' },
         { key: 'Data Stores', value: '456' },
     ], //Receipt loaded right after the transaction gets completed
+    polledTxs: [], // TXs that have been polled manually via FindTX tab
 }
 
 /* Transaction Reducer */
@@ -75,6 +76,18 @@ export default function transactionReducer(state = initialTransactionState, acti
             log.debug("Setting last sent tx hash", action.payload);
             return Object.assign({}, state, {
                 lastSentTxHash: action.payload,
+            });
+
+        case TRANSACTION_ACTION_TYPES.ADD_POLLED_TX:
+            log.debug("Adding polled tx:", action.payload);
+            return Object.assign({}, state, {
+                polledTxs: [...state.polledTxs, action.payload],
+            });
+
+        case TRANSACTION_ACTION_TYPES.CLEAR_POLLED_TX:
+            log.debug("Clearing polled txs:");
+            return Object.assign({}, state, {
+                polledTxs: [],
             });
 
         default:

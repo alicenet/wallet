@@ -78,3 +78,15 @@ export function setLastSentTxHash(txHash) {
         dispatch({ type: TRANSACTION_ACTION_TYPES.SET_LAST_SENT_TX_HASH, payload: txHash });
     }
 }
+
+export function addPolledTx(tx) {
+    return async function (dispatch) {
+        dispatch({ type: TRANSACTION_ACTION_TYPES.ADD_POLLED_TX, payload: tx });
+    }
+}
+
+export function clearPolledTxs() {
+    return async function (dispatch) {
+        dispatch({ type: TRANSACTION_ACTION_TYPES.CLEAR_POLLED_TX });
+    }
+}
