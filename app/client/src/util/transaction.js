@@ -45,13 +45,16 @@ export const createDataStoreObject = (fromAddress, index, rawData, duration) => 
 }
 
 /**
- * Parse an RPV Returned TX Object to a simpler state relevant object
+ * Parse an RPV Returned TX Object to a simpler state relevant object -- Object passed hould have Vin: Arr[] and Vout: Arr[]
  * @param {*} rpcTxObject 
  */
 export const parseRpcTxObject = (rpcTxObject) => {
 
     let vins = [];
     let vouts = [];
+
+    let dataStoreCount = 0;
+    let valueStoreCount = 0;
 
     // Parse each VIN to VIN Details accessible by index of VIN:
     rpcTxObject["Vin"].forEach( (vin) => {
@@ -66,6 +69,7 @@ export const parseRpcTxObject = (rpcTxObject) => {
     rpcTxObject["Vout"].forEach( (vout) => {
 
         if (!!vout["ValueStore"]) {
+            valueStoreCount++;
             vouts.push({
                 type: "ValueStore",
                 owner: vout["ValueStore"]["VSPreImage"].Owner,
@@ -75,6 +79,7 @@ export const parseRpcTxObject = (rpcTxObject) => {
                 value: vout["ValueStore"]["VSPreImage"].Value,
             })
         } else {
+            dataStoreCount++;
             vouts.push({
                 type: "DataStore",
                 owner: vout["DataStore"]["DSLinker"]["DSPreImage"].Owner,
@@ -94,6 +99,8 @@ export const parseRpcTxObject = (rpcTxObject) => {
     const builtTxObj = {
         "wholeTx": rpcTxObject,
         "txHash": rpcTxObject["Vout"][0]["ValueStore"] ? rpcTxObject["Vout"][0]["ValueStore"].TxHash : rpcTxObject["Vout"][0]["DataStore"]["DSLinker"].TxHash,
+        "valueStoreCount": valueStoreCount,
+        "dataStoreCount": dataStoreCount,
         "vinCount": vins.length,
         "voutCount": vouts.length,
         "vins": vins,
@@ -103,3 +110,22 @@ export const parseRpcTxObject = (rpcTxObject) => {
     return builtTxObj;
 
 }
+
+/**
+ * Compose a data collections using rpcTxObjects that will return a key value array of hash=>data respectively for each passed rpcTxObj
+ * @param {Array[]} arrayofRpcTxObjs 
+ */
+export const parseArrayOfTxObjs = (arrayofRpcTxObjs) => {
+    let parsedData = {};
+    arrayofRpcTxObjs.forEach(rpcDataObj => {
+        // Unpack if nested Tx object
+        if (!!rpcDataObj.Tx) {
+            rpcDataObj = rpcDataObj.Tx;
+        }
+
+        let data = parseRpcTxObject(rpcDataObj);
+        let hash = data.txHash;
+        parsedData[hash] = data;
+    })
+    return parsedData;
+} 

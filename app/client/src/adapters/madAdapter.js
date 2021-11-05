@@ -493,7 +493,8 @@ class MadNetAdapter {
         }
         catch (ex) {
             await this.backOffRetry("viewTx");
-            if (this["viewTx-attempts"] > 10) {
+            // Reducing to 1, as the internal library has a retry of ~5 RPC requests -- Just fail if that doesn't work.
+            if (this["viewTx-attempts"] >= 1) {
                 this.transactionHash.set(false);
                 this.transactionHeight.set(false);
                 this.transaction.set(false);

@@ -22,3 +22,12 @@ export function splitStringWithEllipsis(str, lengthOnSides = 3) {
         + "..."
         + str.slice(str.length - lengthOnSides, str.length);
 }
+
+/**
+ * Return true of passed string resembles an expected TxHash
+ * @param { String } hash 
+ * @returns 
+ */
+export function isTxHash(hash) {
+    return /^([A-Fa-f0-9]{64})$/.test(hash);
+}
