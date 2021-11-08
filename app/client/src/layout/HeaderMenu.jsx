@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Container, Header, Icon, Image, Menu, Tab } from 'semantic-ui-react';
+import { Container, Header, Icon, Image, Menu } from 'semantic-ui-react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -53,7 +53,8 @@ function HeaderMenu({ showMenu }) {
 
     const MenuTabItem = ({ name, activeId, gotoPath }) => {
         return (
-            <Menu.Item className="cursor-pointer hover:bg-gray-200 hover:bg-opacity-50 hover:rounded-2xl"
+            <Menu.Item
+                className="cursor-pointer hover:bg-gray-200 hover:bg-opacity-50 hover:rounded-2xl"
                 content={name}
                 active={activeId === activeTabPane}
                 onClick={() => goto(gotoPath)}
@@ -70,11 +71,11 @@ function HeaderMenu({ showMenu }) {
 
                     <Container fluid className="flex flex-row items-center gap-4">
 
-                        <Image src={MadIcon} size="mini" />
+                        <Image src={MadIcon} size="mini"/>
 
                         <Container fluid>
 
-                            <Header content="MadWallet" as="h4" />
+                            <Header content="MadWallet" as="h4"/>
 
                         </Container>
 
@@ -82,26 +83,26 @@ function HeaderMenu({ showMenu }) {
 
                 </Menu.Item>
 
-                <div className="flex mb-1">
+                <div className="flex">
+
                     {showMenu && existingAccount && (<>
-                        <MenuTabItem name="Wallets" activeId={tabPaneIndex.Wallets} gotoPath="/hub" />
-                        <MenuTabItem name="Transactions" activeId={tabPaneIndex.Transactions} gotoPath="/transactions" />
-                        {/* <MenuTabItem name="MadNet" activeId={tabPaneIndex.MadNet} gotoPath="/madnet" />
-                        <MenuTabItem name="Ethereum" activeId={tabPaneIndex.Ethereum} gotoPath="/ethereum" /> */}
+                        <MenuTabItem name="Wallets" activeId={tabPaneIndex.Wallets} gotoPath="/hub"/>
+                        <MenuTabItem name="Transactions" activeId={tabPaneIndex.Transactions} gotoPath="/transactions"/>
                     </>)}
+
                 </div>
 
-                <div className="flex mb-1">
+                <div className="flex">
 
                     {
                         !vaultLocked && !pathIsLockExempt() &&
-                        <Menu.Item as='a' header onClick={() => dispatch(VAULT_ACTIONS.lockVault())} className="mx-0 hover:bg-transparent">
+                        <Menu.Item as='a' header onClick={() => dispatch(VAULT_ACTIONS.lockVault())} className="px-3 hover:bg-transparent">
 
                             <Icon
                                 onMouseEnter={() => setLockIcon("lock")}
                                 onMouseLeave={() => setLockIcon("unlock")}
                                 name={lockIcon}
-                                className="mx-0 transform duration-300 rotate-12 hover:rotate-0"
+                                className="transform duration-300 rotate-12 hover:rotate-0"
                             />
 
                         </Menu.Item>
@@ -109,8 +110,10 @@ function HeaderMenu({ showMenu }) {
 
                     {
                         existingAccount &&
-                        <Menu.Item as='a' header onClick={() => history.push('/wallet/settings')} className="mx-0 hover:bg-transparent">
-                            <Icon name="cog" className="mx-0 transform duration-300 hover:rotate-90" />
+                        <Menu.Item as='a' header onClick={() => history.push('/wallet/settings')} className="px-3 hover:bg-transparent">
+
+                            <Icon name="cog" className="transform duration-300 hover:rotate-90"/>
+
                         </Menu.Item>
                     }
 
