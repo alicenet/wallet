@@ -8,6 +8,7 @@ import { transactionTypes } from 'util/_util';
 import { ADAPTER_ACTIONS, TRANSACTION_ACTIONS } from 'redux/actions/_actions';
 import TransactionRow from './TransactionRow';
 import ConstructingATransactionModal from './ConstructingATransactionModal';
+import AddEditPrioritizationFeeModal from './AddEditPrioritizationFeeModal';
 import AddEditDataStoreModal from './AddEditDataStoreModal';
 import AddEditValueStoreModal from './AddEditValueStoreModal';
 import ChangeReturnAddress from './ChangeReturnAddress';
@@ -63,15 +64,15 @@ function ConstructionModule() {
 
                     <Grid.Row className="py-3">
 
-                        <Grid.Column verticalAlign="middle" width={10} className="pl-0">
+                        <Grid.Column verticalAlign="middle" width={8} className="p-0">
 
                             <ConstructingATransactionModal>
 
                                 <Container>
 
-                                    <div className="cursor-pointer text-blue-400 hover:text-blue-500 flex items-center text-xl">
+                                    <div className="cursor-pointer text-blue-400 hover:text-blue-500 flex items-center text-xl gap-2">
                                         <div className="m-0 font-bold">How to construct a transaction</div>
-                                        <Icon size="small" name="question circle" className="px-4 cursor-pointer"/>
+                                        <Icon size="small" name="question circle" className="m-0 cursor-pointer"/>
                                     </div>
 
                                 </Container>
@@ -80,17 +81,19 @@ function ConstructionModule() {
 
                         </Grid.Column>
 
-                        <Grid.Column textAlign="right" className="p-0" width={6}>
+                        <Grid.Column textAlign="right" className="p-0" width={8}>
 
                             <Menu compact icon='labeled' size="small">
 
                                 <Menu.Item name='add-data-store' onClick={() => setDataStore(emptyDataStore)}>
-                                    <Icon name="chart bar" className="text-gray-600"/>Add DataStore
+                                    <Icon name="chart bar" className="text-gray-600"/>Add Data Store
                                 </Menu.Item>
 
                                 <Menu.Item name='add-value-store' onClick={() => setValueStore(emptyValueStore)}>
                                     <Icon name="currency" className="text-gray-600"/>Add Value Store
                                 </Menu.Item>
+
+                                <AddEditPrioritizationFeeModal/>
 
                             </Menu>
 

@@ -6,6 +6,17 @@ import { TRANSACTION_ACTION_TYPES } from '../constants/_constants';
 
 /**
  * Toggle loading status
+ * @param { number } fee - The selected fee
+ * @returns null
+ */
+export function setPrioritizationFee(fee) {
+    return async function (dispatch) {
+        dispatch({ type: TRANSACTION_ACTION_TYPES.SET_PRIORITIZATION_FEE, payload: fee });
+    }
+}
+
+/**
+ * Toggle loading status
  * @returns null
  */
 export function toggleStatus() {
@@ -15,7 +26,8 @@ export function toggleStatus() {
 }
 
 /**
- * Clears the current list of transactions
+ * Saves the address chosen for the change to be returned to
+ * @param { string } address - A valid Web3 address
  * @returns null
  */
 export function saveChangeReturnAddress(address) {
@@ -25,11 +37,12 @@ export function saveChangeReturnAddress(address) {
 }
 
 /**
- * Clears the current list of transactions
+ * Goes back to initialization details
  * @returns null
  */
 export function clearList() {
     return async function (dispatch) {
+        dispatch({ type: TRANSACTION_ACTION_TYPES.SET_PRIORITIZATION_FEE, payload: 0 });
         dispatch({ type: TRANSACTION_ACTION_TYPES.CLEAR_LIST });
     }
 }

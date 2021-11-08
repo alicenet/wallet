@@ -134,7 +134,7 @@ export default function AddEditValueStoreModal({ valueStore, onClose }) {
                 <Button color="orange" className="m-0" basic onClick={onClose} content="Close"/>
 
                 <Button
-                    icon={<Icon name='chart bar'/>}
+                    icon={<Icon name="currency"/>}
                     className="m-0"
                     content={`${isEditing ? 'Edit' : 'Add'} Value Store`}
                     basic

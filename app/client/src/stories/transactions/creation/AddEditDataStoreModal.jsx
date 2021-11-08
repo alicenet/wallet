@@ -143,10 +143,10 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
 
             <Modal.Actions className="flex justify-between">
 
-                <Button color="orange" className="m-0" basic onClick={onClose} content="Close" />
+                <Button color="orange" className="m-0" basic onClick={onClose} content="Close"/>
 
                 <Button
-                    icon={<Icon name='chart bar' />}
+                    icon={<Icon name='chart bar'/>}
                     className="m-0"
                     content={`${isEditing ? 'Edit' : 'Add'} Data Store`}
                     basic

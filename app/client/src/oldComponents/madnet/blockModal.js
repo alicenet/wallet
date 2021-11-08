@@ -21,7 +21,7 @@ function BlockModal(props) {
     // Display BlockData
     const txList = () => {
         if (!blockInfo['TxHshLst']) {
-            return (<p></p>)
+            return (<p/>)
         }
         return blockInfo['TxHshLst'].map((e, i) => {
             return (

@@ -199,7 +199,7 @@ function _validateValueByType(value, type) {
         default:
             new Error("Invalid type submitted to useFormState validator");
     }
-};
+}
 
 // fullFormValidatorFunction -- Allow state param to call in useState() with initial params
 function _validateAllInSuppliedState(currentFormState) {
@@ -219,7 +219,7 @@ function _validateAllInSuppliedState(currentFormState) {
         }
     });
     return passing;
-};
+}
 
 // Internal validation error builder
 function _getValidationError(type, isValidated) {
@@ -244,8 +244,8 @@ function _getValidationError(type, isValidated) {
         default:
             new Error("Invalid type submitted to useFormState validator");
     }
-};
+}
 
 function _getRequirementError(name, isRequired) {
     return isRequired ? "Field " + name + " is required." : "";
-};
+}
