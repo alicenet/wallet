@@ -33,6 +33,7 @@ module.exports = {
         'alignItems',
         'alignSelf',
         'backgroundColor',
+        'backgroundOpacity',
         'borderColor',
         'borderRadius',
         'borderStyle',
