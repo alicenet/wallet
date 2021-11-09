@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Button, Checkbox, Container, Grid, Header, Icon, Menu, Pagination, Segment, Table } from 'semantic-ui-react';
 import { useDispatch, useSelector } from 'react-redux';
 import isEmpty from 'lodash/isEmpty';
@@ -25,7 +25,10 @@ function ConstructionModule() {
     const emptyDataStore = { from: null, to: null, duration: null, key: null, value: null };
     const emptyValueStore = { from: null, to: null, value: null };
 
-    const { list } = useSelector(state => ({ list: state.transaction.list }));
+    const { list, fees } = useSelector(state => ({
+        list: state.transaction.list,
+        fees: state.transaction.fees,
+    }));
 
     const [dataStore, setDataStore] = useState(null);
     const [valueStore, setValueStore] = useState(null);
@@ -41,6 +44,16 @@ function ConstructionModule() {
         dispatch(TRANSACTION_ACTIONS.toggleStatus());
     };
 
+    const TxFeesDisplay = ({ feesLabel, feesAmount }) => {
+
+        return (
+            <div className="flex text-xs justify-between">
+                <div className="font-bold">{`${feesLabel}:`}</div>
+                <div className="text-gray-500">{`${feesAmount} MadBytes`}</div>
+            </div>
+        )
+    }
+
     useEffect(() => {
         if (list.length > 0) {
             const chunks = chunk(list, recordsPerPage);
@@ -55,6 +68,20 @@ function ConstructionModule() {
         }
     }, [list, activePage]);
 
+    const txsFees = useMemo(
+        () => {
+            if (list.length > 0) {
+                return list.reduce((total, transaction) => {
+                    if (transaction.type === transactionTypes.VALUE_STORE) {
+                        return parseInt(fees.valueStoreFee, 10) + total;
+                    }
+                    return parseInt(fees.dataStoreFee, 10) + total;
+                }, 0);
+            }
+            return 0;
+        }, [list, fees]
+    );
+
     return (
         <Page showMenu>
 
@@ -64,7 +91,7 @@ function ConstructionModule() {
 
                     <Grid.Row className="py-3">
 
-                        <Grid.Column verticalAlign="middle" width={8} className="p-0">
+                        <Grid.Column verticalAlign="middle" width={7} className="p-0">
 
                             <ConstructingATransactionModal>
 
@@ -81,7 +108,7 @@ function ConstructionModule() {
 
                         </Grid.Column>
 
-                        <Grid.Column textAlign="right" className="p-0" width={8}>
+                        <Grid.Column textAlign="right" className="p-0" width={9}>
 
                             <Menu compact icon='labeled' size="small">
 
@@ -214,8 +241,18 @@ function ConstructionModule() {
 
                         </Grid.Column>
 
-                        <Grid.Column width={4} className="p-0 flex flex-col justify-end items-end ">
+                        <Grid.Column width={4} className="p-0 flex flex-col justify-between item">
+
+                            <Container>
+
+                                <TxFeesDisplay feesLabel="Prioritization Fee" feesAmount={fees.prioritizationFee}/>
+                                <TxFeesDisplay feesLabel="Txs Fees" feesAmount={txsFees}/>
+                                <TxFeesDisplay feesLabel="Total Fees" feesAmount={parseInt(fees.prioritizationFee, 10) + txsFees}/>
+
+                            </Container>
+
                             <Button color="teal" content='Send Transaction' disabled={isEmpty(list)} onClick={handleSendTransaction} className="m-0"/>
+
                         </Grid.Column>
 
                     </Grid.Row>
