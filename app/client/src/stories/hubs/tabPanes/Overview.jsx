@@ -14,7 +14,7 @@ export default function Overview({ wallet }) {
 
     const { madNetConnected, web3Connected, vaultExists, balances } = useSelector(state => (
         {
-            web3Conncted: state.adapter.web3Adapter.connected,
+            web3Connected: state.adapter.web3Adapter.connected,
             madNetConnected: state.adapter.madNetAdapter.connected,
             vaultExists: state.vault.exists,
             balances: state.vault.balances,
