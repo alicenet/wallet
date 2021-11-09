@@ -14,7 +14,7 @@ const transactionStatusProgression = [transactionStatus.CREATION, transactionSta
 export const getNextTransactionStatus = (status) => transactionStatusProgression[status % transactionStatusProgression.length];
 
 /**
- * Create and returna standardized ValueStoreObject
+ * Creates and returns a standardized ValueStoreObject
  * @returns { Object } ValueStoreObject
  */
 export const createValueStoreObject = (fromAddress, toAddress, value, bnCurve = false) => {
@@ -29,7 +29,7 @@ export const createValueStoreObject = (fromAddress, toAddress, value, bnCurve = 
 }
 
 /**
- * Create and returna standardized DataStoreObject
+ * Creates and returns a standardized DataStoreObject
  * @returns { Object } DataStoreObject
  */
 export const createDataStoreObject = (fromAddress, index, rawData, duration) => {

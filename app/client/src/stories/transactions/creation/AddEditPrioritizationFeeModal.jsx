@@ -21,13 +21,19 @@ export default function AddEditPrioritizationFeeModal() {
     };
 
     const [formState, formSetter, onSubmit] = useFormState([
-        { name: 'Fee', type: 'integer', isRequired: true, value: prioritizationFee },
+        { name: 'Fee', display: 'MadNet Bytes Fee', type: 'integer', isRequired: true, value: prioritizationFee },
     ]);
+
+    const handleClose = () => {
+        setOpenModal(false);
+        formSetter.setFee(prioritizationFee);
+        formSetter.clearFeeError();
+    }
 
     return (
         <Modal
             open={openModal}
-            onClose={() => setOpenModal(false)}
+            onClose={handleClose}
             size="small"
             trigger={
                 <Menu.Item name='add-prioritization-fee' onClick={() => setOpenModal(true)}>
@@ -54,7 +60,7 @@ export default function AddEditPrioritizationFeeModal() {
 
                                 <Form.Input
                                     id='Fee'
-                                    label='Fee'
+                                    label='MadNet Bytes Fee'
                                     required
                                     value={formState.Fee.value}
                                     onChange={e => formSetter.setFee(e.target.value)}
@@ -73,7 +79,7 @@ export default function AddEditPrioritizationFeeModal() {
 
             <Modal.Actions className="flex justify-between">
 
-                <Button color="orange" className="m-0" basic onClick={() => setOpenModal(false)} content="Close"/>
+                <Button color="orange" className="m-0" basic onClick={handleClose} content="Close"/>
 
                 <Button
                     icon={<Icon name='chain'/>}
