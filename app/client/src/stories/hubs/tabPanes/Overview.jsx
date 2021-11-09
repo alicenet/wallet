@@ -61,7 +61,7 @@ export default function Overview({ wallet }) {
     }
 
     return (
-        <Grid className="segment flex flex-col justify-start bg-white break-all text-sm m-0 p-4 text-gray-700 border-solid border border-gray-300 rounded-b border-t-0 rounded-tr">
+        <Grid className="segment flex flex-col justify-start bg-white break-all text-sm m-0 p-4 text-gray-700 border-solid border border-gray-300 border-t-0 rounded-tl-none rounded-tr-none ">
 
             <Grid.Row>
 

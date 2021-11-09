@@ -81,7 +81,6 @@ export const safeJsonParse = (str) => {
  * @returns 
  */
 export function hexToUtf8Str(hexString) {
-    console.log(hexString)
     let parsed = false;
     try {
         parsed = decodeURIComponent(

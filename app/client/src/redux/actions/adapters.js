@@ -1,4 +1,4 @@
-import { ADAPTER_ACTION_TYPES, VAULT_ACTION_TYPES } from '../constants/_constants';
+import { ADAPTER_ACTION_TYPES, TRANSACTION_ACTION_TYPES, VAULT_ACTION_TYPES } from '../constants/_constants';
 import web3Adapter from 'adapters/web3Adapter';
 import { default_log as log } from 'log/logHelper';
 import madNetAdapter from 'adapters/madAdapter';
@@ -273,12 +273,16 @@ export const sendTransactionReducerTXs = () => {
         preppedTxObjs.forEach(tx => {
             madNetAdapter.addTxOut(tx);
         })
+
+        console.debug("MadNetAdapter TxOuts pending: ", madNetAdapter.txOuts);
         
         let tx = await madNetAdapter.createTx();
 
         // Set latest tx to lastSentAndMinedTx in transaction reducer
         dispatch(TRANSACTION_ACTIONS.setLastSentAndMinedTx(tx)) 
         dispatch(TRANSACTION_ACTIONS.toggleStatus());
+        // Reset last received lastSentTxHash for next cycle
+        dispatch({type: TRANSACTION_ACTION_TYPES.SET_LAST_SENT_TX_HASH, payload: ""});
 
         return tx;
     }
