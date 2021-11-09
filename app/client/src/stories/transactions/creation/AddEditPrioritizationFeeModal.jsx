@@ -12,7 +12,7 @@ export default function AddEditPrioritizationFeeModal() {
     const [openModal, setOpenModal] = React.useState(false)
 
     const { prioritizationFee } = useSelector(state => ({
-        prioritizationFee: state.transaction.prioritizationFee,
+        prioritizationFee: state.transaction.fees.prioritizationFee,
     }));
 
     const handleSubmit = async () => {

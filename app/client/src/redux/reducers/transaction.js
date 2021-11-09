@@ -5,7 +5,11 @@ import utils, { transactionStatus } from 'util/_util';
 export const initialTransactionState = {
     status: transactionStatus.CREATION, //The status reflects the transaction workflow
     list: [], //The list of transactions before being sent to the chain
-    prioritizationFee: 0,
+    fees: {
+        prioritizationFee: 0,
+        dataStoreFee: 0,
+        valueStoreFee: 0,
+    },
     changeReturnAddress: null, //The address to which the change might be returned if any
     lastSentAndMinedTx: false, // Last mined tx data
     lastSentTxHash: "", // Last sent TX Hash -- Received from RPC - send-transaction on successful send -- Can be used to check pending TX
@@ -38,7 +42,7 @@ export default function transactionReducer(state = initialTransactionState, acti
         case TRANSACTION_ACTION_TYPES.SET_PRIORITIZATION_FEE:
             log.debug("Updating prioritization fee", action.payload);
             return Object.assign({}, state, {
-                prioritizationFee: action.payload,
+                fees: { ...state.fees, prioritizationFee: action.payload },
             });
 
         case TRANSACTION_ACTION_TYPES.ADD_TO_LIST:

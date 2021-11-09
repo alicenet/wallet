@@ -1,6 +1,6 @@
 import { VAULT_ACTION_TYPES } from '../constants/_constants';
 import { reduxState_logger as log } from 'log/logHelper'
-import { curveTypes } from '../../util/_util';
+import { curveTypes } from 'util/_util';
 
 /** 
  * This vault reducer contains all state regarding user wallets
