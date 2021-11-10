@@ -20,7 +20,7 @@ export default function OptOutSegment() {
     /* Vault       Functions  */
     ////////////////////////////
     const printMadWalletInstance = () => {
-        let madWallet = dispatch(VAULT_ACTIONS.getMadWallet());
+        dispatch(VAULT_ACTIONS.getMadWallet());
     }
 
     const addOptOutKeystore = async (keystoreJson, password) => {

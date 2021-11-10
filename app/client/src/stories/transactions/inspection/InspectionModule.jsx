@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Grid, Header, Table, Message, Label, Popup } from 'semantic-ui-react';
+import { Button, Grid, Header, Table, Message, Label } from 'semantic-ui-react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { TRANSACTION_ACTIONS } from 'redux/actions/_actions';
@@ -15,15 +15,9 @@ function InspectionModule() {
 
     const dispatch = useDispatch();
     const history = useHistory();
-    const [subFocus, setSubFocus] = React.useState([false, false]); // 0|1 vin/vout , vin||vout IDX position
 
     const [vinFocus, setVinFocus] = React.useState(0); // IDX of the focused VIN
     const [voutFocus, setVoutFocus] = React.useState(0); // IDX of the focused vOUT
-
-    // Anytime this component mounts, reset sub focus
-    React.useEffect(() => {
-        setSubFocus([false, false])
-    }, []) // eslint-disable-line
 
     let showBackButton = false; // Default false -- If state available from push show true
 
@@ -69,7 +63,7 @@ function InspectionModule() {
             getOwners();
         }
 
-    }, [])
+    }, []) // eslint-disable-line
 
     const PopupWithParsedValue = ({ value, isString }) => {
 
@@ -87,14 +81,6 @@ function InspectionModule() {
             </div>
         )
 
-        return (
-            <Popup trigger={<div className="cursor-pointer hover:bg-gray-100">{String(value)}</div>} offset="0,0" basic position="right center" size="mini"
-                className="flex text-xs p-1 px-2"
-                content={<div className="relative"><span className="font-bold">From Hex: </span>
-                    {isString ? utils.generic.hexToUtf8Str(value) : parseInt(value, 16)}
-                </div>}
-            />
-        )
     }
 
     /** Table view for TX VINs */
@@ -157,7 +143,7 @@ function InspectionModule() {
 
                 let value = focusVout[key];
 
-                if (skipKeys.indexOf(key) !== -1) { return }
+                if (skipKeys.indexOf(key) !== -1) { return null }
 
                 return (
                     <Table.Row key={`row-detail-${key}`}>

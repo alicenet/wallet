@@ -17,7 +17,10 @@ export default function VerifyImport() {
     const toLoad = history?.location?.state?.toLoad;
     // Local State
     const [potentialWallet, setPotentialWallet] = React.useState(false);
-    const [loading, setLoading] = React.useState('address');
+
+    const [addressLoading, setAddressLoading] = React.useState(false);
+    const [verifyLoading, setVerifyLoading] = React.useState(false);
+
     const [success, setSuccess] = React.useState(false);
     const [error, setError] = React.useState(false);
 
@@ -39,7 +42,7 @@ export default function VerifyImport() {
                 let ks = walletUtils.unlockKeystore(toLoad.locked, toLoad.password);
                 await tempMadWallet.Account.addAccount(ks.privateKey, ks.curve ? ks.curve : curveTypes.SECP256K1); // Default to secp
                 setPotentialWallet(tempMadWallet.Account.accounts[0]);
-                setLoading(false);
+                setAddressLoading(false);
             } catch (ex) {
                 log.error(ex);
                 setError("Unable to load and parse wallet, check log.")
@@ -57,13 +60,14 @@ export default function VerifyImport() {
     }, [success, history])
 
     const verify = async () => {
-        setLoading("verifying");
+        setVerifyLoading(true);
 
         let added = await dispatch(VAULT_ACTIONS.addExternalWalletToState(toLoad.locked, toLoad.password, toLoad.walletName));
 
+        setVerifyLoading(false);
+
         if (added.error) {
             log.error(added.error);
-            setLoading(false);
             return setError(added.error);
         }
 
@@ -94,7 +98,7 @@ export default function VerifyImport() {
                 <Grid.Column width={16} className="flex flex-auto flex-col items-center">
 
                     <div className="flex flex-row items-center">
-                        <span className="font-bold uppercase">Public Address: &nbsp; </span> {loading === "address" ? <Loader className="ml-4 " inline active size="mini" /> : potentialWallet.address}
+                        <span className="font-bold uppercase">Public Address: &nbsp; </span> {addressLoading ? <Loader className="ml-4 " inline active size="mini" /> : potentialWallet.address}
                     </div>
 
                 </Grid.Column>
@@ -102,7 +106,7 @@ export default function VerifyImport() {
                 <Grid.Column width={16} className="flex flex-auto flex-col items-center mt-8">
 
                     <div className="flex flex-col gap-2 w-72">
-                        <Button loading={loading === "verifying"} content={error ? "Try Again" : "Verify Import"} basic color={error ? "red" : "green"} size="small" onClick={verify} />
+                        <Button loading={verifyLoading} content={error ? "Try Again" : "Verify Import"} basic color={error ? "red" : "green"} size="small" onClick={verify} />
                         <Button content="Cancel" onClick={() => history.push('/addWallet/menu')} basic color="orange" size="small" />
                     </div>
 

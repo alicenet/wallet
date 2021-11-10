@@ -14,7 +14,8 @@ export default function FetchTxs() {
     const history = useHistory();
     const dispatch = useDispatch();
 
-    const [loading, setLoading] = React.useState(false);
+    const [hashFetchLoading, setHashFetchFetchLoading] = React.useState(false);
+
     const [txHashVal, setTxHashVal] = React.useState({ value: "", error: "" });
     const updateTxHashVal = (val) => setTxHashVal(s => ({ ...s, value: val }))
     const updateTxHashErr = (err) => setTxHashVal(s => ({ ...s, error: err }))
@@ -36,16 +37,15 @@ export default function FetchTxs() {
             return updateTxHashErr("Not a valid hash!")
         }
         updateTxHashErr("");
-        setLoading("hashSearch");
+        setHashFetchFetchLoading(true)
         let res;
         res = await madNetAdapter.viewTransaction(txHashVal.value)
+        setHashFetchFetchLoading(false);
         if (res.error) {
-            setLoading(false);
             return updateTxHashErr(res.error.message)
         }
         dispatch(TRANSACTION_ACTIONS.addPolledTx(res.tx));
         updateTxHashVal("");
-        setLoading(false);
     }
 
     const getTxTable = () => {
@@ -72,7 +72,7 @@ export default function FetchTxs() {
                 <Table.Cell>{tVal.toString()}</Table.Cell>
                 <Table.Cell>{txData.valueStoreCount}</Table.Cell>
                 <Table.Cell>{txData.dataStoreCount}</Table.Cell>
-                <Table.Cell textAlign="center" className="cursor-pointer hover:bg-gray-100" disabled={loading === "inspectFetch"}
+                <Table.Cell textAlign="center" className="cursor-pointer hover:bg-gray-100" disabled={hashFetchLoading}
                     onClick={() => inspectTx(tx.Tx)}>
                     <Icon name="search" />
                 </Table.Cell>
@@ -116,7 +116,6 @@ export default function FetchTxs() {
 
                     <div className="mb-2 items-center">
                         <Input
-                            fluid
                             size="mini"
                             className="mb-2"
                             placeholder="Lookup TX By Hash"
@@ -128,7 +127,7 @@ export default function FetchTxs() {
                                 size: "mini",
                                 onClick: viewTxHash,
                                 basic: true,
-                                loading: loading === "hashSearch"
+                                loading: hashFetchLoading
                             }} />
                     </div>
 
