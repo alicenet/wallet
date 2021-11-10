@@ -239,6 +239,26 @@ export function getWalletNameFromAddress(address) {
     return found;
 }
 
+// Returns true if the user has the corresponding wallet in the vault for a given public address
+export function userOwnsAddress(address) {
+    let walletState = store.getState().vault.wallets
+    let wallets = [...walletState.internal, ...walletState.external]
+    let owns = false;
+    wallets.forEach( w => {
+        if (w.address === address) {
+            owns = true;
+        }
+    })
+    return owns;
+}
+
+// Returns true if the sent address is the first address in the user's collections
+export function isPrimaryWalletAddress(address) {
+    let walletState = store.getState().vault.wallets
+    let wallets = [...walletState.internal, ...walletState.external]
+    return wallets[0].address === address;
+}
+
 export const curveTypes = {
     SECP256K1: 1,
     BARRETO_NAEHRIG: 2,

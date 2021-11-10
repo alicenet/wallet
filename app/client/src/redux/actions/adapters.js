@@ -5,8 +5,9 @@ import madNetAdapter from 'adapters/madAdapter';
 import { toast } from 'react-toastify';
 import { SyncToastMessageSuccess } from 'components/customToasts/CustomToasts';
 import { transactionTypes } from 'util/transaction';
-import { transactionUtils } from 'util/_util';
+import utils, { genericUtils, transactionUtils } from 'util/_util';
 import { TRANSACTION_ACTIONS } from './_actions';
+import { getMadWalletInstance } from 'redux/middleware/WalletManagerMiddleware';
 
 export const setWeb3Connected = (isConnected) => {
     return dispatch => {
@@ -107,7 +108,7 @@ export const initMadNet = (initConfig) => {
 
 // Single dispatch to call for initiating both Web3 and MadNet adapters after vault unlocking / wallet loads
 export const initAdapters = () => {
-    return async (dispatch) => {
+    return async (dispatch, getState) => {
         // TODO: Check both states -- throw different errors!
         let web3Connected = await dispatch(initWeb3({ preventToast: true })); // Attempt to init web3Adapter -- Adapter will handle error toasts
         let madConnected = await dispatch(initMadNet({ preventToast: true })); // Attempt to init madAdapter -- Adapter will handle error toasts
@@ -120,6 +121,9 @@ export const initAdapters = () => {
         }
         else if (web3Connected && madConnected) {
             toast.success(<SyncToastMessageSuccess basic message="MadNet & Web3 Connected" />, { className: "basic", "autoClose": 2400 })
+            // Refetch balance for primary wallet if it exists on success
+            let wallets = [...getState().vault.wallets.internal, ...getState().vault.wallets.external];
+            dispatch(getAndStoreLatestBalancesForAddress(wallets[0].address));
             return { success: true }
         } else {
             return {
@@ -240,10 +244,12 @@ export const getAndStoreRecentTXsForAddress = (address, curve) => {
         if (txs.length === 0) {
             txs = [false];
         }
-        dispatch({type: VAULT_ACTION_TYPES.UPDATE_RECENT_TXS_BY_ADDRESS, payload: {
-            address: address,
-            txs: txs,
-        }})
+        dispatch({
+            type: VAULT_ACTION_TYPES.UPDATE_RECENT_TXS_BY_ADDRESS, payload: {
+                address: address,
+                txs: txs,
+            }
+        })
         log.debug("Recent TXs fetched and updated to state for address: ", address)
         return true;
     }
@@ -256,14 +262,14 @@ export const sendTransactionReducerTXs = () => {
     return async (dispatch, getState) => {
         let txReducerTxs = getState().transaction.list;
         let preppedTxObjs = [] // Convert to proper tx format for madNetAdapter
-        txReducerTxs.forEach( (tx) => {
+        txReducerTxs.forEach((tx) => {
             if (tx.type === transactionTypes.DATA_STORE) {
                 preppedTxObjs.push(
                     transactionUtils.createDataStoreObject(tx.from, tx.key, tx.value, tx.duration)
                 );
             } else if (tx.type === transactionTypes.VALUE_STORE) {
                 preppedTxObjs.push(
-                    transactionUtils.createValueStoreObject(tx.from, tx.to, tx.value, false )
+                    transactionUtils.createValueStoreObject(tx.from, tx.to, tx.value, false)
                 );
             } else {
                 throw new Error("sendTransactionReducerTXs received incorrect txType of type: ", tx.type);
@@ -275,14 +281,42 @@ export const sendTransactionReducerTXs = () => {
         })
 
         console.debug("MadNetAdapter TxOuts pending: ", madNetAdapter.txOuts);
-        
+
         let tx = await madNetAdapter.createTx();
 
+        try {
+            // Grab any owners, and send to balance updater for those addresses
+            let txDatas = utils.transaction.parseRpcTxObject(tx.txDetails)
+            // Wrap in nested function to await within the context of this function only.
+            const sendForBalances = async (ownersToBalFetch) => {
+                // Give the network a few seconds to catch up after the success
+                await genericUtils.waitFor(3000, "PostTX:UpdateBal");
+                for (let i=0; i<ownersToBalFetch.length; i++) {
+                    let owner = ownersToBalFetch[i];
+                    await dispatch(getAndStoreLatestBalancesForAddress(owner));
+                    // await dispatch(getAndStoreRecentTXsForAddress(owner));
+                }
+            }
+
+            let owners = [];
+            const madWalletInstance = getMadWalletInstance();
+            for (let i = 0; i < txDatas.vouts.length; i++) {
+                let vout = txDatas.vouts[i];
+                let [n, n2, extractedOwner] = await madWalletInstance.Transaction.Utils.extractOwner(vout.owner); // n == not needed
+                if (utils.wallet.userOwnsAddress(extractedOwner)) {
+                    owners.push(extractedOwner);
+                }
+            }
+            sendForBalances(owners);
+        } catch (ex) {
+            log.error("Unable to parse returned tx for owners to aggregate balances. Did tx fail? -- Error: " + ex);
+        }
+
         // Set latest tx to lastSentAndMinedTx in transaction reducer
-        dispatch(TRANSACTION_ACTIONS.setLastSentAndMinedTx(tx)) 
+        dispatch(TRANSACTION_ACTIONS.setLastSentAndMinedTx(tx))
         dispatch(TRANSACTION_ACTIONS.toggleStatus());
         // Reset last received lastSentTxHash for next cycle
-        dispatch({type: TRANSACTION_ACTION_TYPES.SET_LAST_SENT_TX_HASH, payload: ""});
+        dispatch({ type: TRANSACTION_ACTION_TYPES.SET_LAST_SENT_TX_HASH, payload: "" });
 
         return tx;
     }
