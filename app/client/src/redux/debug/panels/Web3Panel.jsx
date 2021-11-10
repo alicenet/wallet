@@ -11,12 +11,13 @@ export default function Web3Panel() {
     const wallets = useSelector(s => s.vault.wallets);
     const [activeWallet, setActiveWallet] = React.useState(false);
 
-    const [loading, setLoading] = React.useState(false);
+    const [initLoading, setInitLoading] = React.useState(false);
+    const [accountLoading, setAccountLoading] = React.useState(false);
 
     const initWeb3Adapter = async () => {
-        setLoading("instance");
+        setInitLoading(true);
         await web3Adapter.__init();
-        setLoading(false);
+        setInitLoading(false);
     }
 
     const walletArrayToButtons = (walletArray, actionFunction) => {
@@ -29,9 +30,9 @@ export default function Web3Panel() {
     }
 
     const addWalletToWeb3Instance = async wallet => {
-        setLoading("activeAccount");
+        setAccountLoading(true);
         setActiveWallet(await web3Adapter.useAccount(wallet.privK));
-        setLoading(false);
+        setAccountLoading(false);
     };
 
     return (<>
@@ -57,7 +58,7 @@ export default function Web3Panel() {
                 </div>
                 <div>
                     <Button.Group size="mini">
-                        <DButton color={!web3AdapterState.connected ? "orange" : "purple"} loading={loading === "instance"}
+                        <DButton color={!web3AdapterState.connected ? "orange" : "purple"} loading={initLoading}
                             content={!web3AdapterState.connected ? "Init Web3 Adapter" : "Print web3Adapter Instance"}
                             onClick={!web3AdapterState.connected ? initWeb3Adapter : () => console.log(web3Adapter)} />
                     </Button.Group>
@@ -77,7 +78,7 @@ export default function Web3Panel() {
             </Button.Group>
             <Header as="h4">Active Wallet</Header>
             <div className="flex justify-between items-end">
-                {loading === "activeAccount" ? (
+                {accountLoading ? (
                     <Placeholder>Loading Account...</Placeholder>
                 ) : activeWallet ? (
                     <div>

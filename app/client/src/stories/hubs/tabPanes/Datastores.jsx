@@ -16,7 +16,7 @@ export default function Datastores({ wallet }) {
     const pageForward = () => setPage(s => s + 1);
     const pageBack = () => setPage(s => s - 1);
 
-    const [loading, setLoading] = React.useState(false);
+    const [fetchLoader, setFetchLoader] = React.useState(false);
     const [datastores, setDataStores] = React.useState([]);
     const [prevIndex, setPrevIndex] = React.useState("") // Use for previous page when available
     const [nextIndexToUse, setNextIndexToUse] = React.useState(""); // Use for next index in pagination -- Pulled from last of stack on data pull
@@ -26,13 +26,13 @@ export default function Datastores({ wallet }) {
     const [nextPageExists, setNextPageExists] = React.useState(false);
 
     const fetchDatastores = React.useCallback(async () => {
-        setLoading('fetching'); // Mark loading
+        setFetchLoader(true);
         // Set active page in adapter to 1
         madNetAdapter.setDsActivePage(1)
         // Set dataStoreSearch address to the active wallet to the current wallet address
         madNetAdapter.setDsSearchAddress(wallet.address);
         await getData();
-        setLoading(false);
+        setFetchLoader(false);
     }, [wallet, page, lastPage]);
 
     const getData = React.useCallback(async () => {
@@ -81,7 +81,7 @@ export default function Datastores({ wallet }) {
     }, [wallet, page, lastPage])
 
 
-    // Fetch the data stores on mount
+    // Fetch the data stores on mount and wallet/page changes
     React.useEffect(() => {
         // Reset page if wallet changes
         if (wallet.address !== lastWallet?.address) {
@@ -89,7 +89,6 @@ export default function Datastores({ wallet }) {
             setPrevIndex(false);
             setNextIndexToUse("");
         }
-        // Fetch data on wallet and page changes
         fetchDatastores();
     }, [wallet, page]);
 
@@ -144,9 +143,9 @@ export default function Datastores({ wallet }) {
     return (
         <Segment className="bg-white m-0 border-solid border border-gray-300 rounded-b border-t-0 rounded-tr-none rounded-tl-none">
 
-            {loading === "fetching" && <Loader size="large" active content="Searching for Datastores" className="text-sm text-gray-500" />}
+            {fetchLoader && <Loader size="large" active content="Searching for Datastores" className="text-sm text-gray-500" />}
 
-            {loading === false && datastores.length === 0 && (
+            {fetchLoader === false && datastores.length === 0 && (
                 <div className="flex justify-center items-center h-full">
                     <Header className="m-0 text-gray-500">
                         No datastores were found
@@ -154,9 +153,9 @@ export default function Datastores({ wallet }) {
                 </div>
             )}
 
-            {!loading && datastores.error && <Message content={datastores.error} error size="mini" />}
+            {!fetchLoader && datastores.error && <Message content={datastores.error} error size="mini" />}
 
-            {!loading && datastores.length > 0 && getDatastoreDisplay()}
+            {!fetchLoader && datastores.length > 0 && getDatastoreDisplay()}
 
         </Segment>
     );
