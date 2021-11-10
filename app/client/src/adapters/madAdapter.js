@@ -55,11 +55,18 @@ class MadNetAdapter {
 
         // DataStore explorer panel
         this.dsRedirected = this._handleReduxStateValue(["dataExplore", "redirected"]);
+        // Set default searchOpts
         this.dsSearchOpts = this._handleReduxStateValue(["dataExplore", "searchOpts"]);
+        this.dsSearchOpts.set({ "address": "", "offset": "", "bnCurve": false });
+        // Set default dataStores
         this.dsDataStores = this._handleReduxStateValue(["dataExplore", "dataStores"]);
+        this.dsDataStores.set([]);
+        // Set default activePage
         this.dsActivePage = this._handleReduxStateValue(["dataExplore", "activePage"]);
+        this.dsActivePage.set([]);
+        // Set default dsView
         this.dsView = this._handleReduxStateValue(["dataExplore", "dsView"]);
-
+        this.dsView.set([]);
     }
 
     /**
@@ -314,9 +321,11 @@ class MadNetAdapter {
             try {
                 switch (txOut.type) {
                     case "VS":
+                        log.debug("TxOut created as ValueStore: ", txOut);
                         await this.wallet().Transaction.createValueStore(txOut.fromAddress, txOut.value, txOut.toAddress, txOut.bnCurve ? curveTypes.BARRETO_NAEHRIG : curveTypes.SECP256K1)
                         break;;
                     case "DS":
+                        log.debug("TxOut created as DataStore: ", txOut);
                         await this.wallet().Transaction.createDataStore(txOut.fromAddress, txOut.index, txOut.duration, txOut.rawData)
                         break;;
                     default:
@@ -335,10 +344,8 @@ class MadNetAdapter {
 
     async sendTx() {
         try {
-            await this.wallet().Transaction._createTxIns(this.changeAddress.get()["address"], this.changeAddress.get()["bnCurve"])
-            await this.wallet().Transaction.Tx._createTx();
-            let tx = await this.wallet().Rpc.sendTransaction(this.wallet().Transaction.Tx.getTx())
-            await this.backOffRetry('sendTx', true)
+            let tx = await this.wallet().Transaction.sendTx(this.changeAddress.get()["address"], this.changeAddress.get()["bnCurve"]);
+            await this.backOffRetry('sendTx', true);
             this.pendingTx.set(tx);
             store.dispatch({ type: TRANSACTION_ACTION_TYPES.SET_LAST_SENT_TX_HASH, payload: tx });
             await this.pendingTxStatus.set("Pending TxHash: " + this.trimTxHash(tx));
@@ -350,7 +357,8 @@ class MadNetAdapter {
         }
         catch (ex) {
             await this.backOffRetry('sendTx')
-            if (this['sendTx-attempts'] > 5) {
+            if (this['sendTx-attempts'] > 2) {
+                // Clear txOuts on a final fail
                 this.txOuts.set([]);
                 this.changeAddress.set({});
                 await this.wallet().Transaction._reset();
@@ -378,10 +386,10 @@ class MadNetAdapter {
             if (this['pending-' + JSON.stringify(tx) + "-attempts"] > 30) {
                 this.pendingTx.set(false);
                 await this.backOffRetry('pending-' + JSON.stringify(tx), true)
-                return { error: ex.message, "txDetails": false, "txHash": tx.error? false : tx }
+                return { error: ex.message, "txDetails": false, "txHash": tx.error ? false : tx }
             }
             await this.sleep(this["pending-" + JSON.stringify(tx) + "-timeout"])
-            return await this.monitorPending(tx)
+            return await this.monitorPending()
         }
     }
 
@@ -593,6 +601,18 @@ class MadNetAdapter {
     setDsSearchOpts(searchOpts) {
         try {
             this.dsSearchOpts.set(searchOpts);
+            return true;
+        }
+        catch (ex) {
+            return { error: ex }
+        }
+    }
+
+    setDsSearchAddress(address) {
+        try {
+            let newOpts = { ...this.dsSearchOpts.get() };
+            newOpts.address = address;
+            this.dsSearchOpts.set(newOpts);
             return true;
         }
         catch (ex) {
