@@ -116,7 +116,6 @@ export default function FetchTxs() {
 
                     <div className="mb-2 items-center">
                         <Input
-                            fluid
                             size="mini"
                             className="mb-2"
                             placeholder="Lookup TX By Hash"

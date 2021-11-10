@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom';
 import Web3 from 'web3'
 
 import { ADAPTER_ACTIONS } from 'redux/actions/_actions';
-import { Button, Icon, Input, Loader, Segment, Table } from 'semantic-ui-react';
+import { Button, Icon, Loader, Segment, Table } from 'semantic-ui-react';
 import utils, { stringUtils } from 'util/_util';
 import copy from 'copy-to-clipboard';
 
@@ -20,7 +20,7 @@ export default function RecentTxs({ wallet }) {
     const recentTxData = utils.transaction.parseArrayOfTxObjs(recentTxs.length > 0 && recentTxs[0] !== false ? recentTxs : []);
 
     const fetchRecentTxs = React.useCallback(async () => {
-        setFetchLoading();
+        setFetchLoading(true);
         await dispatch(ADAPTER_ACTIONS.getAndStoreRecentTXsForAddress(wallet.address, wallet.curve));
         setFetchLoading(false);
     }, [wallet, dispatch]);
@@ -47,7 +47,7 @@ export default function RecentTxs({ wallet }) {
         if (recentTxs.length === 0) {
             fetchRecentTxs();
         }
-    }, [wallet, fetchRecentTxs])
+    }, [wallet, fetchRecentTxs, recentTxs.length])
 
     const getTxTable = () => {
 
