@@ -344,10 +344,8 @@ class MadNetAdapter {
 
     async sendTx() {
         try {
-            await this.wallet().Transaction._createTxIns(this.changeAddress.get()["address"], this.changeAddress.get()["bnCurve"])
-            await this.wallet().Transaction.Tx._createTx();
-            let tx = await this.wallet().Rpc.sendTransaction(this.wallet().Transaction.Tx.getTx())
-            await this.backOffRetry('sendTx', true)
+            let tx = await this.wallet().Transaction.sendTx(this.changeAddress.get()["address"], this.changeAddress.get()["bnCurve"]);
+            await this.backOffRetry('sendTx', true);
             this.pendingTx.set(tx);
             store.dispatch({ type: TRANSACTION_ACTION_TYPES.SET_LAST_SENT_TX_HASH, payload: tx });
             await this.pendingTxStatus.set("Pending TxHash: " + this.trimTxHash(tx));

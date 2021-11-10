@@ -21,7 +21,9 @@ export default function Datastores({ wallet }) {
     const [prevIndex, setPrevIndex] = React.useState("") // Use for previous page when available
     const [nextIndexToUse, setNextIndexToUse] = React.useState(""); // Use for next index in pagination -- Pulled from last of stack on data pull
 
-    const maxDataPerPage = 12; // Max Datastores per page
+    const maxDataPerPage = 5; // Max Datastores per page -- TODO: Adjust after final testing
+
+    const [nextPageExists, setNextPageExists] = React.useState(false);
 
     const fetchDatastores = React.useCallback(async () => {
         setLoading('fetching'); // Mark loading
@@ -43,24 +45,23 @@ export default function Datastores({ wallet }) {
 
         let indexToUse = dir === "forwards" ? nextIndexToUse : prevIndex;
 
-        console.log( {
-            page: page,
-            lastPage: lastPage,
-            dir: dir,
-            indexToUse: indexToUse,
-            prevIndex: prevIndex,
-            nextIndexToUse: nextIndexToUse,
-        })
-
         let madWalletInstance = getMadWalletInstance();
         let dsSearchOpts = madNetAdapter.dsSearchOpts.get();
         let foundStores = [];
-        for (let i = maxDataPerPage; i > 0; i--) {
+        for (let i = (maxDataPerPage + 1); i > 0; i--) {
             let attempt = await madWalletInstance.Rpc.getDataStoreUTXOIDs(dsSearchOpts["address"], (dsSearchOpts["bnCurve"] ? 2 : 1), i, indexToUse)
             if (attempt && attempt.length > 0) {
                 foundStores = attempt;
                 break;
             }
+        }
+        /// If found stores has length of +1 of maxDataPerPage we know the next page exists
+        // -- Additionally slice the +1 off for the UI so only the max per page is shown
+        if (foundStores.length > maxDataPerPage) {
+            setNextPageExists(true);
+            foundStores = foundStores.slice(0, foundStores.length - 1);
+        } else {
+            setNextPageExists(false);
         }
         if (foundStores.length === 0) { return setDataStores([]); }
         let UTXOIDS = [];
@@ -69,12 +70,11 @@ export default function Datastores({ wallet }) {
         }
         let DStores = await madWalletInstance.Rpc.getUTXOsByIds(UTXOIDS); // This returns [DS, VS, AS] stores respectively
         let dStores = DStores[0]; // Extract just the Datastore array
-        console.log(dStores);
         // Extract data from stores
         dStores = await utils.transaction.parseDsLinkers(dStores);
         // Set pagination indices
         setPrevIndex(page === 2 ? "" : indexToUse); // Set the just used index as the prev-index to use
-        setNextIndexToUse(dStores[dStores.length-1].index); // Set the next-index to the last element in the array
+        setNextIndexToUse(dStores[dStores.length - 1].index); // Set the next-index to the last element in the array
         // Set the data stores
         setDataStores(dStores);
 
@@ -109,9 +109,9 @@ export default function Datastores({ wallet }) {
             ))
         }
 
-        return (<div>
+        return (<div className="flex flex-col justify-between h-full">
 
-            <div>
+            <div className="">
                 <Table size="small" compact className="text-xs" color="blue">
 
                     <Table.Header>
@@ -133,7 +133,7 @@ export default function Datastores({ wallet }) {
                 <Button.Group size="mini" className="flex justify-between">
                     <Button content="Prev Page" onClick={pageBack} disabled={page === 1} />
                     <Button className="ml-2" content={"Page: " + page} onClick={() => console.log(datastores)} />
-                    <Button className="ml-2" content="Next Page" onClick={pageForward} />
+                    <Button className="ml-2" content="Next Page" disabled={!nextPageExists} onClick={pageForward} />
                 </Button.Group>
             </div>
 
@@ -154,10 +154,9 @@ export default function Datastores({ wallet }) {
                 </div>
             )}
 
-            {!loading && datastores.error && <Message content={datastores.error} error size="mini"/>}
+            {!loading && datastores.error && <Message content={datastores.error} error size="mini" />}
 
             {!loading && datastores.length > 0 && getDatastoreDisplay()}
-
 
         </Segment>
     );
