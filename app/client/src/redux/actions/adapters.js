@@ -316,7 +316,7 @@ export const sendTransactionReducerTXs = () => {
         }
 
         // Set latest tx to lastSentAndMinedTx in transaction reducer
-        dispatch(TRANSACTION_ACTIONS.setLastSentAndMinedTx(tx))
+        dispatch(TRANSACTION_ACTIONS.setLastSentAndMinedTx(tx));
         dispatch(TRANSACTION_ACTIONS.toggleStatus());
         // Reset last received lastSentTxHash for next cycle
         dispatch({ type: TRANSACTION_ACTION_TYPES.SET_LAST_SENT_TX_HASH, payload: "" });

@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import { VAULT_ACTIONS } from 'redux/actions/_actions';
 import { DButton } from '../../DebugPanel.jsx';
-import { classNames } from 'util/_util';
+import utils, { classNames } from 'util/_util';
 import GenerateKeystoreForm from 'components/keystore/GenerateKeystoreForm';
 
 /** 
@@ -118,6 +118,15 @@ export default function VaultSegment() {
             </Form>
 
             <Header as="h6" className="m-0 mt-2">{"Wallet<=>Vault State Verification"}</Header>
+
+            <div className="flex justify-between">
+                <DButton content="Check wallets[0] is owned" onClick={() => console.log(
+                    utils.wallet.userOwnsAddress([...vault.wallets.internal, ...vault.wallets.external][0].address)
+                )} />
+                <DButton content="Check wallets[0] is primary" onClick={() => console.log(
+                    utils.wallet.isPrimaryWalletAddress([...vault.wallets.internal, ...vault.wallets.external][0].address)
+                )} />
+            </div>
 
 
         </Segment>

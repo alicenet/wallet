@@ -219,7 +219,7 @@ export const strip0x = (pKeyOrAddress) => {
  * Accepts two strings of eth addresses, strips them of 0x prefix, and lowercases them
  * Returns true if both strings match
  */
- export function compareAddresses(address1, address2) {
+export function compareAddresses(address1, address2) {
     if (typeof address1 !== "string" || typeof address2 !== "string") { log.warn("Only strings should be passed to compareAddresses()."); return false; }
     let stripped1 = strip0x(address1).toLowerCase();
     let stripped2 = strip0x(address2).toLowerCase();
@@ -231,7 +231,7 @@ export function getWalletNameFromAddress(address) {
     let walletState = store.getState().vault.wallets
     let wallets = [...walletState.internal, ...walletState.external]
     let found = null;
-    wallets.forEach( w => {
+    wallets.forEach(w => {
         if (w.address === address) {
             found = w.name;
         }
@@ -243,11 +243,8 @@ export function getWalletNameFromAddress(address) {
 export function userOwnsAddress(address) {
     let walletState = store.getState().vault.wallets
     let wallets = [...walletState.internal, ...walletState.external]
-    let owns = false;
-    wallets.forEach( w => {
-        if (w.address === address) {
-            owns = true;
-        }
+    let owns = wallets.some( w => {
+        return w.address === address;
     })
     return owns;
 }
@@ -256,6 +253,7 @@ export function userOwnsAddress(address) {
 export function isPrimaryWalletAddress(address) {
     let walletState = store.getState().vault.wallets
     let wallets = [...walletState.internal, ...walletState.external]
+    if (wallets.length === 0) { return false };
     return wallets[0].address === address;
 }
 
