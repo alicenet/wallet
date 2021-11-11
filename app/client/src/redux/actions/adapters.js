@@ -123,7 +123,10 @@ export const initAdapters = () => {
             toast.success(<SyncToastMessageSuccess basic message="MadNet & Web3 Connected" />, { className: "basic", "autoClose": 2400 })
             // Refetch balance for primary wallet if it exists on success
             let wallets = [...getState().vault.wallets.internal, ...getState().vault.wallets.external];
-            dispatch(getAndStoreLatestBalancesForAddress(wallets[0].address));
+            if (wallets.length === 0) {
+                return { success: true }
+            }
+            dispatch(getAndStoreLatestBalancesForAddress(wallets[0]?.address));
             return { success: true }
         } else {
             return {
@@ -291,7 +294,7 @@ export const sendTransactionReducerTXs = () => {
             const sendForBalances = async (ownersToBalFetch) => {
                 // Give the network a few seconds to catch up after the success
                 await genericUtils.waitFor(3000, "PostTX:UpdateBal");
-                for (let i=0; i<ownersToBalFetch.length; i++) {
+                for (let i = 0; i < ownersToBalFetch.length; i++) {
                     let owner = ownersToBalFetch[i];
                     await dispatch(getAndStoreLatestBalancesForAddress(owner));
                     // await dispatch(getAndStoreRecentTXsForAddress(owner));
