@@ -120,7 +120,7 @@ function ConstructionModule() {
                                     <Icon name="currency" className="text-gray-600"/>Add Value Store
                                 </Menu.Item>
 
-                                {/* <AddEditPrioritizationFeeModal/> */}
+                                <AddEditPrioritizationFeeModal/>
 
                             </Menu>
 
@@ -243,13 +243,13 @@ function ConstructionModule() {
 
                         <Grid.Column width={4} className="p-0 flex flex-col justify-end item">
 
-                            {/* <Container>
+                            <Container>
 
                                 <TxFeesDisplay feesLabel="Prioritization Fee" feesAmount={fees.prioritizationFee}/>
                                 <TxFeesDisplay feesLabel="Txs Fees" feesAmount={txsFees}/>
                                 <TxFeesDisplay feesLabel="Total Fees" feesAmount={parseInt(fees.prioritizationFee, 10) + txsFees}/>
 
-                            </Container> */}
+                            </Container>
 
                             <Button color="teal" content='Send Transaction' disabled={isEmpty(list)} onClick={handleSendTransaction} className="m-0"/>
 
