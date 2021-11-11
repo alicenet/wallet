@@ -7,6 +7,7 @@ import { ADAPTER_ACTIONS } from 'redux/actions/_actions';
 import { Button, Icon, Loader, Popup, Segment, Table } from 'semantic-ui-react';
 import utils, { stringUtils } from 'util/_util';
 import copy from 'copy-to-clipboard';
+import log from 'loglevel';
 
 export default function RecentTxs({ wallet }) {
 

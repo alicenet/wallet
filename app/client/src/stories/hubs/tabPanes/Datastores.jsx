@@ -6,6 +6,7 @@ import utils from 'util/_util';
 import usePrevious from 'hooks/usePrevious';
 import { useHistory } from 'react-router';
 import copy from 'copy-to-clipboard';
+import { default_log as log } from 'log/logHelper';
 
 export default function Datastores({ wallet }) {
 
@@ -23,7 +24,7 @@ export default function Datastores({ wallet }) {
     const [prevIndex, setPrevIndex] = React.useState("") // Use for previous page when available
     const [nextIndexToUse, setNextIndexToUse] = React.useState(""); // Use for next index in pagination -- Pulled from last of stack on data pull
 
-    const maxDataPerPage = 5; // Max Datastores per page -- TODO: Adjust after final testing
+    const maxDataPerPage = 15; // Max Datastores per page -- TODO: Adjust after final testing
 
     const [nextPageExists, setNextPageExists] = React.useState(false);
 
@@ -128,7 +129,7 @@ export default function Datastores({ wallet }) {
                     <Table.Cell content={parseInt(dstore.deposit, 16)} />
                     <Table.Cell content={utils.generic.hexToUtf8Str(dstore.index)} />
                     <Table.Cell content={utils.generic.hexToUtf8Str(dstore.value)} />
-                    <Table.Cell className="cursor-pointer hover:text-gray-400 hover:bg-gray-100 text-center"  content={<Icon name="search" loading={loadingTx} onClick={() => inspectTx(dstore)} />} />
+                    <Table.Cell className="cursor-pointer hover:bg-gray-100 text-center" onClick={() => inspectTx(dstore)} content={<Icon name="search" loading={loadingTx} />} />
                 </Table.Row>
             ))
         }
