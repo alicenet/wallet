@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container } from 'semantic-ui-react';
-import { Router, Route, Switch } from 'react-router-dom';
+import { MemoryRouter as Router, Route, Switch } from 'react-router-dom';
 import DebugPanel, { handleDebugListener } from 'redux/debug/DebugPanel';
 import { ToastContainer } from 'react-toastify';
 import { history } from 'history/history';

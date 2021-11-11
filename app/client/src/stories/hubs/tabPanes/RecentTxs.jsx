@@ -4,9 +4,10 @@ import { useHistory } from 'react-router-dom';
 import Web3 from 'web3'
 
 import { ADAPTER_ACTIONS } from 'redux/actions/_actions';
-import { Button, Icon, Loader, Segment, Table } from 'semantic-ui-react';
+import { Button, Icon, Loader, Popup, Segment, Table } from 'semantic-ui-react';
 import utils, { stringUtils } from 'util/_util';
 import copy from 'copy-to-clipboard';
+import log from 'loglevel';
 
 export default function RecentTxs({ wallet }) {
 
@@ -65,9 +66,16 @@ export default function RecentTxs({ wallet }) {
             })
 
             return (<Table.Row className="">
-                <Table.Cell className="cursor-pointer hover:bg-gray-100" onClick={() => copy(tx["Tx"]["Vin"][0]["TXInLinker"].TxHash)}>
-                    {stringUtils.splitStringWithEllipsis(tx["Tx"]["Vin"][0]["TXInLinker"].TxHash, "10")}
-                </Table.Cell>
+                <Popup
+                    trigger={
+                        <Table.Cell className="cursor-pointer hover:bg-gray-100" onClick={() => copy(tx["Tx"]["Vin"][0]["TXInLinker"].TxHash, {message: 'Press #{key} to copy'})}>
+                            {stringUtils.splitStringWithEllipsis(tx["Tx"]["Vin"][0]["TXInLinker"].TxHash, "10")}
+                        </Table.Cell>
+                    }
+                    size="mini"
+                    content="Click to copy complete hash"
+                    position="left center"
+                />
                 <Table.Cell>{tx["Tx"]["Vin"].length}</Table.Cell>
                 <Table.Cell>{tx["Tx"]["Vout"].length}</Table.Cell>
                 <Table.Cell>{tVal.toString()}</Table.Cell>
@@ -81,7 +89,7 @@ export default function RecentTxs({ wallet }) {
         })
 
         return (
-            <Table basic celled compact className="text-xs">
+            <Table basic celled compact className="text-xs" color="blue">
                 <Table.Header fullWidth>
                     <Table.HeaderCell>TX Hash</Table.HeaderCell>
                     <Table.HeaderCell>VINs</Table.HeaderCell>
@@ -102,7 +110,8 @@ export default function RecentTxs({ wallet }) {
     return (
         <Segment className="flex flex-col justify-center bg-white m-0 border-solid border border-gray-300 rounded-b border-t-0 rounded-tr-none rounded-tl-none">
             {fetchLoading && <Loader active size="large" content="Searching For TXs" className="text-sm text-gray-500" />}
-            {fetchLoading && recentTxs?.length > 0 && recentTxs[0] !== false && (<>
+
+            {!fetchLoading && (recentTxs?.length > 0) && (recentTxs[0] !== false) && (<>
 
                 <div className="flex flex-col justify-between h-full">
 
@@ -115,7 +124,7 @@ export default function RecentTxs({ wallet }) {
                         <div className="text-xs">{activePage + 1} / {totalPages} </div>
                         <Button.Group size="mini">
                             <Button content="Refresh" size="mini" onClick={fetchRecentTxs} />
-                            <Button.Or/>
+                            <Button.Or />
                             <Button disabled={activePage >= totalPages - 1} content="Next" onClick={pageForward} />
                         </Button.Group>
                     </div>

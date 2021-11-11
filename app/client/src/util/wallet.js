@@ -219,7 +219,7 @@ export const strip0x = (pKeyOrAddress) => {
  * Accepts two strings of eth addresses, strips them of 0x prefix, and lowercases them
  * Returns true if both strings match
  */
- export function compareAddresses(address1, address2) {
+export function compareAddresses(address1, address2) {
     if (typeof address1 !== "string" || typeof address2 !== "string") { log.warn("Only strings should be passed to compareAddresses()."); return false; }
     let stripped1 = strip0x(address1).toLowerCase();
     let stripped2 = strip0x(address2).toLowerCase();
@@ -231,12 +231,30 @@ export function getWalletNameFromAddress(address) {
     let walletState = store.getState().vault.wallets
     let wallets = [...walletState.internal, ...walletState.external]
     let found = null;
-    wallets.forEach( w => {
+    wallets.forEach(w => {
         if (w.address === address) {
             found = w.name;
         }
     })
     return found;
+}
+
+// Returns true if the user has the corresponding wallet in the vault for a given public address
+export function userOwnsAddress(address) {
+    let walletState = store.getState().vault.wallets
+    let wallets = [...walletState.internal, ...walletState.external]
+    let owns = wallets.some( w => {
+        return w.address === address;
+    })
+    return owns;
+}
+
+// Returns true if the sent address is the first address in the user's collections
+export function isPrimaryWalletAddress(address) {
+    let walletState = store.getState().vault.wallets
+    let wallets = [...walletState.internal, ...walletState.external]
+    if (wallets.length === 0) { return false };
+    return wallets[0].address === address;
 }
 
 export const curveTypes = {

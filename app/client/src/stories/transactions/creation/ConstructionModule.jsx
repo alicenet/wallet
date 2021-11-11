@@ -241,7 +241,7 @@ function ConstructionModule() {
 
                         </Grid.Column>
 
-                        <Grid.Column width={4} className="p-0 flex flex-col justify-between item">
+                        <Grid.Column width={4} className="p-0 flex flex-col justify-end item">
 
                             <Container>
 

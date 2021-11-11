@@ -1,10 +1,12 @@
 import React from 'react';
-import { Button, Header, Icon, Loader, Message, Segment, Table } from 'semantic-ui-react';
+import { Button, Header, Icon, Loader, Message, Popup, Segment, Table } from 'semantic-ui-react';
 import madNetAdapter from 'adapters/madAdapter';
 import { getMadWalletInstance } from 'redux/middleware/WalletManagerMiddleware';
 import utils from 'util/_util';
 import usePrevious from 'hooks/usePrevious';
 import { useHistory } from 'react-router';
+import copy from 'copy-to-clipboard';
+import { default_log as log } from 'log/logHelper';
 
 export default function Datastores({ wallet }) {
 
@@ -22,7 +24,7 @@ export default function Datastores({ wallet }) {
     const [prevIndex, setPrevIndex] = React.useState("") // Use for previous page when available
     const [nextIndexToUse, setNextIndexToUse] = React.useState(""); // Use for next index in pagination -- Pulled from last of stack on data pull
 
-    const maxDataPerPage = 5; // Max Datastores per page -- TODO: Adjust after final testing
+    const maxDataPerPage = 15; // Max Datastores per page -- TODO: Adjust after final testing
 
     const [nextPageExists, setNextPageExists] = React.useState(false);
 
@@ -110,14 +112,24 @@ export default function Datastores({ wallet }) {
         const getRows = () => {
             return datastores.map(dstore => (
                 <Table.Row>
-                    <Table.Cell content={utils.string.splitStringWithEllipsis(dstore.txHash, 5)} />
+                    <Popup
+                        trigger={
+                            <Table.Cell className="cursor-pointer hover:bg-gray-100" 
+                                content={utils.string.splitStringWithEllipsis(dstore.txHash, 5)} 
+                                onClick={() => copy(dstore.txHash)}
+                            />
+                        }
+                        size="mini"
+                        content="Click to copy complete hash"
+                        position="left center"
+                    />
                     <Table.Cell content={dstore.issued} />
                     <Table.Cell content={dstore.expiry} />
                     <Table.Cell content={parseInt(dstore.fee, 16)} />
                     <Table.Cell content={parseInt(dstore.deposit, 16)} />
                     <Table.Cell content={utils.generic.hexToUtf8Str(dstore.index)} />
                     <Table.Cell content={utils.generic.hexToUtf8Str(dstore.value)} />
-                    <Table.Cell content={<Icon name="search" loading={loadingTx} className="cursor-pointer hover:text-gray-400" onClick={() => inspectTx(dstore)} />} />
+                    <Table.Cell className="cursor-pointer hover:bg-gray-100 text-center" onClick={() => inspectTx(dstore)} content={<Icon name="search" loading={loadingTx} />} />
                 </Table.Row>
             ))
         }
@@ -125,7 +137,7 @@ export default function Datastores({ wallet }) {
         return (<div className="flex flex-col justify-between h-full">
 
             <div className="">
-                <Table size="small" compact className="text-xs" color="blue">
+                <Table size="small" compact celled className="text-xs" color="blue">
 
                     <Table.Header>
                         <Table.HeaderCell>TxHash</Table.HeaderCell>
