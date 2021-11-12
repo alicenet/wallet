@@ -19,7 +19,7 @@ export default function NetworkStatusIndicator() {
     const web3Color = web3Busy ? "yellow" : web3Connected ? "green" : "red";
     const madColor = madBusy ? "yellow" : madConnected ? "green" : "red";
 
-    return vaultExists && (
+    return !vaultExists ? null : (
 
         <div className="flex flex-col absolute bottom-0.5 left-1 text-xs">
 
