@@ -114,8 +114,8 @@ export default function Datastores({ wallet }) {
                 <Table.Row>
                     <Popup
                         trigger={
-                            <Table.Cell className="cursor-pointer hover:bg-gray-100" 
-                                content={utils.string.splitStringWithEllipsis(dstore.txHash, 5)} 
+                            <Table.Cell className="cursor-pointer hover:bg-gray-100"
+                                content={utils.string.splitStringWithEllipsis(dstore.txHash, 5)}
                                 onClick={() => copy(dstore.txHash)}
                             />
                         }
@@ -155,12 +155,10 @@ export default function Datastores({ wallet }) {
                 </Table>
             </div>
 
-            <div className="mt-4">
-                <Button.Group size="mini" className="flex justify-between">
-                    <Button content="Prev Page" onClick={pageBack} disabled={page === 1} />
-                    <Button className="ml-2 cursor-default bg-gray-400 text-white" content={"Page " + page} />
-                    <Button className="ml-2" content="Next Page" disabled={!nextPageExists} onClick={pageForward} />
-                </Button.Group>
+            <div className="flex justify-between items-center">
+                <Button disabled={page === 1} icon="left chevron" size="mini" onClick={pageBack} />
+                <div className="text-xs text-gray-600">Page {page} </div>
+                <Button disabled={!nextPageExists} icon="right chevron" size="mini" onClick={pageForward} />
             </div>
 
         </div>)

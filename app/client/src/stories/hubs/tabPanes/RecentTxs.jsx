@@ -120,12 +120,12 @@ export default function RecentTxs({ wallet }) {
                     </div>
 
                     <div className="flex justify-between items-center">
-                        <Button disabled={activePage === 0} content="Back" size="mini" onClick={pageBackward} />
-                        <div className="text-xs">{activePage + 1} / {totalPages} </div>
+                        <Button disabled={activePage === 0} icon="chevron left" size="mini" onClick={pageBackward} />
+                        <div className="text-xs text-gray-600">Page {activePage + 1} of {totalPages} </div>
                         <Button.Group size="mini">
-                            <Button content="Refresh" size="mini" onClick={fetchRecentTxs} />
+                            <Button content icon="refresh" size="mini" onClick={fetchRecentTxs} />
                             <Button.Or />
-                            <Button disabled={activePage >= totalPages - 1} content="Next" onClick={pageForward} />
+                            <Button icon="chevron right" disabled={activePage >= totalPages - 1} onClick={pageForward} />
                         </Button.Group>
                     </div>
                 </div>
