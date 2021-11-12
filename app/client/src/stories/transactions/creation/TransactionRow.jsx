@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import utils, { transactionTypes } from 'util/_util';
 import { SyncToastMessageSuccess } from 'components/customToasts/CustomToasts';
 import { TRANSACTION_ACTIONS } from 'redux/actions/_actions';
+import copy from 'copy-to-clipboard';
 
 export default function TransactionRow({ transaction, index, onUpdate }) {
 
@@ -39,6 +40,16 @@ export default function TransactionRow({ transaction, index, onUpdate }) {
         );
     };
 
+    // Return blank row if transaction not available with minimum cell height set
+    if (!transaction) {
+        const cells = Array.from(Array(7).keys());
+        return (
+            <Table.Row>
+                {cells.map(a => (<Table.Cell content="" style={{height: "38px" }} />))}
+            </Table.Row>
+        )
+    }
+
     return (
         <Table.Row>
 
@@ -65,8 +76,8 @@ export default function TransactionRow({ transaction, index, onUpdate }) {
                 offset={"0,1"}
                 className="text-xs"
                 trigger={
-                    <Table.Cell className="py-0 px-2">
-                        {utils.string.splitStringWithEllipsis(transaction.to, 5)}
+                    <Table.Cell className="py-0 px-2 cursor-pointer" onClick={() => copy(transaction.to)}>
+                        {utils.string.splitStringWithEllipsis(transaction.to, 5)} ( Click To Copy )
                     </Table.Cell>
                 }
                 content={
