@@ -1,7 +1,9 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 
 import { useHistory } from 'react-router-dom';
+import { CONFIG_ACTIONS } from 'redux/actions/_actions';
 
 import { Button, Container, Grid, Header, Radio } from 'semantic-ui-react';
 
@@ -10,9 +12,34 @@ import Page from '../../layout/Page';
 function Settings() {
 
     const history = useHistory();
-    const { vaultExists } = useSelector(s => ({ vaultExists: s.vault.exists }));
+    const { vaultExists, initAdvancedFeaturesState, initHideGenericTooltipsState } = useSelector(s => ({
+        vaultExists: s.vault.exists,
+        initAdvancedFeaturesState: s.config.advanced_settings,
+        initHideGenericTooltipsState: s.config.hide_generic_tooltips,
+    }));
 
-    const [showAdvancedFeatures, setShowAdvancedFeatures] = React.useState(false);
+    const dispatch = useDispatch();
+
+    const [showAdvancedFeatures, setShowAdvancedFeatures] = React.useState(initAdvancedFeaturesState);
+    const [hideGenericTooltips, setHideGenericTooltips] = React.useState(initHideGenericTooltipsState);
+
+    const toggleAdvancedFeatures = () => {
+        setShowAdvancedFeatures(s => {
+            dispatch(CONFIG_ACTIONS.saveConfigurationValues({
+                enableAdvancedSettings: !s,
+            }));
+            return !s
+        });
+    }
+
+    const toggleHideGenericTooltips = () => {
+        setHideGenericTooltips(s => {
+            dispatch(CONFIG_ACTIONS.saveConfigurationValues({
+                hideGenericTooltips: !s,
+            }));
+            return !s
+        });
+    }
 
     return (
         <Page>
@@ -44,8 +71,12 @@ function Settings() {
 
                     <Container className="flex flex-col justify-center text-justify w-72 gap-5">
 
-                        <Radio label="Show Advanced Features" toggle color="purple" onChange={() => setShowAdvancedFeatures(prevState => !prevState)}
+                        <Radio label="Show Advanced Features" toggle color="purple" onChange={toggleAdvancedFeatures}
                             checked={showAdvancedFeatures} />
+                        <Radio disabled label="Dark Mode" toggle color="purple" className="hidden" />
+
+                        <Radio label="Hide Generic Tooltips" toggle color="purple" onChange={toggleHideGenericTooltips}
+                            checked={hideGenericTooltips} />
                         <Radio disabled label="Dark Mode" toggle color="purple" className="hidden" />
 
                     </Container>

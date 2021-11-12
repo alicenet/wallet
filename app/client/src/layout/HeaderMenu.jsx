@@ -19,6 +19,7 @@ function HeaderMenu({ showMenu }) {
     const history = useHistory();
     const dispatch = useDispatch();
     const location = useLocation();
+    const { hideGenericTooltips } = useSelector(state => ({ hideGenericTooltips: state.config.hide_generic_tooltips }))
     const pathname = location.pathname;
 
     const [lockIcon, setLockIcon] = React.useState("unlock");
@@ -96,18 +97,18 @@ function HeaderMenu({ showMenu }) {
 
                     {
                         !vaultLocked && !pathIsLockExempt() &&
-                        <Popup size="mini"
+                        <Popup size="mini" disabled={hideGenericTooltips}
                             content="Lock Vault"
                             position="right center"
                             offset="0, -4"
                             trigger={
-                                <Menu.Item as='a' header onClick={() => dispatch(VAULT_ACTIONS.lockVault())} className="px-3 hover:bg-transparent">
+                                <Menu.Item as='a' header onClick={() => dispatch(VAULT_ACTIONS.lockVault())} className="group px-3 hover:bg-transparent">
 
                                     <Icon
                                         onMouseEnter={() => setLockIcon("lock")}
                                         onMouseLeave={() => setLockIcon("unlock")}
                                         name={lockIcon}
-                                        className="transform duration-300 rotate-12 hover:rotate-0"
+                                        className="transform duration-300 rotate-12 group-hover:rotate-0"
                                     />
 
                                 </Menu.Item>
@@ -117,14 +118,14 @@ function HeaderMenu({ showMenu }) {
                     }
 
                     {
-                        existingAccount &&
-                        <Popup size="mini"
+                        existingAccount && !vaultLocked &&
+                        <Popup size="mini" disabled={hideGenericTooltips}
                             content="Open Settings"
                             position="right center"
                             offset="0, -4"
                             trigger={
-                                <Menu.Item as='a' header onClick={() => history.push('/wallet/settings')} className="px-3 hover:bg-transparent">
-                                    <Icon name="cog" className="transform duration-300 hover:rotate-90" />
+                                <Menu.Item as='a' header onClick={() => history.push('/wallet/settings')} className="px-3 hover:bg-transparent group">
+                                    <Icon name="cog" className="transform duration-300 group-hover:rotate-90" />
                                 </Menu.Item>
                             }
                         />

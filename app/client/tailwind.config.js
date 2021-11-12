@@ -24,6 +24,7 @@ module.exports = {
     variants: {
         extend: {
             margin: ['last', 'first'],
+            rotate: ['group-hover'],
         },
     },
     plugins: [],

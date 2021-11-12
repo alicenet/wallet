@@ -7,6 +7,7 @@ export const initialConfigurationState = {
     mad_net_chainID: "66", // Chain ID to use on MadNet
     mad_net_provider: "https://testnet.edge.mnexplore.com/v1/", // MadNet API endpoint
     registry_contract_address: "0x70c43ed0989fc0f50772d6a949cb0470753ae486", // Contract address for Registry Contract
+    advanced_settings: false,
 }
 
 /* Modal Reducer */
@@ -21,6 +22,8 @@ export default function configurationReducer(state = initialConfigurationState, 
                 mad_net_provider: initialConfigurationState.mad_net_provider,
                 ethereum_provider: initialConfigurationState.ethereum_provider,
                 registry_contract_address: initialConfigurationState.registry_contract_address,
+                advanced_settings: initialConfigurationState.advanced_settings,
+                hide_generic_tooltips: initialConfigurationState.hide_generic_tooltips,
             });
 
         case CONFIG_ACTION_TYPES.SAVE_CONFIGURATION:
@@ -30,6 +33,8 @@ export default function configurationReducer(state = initialConfigurationState, 
                 mad_net_provider: action.payload.mad_net_provider,
                 ethereum_provider: action.payload.ethereum_provider,
                 registry_contract_address: action.payload.registry_contract_address,
+                advanced_settings: action.payload.advanced_settings,
+                hide_generic_tooltips: action.payload.hide_generic_tooltips,
             });
 
         default:

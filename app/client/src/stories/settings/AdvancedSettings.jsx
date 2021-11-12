@@ -31,14 +31,13 @@ function AdvancedSettings() {
     ]);
 
     const handleSubmit = async () => {
-        
+
         dispatch(INTERFACE_ACTIONS.toggleGlobalLoadingBool(true));
-        const result = await dispatch(CONFIG_ACTIONS.saveConfigurationValues(
-            false,
-            formState.MadNetProvider.value,
-            formState.EthereumProvider.value,
-            formState.RegistryContractAddress.value
-        ));
+        const result = await dispatch(CONFIG_ACTIONS.saveConfigurationValues({
+            madNetProvider: formState.MadNetProvider.value,
+            ethProvider: formState.EthereumProvider.value,
+            registryContractAddress: formState.RegistryContractAddress.value
+        }));
 
         if (result.error) {
             notifyError('There was an error while saving changes');
@@ -49,12 +48,12 @@ function AdvancedSettings() {
     };
 
     const notifyError = message => {
-        toast.error(<SyncToastMessageWarning title="Error" message={message}/>, { autoClose: 2000 });
+        toast.error(<SyncToastMessageWarning title="Error" message={message} />, { autoClose: 2000 });
         dispatch(INTERFACE_ACTIONS.toggleGlobalLoadingBool(false));
     };
 
     const notifySuccess = message => {
-        toast.success(<SyncToastMessageSuccess title="Success" message={message}/>, { autoClose: 1000 });
+        toast.success(<SyncToastMessageSuccess title="Success" message={message} />, { autoClose: 1000 });
         dispatch(INTERFACE_ACTIONS.toggleGlobalLoadingBool(false));
     };
 
@@ -77,7 +76,7 @@ function AdvancedSettings() {
 
                 <Grid.Column width={16} className="p-0 self-center">
 
-                    <Header content="Advanced Settings" as="h3" className="m-0"/>
+                    <Header content="Advanced Settings" as="h3" className="m-0" />
 
                 </Grid.Column>
 
@@ -125,7 +124,7 @@ function AdvancedSettings() {
 
                         <div>
 
-                            <Button color="orange" basic content="Go Back" className="m-0" onClick={history.goBack}/>
+                            <Button color="orange" basic content="Go Back" className="m-0" onClick={history.goBack} />
 
                         </div>
 
@@ -133,12 +132,12 @@ function AdvancedSettings() {
 
                             <Button.Group>
 
-                                <Button disabled={loading} color="purple" icon="save" basic content="Save" className="m-0" onClick={() => onSubmit(handleSubmit)}/>
+                                <Button disabled={loading} color="purple" icon="save" basic content="Save" className="m-0" onClick={() => onSubmit(handleSubmit)} />
 
-                                <Button.Or className="w-0 self-center text-sm"/>
+                                <Button.Or className="w-0 self-center text-sm" />
 
                                 <Button disabled={loading} color="purple" icon="undo alternate" basic content="Load Defaults" className="m-0"
-                                        onClick={handleLoadDefaultValues}/>
+                                    onClick={handleLoadDefaultValues} />
 
                             </Button.Group>
 
