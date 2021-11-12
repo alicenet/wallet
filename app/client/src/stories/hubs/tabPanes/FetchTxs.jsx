@@ -144,9 +144,9 @@ export default function FetchTxs() {
                 </div>
 
                 <div className="flex justify-between items-center">
-                    <Button disabled={activePage === 0} content="Back" size="mini" onClick={pageBackward} />
-                    <div className="text-xs">{activePage + 1} / {totalPages} </div>
-                    <Button disabled={activePage >= totalPages - 1} content="Next" size="mini" onClick={pageForward} />
+                    <Button disabled={activePage === 0} icon="left chevron" size="mini" onClick={pageBackward} />
+                    <div className="text-xs text-gray-600">Page {activePage + 1} of {totalPages} </div>
+                    <Button disabled={activePage >= totalPages - 1} icon="right chevron" size="mini" onClick={pageForward} />
                 </div>
             </div>
 

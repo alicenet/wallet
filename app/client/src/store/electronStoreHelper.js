@@ -293,6 +293,8 @@ function storeConfigurationValues(configValues) {
         mad_net_provider: configValues.mad_net_provider,
         ethereum_provider: configValues.ethereum_provider,
         registry_contract_address: configValues.registry_contract_address,
+        advanced_settings: configValues.advanced_settings,
+        hide_generic_tooltips: configValues.hide_generic_tooltips,
     }
     writePlainValueToStore('configuration', updateObject);
 }

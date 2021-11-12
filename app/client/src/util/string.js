@@ -1,3 +1,5 @@
+import { upperFirst } from 'lodash';
+
 /**
  * Limit string length to limit, return as full limit length, where length through length -3 are ellipses
  * @param {string} str
@@ -30,4 +32,15 @@ export function splitStringWithEllipsis(str, lengthOnSides = 3) {
  */
 export function isTxHash(hash) {
     return /^([A-Fa-f0-9]{64})$/.test(hash);
+}
+
+/**
+ * Take a string with underscores as spaces as prettify it
+ * @param input - String to prettify
+ * @returns { String } 
+ */
+export function prettyifyUnderscoreKey(input) {
+    let keyString = input.split("_");
+    let keyWords = keyString.map(word => (upperFirst(word)));
+    return keyWords.join(" ");
 }

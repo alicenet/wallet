@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Container, Header, Icon, Image, Menu } from 'semantic-ui-react';
+import { Container, Header, Icon, Image, Menu, Popup } from 'semantic-ui-react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -19,6 +19,7 @@ function HeaderMenu({ showMenu }) {
     const history = useHistory();
     const dispatch = useDispatch();
     const location = useLocation();
+    const { hideGenericTooltips } = useSelector(state => ({ hideGenericTooltips: state.config.hide_generic_tooltips }))
     const pathname = location.pathname;
 
     const [lockIcon, setLockIcon] = React.useState("unlock");
@@ -71,11 +72,11 @@ function HeaderMenu({ showMenu }) {
 
                     <Container fluid className="flex flex-row items-center gap-4">
 
-                        <Image src={MadIcon} size="mini"/>
+                        <Image src={MadIcon} size="mini" />
 
                         <Container fluid>
 
-                            <Header content="MadWallet" as="h4"/>
+                            <Header content="MadWallet" as="h4" />
 
                         </Container>
 
@@ -86,8 +87,8 @@ function HeaderMenu({ showMenu }) {
                 <div className="flex">
 
                     {showMenu && existingAccount && (<>
-                        <MenuTabItem name="Wallets" activeId={tabPaneIndex.Wallets} gotoPath="/hub"/>
-                        <MenuTabItem name="Transactions" activeId={tabPaneIndex.Transactions} gotoPath="/transactions"/>
+                        <MenuTabItem name="Wallets" activeId={tabPaneIndex.Wallets} gotoPath="/hub" />
+                        <MenuTabItem name="Transactions" activeId={tabPaneIndex.Transactions} gotoPath="/transactions" />
                     </>)}
 
                 </div>
@@ -96,25 +97,39 @@ function HeaderMenu({ showMenu }) {
 
                     {
                         !vaultLocked && !pathIsLockExempt() &&
-                        <Menu.Item as='a' header onClick={() => dispatch(VAULT_ACTIONS.lockVault())} className="px-3 hover:bg-transparent">
+                        <Popup size="mini" disabled={hideGenericTooltips}
+                            content="Lock Vault"
+                            position="right center"
+                            offset="0, -4"
+                            trigger={
+                                <Menu.Item as='a' header onClick={() => dispatch(VAULT_ACTIONS.lockVault())} className="group px-3 hover:bg-transparent">
 
-                            <Icon
-                                onMouseEnter={() => setLockIcon("lock")}
-                                onMouseLeave={() => setLockIcon("unlock")}
-                                name={lockIcon}
-                                className="transform duration-300 rotate-12 hover:rotate-0"
-                            />
+                                    <Icon
+                                        onMouseEnter={() => setLockIcon("lock")}
+                                        onMouseLeave={() => setLockIcon("unlock")}
+                                        name={lockIcon}
+                                        className="transform duration-300 rotate-12 group-hover:rotate-0"
+                                    />
 
-                        </Menu.Item>
+                                </Menu.Item>
+                            }
+
+                        />
                     }
 
                     {
-                        existingAccount &&
-                        <Menu.Item as='a' header onClick={() => history.push('/wallet/settings')} className="px-3 hover:bg-transparent">
+                        existingAccount && !vaultLocked &&
+                        <Popup size="mini" disabled={hideGenericTooltips}
+                            content="Open Settings"
+                            position="right center"
+                            offset="0, -4"
+                            trigger={
+                                <Menu.Item as='a' header onClick={() => history.push('/wallet/settings')} className="px-3 hover:bg-transparent group">
+                                    <Icon name="cog" className="transform duration-300 group-hover:rotate-90" />
+                                </Menu.Item>
+                            }
+                        />
 
-                            <Icon name="cog" className="transform duration-300 hover:rotate-90"/>
-
-                        </Menu.Item>
                     }
 
                 </div>

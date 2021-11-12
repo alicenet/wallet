@@ -93,4 +93,14 @@ export function hexToUtf8Str(hexString) {
     return parsed
 }
 
+/**
+ * Safely return the input if it is not undefined, or return the fallback value
+ * Useful for avoding issues with boolean equality checks
+ * @param {*} input - The value to check for typeof undefined
+ * @param {*} fallback  - If input === "undefined" this value with be returned
+ */
+export function useFallbackValueForUndefinedInput(input, fallback) {
+    return typeof input === "undefined" ? fallback : input;
+}
+
 export const isDebug = process.env.REACT_APP_DEBUG === "TRUE";

@@ -14,7 +14,7 @@ import AddEditValueStoreModal from './AddEditValueStoreModal';
 import ChangeReturnAddress from './ChangeReturnAddress';
 import Page from 'layout/Page';
 
-const recordsPerPage = 4;
+const recordsPerPage = 5;
 
 function ConstructionModule() {
 
@@ -36,7 +36,23 @@ function ConstructionModule() {
     const [paginatedList, setPaginatedList] = useState([]);
     const [changeReturnAddress, setChangeReturnAddress] = useState(false);
 
-    const handlePaginationChange = (e, { activePage }) => setActivePage(activePage);
+    const totalPages = Math.ceil(list.length / 5);
+    const nextAvailable = (activePage + 1) <= totalPages;
+    const prevAvailable = (activePage - 1) !== 0;
+
+
+    const handlePaginationChange = (direction) => {
+        if (direction === "back") {
+            if (prevAvailable) {
+                setActivePage(state => state - 1);
+            }
+        }
+        else if (direction === "forward") {
+            if (nextAvailable) {
+                setActivePage(state => state + 1);
+            }
+        }
+    }
 
     const handleSendTransaction = async () => {
         // Send the TX via the main tx action -- Just fire it off, latest TX will appear in transaction reducer as lastSentAndMinedTx
@@ -59,6 +75,12 @@ function ConstructionModule() {
             const chunks = chunk(list, recordsPerPage);
             const result = chunks[activePage - 1];
             if (result) {
+                if (result.length < 5) {
+                    // Pad in empty rows to prevent height jump -- parse false as empty rows below
+                    while (result.length < 5) {
+                        result.push(false)
+                    }
+                }
                 setPaginatedList(result);
             }
             else {
@@ -99,7 +121,7 @@ function ConstructionModule() {
 
                                     <div className="cursor-pointer text-blue-400 hover:text-blue-500 flex items-center text-xl gap-2">
                                         <div className="m-0 font-bold">How to construct a transaction</div>
-                                        <Icon size="small" name="question circle" className="m-0 cursor-pointer"/>
+                                        <Icon size="small" name="question circle" className="m-0 cursor-pointer" />
                                     </div>
 
                                 </Container>
@@ -113,14 +135,14 @@ function ConstructionModule() {
                             <Menu compact icon='labeled' size="small">
 
                                 <Menu.Item name='add-data-store' onClick={() => setDataStore(emptyDataStore)}>
-                                    <Icon name="chart bar" className="text-gray-600"/>Add Data Store
+                                    <Icon name="chart bar" className="text-gray-600" />Add Data Store
                                 </Menu.Item>
 
                                 <Menu.Item name='add-value-store' onClick={() => setValueStore(emptyValueStore)}>
-                                    <Icon name="currency" className="text-gray-600"/>Add Value Store
+                                    <Icon name="currency" className="text-gray-600" />Add Value Store
                                 </Menu.Item>
 
-                                <AddEditPrioritizationFeeModal/>
+                                <AddEditPrioritizationFeeModal />
 
                             </Menu>
 
@@ -184,19 +206,16 @@ function ConstructionModule() {
 
                                     <Table.Row textAlign="right">
 
-                                        <Table.HeaderCell colSpan={7} className="p-0">
+                                        <Table.HeaderCell colSpan={7} width={16} textAlign="right" className="p-2">
 
-                                            <Pagination
-                                                activePage={activePage}
-                                                onPageChange={handlePaginationChange}
-                                                boundaryRange={0}
-                                                ellipsisItem={null}
-                                                firstItem={null}
-                                                lastItem={null}
-                                                siblingRange={1}
-                                                totalPages={Math.ceil(list.length / recordsPerPage)}
-                                                size='mini'
-                                            />
+                                            <div className="flex w-full justify-between items-center">
+                                                <Button disabled={!prevAvailable} icon="chevron left" size="mini" onClick={() => handlePaginationChange("back")} />
+                                                <div className="text-gray-500">
+                                                    Page {activePage} of {totalPages}
+                                                </div>
+                                                <Button disabled={!nextAvailable} icon="chevron right" size="mini" onClick={() => handlePaginationChange("forward")} />
+                                            </div>
+
 
                                         </Table.HeaderCell>
 
@@ -210,9 +229,9 @@ function ConstructionModule() {
 
                     </Grid.Row>
 
-                    {dataStore && <AddEditDataStoreModal dataStore={dataStore} onClose={() => setDataStore(null)}/>}
+                    {dataStore && <AddEditDataStoreModal dataStore={dataStore} onClose={() => setDataStore(null)} />}
 
-                    {valueStore && <AddEditValueStoreModal valueStore={valueStore} onClose={() => setValueStore(null)}/>}
+                    {valueStore && <AddEditValueStoreModal valueStore={valueStore} onClose={() => setValueStore(null)} />}
 
                     <Grid.Row>
 
@@ -230,28 +249,28 @@ function ConstructionModule() {
                                         />
                                     </label>
                                 </div>
-                                <div className="text-sm">Your change address is where remaining UTXOs will go.<br/>
+                                <div className="text-sm">Your change address is where remaining UTXOs will go.<br />
                                     This defaults to the first sending wallet, though you may choose which wallet to use.
                                 </div>
                             </div>
 
                             <div className="flex justify-start mt-4">
-                                <ChangeReturnAddress disabled={!changeReturnAddress}/>
+                                <ChangeReturnAddress disabled={!changeReturnAddress} />
                             </div>
 
                         </Grid.Column>
 
-                        <Grid.Column width={4} className="p-0 flex flex-col justify-end item">
+                        <Grid.Column width={4} className="p-0 flex flex-col justify-between item">
 
                             <Container>
 
-                                <TxFeesDisplay feesLabel="Prioritization Fee" feesAmount={fees.prioritizationFee}/>
-                                <TxFeesDisplay feesLabel="Txs Fees" feesAmount={txsFees}/>
-                                <TxFeesDisplay feesLabel="Total Fees" feesAmount={parseInt(fees.prioritizationFee, 10) + txsFees}/>
+                                <TxFeesDisplay feesLabel="Prioritization Fee" feesAmount={fees.prioritizationFee} />
+                                <TxFeesDisplay feesLabel="Txs Fees" feesAmount={txsFees} />
+                                <TxFeesDisplay feesLabel="Total Fees" feesAmount={parseInt(fees.prioritizationFee, 10) + txsFees} />
 
                             </Container>
 
-                            <Button color="teal" content='Send Transaction' disabled={isEmpty(list)} onClick={handleSendTransaction} className="m-0"/>
+                            <Button color="teal" content='Send Transaction' disabled={isEmpty(list)} onClick={handleSendTransaction} className="m-0" />
 
                         </Grid.Column>
 
