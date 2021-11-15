@@ -10,6 +10,7 @@ import {useSelector} from 'react-redux';
 import shuffle from 'lodash/shuffle';
 
 import Page from '../../layout/Page';
+import { isDebug } from 'util/generic';
 
 function VerifyYourSeedPhrase() {
 
@@ -23,6 +24,7 @@ function VerifyYourSeedPhrase() {
     const {seedPhrase} = useSelector(state => ({seedPhrase: state.user.potential_seed_phrase}));
 
     React.useEffect(() => {
+        if (isDebug) { return  setShuffledSeedPhrase(seedPhrase.split(' ')); } // Skip shuffle for debug mode
         setShuffledSeedPhrase(shuffle(seedPhrase.split(' ')));
     }, [seedPhrase])
 
