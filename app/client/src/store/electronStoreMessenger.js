@@ -7,6 +7,11 @@ import util from 'util/_util';
 import { scrypt } from 'scrypt-js'; // External -- scrypt-js -- scrypt is not in current version of node -- Change to supplied crypto module if node16+ used
 import crypto from 'crypto';
 
+// IPC Channel -- Direct from custom IPC module in parent electron project -- These MUST match.
+const writeBakFileRequest = "WriteBakFile-Request";
+const writeBakFileResponse = "WriteBakFile-Response";
+const readBakFileRequest = "ReadBakFile-Request";
+const readBakFileResponse = "ReadBakFile-Request";
 
 /**
  * Middleware to mimic syncronous-non-event based access to secure-electron-store 
@@ -128,6 +133,15 @@ class StoreMessenger {
         } else {
             log.debug('Plain Value written to store with key: ' + key + " and value:", value);
         }
+    }
+
+    /**
+     * Calls the underlying IPC method to make a direct copy of the MadNetCfg file
+     * This file acts as a manual replacement backup if any issues occur - See BackupStore.js in app/electron
+     */
+    async backupStore() {
+        console.log(window.api);
+        window.api.storeBak.send(writeBakFileRequest, {} );
     }
 
     _writeToFakeStore(key, value) {
@@ -273,6 +287,7 @@ try {
             log.info("Electron store successfully deleted.")
         }
     });
+
 
 } catch (ex) {
     log.warn("It appears electron store is not available, you may be running in vanilla browser. You won't have access to storage this way.")

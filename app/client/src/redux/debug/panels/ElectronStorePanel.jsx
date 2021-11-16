@@ -96,6 +96,15 @@ export default function ElectronStorePanel() {
 
             </Segment>
 
+            <Segment>
+
+                <Header>Backup Store (window.storeBak) </Header>
+
+                <Button content="Print window.api" onClick={ () => console.log(window.api) }/>
+                <Button content="Backup Store" onClick={ () => electronStoreUtilityActons.backupStore() } />
+
+            </Segment>
+
         </div>
 
     )

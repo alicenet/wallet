@@ -104,6 +104,13 @@ function readEncryptedValueFromStore(key, password) {
     })
 }
 
+/**
+ * Requests a direct copy of the user file be made by the electron store messenger
+ */
+function backupStore() {
+    electronStoreMessenger.backupStore();
+}
+
 function completelyDeleteElectronStore() {
     electronStoreMessenger.deleteStore();
 }
@@ -114,6 +121,7 @@ export const electronStoreUtilityActons = {
     writeEncryptedToStore: writeEncryptedValueToStore,
     readPlainValueFromStore: readPlainValueFromStore,
     readEncryptedValueFromStore: readEncryptedValueFromStore,
+    backupStore: backupStore,
 }
 
 //////////////////////////////////////
