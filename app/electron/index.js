@@ -16,16 +16,7 @@ const icon = path.join(__dirname, '/app-build/electron/icon.png');
 let win;
 
 async function createWindow() {
-  const store = new Store({
-    path: app.getPath('userData'),
-    unprotectedPath: app.getPath('userData'),
-    filename: 'MadWalletEnc',
-  });
-
-  const storeBak = new BackupStore({
-      path: app.getPath('userData'),
-  });
-
+    
   win = new BrowserWindow({
     width: 800,
     height: 600,
@@ -44,6 +35,18 @@ async function createWindow() {
       additionalArguments: [`storePath:${app.getPath('userData')}`],
       preload: path.join(__dirname, './preload.js'),
     },
+  });
+
+  const store = new Store({
+    path: app.getPath('userData'),
+    unprotectedPath: app.getPath('userData'),
+    filename: 'MadWalletUser',
+  });
+
+  const storeBak = new BackupStore({
+      path: app.getPath('userData'),
+      filename: 'MadWalletUser',
+      extension: ".json.bak"
   });
 
   store.mainBindings(ipcMain, win, fs);

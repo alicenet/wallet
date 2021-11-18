@@ -1,5 +1,6 @@
 /* Code for prepping events and dependencies for the secure-electon-store */
 import { readConfigRequest, readConfigResponse, writeConfigRequest, deleteConfigRequest, deleteConfigResponse } from "secure-electron-store";
+
 import { electronStoreMessenger_logger as log, ADDITIONAL_LOG_OPTS } from 'log/logHelper';
 import { v4 as uuidv4 } from 'uuid';
 import util from 'util/_util';
@@ -7,11 +8,10 @@ import util from 'util/_util';
 import { scrypt } from 'scrypt-js'; // External -- scrypt-js -- scrypt is not in current version of node -- Change to supplied crypto module if node16+ used
 import crypto from 'crypto';
 
-// IPC Channel -- Direct from custom IPC module in parent electron project -- These MUST match.
+// IPC Channels -- Direct from custom IPC module in parent electron project -- These MUST match.
+// Can't import outside of client source
 const writeBakFileRequest = "WriteBakFile-Request";
 const writeBakFileResponse = "WriteBakFile-Response";
-const readBakFileRequest = "ReadBakFile-Request";
-const readBakFileResponse = "ReadBakFile-Request";
 
 /**
  * Middleware to mimic syncronous-non-event based access to secure-electron-store 
@@ -21,7 +21,8 @@ const readBakFileResponse = "ReadBakFile-Request";
 class StoreMessenger {
 
     constructor() {
-        this.subscribers = {};
+        this.subscribers = {}; // Subscribers for secure-electron-store
+        this.bakSubsribers = {}; // Subscribers for BackupStore
         this.storeAvailable = !!window && !!window.api && !!window.api.store
         if (this.storeAvailable) {
             log.debug("DEBUG: Store files located in: ", window.api.store.path)
@@ -74,6 +75,30 @@ class StoreMessenger {
         }
     }
 
+    /**
+     * Core event cycle -- Used by external SecureBackup to pass events down to subscribers -- Default to writeBakFileResponse until further needs arise
+     * @param {*} channel 
+     * @param {*} response 
+     */
+    notifyBackupEvent(channel, response) {
+        for (let sub in this.bakSubsribers) {
+            let keyIdx = this.bakSubsribers[sub].channels.indexOf(channel);
+            if (keyIdx !== -1) {
+                this.bakSubsribers[sub].callbacks[keyIdx](channel, response);
+            }
+        }
+    }
+
+    /**
+     * Calls the underlying IPC method to make a direct copy of the MadWalletUser file
+     * This file can act as a manual replacement backup if any issues occur - See BackupStore.js in app/electron
+     * @param cb - Callback to call withs (args) => {} from BackupStore event
+     */
+    async backupStore(cb = (args) => { }) {
+        this.subscribeToBackupEvent(writeBakFileResponse, cb, true);
+        window.api.storeBak.send(writeBakFileRequest);
+    }
+
     /** Completely delete the electron store and all key/values -- Primarily for debugging */
     deleteStore() {
         log.info("About to completely delete the electron store -- I certainly hope this was on purpose.");
@@ -105,6 +130,27 @@ class StoreMessenger {
     }
 
     /**
+     * Subscribe to a channel for the BackupStore
+     * @param { String } channel - Channel name to subscribe to
+     * @param { Function } callback - Callback to run when the response is served
+     * @returns { String } - v4uuid to use for unsubscription of this channel
+     */
+    subscribeToBackupEvent(channel, callback, forceUnsub) {
+        let id = uuidv4(); // Create the uid for the subscription
+        if (ADDITIONAL_LOG_OPTS.LOG_ELECTRON_MESSENGER_SUBSCRIBER_EVENTS) { log.debug(`${this._shortId(id)} has subscribed to backup channel ${channel}`); }
+        // Wrap the callback to immediately unsub after the value is fetched
+        let theCb = forceUnsub ? (
+            (channel, response) => {
+                callback(channel, response);
+                this.unsubscribe(id);
+            }
+        ) : callback;
+        // Update subscriptions
+        this.bakSubsribers[id] = { channels: [channel], callbacks: [theCb] }
+        return id;
+    }
+
+    /**
      * Subscribe to an array of event keys -- Returns a v4uuid to use for unsubscription of this key set
      * @param {Array.Strings} keys - The key to be notified of events on
      * @param {Func} callback - ([keys], [values]) => {} :: Where keys are the keys events have happened on, and values are their latest values
@@ -118,6 +164,15 @@ class StoreMessenger {
     unsubscribe(uid) {
         if (ADDITIONAL_LOG_OPTS.LOG_ELECTRON_MESSENGER_SUBSCRIBER_EVENTS) { log.debug(`${this._shortId(uid)} has unsubscribed from ${this.subscribers[uid].keys}`); }
         delete this.subscribers[uid];
+    }
+
+    /**
+      * Unsubscribe from any events associated with the uuid on the bakSubscriptions list
+      * @param {String} uid - The v4uuid associated with the subscription :: Generally returned from subscribeToBackupEvent() or handled internally
+    */
+    unsubscribeFromBackup(uid) {
+        if (ADDITIONAL_LOG_OPTS.LOG_ELECTRON_MESSENGER_SUBSCRIBER_EVENTS) { log.debug(`${this._shortId(uid)} has unsubscribed from backup channel: ${this.bakSubsribers[uid].channels}`); }
+        delete this.bakSubsribers[uid];
     }
 
     /**
@@ -135,15 +190,6 @@ class StoreMessenger {
         }
     }
 
-    /**
-     * Calls the underlying IPC method to make a direct copy of the MadNetCfg file
-     * This file acts as a manual replacement backup if any issues occur - See BackupStore.js in app/electron
-     */
-    async backupStore() {
-        console.log(window.api);
-        window.api.storeBak.send(writeBakFileRequest, {} );
-    }
-
     _writeToFakeStore(key, value) {
         this.fakeStore[key] = value;
         if (util.generic.stringHasJsonStructure(value)) {
@@ -153,31 +199,36 @@ class StoreMessenger {
         }
     }
 
-    async writeEncryptedToStore(key, value, password) {
-        const algorithm = 'aes-256-cbc';
-    
-        const salt = crypto.randomBytes(64);
-        let sKey = await scrypt(new Buffer.from(password), new Buffer.from(salt), 1024, 8, 1, 32, () => { });
+    writeEncryptedToStore(key, value, password) {
+        return new Promise(async res => {
 
-        crypto.randomFill(new Uint8Array(16), (err, iv) => {
-            if (err) throw err;
-            // Once we have the key and iv, we can create and use the cipher...
-            const cipher = crypto.createCipheriv(algorithm, sKey, iv);
+            const algorithm = 'aes-256-cbc';
 
-            let encrypted = '';
-            cipher.setEncoding('hex');
+            const salt = crypto.randomBytes(64);
+            let sKey = await scrypt(new Buffer.from(password), new Buffer.from(salt), 1024, 8, 1, 32, () => { });
 
-            cipher.on('data', (chunk) => encrypted += chunk);
-            cipher.on('end', () => {
-                let storageJson = this._createEncryptedValueStoreJSONString(algorithm, iv, encrypted, salt);
-                log.debug('Encrypted Value prepared for storage with key: ' + key + " and JSON: ", JSON.parse(storageJson));
-                this.writeToStore(key, storageJson)
+            crypto.randomFill(new Uint8Array(16), (err, iv) => {
+                if (err) throw err;
+                // Once we have the key and iv, we can create and use the cipher...
+                const cipher = crypto.createCipheriv(algorithm, sKey, iv);
+
+                let encrypted = '';
+                cipher.setEncoding('hex');
+
+                cipher.on('data', (chunk) => encrypted += chunk);
+                cipher.on('end', () => {
+                    let storageJson = this._createEncryptedValueStoreJSONString(algorithm, iv, encrypted, salt);
+                    log.debug('Encrypted Value prepared for storage with key: ' + key + " and JSON: ", JSON.parse(storageJson));
+                    this.writeToStore(key, storageJson)
+                });
+
+                cipher.write(value);
+                cipher.end();
+
+                res(true);
             });
 
-            cipher.write(value);
-            cipher.end();
-
-        });
+        })
 
     }
 
@@ -286,6 +337,10 @@ try {
         if (args.success) {
             log.info("Electron store successfully deleted.")
         }
+    });
+
+    window.api.storeBak.onReceive(writeBakFileResponse, function (args) {
+        storeMessenger.notifyBackupEvent(writeBakFileResponse, args);
     });
 
 

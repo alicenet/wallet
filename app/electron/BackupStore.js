@@ -3,20 +3,27 @@ const pathModule = require("path");
 
 const writeBakFileRequest = "WriteBakFile-Request";
 const writeBakFileResponse = "WriteBakFile-Response";
-const readBakFileRequest = "ReadBakFile-Request";
-const readBakFileResponse = "ReadBakFile-Request";
+// const readBakFileRequest = "ReadBakFile-Request";
+// const readBakFileResponse = "ReadBakFile-Request";
 
-// Backup Store Shim -- Behaves similar to secure-electron-store -- Only provides one write channel , manual restoration is required by user
+const defaultOptions = {
+    path: "",
+    filename: "data",
+    extension: ".json",
+};
+
+// Backup Store Shim -- Behaves similar to secure-electron-store -- Only provides one write channel , manual restoration is required by user at the moment
 module.exports = class BackupStore {
 
     constructor(options) {
-        this.filename = "MadWalletEnc.bak";
-        this.initialFileValue;
-        this.validSendChannels = [writeBakFileRequest, readBakFileRequest];
-        this.validReceiveChannels = [writeBakFileResponse, readBakFileResponse];
+        this.options = defaultOptions;
+        this.fileData = undefined;
+        this.initialFileData = undefined;
+        this.initialFileDataParsed = false;
 
-        console.log(options)
-        
+        this.validSendChannels = [writeBakFileRequest, /*readBakFileRequest*/];
+        this.validReceiveChannels = [writeBakFileResponse, /*readBakFileResponse*/];
+
         // Merge options
         if (typeof options !== "undefined") {
             this.options = Object.assign(this.options, options);
@@ -27,51 +34,63 @@ module.exports = class BackupStore {
         // Only run the following code in the renderer
         // process; we can determine if this is the renderer
         // process if we haven't set a new path from our options
-        if (typeof options === "undefined" || options.path !== "") {
+        if (typeof options === "undefined" || options.path !== defaultOptions.path) { 
+            // NOTE: This above line is very confusing, but directly sourced from the reference code in secure-electron-store and may be being done purposely due to two instances
+            // Needing to be created for the IPC process to function properly. There may be a dependency on the first preload run for the rendering process run.
+            //  -- This is checking for what defaultOptions has been updated to on MergeOptions above -- potentially in another instance, not what it IS on first run or defined as above.
+            // -- I haven't had the chance to completely dig through that library, but wanted to note this for anyone who may end up here later
             try {
                 const arg = process.argv.filter(p => p.indexOf("storePath:") >= 0)[0];
-                console.log(arg);
-                this.path = arg.substr(arg.indexOf(":") + 1);
+                this.options.path = arg.substr(arg.indexOf(":") + 1);
             } catch (error) {
                 throw new Error(`Could not find property 'additionalArguments' value beginning with 'storePath:' in your BrowserWindow. Please ensure this is set! Error: ${error}`);
             }
         }
 
-        this.filePath = pathModule.join(options.path, `${this.filename}`);
-
+        const rootPath = this.options.path;
+        this.options.path =  pathModule.join(rootPath, `${this.options.filename}${this.options.extension}`);
 
     }
 
     // Main IPC Bindings
     mainBindings(ipcMain, browserWindow, fs) {
 
-        ipcMain.on(writeBakFileRequest, (IpcMainEvent, args) => {
-            console.log("WRITE BAK FILE REQ");
-            console.log("ARGS", args);
+        const { path } = this.options;
 
+        ipcMain.on(writeBakFileRequest, (IpcMainEvent, args) => {
             try {
-                console.log("path", path);
-                let currentConfig = fs.readFileSync("" + "/" + "MadWalletEnc.json");
-                console.log("Currentfile: ", currentConfig);
+                // Strip .bak from the path and append it with json to get the file we want to backup
+                let currentConfig = fs.readFileSync(path.replace('.json.bak', ".json"));
+                // Back this file up
+                fs.writeFileSync(path, currentConfig);
+                console.log("Config backup created at: ", path);
+                browserWindow.webContents.send(writeBakFileResponse, { success: true })
             } catch (ex) {
-                console.error(ex);
+                // If a config doesn't exist, we can just log here for reference
+                if (ex.code === "ENOENT") {
+                    console.warn("Config doesn't exist -- skipping backup write.");
+                } else {
+                    throw new Error(ex);
+                }
             }
 
         });
 
-        ipcMain.on(readBakFileRequest, (IpcMainEvent, args) => {
-            console.log("READ BAK FILE REQ");
-        });
+        // TBD -- May not be needed, or may be used in future features ( Auto restore backup, etc )
+        /*
+            ipcMain.on(readBakFileRequest, (IpcMainEvent, args) => {
+                console.log("READ BAK FILE REQ");
+            });
+        */
 
     }
 
     // Preload IPC Bindings
     preloadBindings(ipcRenderer, fs) {
 
-
         // Attempt to get initial file data
         try {
-            this.initialFileValue = fs.readFileSync(this.filePath);
+            this.initialFileData = fs.readFileSync(this.filePath);
             console.log("OK: Vault Backup File MadWalletEnc.bak exists!");
         } catch (ex) {
             // Doesn't exist -- Leave it be
@@ -83,7 +102,7 @@ module.exports = class BackupStore {
 
         return {
             initialValue: this.initialFileValue,
-            send: (channel, jsonObj ) => {
+            send: (channel, jsonObj) => {
                 if (this.validSendChannels.includes(channel)) {
                     switch (channel) {
                         // Save Data to MadWalletEnc.bak
@@ -97,12 +116,14 @@ module.exports = class BackupStore {
                 if (this.validReceiveChannels.includes(channel)) {
                     ipcRenderer.on(channel, (event, args) => {
                         switch (channel) {
+                        // Only needed if not using internal logging or need processing on read
+                        /*
                             case writeBakFileResponse: console.log(`Write bakFile success: ${args.success}`); break;
-                            // case readBakFileResp: console.log(`Read bakFile success: ${args.success}`); break;
+                            case readBakFileResp: console.log(`Read bakFile success: ${args.success}`); break;
+                        */
                         }
                         func(args);
                     })
-
                 }
             }
         }
