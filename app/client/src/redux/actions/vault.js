@@ -73,7 +73,7 @@ export function loadSecureHDVaultFromStorage(password) {
         // Unlock vault for parsing and note the mnemonic for HD wallets
         const unlockedVault = await electronStoreCommonActions.unlockAndGetSecuredHDVault(password);
         if (unlockedVault.error) { return [false, [unlockedVault]] }; // Bubble the done/error upwards
-        // Anytime we unlock a vault on user load -- Assume it is in a healthy state and request a backup be made and wait for the response before moving on
+        // Anytime we unlock a vault on user load withou an error -- Assume it is in a healthy state and request a backup be made and wait for the response before moving on
         let backupSuccess = await electronStoreUtilityActons.backupStore();
         log.debug("Vault Backup Success:", backupSuccess);
         // Continue loading the vault
