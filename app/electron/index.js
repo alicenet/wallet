@@ -3,6 +3,7 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const isDev = require('electron-is-dev');
 
 const Store = require('secure-electron-store').default;
+const BackupStore = require('./BackupStore');
 const fs = require('fs');
 
 const path = require('path');
@@ -15,13 +16,7 @@ const icon = path.join(__dirname, '/app-build/electron/icon.png');
 let win;
 
 async function createWindow() {
-  const store = new Store({
-    path: app.getPath('userData'),
-    unprotectedPath: app.getPath('userData'),
-    filename: 'MadWalletEnc',
-    unprotectedFilename: 'MadWalletCfg',
-  });
-
+    
   win = new BrowserWindow({
     width: 800,
     height: 600,
@@ -42,7 +37,20 @@ async function createWindow() {
     },
   });
 
+  const store = new Store({
+    path: app.getPath('userData'),
+    unprotectedPath: app.getPath('userData'),
+    filename: 'MadWalletUser',
+  });
+
+  const storeBak = new BackupStore({
+      path: app.getPath('userData'),
+      filename: 'MadWalletUser',
+      extension: ".json.bak"
+  });
+
   store.mainBindings(ipcMain, win, fs);
+  storeBak.mainBindings(ipcMain, win, fs);
 
   if (isDev) {
     win.loadURL(selfHost);

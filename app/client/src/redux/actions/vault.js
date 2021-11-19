@@ -1,6 +1,6 @@
 import { VAULT_ACTION_TYPES, MIDDLEWARE_ACTION_TYPES } from 'redux/constants/_constants';
 import { getMadWalletInstance } from 'redux/middleware/WalletManagerMiddleware'
-import { electronStoreCommonActions } from '../../store/electronStoreHelper';
+import { electronStoreCommonActions, electronStoreUtilityActons } from '../../store/electronStoreHelper';
 import { reduxState_logger as log } from 'log/logHelper';
 import util from 'util/_util';
 import { ACTION_ELECTRON_SYNC } from 'redux/middleware/VaultUpdateManagerMiddleware';
@@ -44,6 +44,11 @@ export function generateNewSecureHDVault(mnemonic, password, curveType = util.wa
         await dispatch({ type: MIDDLEWARE_ACTION_TYPES.INIT_MAD_WALLET, payload: preInitPayload }); // Pass off to MadWalletMiddleware to finish state initiation
         dispatch({ type: VAULT_ACTION_TYPES.SET_MNEMONIC, payload: mnemonic });
         dispatch({ type: VAULT_ACTION_TYPES.MARK_EXISTS_AND_UNLOCKED });
+
+        // Once a vault has been created -- Go ahead and make a backup of it
+        let newVaultBackedUp = await electronStoreUtilityActons.backupStore();
+        log.debug("New Vault Backup Success:", newVaultBackedUp);
+
         // Once the vault is created attempt to connect web3, and then madNet
         log.debug("Vault Created: Attempting to init MadNet && Web3 Adapters. . .")
         let adaptersConnected = await dispatch(ADAPTER_ACTIONS.initAdapters());
@@ -68,6 +73,10 @@ export function loadSecureHDVaultFromStorage(password) {
         // Unlock vault for parsing and note the mnemonic for HD wallets
         const unlockedVault = await electronStoreCommonActions.unlockAndGetSecuredHDVault(password);
         if (unlockedVault.error) { return [false, [unlockedVault]] }; // Bubble the done/error upwards
+        // Anytime we unlock a vault on user load withou an error -- Assume it is in a healthy state and request a backup be made and wait for the response before moving on
+        let backupSuccess = await electronStoreUtilityActons.backupStore();
+        log.debug("Vault Backup Success:", backupSuccess);
+        // Continue loading the vault
         const mnemonic = unlockedVault.mnemonic;
         const hdLoadCount = unlockedVault.hd_wallet_count;
         const hdCurve = unlockedVault.hd_wallet_curve;

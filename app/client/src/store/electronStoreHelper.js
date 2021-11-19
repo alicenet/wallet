@@ -61,10 +61,10 @@ function writePlainValueToStore(key, value) {
  * @param { String } key - Key to use for the respectively supplied value 
  * @param { String } value - Value you wish to write to the secure-electron-store -- JSON should be stringified 
  */
-function writeEncryptedValueToStore(key, value, password) {
+async function writeEncryptedValueToStore(key, value, password) {
     _requireKeyValuePassword("writeEncryptedValueToStore", key, value, password);
     log.debug("Secure K:V write request sent to electronStoreMessenger => " + key + " : " + value);
-    electronStoreMessenger.writeEncryptedToStore(key, value, password);
+    return await electronStoreMessenger.writeEncryptedToStore(key, value, password);
 }
 
 /**
@@ -104,6 +104,17 @@ function readEncryptedValueFromStore(key, password) {
     })
 }
 
+/**
+ * Requests a direct copy of the user file be made by the electron store messenger
+ */
+async function backupStore() {
+    return new Promise( res => {
+        electronStoreMessenger.backupStore( (channel, response) => {
+            res(!!response.success);
+        });
+    })
+}
+
 function completelyDeleteElectronStore() {
     electronStoreMessenger.deleteStore();
 }
@@ -114,6 +125,7 @@ export const electronStoreUtilityActons = {
     writeEncryptedToStore: writeEncryptedValueToStore,
     readPlainValueFromStore: readPlainValueFromStore,
     readEncryptedValueFromStore: readEncryptedValueFromStore,
+    backupStore: backupStore,
 }
 
 //////////////////////////////////////
