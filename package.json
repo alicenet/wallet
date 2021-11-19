@@ -13,7 +13,6 @@
     "dev": "concurrently \"cd app/client && npm start\" \"electron ./app/electron\"",
     "lint": "eslint .",
     "lint-fix": "eslint --fix .",
-    "preinstall": "echo \"Removing root and nested node_modules\" && rm -rf node_modules app/client/node_modules && echo \"node_modules removed, proceeding with install... \n \" ",
     "postinstall": "cd app/client && npm install"
   },
   "author": "",

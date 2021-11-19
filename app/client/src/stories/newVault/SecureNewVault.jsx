@@ -66,6 +66,7 @@ function SecureNewVault() {
                         <Form.Group className="flex flex-auto flex-col m-0 text-left text-sm gap-5">
 
                             <Form.Input
+                                className='p-0'
                                 id='password'
                                 label='Password'
                                 placeholder='Enter Password'
@@ -76,6 +77,7 @@ function SecureNewVault() {
                             />
 
                             <Form.Input
+                                className='p-0'
                                 id='verify-password'
                                 label='Verify Password'
                                 placeholder='Enter Password'
