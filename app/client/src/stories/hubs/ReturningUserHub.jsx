@@ -125,7 +125,7 @@ export default function Hub() {
 
                     </Grid.Column>
 
-                    <Grid.Column width={openDrawer ? 12 : 14} className="flex flex-col duration-300 transition-transform transition-width p-4 pl-0">
+                    <Grid.Column width={openDrawer ? 12 : 14} className="flex flex-col duration-300 transition-transform transition-width pl-0 pr-6">
 
                         <Container className="flex flex-col">
                             {selectedWallet ?
