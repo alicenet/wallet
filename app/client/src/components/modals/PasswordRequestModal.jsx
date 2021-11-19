@@ -53,10 +53,6 @@ export default function PasswordRequestModal() {
 
             <Modal.Content>
 
-                <div className="text-sm">
-                    Your password has been requested for the reason above.
-                </div>
-
                 <Form size="small" className="mt-4" onSubmit={() => onSubmit(tryPassword)} error={!!formState.password.error}>
                     <Form.Input type={showPassword ? "text" : "password"} error={!!formState.password.error} value={formState.password.value} onChange={e => formSetter.setPassword(e.target.value)}
                         icon={<Icon link name={showPassword ? "eye" : "eye slash"} onClick={ () => setShowPassword(s => !s)} />}

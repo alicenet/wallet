@@ -86,7 +86,7 @@ export default function AddWalletMenu() {
                         <Form className="w-56" size="small">
                             <Form.Input value={walletName.value} onChange={e => setWalletNameKeys({ value: e.target.value })}
                                 error={!!walletName.error && walletName.error}
-                                label="Wallet Name" size="small" placeholder=". . ."
+                                label="Wallet Name" size="small"
                                 className="text-left"
                             />
                         </Form>
