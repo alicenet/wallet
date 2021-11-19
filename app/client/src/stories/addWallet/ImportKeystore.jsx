@@ -48,7 +48,6 @@ export default function ImportKeystore() {
 
                     <div className="flex justify-center">
                         <LoadKeystoreForm hideTitle
-                            submitText="Add Wallet"
                             submitFunction={addWallet}
                             cancelText="Cancel"
                             cancelFunction={history.goBack}

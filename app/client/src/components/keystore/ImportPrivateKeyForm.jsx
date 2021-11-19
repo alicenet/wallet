@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useFormState } from 'hooks/_hooks';
-import { Form, Header, Message, Icon, Popup, Checkbox } from 'semantic-ui-react';
+import { Checkbox, Form, Header, Icon, Message, Popup } from 'semantic-ui-react';
+
 import { walletUtils } from 'util/_util';
 import { curveTypes } from 'util/wallet';
 import { default_log as log } from 'log/logHelper'
@@ -8,21 +9,21 @@ import { isDebug } from 'util/generic';
 
 /**
  * Verifies a privateKey string and calls the passed callback with a temporary keystore object with password ""
- * @param { Function ({results}) => {} } submitFunction - Callback function to use -- Provides ({locked, password, success, error, walletName}) => {} 
+ * @param { Function ({results}) => {} } submitFunction - Callback function to use -- Provides ({locked, password, success, error, walletName}) => {}
  * @prop { Bool } hideTitle - Hide the form title?
- * @returns 
+ * @returns
  */
 export default function ImportPrivateKeyForm({ submitText, submitFunction, cancelText, cancelFunction, hideTitle }) {
 
     const [formState, formSetter, onSubmit] = useFormState([
-        { name: 'privateKey', type: 'string', isRequired: true, },
-        { name: 'walletName', type: 'string', isRequired: true, length: 4, value: isDebug ? "testPrivK" : "" }
+        { name: 'privateKey', display: 'Private Key', type: 'string', isRequired: true, },
+        { name: 'walletName', display: 'Wallet Name', type: 'string', isRequired: true, length: 4, value: isDebug ? "testPrivK" : "" },
     ]);
 
-    const [error, setError] = React.useState(false);
-    const [success] = React.useState(false); 
-    const [loading, setLoading] = React.useState(false);
-    const [curveType, setCurveType] = React.useState(curveTypes.SECP256K1);
+    const [error, setError] = useState(false);
+    const [success] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [curveType, setCurveType] = useState(curveTypes.SECP256K1);
     const toggleCurveType = () => setCurveType(s => s === curveTypes.SECP256K1 ? curveTypes.BARRETO_NAEHRIG : curveTypes.SECP256K1)
 
     const verifyPrivKey = () => {
@@ -32,11 +33,11 @@ export default function ImportPrivateKeyForm({ submitText, submitFunction, cance
             let ks = walletUtils.generateKeystoreFromPrivK(formState.privateKey.value, "", curveType)
             setError(false);
             submitFunction({
-                locked: ks, 
-                password: "", 
-                walletName: formState.walletName.value, 
-                success: true, 
-                error: false, 
+                locked: ks,
+                password: "",
+                walletName: formState.walletName.value,
+                success: true,
+                error: false,
             });
         } catch (ex) {
             log.error(ex);
@@ -64,36 +65,70 @@ export default function ImportPrivateKeyForm({ submitText, submitFunction, cance
                         <Checkbox
                             checked={curveType === curveTypes.BARRETO_NAEHRIG}
                             onChange={toggleCurveType}
-                            label={<><label className={"labelCheckbox"}>Use BN Curve</label><Popup size="mini" position="right center" offset={"0,2"}
-                                trigger={<Icon name="question circle" className="ml-1 mb-1.5" style={{ marginRight: "-.035rem" }} />} content="Generate public address with BN Curve" /></>}
-                            className="flex justify-center items-center text-xs uppercase font-bold relative top-0" />
+                            label={
+                                <>
+                                    <label className={"labelCheckbox"}>Use BN Curve</label>
+                                    <Popup
+                                        size="mini"
+                                        position="right center"
+                                        offset={"0,2"}
+                                        trigger={
+                                            <Icon name="question circle" className="ml-1 mb-1.5" style={{ marginRight: "-.035rem" }}/>
+                                        }
+                                        content="Generate public address with BN Curve"/>
+                                </>
+                            }
+                            className="flex justify-center items-center text-xs uppercase font-bold relative top-0"
+                        />
                     </label>
                 }
                 error={!!formState.privateKey.error && { content: formState.privateKey.error }}
-
             />
 
-
             <Form.Input
-                label={<><label className="inline text-left">Wallet Name</label><Popup size="mini" position="right center" offset={"4,2"}
-                    trigger={<Icon name="question circle" className="ml-1" />} content="How this wallet will be referenced" /> </>}
+                label={
+                    <>
+                        <label className="inline text-left">Wallet Name</label>
+                        <Popup
+                            size="mini"
+                            position="right center"
+                            offset={"4,2"}
+                            trigger={
+                                <Icon name="question circle" className="ml-1"/>
+                            }
+                            content="How this wallet will be referenced"
+                        />
+                    </>
+                }
                 type="text" value={formState.walletName.value}
                 onChange={e => formSetter.setWalletName(e.target.value)}
                 error={!!formState.walletName.error && { content: formState.walletName.error }}
             />
 
-            <Form.Button fluid size="small" basic loading={loading} className="mt-16"
+            <Form.Button
+                fluid
+                size="small"
+                basic
+                loading={loading}
+                className="mt-16"
                 onClick={() => onSubmit(verifyPrivKey)}
                 color={error ? "red" : "green"}
                 disabled={success}
-                content={error ? "Try Again" : success ? "Success" : "Add Wallet"}
+                content={error ? "Try Again" : success ? "Success" : submitText || "Add Wallet"}
                 icon={error ? "exclamation" : success ? "checkmark" : "plus"}
             />
 
-            <Form.Button fluid size="small" basic loading={loading}
+            <Form.Button
+                fluid
+                size="small"
+                basic
+                loading={loading}
                 icon={success ? "thumbs up" : "x"}
                 color={success ? "green" : "orange"}
-                onClick={success ? e => e.preventDefault() : (e) => { e.preventDefault(); cancelFunction() }}
+                onClick={success ? e => e.preventDefault() : (e) => {
+                    e.preventDefault();
+                    cancelFunction();
+                }}
                 content={success ? "Success, please wait..." : cancelText}
             />
 

@@ -10,7 +10,7 @@ import { useDispatch } from 'react-redux';
 import Page from 'layout/Page';
 import { toast } from 'react-toastify';
 
-import { VAULT_ACTIONS, ADAPTER_ACTIONS } from 'redux/actions/_actions';
+import { ADAPTER_ACTIONS, VAULT_ACTIONS } from 'redux/actions/_actions';
 
 function UseExistingKeystore() {
 
@@ -39,7 +39,7 @@ function UseExistingKeystore() {
 
                 <Grid.Column width={16} className="p-0 self-center">
 
-                    <Header content="Use Existing Keystore" as="h3" className="m-0" />
+                    <Header content="Use Existing Keystore" as="h3" className="m-0"/>
 
                 </Grid.Column>
 

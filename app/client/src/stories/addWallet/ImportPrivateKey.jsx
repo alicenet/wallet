@@ -1,21 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Container, Grid, Header, Message } from 'semantic-ui-react'
 import { useHistory } from 'react-router-dom';
+
 import ImportPrivateKeyForm from 'components/keystore/ImportPrivateKeyForm';
 
 export default function ImportPrivateKey() {
 
     const history = useHistory();
 
-    const [success, setSuccces] = React.useState(false);
+    const [success, setSuccess] = React.useState(false);
     const [results, setResult] = React.useState(false);
 
     const addWallet = async (results) => {
         setResult(results);
-        setSuccces(true);
+        setSuccess(true);
     }
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (success) {
             history.push("/addWallet/verify", {
                 toLoad: results,
@@ -35,7 +36,7 @@ export default function ImportPrivateKey() {
 
                     <div className="text-sm">
 
-                        <p>If your key was used with a BN Curve derrived public address, tick the box accordingly.</p>
+                        <p>If your key was used with a BN Curve derived public address, tick the box accordingly.</p>
 
                     </div>
 
@@ -44,12 +45,13 @@ export default function ImportPrivateKey() {
                 <Grid.Column width={16} textAlign="center">
 
                     <div className="flex justify-center">
+
                         <ImportPrivateKeyForm hideTitle
-                            submitText="Add Wallet"
                             submitFunction={addWallet}
                             cancelText="Cancel"
                             cancelFunction={history.goBack}
                         />
+
                     </div>
 
                     {success && (
