@@ -88,18 +88,6 @@ module.exports = class BackupStore {
     // Preload IPC Bindings
     preloadBindings(ipcRenderer, fs) {
 
-        // Attempt to get initial file data
-        try {
-            this.initialFileData = fs.readFileSync(this.filePath);
-            console.log("OK: Vault Backup File MadWalletEnc.bak exists!");
-        } catch (ex) {
-            // Doesn't exist -- Leave it be
-            if (ex.code === "ENOENT") {
-                this.initialFileValue = null;
-                console.log("WARNING: Vault Backup File MadWalletEnc.bak does not exist. First run?");
-            }
-        }
-
         return {
             initialValue: this.initialFileValue,
             send: (channel, jsonObj) => {
