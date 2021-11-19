@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Grid, Header, Button } from 'semantic-ui-react'
+import { Button, Container, Grid, Header } from 'semantic-ui-react'
 import { useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
@@ -18,14 +18,6 @@ export default function AddWalletMenu() {
         walletButtons.unshift(
             { content: "Generate Wallet", icon: "plus", onClick: () => history.push('/addWallet/generate') }
         )
-    }
-
-    const getWalletAdditionButtons = () => {
-        return walletButtons.map(buttonSettings => {
-            const bs = buttonSettings;
-            const bProps = { labelPosition: "left", basic: true, color: bs.color || "purple", size: "small" }
-            return <Button content={bs.content} icon={bs.icon} {...bProps} className="w-56 text-left" onClick={bs.onClick} />
-        })
     }
 
     return (
@@ -51,7 +43,23 @@ export default function AddWalletMenu() {
                 <Grid.Column width={16} className="flex flex-auto flex-col items-center gap-5">
 
                     <div className="flex flex-auto flex-col items-center gap-3 w-72">
-                        {getWalletAdditionButtons()}
+
+                        {
+                            walletButtons.map((walletButton, index) =>
+                                <Button
+                                    labelPosition="left"
+                                    basic
+                                    color={walletButton.color || "purple"}
+                                    size="small"
+                                    key={`wallet-button-${index}`}
+                                    content={walletButton.content}
+                                    icon={walletButton.icon}
+                                    className="w-56 text-left"
+                                    onClick={walletButton.onClick}
+                                />
+                            )
+                        }
+
                     </div>
 
                 </Grid.Column>
