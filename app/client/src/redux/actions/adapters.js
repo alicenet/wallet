@@ -320,6 +320,8 @@ export const sendTransactionReducerTXs = () => {
         dispatch(TRANSACTION_ACTIONS.toggleStatus());
         // Reset last received lastSentTxHash for next cycle
         dispatch({ type: TRANSACTION_ACTION_TYPES.SET_LAST_SENT_TX_HASH, payload: "" });
+        // Reset TxFeePayer for next cycles
+        dispatch(TRANSACTION_ACTIONS.clearFeePayer());
 
         return tx;
     }

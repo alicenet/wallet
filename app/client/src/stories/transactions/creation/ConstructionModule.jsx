@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Button, Checkbox, Container, Grid, Header, Icon, Menu, Pagination, Segment, Table } from 'semantic-ui-react';
+import { Button, Checkbox, Container, Grid, Header, Icon, Menu, Pagination, Popup, Segment, Table } from 'semantic-ui-react';
 import { useDispatch, useSelector } from 'react-redux';
 import isEmpty from 'lodash/isEmpty';
 import chunk from 'lodash/chunk';
@@ -60,12 +60,20 @@ function ConstructionModule() {
         dispatch(TRANSACTION_ACTIONS.toggleStatus());
     };
 
-    const TxFeesDisplay = ({ feesLabel, feesAmount }) => {
+    const TxFeesDisplay = ({ feesLabel, feesAmount, tooltipText }) => {
 
         return (
             <div className="flex text-xs justify-between">
-                <div className="font-bold">{`${feesLabel}:`}</div>
+                <div className="font-bold w-16 text-left">{`${feesLabel}:`}</div>
                 <div className="text-gray-500">{`${feesAmount} MadBytes`}</div>
+                <div>
+                    <Popup content={tooltipText} size="mini" className="w-60" position="top right"
+                        offset="10,0"
+                        trigger={
+                            <Icon name="question circle cursor-pointer" />
+                        }
+                    />
+                </div>
             </div>
         )
     }
@@ -264,9 +272,9 @@ function ConstructionModule() {
 
                             <Container>
 
-                                <TxFeesDisplay feesLabel="Prioritization Fee" feesAmount={fees.prioritizationFee} />
-                                <TxFeesDisplay feesLabel="Txs Fees" feesAmount={txsFees} />
-                                <TxFeesDisplay feesLabel="Total Fees" feesAmount={parseInt(fees.prioritizationFee, 10) + txsFees} />
+                                <TxFeesDisplay tooltipText="The minimum tx fee + any prioritization fees" feesLabel="Tx Fee" feesAmount={fees.prioritizationFee} />
+                                <TxFeesDisplay tooltipText="The sum of the cost of each store" feesLabel="Store Fees" feesAmount={txsFees} />
+                                <TxFeesDisplay tooltipText="The sum of all transaction fees" feesLabel="Total Fees" feesAmount={parseInt(fees.prioritizationFee, 10) + txsFees} />
 
                             </Container>
 

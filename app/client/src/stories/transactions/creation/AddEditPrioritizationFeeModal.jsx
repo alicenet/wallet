@@ -4,15 +4,30 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { useFormState } from 'hooks/_hooks';
 import { TRANSACTION_ACTIONS } from 'redux/actions/_actions';
+import ChangeFeePayer from './ChangeFeePayer';
 
 export default function AddEditPrioritizationFeeModal() {
 
     const dispatch = useDispatch();
 
     const [openModal, setOpenModal] = React.useState(false)
+    const [minFee, setMinFee] = React.useState(0);
 
-    const { prioritizationFee } = useSelector(state => ({
+    // Get TX Fee
+    React.useEffect(() => {
+        // For fetching the minimum transaction fee
+        const getTxFee = async () => {
+            let minFee = 0; // TODO: Await Adapter Call
+            setMinFee(minFee);
+        }
+
+        getTxFee();
+    })
+
+    const { prioritizationFee, feePayer, txList } = useSelector(state => ({
         prioritizationFee: state.transaction.fees.prioritizationFee,
+        feePayer: state.transaction.feePayer,
+        txList: state.transaction.list,
     }));
 
     const handleSubmit = async () => {
@@ -36,8 +51,8 @@ export default function AddEditPrioritizationFeeModal() {
             onClose={handleClose}
             size="small"
             trigger={
-                <Menu.Item name='add-prioritization-fee' onClick={() => setOpenModal(true)}>
-                    <Icon name="chain" className="text-gray-600"/>Prioritization Fee
+                <Menu.Item name='add-prioritization-fee' disabled={txList.length === 0} onClick={() => setOpenModal(true)}>
+                    <Icon name="chain" className="text-gray-600" />Adjust Tx Fee
                 </Menu.Item>
             }
         >
@@ -54,18 +69,36 @@ export default function AddEditPrioritizationFeeModal() {
 
                     <Grid className="m-0 content-evenly gap-2">
 
+                        <Grid.Row>
+                            <Grid.Column width="16">
+                                <p>
+                                    MadNet Transactions cost a minimum fee. <br/>
+                                    You may provide additional MadBytes to give your transaction priority. <br/> 
+                                </p>
+                            </Grid.Column>
+                        </Grid.Row>
+
                         <Grid.Row columns={1} className="p-0">
 
                             <Grid.Column>
 
                                 <Form.Input
+                                    id='MinFee'
+                                    label='MadNet Bytes Minimum Fee'
+                                    disabled
+                                    value={minFee}
+                                />
+
+                                <Form.Input
                                     id='Fee'
-                                    label='MadNet Bytes Fee'
+                                    label='MadNet Bytes Prioritization Fee'
                                     required
                                     value={formState.Fee.value}
                                     onChange={e => formSetter.setFee(e.target.value)}
                                     error={!!formState.Fee.error && { content: formState.Fee.error }}
                                 />
+
+                                <ChangeFeePayer/>
 
                             </Grid.Column>
 
@@ -79,10 +112,10 @@ export default function AddEditPrioritizationFeeModal() {
 
             <Modal.Actions className="flex justify-between">
 
-                <Button color="orange" className="m-0" basic onClick={handleClose} content="Close"/>
+                <Button color="orange" className="m-0" basic onClick={handleClose} content="Close" />
 
                 <Button
-                    icon={<Icon name='chain'/>}
+                    icon={<Icon name='chain' />}
                     className="m-0"
                     content="Set Prioritization Fee"
                     basic

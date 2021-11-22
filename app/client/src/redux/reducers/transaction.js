@@ -10,6 +10,10 @@ export const initialTransactionState = {
         dataStoreFee: 0,
         valueStoreFee: 0,
     },
+    feePayer: {
+        wallet: false, // Wallet object of the fee payer, and override notification -- Should exist in internal/external vault state wallets and set through Adjust TX Fee Modal
+        over_ride: false, // Has the wallet been manually set, and should not be updated by parseDefaultFeePayer() in transaction.actions?
+    },
     changeReturnAddress: null, //The address to which the change might be returned if any
     lastSentAndMinedTx: false, // Last mined tx data
     lastSentTxHash: "", // Last sent TX Hash -- Received from RPC - send-transaction on successful send -- Can be used to check pending TX
@@ -90,6 +94,24 @@ export default function transactionReducer(state = initialTransactionState, acti
             log.debug("Clearing polled txs:");
             return Object.assign({}, state, {
                 polledTxs: [],
+            });
+
+        case TRANSACTION_ACTION_TYPES.SET_FEE_PAYER:
+            log.debug("Setting feePayer to:", action.payload);
+            return Object.assign({}, state, {
+                feePayer: {
+                    wallet: action.payload.wallet,
+                    over_ride: action.payload.over_ride
+                },
+            });
+
+        case TRANSACTION_ACTION_TYPES.CLEAR_FEE_PAYER:
+            log.debug("Clearing feePayer");
+            return Object.assign({}, state, {
+                feePayer: {
+                    wallet: false,
+                    over_ride: false,
+                }
             });
 
         default:
