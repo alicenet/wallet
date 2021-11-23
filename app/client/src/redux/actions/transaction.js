@@ -1,5 +1,5 @@
 import { TRANSACTION_ACTION_TYPES } from '../constants/_constants';
-import { find } from 'lodash';
+import { default_log as log } from 'log/logHelper';
 
 //////////////////////////////////
 /* External Async Action Calls */
@@ -33,7 +33,7 @@ export function setFeePayer(wallet, over_ride = false) {
  */
 export function clearFeePayer() {
     return async function (dispatch) {
-        dispatch({type: TRANSACTION_ACTION_TYPES.CLEAR_FEE_PAYER});
+        dispatch({ type: TRANSACTION_ACTION_TYPES.CLEAR_FEE_PAYER });
     }
 }
 
@@ -50,15 +50,18 @@ export function parseDefaultFeePayer() {
         // If the over_ride is set ( Manual Fee Payer Wallet Has Been Selected ), do not update through the parseDefaultFeePayer
         if (over_ride) { return }
         // Don't update the default if none exist
-        if (transactionList.length === 0) { return }
+        if (transactionList.length === 0) {
+            log.warn("parseDefaultFeePayer() called without a populated transaction list in the transaction reducer. This shouldn't happen!")
+            return
+        }
 
         // Else, update to the first entry position 
         const wallets = [...state.vault.wallets.internal, ...state.vault.wallets.external]
         const firstEntry = transactionList[0];
 
-        // Grab the wallet to set as the fee payer and dispatch it
+        // Grab the wallet to set as the fee payer and dispatch it -- This should always exist and is failsafed by the above length constraint on transactionList
         const walletToSet = wallets.filter(wallet => wallet.address === firstEntry.from)?.[0];
-        dispatch(setFeePayer(walletToSet ? walletToSet : false));
+        dispatch(setFeePayer(walletToSet));
     }
 }
 

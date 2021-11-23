@@ -11,7 +11,7 @@ export const initialTransactionState = {
         valueStoreFee: 0,
     },
     feePayer: {
-        wallet: false, // Wallet object of the fee payer, and override notification -- Should exist in internal/external vault state wallets and set through Adjust TX Fee Modal
+        wallet: null, // Wallet object of the fee payer, and override notification -- Should exist in internal/external vault state wallets and set through Adjust TX Fee Modal
         over_ride: false, // Has the wallet been manually set, and should not be updated by parseDefaultFeePayer() in transaction.actions?
     },
     changeReturnAddress: null, //The address to which the change might be returned if any
@@ -109,7 +109,7 @@ export default function transactionReducer(state = initialTransactionState, acti
             log.debug("Clearing feePayer");
             return Object.assign({}, state, {
                 feePayer: {
-                    wallet: false,
+                    wallet: null,
                     over_ride: false,
                 }
             });
