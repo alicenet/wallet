@@ -257,6 +257,17 @@ export function isPrimaryWalletAddress(address) {
     return wallets[0].address === address;
 }
 
+/**
+ *  Returns the corresponding vault wallet object for a given address
+ * @param { String } address - Address of the wallet to fetch in the vault
+ * */
+export function getVaultWalletByAddress(address) {
+    let walletState = store.getState().vault.wallets
+    let wallets = [...walletState.internal, ...walletState.external];
+    let foundWallet = wallets.filter(wallet => wallet.address === address)?.[0];
+    return !foundWallet ? false : foundWallet;
+}
+
 export const curveTypes = {
     SECP256K1: 1,
     BARRETO_NAEHRIG: 2,
