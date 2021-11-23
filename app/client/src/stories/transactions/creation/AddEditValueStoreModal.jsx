@@ -1,5 +1,5 @@
-import React from 'react';
-import { Button, Form, Grid, Header, Icon, Modal } from 'semantic-ui-react';
+import React, { useMemo, useState } from 'react';
+import { Button, Checkbox, Form, Grid, Header, Icon, Modal, Popup } from 'semantic-ui-react';
 import { useFormState } from 'hooks/_hooks';
 import { useDispatch, useSelector } from 'react-redux';
 import has from 'lodash/has';
@@ -16,7 +16,7 @@ export default function AddEditValueStoreModal({ valueStore, onClose }) {
         external: state.vault.wallets.external,
     }));
 
-    const wallets = React.useMemo(() => (internal.concat(external)).map(wallet => {
+    const wallets = useMemo(() => (internal.concat(external)).map(wallet => {
         return {
             text: `${wallet.name} (0x${utils.string.splitStringWithEllipsis(wallet.address, 5)})`,
             value: wallet.address
@@ -31,6 +31,9 @@ export default function AddEditValueStoreModal({ valueStore, onClose }) {
 
     const isEditing = has(valueStore, 'index');
 
+    const [useBNCurve, setUseBNCurve] = useState(valueStore.useBNCurve);
+    const toggleCurveType = () => setUseBNCurve(s => !s);
+
     const handleSubmit = async () => {
         if (isEditing) {
             dispatch(TRANSACTION_ACTIONS.editStore({
@@ -38,6 +41,7 @@ export default function AddEditValueStoreModal({ valueStore, onClose }) {
                 from: formState.From.value,
                 to: formState.To.value,
                 value: formState.Value.value,
+                useBNCurve,
             }));
         }
         else {
@@ -45,6 +49,7 @@ export default function AddEditValueStoreModal({ valueStore, onClose }) {
                 from: formState.From.value,
                 to: formState.To.value,
                 value: formState.Value.value,
+                useBNCurve,
                 type: transactionTypes.VALUE_STORE,
             }));
         }
@@ -90,17 +95,37 @@ export default function AddEditValueStoreModal({ valueStore, onClose }) {
 
                         </Grid.Row>
 
-                        <Grid.Row columns={1} className="p-0">
+                        <Grid.Row columns={2} className="p-0 justify-around">
 
-                            <Grid.Column>
+                            <Grid.Column width="12">
 
                                 <Form.Input
-                                    id='To'
-                                    label='To'
-                                    required
+                                    id="To"
+                                    label="To"
                                     value={formState.To.value}
                                     onChange={e => formSetter.setTo(e.target.value)}
                                     error={!!formState.To.error && { content: formState.To.error }}
+                                />
+
+                            </Grid.Column>
+
+                            <Grid.Column width="4" className="flex justify-end pl-0">
+
+                                <Checkbox
+                                    className="flex justify-center items-end text-xs uppercase font-bold pb-2"
+                                    checked={useBNCurve}
+                                    onChange={toggleCurveType}
+                                    label={
+                                        <>
+                                            <label className={"labelCheckbox"}>Use BN Curve</label>
+                                            <Popup
+                                                size="mini"
+                                                position="right center"
+                                                trigger={<Icon name="question circle" className="ml-1 mb-1.5"/>}
+                                                content="Generate public address with BN Curve"
+                                            />
+                                        </>
+                                    }
                                 />
 
                             </Grid.Column>
