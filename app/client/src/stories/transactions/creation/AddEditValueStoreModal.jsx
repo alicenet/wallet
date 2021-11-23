@@ -41,7 +41,7 @@ export default function AddEditValueStoreModal({ valueStore, onClose }) {
                 from: formState.From.value,
                 to: formState.To.value,
                 value: formState.Value.value,
-                useBNCurve,
+                bnCurve: useBNCurve,
             }));
         }
         else {
@@ -49,7 +49,7 @@ export default function AddEditValueStoreModal({ valueStore, onClose }) {
                 from: formState.From.value,
                 to: formState.To.value,
                 value: formState.Value.value,
-                useBNCurve,
+                bnCurve: useBNCurve,
                 type: transactionTypes.VALUE_STORE,
             }));
         }

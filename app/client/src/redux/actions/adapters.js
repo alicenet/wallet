@@ -272,7 +272,7 @@ export const sendTransactionReducerTXs = () => {
                 );
             } else if (tx.type === transactionTypes.VALUE_STORE) {
                 preppedTxObjs.push(
-                    transactionUtils.createValueStoreObject(tx.from, tx.to, tx.value, false)
+                    transactionUtils.createValueStoreObject(tx.from, tx.to, tx.value, tx.bnCurve)
                 );
             } else {
                 throw new Error("sendTransactionReducerTXs received incorrect txType of type: ", tx.type);
