@@ -31,7 +31,7 @@ export default function AddEditValueStoreModal({ valueStore, onClose }) {
 
     const isEditing = has(valueStore, 'index');
 
-    const [useBNCurve, setUseBNCurve] = useState(valueStore.useBNCurve);
+    const [useBNCurve, setUseBNCurve] = useState(valueStore.bnCurve);
     const toggleCurveType = () => setUseBNCurve(s => !s);
 
     const handleSubmit = async () => {
