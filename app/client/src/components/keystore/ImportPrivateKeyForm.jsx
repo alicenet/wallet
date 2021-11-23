@@ -72,9 +72,7 @@ export default function ImportPrivateKeyForm({ submitText, submitFunction, cance
                                         size="mini"
                                         position="right center"
                                         offset={"0,2"}
-                                        trigger={
-                                            <Icon name="question circle" className="ml-1 mb-1.5" style={{ marginRight: "-.035rem" }}/>
-                                        }
+                                        trigger={<Icon name="question circle" className="ml-1 mb-1.5" style={{ marginRight: "-.035rem" }}/>}
                                         content="Generate public address with BN Curve"/>
                                 </>
                             }

@@ -101,10 +101,12 @@ export default function LoadKeystoreForm({ submitText, submitFunction, cancelTex
                                         position="right center"
                                         offset={"0,2"}
                                         trigger={<Icon name="question circle" className="ml-1 mb-1.5" style={{ marginRight: "-.035rem" }}/>}
-                                        content="Force the address generation by BN Curve. This will be detected if it is in the keystore"/>
+                                        content="Force the address generation by BN Curve. This will be detected if it is in the keystore"
+                                    />
                                 </>
                             }
-                            className="flex justify-center items-center text-xs uppercase font-bold relative -top-0"/>
+                            className="flex justify-center items-center text-xs uppercase font-bold relative -top-0"
+                        />
                     </label>
                 }
             />

@@ -83,7 +83,8 @@ export default function GenerateKeystoreForm(
                                     checked={curveType === curveTypes.BARRETO_NAEHRIG}
                                     onChange={toggleCurveType}
                                     label={<label className={"labelCheckbox"}>Use BN Curve</label>}
-                                    className="flex justify-center items-center text-xs uppercase font-bold relative -top-0" />
+                                    className="flex justify-center items-center text-xs uppercase font-bold relative -top-0"
+                                />
                             </label>
                         }
                         type={showPassword ? "text" : "password"} value={formState.password.value}
@@ -152,7 +153,8 @@ export default function GenerateKeystoreForm(
                             checked={curveType === curveTypes.BARRETO_NAEHRIG}
                             onChange={toggleCurveType}
                             label={<label className={"labelCheckbox"}>Use BN Curve</label>}
-                            className="flex justify-center items-center text-xs uppercase font-bold relative -top-0" />
+                            className="flex justify-center items-center text-xs uppercase font-bold relative -top-0"
+                        />
                     </label>
                 } 
                 type={showPassword ? "string" : "password"} value={formState.verifiedPassword.value}

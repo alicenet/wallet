@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 
@@ -11,9 +11,9 @@ import KeyOperationCurveModal from './KeyOperationCurveModal';
 
 function ChooseEllipticCurve() {
 
-    const [enableAdvancedWalletOptions, setEnableAdvancedOptions] = React.useState(false)
     const history = useHistory();
-    const [curveType, setCurveType] = React.useState(curveTypes.SECP256K1)
+    const [enableAdvancedWalletOptions, setEnableAdvancedOptions] = useState(false)
+    const [curveType, setCurveType] = useState(curveTypes.SECP256K1)
 
     const dispatch = useDispatch();
 
