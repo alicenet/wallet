@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Button, Checkbox, Container, Grid, Header, Icon, Menu, Pagination, Popup, Segment, Table } from 'semantic-ui-react';
+import { Button, Checkbox, Container, Grid, Header, Icon, Menu, Popup, Segment, Table } from 'semantic-ui-react';
 import { useDispatch, useSelector } from 'react-redux';
 import isEmpty from 'lodash/isEmpty';
 import chunk from 'lodash/chunk';
