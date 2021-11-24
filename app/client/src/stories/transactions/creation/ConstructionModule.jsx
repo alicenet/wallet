@@ -197,7 +197,7 @@ function ConstructionModule() {
                                         (transaction, index) => {
                                             const absoluteIndex = (activePage - 1) * recordsPerPage + index;
                                             return <TransactionRow
-                                                key={`transaction-row-${absoluteIndex}`}
+                                                key={`transaction-row-${index}`}
                                                 transaction={transaction}
                                                 index={absoluteIndex}
                                                 onUpdate={transaction.type === transactionTypes.DATA_STORE ? setDataStore : setValueStore}
