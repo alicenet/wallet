@@ -23,7 +23,7 @@ function ConstructionModule() {
     const columns = ['Type', 'From', 'To', 'Key', 'Value', 'Duration', ''];
 
     const emptyDataStore = { from: null, to: null, duration: null, key: null, value: null };
-    const emptyValueStore = { from: null, to: null, value: null };
+    const emptyValueStore = { from: null, to: null, value: null, bnCurve: false };
 
     const { list, fees } = useSelector(state => ({
         list: state.transaction.list,
