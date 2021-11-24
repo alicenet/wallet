@@ -305,7 +305,7 @@ export const sendTransactionReducerTXs = () => {
             const madWalletInstance = getMadWalletInstance();
             for (let i = 0; i < txDatas.vouts.length; i++) {
                 let vout = txDatas.vouts[i];
-                let [n, n2, extractedOwner] = await madWalletInstance.Transaction.Utils.extractOwner(vout.owner); // n == not needed
+                let extractedOwner = (await madWalletInstance.Transaction.Utils.extractOwner(vout.owner))[2];
                 if (utils.wallet.userOwnsAddress(extractedOwner)) {
                     owners.push(extractedOwner);
                 }
