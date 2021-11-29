@@ -5,10 +5,17 @@ import utils, { transactionStatus } from 'util/_util';
 export const initialTransactionState = {
     status: transactionStatus.CREATION, //The status reflects the transaction workflow
     list: [], //The list of transactions before being sent to the chain
-    fees: {
-        prioritizationFee: 0,
-        dataStoreFee: 0,
-        valueStoreFee: 0,
+    fees: { // Human readable fees -- The fees to be used by the adapter are in adapter reducer as HEX values
+        atomicSwapFee: 0, // Hex Parsed Base Atomic Swap Fee from RPC.getFees()
+        atomicSwapFees: 0, // Total Fees for all atomicSwap VOUTs in txList
+        dataStoreFee: 0, // Hex Parsed Base DataStore fee from RPC.getFees()
+        dataStoreFees: 0, // Total Fees for all dataStore VOUTs in txList
+        valueStoreFee: 0, // Hex Parsed Base ValueStore from RPC.getFees()
+        valueStoreFees: 0, // Total Fees for all valueStore VOUTs in txList
+        minTxFee: 0, // Parsed minimum tx fee
+        prioritizationFee: 0, // Any additional priortization fee set by the user
+        txFee: 0, // Prioritization + Minimum Fee
+        totalFee: 0, // Total TX Fee ( All Store Fees + Min Fee + Prioritization )
     },
     feePayer: {
         wallet: null, // Wallet object of the fee payer, and override notification -- Should exist in internal/external vault state wallets and set through Adjust TX Fee Modal
@@ -47,6 +54,26 @@ export default function transactionReducer(state = initialTransactionState, acti
             log.debug("Updating prioritization fee", action.payload);
             return Object.assign({}, state, {
                 fees: { ...state.fees, prioritizationFee: action.payload },
+            });
+
+        case TRANSACTION_ACTION_TYPES.UPDATE_FEES_BY_TYPE:
+            log.debug("Updating fees by keyed object: ", action.payload);
+            if (!action.payload) {
+                throw new Error("UPDATE_FEES_BY_TYPE called without payload -- Always pass a payload to this action.");
+            }
+            return Object.assign({}, state, {
+                fees: {
+                    atomicSwapFee: typeof action.payload.atomicSwapFee !== 'undefined' ? action.payload.atomicSwapFee : state.fees.atomicSwapFee,
+                    atomicSwapFees: typeof action.payload.atomicSwapFees !== 'undefined' ? action.payload.atomicSwapFees : state.fees.atomicSwapFees,
+                    dataStoreFee: typeof action.payload.dataStoreFee !== 'undefined' ? action.payload.dataStoreFee : state.fees.dataStoreFee,
+                    dataStoreFees: typeof action.payload.dataStoreFees !== 'undefined' ? action.payload.dataStoreFees : state.fees.dataStoreFees,
+                    valueStoreFee: typeof action.payload.valueStoreFee !== 'undefined' ? action.payload.valueStoreFee : state.fees.valueStoreFee,
+                    valueStoreFees: typeof action.payload.valueStoreFees !== 'undefined' ? action.payload.valueStoreFees : state.fees.valueStoreFees,
+                    minTxFee: typeof action.payload.minTxFee !== 'undefined' ? action.payload.minTxFee : state.fees.minTxFee,
+                    prioritizationFee: typeof action.payload.prioritizationFee !== 'undefined' ? action.payload.prioritizationFee : state.fees.prioritizationFee,
+                    txFee: typeof action.payload.txFee !== 'undefined' ? action.payload.txFee : state.fees.txFee,
+                    totalFee: typeof action.payload.totalFee !== 'undefined' ? action.payload.totalFee : state.fees.totalFee,
+                },
             });
 
         case TRANSACTION_ACTION_TYPES.ADD_TO_LIST:

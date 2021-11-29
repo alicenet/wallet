@@ -13,6 +13,7 @@ import { default_log as log } from 'log/logHelper';
 export function setPrioritizationFee(fee) {
     return async function (dispatch) {
         dispatch({ type: TRANSACTION_ACTION_TYPES.SET_PRIORITIZATION_FEE, payload: fee });
+        dispatch(parseAndUpdateFees());
     }
 }
 
@@ -106,6 +107,7 @@ export function addStore(transaction) {
     return async function (dispatch) {
         dispatch({ type: TRANSACTION_ACTION_TYPES.ADD_TO_LIST, payload: transaction });
         dispatch(parseDefaultFeePayer());
+        dispatch(parseAndUpdateFees());
     }
 }
 
@@ -129,6 +131,7 @@ export function editStore(transaction) {
 export function removeItem(index) {
     return async function (dispatch) {
         dispatch({ type: TRANSACTION_ACTION_TYPES.REMOVE_FROM_LIST, payload: index });
+        dispatch(parseAndUpdateFees());
     }
 }
 
@@ -154,4 +157,78 @@ export function clearPolledTxs() {
     return async function (dispatch) {
         dispatch({ type: TRANSACTION_ACTION_TYPES.CLEAR_POLLED_TX });
     }
+}
+
+/**
+ * Parse and update any passed fees to human readable state in the reducer -- Additionally calculates any fee changes when called
+ * -- Should be called when making adjustments to transaction.list or priotization fee changes
+ * @param { Object } rpcFees 
+ * @property { BigIntHexString } rpcFees.atomicSwapFee - Atomic Swap fee from RPC.getFees()
+ * @property { BigIntHexString } rpcFees.dataStoreFee - Data Store Fee from RPC.getFees()
+ * @property { BigIntHexString } rpcFees.valueStoreFee - Value Store Fee from RPC.getFees()
+ * @property { BigIntHexString } rpcFees.minTxFee - Min TX Fee from RPC.getFees()
+ * @property { Integer } rpcFees.prioritizationFee - Prioritization fee to use if any -- Will use existing state if available for calculation
+ */
+export function parseAndUpdateFees(rpcFees) {
+    return async function (dispatch, getState) {
+
+        const state = getState();
+
+        const madNetFees = rpcFees ? rpcFees : state.adapter.madNetAdapter.fees;
+        const txList = state.transaction.list;
+
+        console.log(madNetFees);
+
+        // Convert RPC Fees to human readable format for transaction reducer state
+        Object.keys(madNetFees).map(key => {
+            madNetFees[key] = parseInt(madNetFees[key], 16);
+        })
+
+        // Build fees from passed paramaters or available state
+        let fees = {
+            atomicSwapFee: madNetFees.atomicSwapFee, // Hex Parsed Base Atomic Swap Fee from RPC.getFees()
+            atomicSwapFees: 0, // Total Fees for all atomicSwap VOUTs in txList
+            dataStoreFee: madNetFees.dataStoreFee, // Hex Parsed Base DataStore fee from RPC.getFees()
+            dataStoreFees: 0, // Total Fees for all dataStore VOUTs in txList
+            valueStoreFee: madNetFees.valueStoreFee, // Hex Parsed Base ValueStore from RPC.getFees()
+            valueStoreFees: 0, // Total Fees for all valueStore VOUTs in txList
+            minTxFee: madNetFees.minTxFee, // Parsed minimum tx fee
+            prioritizationFee: 0, // Any additional priortization fee set by the user
+            txFee: 0, // Prioritization + Minimum Fee
+            totalFee: 0, // Total TX Fee ( All Store Fees + Min Fee + Prioritization )
+        }
+
+        // If the txList > 0, we need to calculate total fees
+        if (txList.length > 0) {
+            // Add a fee for each instance of the respective tx type to the total type fees
+            for (let i = 0; i < txList.length; i++) {
+                let tx = txList[i];
+                // Is DataStore
+                if (tx.type === 1) {
+                    fees.dataStoreFees += fees.dataStoreFee;
+                }
+                // Is ValueStore
+                else if (tx.type === 2) {
+                    fees.valueStoreFees += fees.valueStoreFee;
+
+                }
+                // Is Atomic Swap -- For future use
+                else if (tx.type === 3) {
+                    fees.atomicSwapFees += fees.atomicSwapFee;
+                }
+            }
+        }
+
+        fees.txFee = fees.minTxFee + fees.prioritizationFee;
+        fees.totalFee = fees.txFee + fees.valueStoreFees + fees.dataStoreFees + fees.atomicSwapFees;
+
+        console.log({
+            txList: txList,
+            fees: fees,
+        });
+
+        dispatch({ type: TRANSACTION_ACTION_TYPES.UPDATE_FEES_BY_TYPE, payload: fees })
+
+    }
+
 }

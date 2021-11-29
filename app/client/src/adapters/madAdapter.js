@@ -1,7 +1,7 @@
 import store from '../redux/store/store';
 import BigInt from "big-integer";
 import { ADAPTER_ACTION_TYPES, TRANSACTION_ACTION_TYPES } from 'redux/constants/_constants';
-import { ADAPTER_ACTIONS } from 'redux/actions/_actions';
+import { ADAPTER_ACTIONS, TRANSACTION_ACTIONS } from 'redux/actions/_actions';
 import { getMadWalletInstance } from 'redux/middleware/WalletManagerMiddleware'
 import { default_log as log } from 'log/logHelper'
 import { SyncToastMessageWarning, SyncToastMessageSuccess } from 'components/customToasts/CustomToasts'
@@ -67,6 +67,11 @@ class MadNetAdapter {
         // Set default dsView
         this.dsView = this._handleReduxStateValue(["dataExplore", "dsView"]);
         this.dsView.set([]);
+
+        // Set fees 
+        this.fees = this._handleReduxStateValue(["fees"]);
+        this.fees.set({});
+
     }
 
     /**
@@ -87,6 +92,21 @@ class MadNetAdapter {
                 toast.success(<SyncToastMessageSuccess basic title="Success" message="MadNet Connected" />, { className: "basic", "autoClose": 2400 })
             }
             store.dispatch(ADAPTER_ACTIONS.setMadNetBusy(false));
+            // Attempt to get fees -- RPC will throw if unfetchable
+            let fees = await this.wallet().Rpc.getFees();
+            // Re-assign to internal camelCase keys
+            this.fees.set({
+                atomicSwapFee: fees.AtomicSwapFee,
+                dataStoreFee: fees.DataStoreFee,
+                minTxFee: fees.MinTxFee,
+                valueStoreFee: fees.ValueStoreFee
+            });
+            store.dispatch(TRANSACTION_ACTIONS.parseAndUpdateFees({
+                atomicSwapFee: fees.AtomicSwapFee,
+                dataStoreFee: fees.DataStoreFee,
+                minTxFee: fees.MinTxFee,
+                valueStoreFee: fees.ValueStoreFee
+            }));
             return { success: true }
         }
         catch (ex) {

@@ -1,6 +1,7 @@
 /* Action Type Constants for ../reducer/transaction Actions */
 export const transactionActionTypes = {
     SET_PRIORITIZATION_FEE: "SET_PRIORITIZATION_FEE",
+    UPDATE_FEES_BY_TYPE: "UPDATE_FEES_BY_TYPE",
     CLEAR_LIST: "CLEAR_LIST",
     ADD_TO_LIST: "ADD_TO_LIST",
     REMOVE_FROM_LIST: "REMOVE_FROM_LIST",
