@@ -1,75 +1,64 @@
-import React, { useEffect, useState } from 'react';
-import { Form } from 'semantic-ui-react';
-import { useDispatch, useSelector } from 'react-redux';
-import head from 'lodash/head';
+import React, { useState } from 'react';
+import { Button, Icon, Popup } from 'semantic-ui-react';
+import { useSelector } from 'react-redux';
+
 import utils from 'util/_util';
-import Web3 from 'web3';
-import { toast } from 'react-toastify';
-import { TRANSACTION_ACTIONS } from 'redux/actions/_actions';
+import ChangeReturnAddressModal from './ChangeReturnAddressModal';
 
-import { SyncToastMessageWarning } from 'components/customToasts/CustomToasts';
+export default function ChangeReturnAddress() {
 
-function ChangeReturnAddress({ disabled = false, checkBoxOnChange, checkBoxChecked }) {
-
-    const dispatch = useDispatch();
-
-    const { internal, external } = useSelector(state => ({
-        internal: state.vault.wallets.internal,
-        external: state.vault.wallets.external,
+    const { changeReturnAddress } = useSelector(state => ({
+        changeReturnAddress: state.transaction.changeReturnAddress,
     }));
 
-    const [selectedReturnWallet, setSelectedReturnWallet] = useState(null);
-    const [adHocWallets, setAdHocWallets] = useState([]);
-
-    const wallets = React.useMemo(() => (internal.concat(external).concat(adHocWallets)).map(wallet => {
-        return {
-            text: `${wallet.name} (0x${utils.string.splitStringWithEllipsis(wallet.address, 5)})`,
-            value: wallet.address
-        };
-    }) || [], [internal, external, adHocWallets]);
-
-    useEffect(() => {
-        if (wallets.length > 0 && !selectedReturnWallet) {
-            setSelectedReturnWallet(head(wallets).value);
-        }
-    }, [wallets, selectedReturnWallet]);
-
-    useEffect(() => {
-        if (Web3.utils.isAddress(selectedReturnWallet)) {
-            dispatch(TRANSACTION_ACTIONS.saveChangeReturnAddress(selectedReturnWallet));
-
-        }
-    }, [selectedReturnWallet, dispatch]);
-
-    const handleAddressChange = (e, { value }) => setSelectedReturnWallet(value);
-
-    const handleAddressAdded = (e, { value }) => {
-        if (Web3.utils.isAddress(value)) {
-            setAdHocWallets(prevState => prevState.concat([{ name: value, address: value }]))
-        }
-        else {
-            toast.error(<SyncToastMessageWarning title="Error " message="Not a valid return address" />, { className: "basic", "autoClose": 1500 })
-        }
-    };
+    const [showChangeReturnAddressModal, setShowChangeReturnAddressModal] = useState(false);
 
     return (
-        <Form size="small" className="small-checkbox">
+        <>
 
-            <Form.Dropdown
-                disabled={disabled}
-                options={wallets}
-                placeholder='Choose UTXO Return Address'
-                search
-                selection
-                allowAdditions
-                closeOnChange
-                defaultValue={head(wallets)?.value}
-                onAddItem={handleAddressAdded}
-                onChange={handleAddressChange}
+            <div className="flex flex-col items-start">
+
+                <div className="flex text-xl font-bold">
+
+                    <Popup
+                        size="mini"
+                        className="w-60"
+                        position="right center"
+                        offset={"0,2"}
+                        trigger={
+                            <div className="flex items-center text-xl gap-2 cursor-pointer">
+                                <div className="m-0 font-bold">Change Address</div>
+                                <Icon size="small" name="question circle" className="m-0"/>
+                            </div>
+                        }
+                        content={
+                            <div className="text-sm">Your change address is where remaining UTXOs will go.<br/>
+                                This defaults to the first sending wallet, though you may choose which wallet to use.
+                            </div>
+                        }
+                    />
+
+                </div>
+
+                <div>
+                    {`0x${utils.string.splitStringWithEllipsis(changeReturnAddress, 10)}`}
+                </div>
+
+            </div>
+
+            <Button
+                basic
+                color="teal"
+                content="Use Custom Address"
+                className="m-0 w-52"
+                onClick={() => setShowChangeReturnAddressModal(true)}
             />
-        </Form>
+
+            <ChangeReturnAddressModal
+                open={showChangeReturnAddressModal}
+                onClose={() => setShowChangeReturnAddressModal(false)}
+            />
+
+        </>
     )
-
 }
-
-export default ChangeReturnAddress;

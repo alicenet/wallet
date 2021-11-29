@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Button, Checkbox, Container, Grid, Header, Icon, Menu, Popup, Segment, Table } from 'semantic-ui-react';
+import { Button, Container, Grid, Header, Icon, Menu, Popup, Segment, Table } from 'semantic-ui-react';
 import { useDispatch, useSelector } from 'react-redux';
 import isEmpty from 'lodash/isEmpty';
 import chunk from 'lodash/chunk';
@@ -34,12 +34,10 @@ function ConstructionModule() {
     const [valueStore, setValueStore] = useState(null);
     const [activePage, setActivePage] = useState(1);
     const [paginatedList, setPaginatedList] = useState([]);
-    const [changeReturnAddress, setChangeReturnAddress] = useState(false);
 
     const totalPages = Math.ceil(list.length / 5);
     const nextAvailable = (activePage + 1) <= totalPages;
     const prevAvailable = (activePage - 1) !== 0;
-
 
     const handlePaginationChange = (direction) => {
         if (direction === "back") {
@@ -60,23 +58,24 @@ function ConstructionModule() {
         dispatch(TRANSACTION_ACTIONS.toggleStatus());
     };
 
-    const TxFeesDisplay = ({ feesLabel, feesAmount, tooltipText }) => {
-
-        return (
-            <div className="flex text-xs justify-between">
-                <div className="font-bold w-16 text-left">{`${feesLabel}:`}</div>
+    const TxFeesDisplay = ({ feesLabel, feesAmount, tooltipText }) => (
+        <div className="flex text-xs justify-between">
+            <div className="font-bold w-16 text-left">{`${feesLabel}:`}</div>
+            <div className="flex flex-shrink gap-1">
                 <div className="text-gray-500">{`${feesAmount} MadBytes`}</div>
-                <div>
-                    <Popup content={tooltipText} size="mini" className="w-60" position="top right"
-                        offset="10,0"
-                        trigger={
-                            <Icon name="question circle cursor-pointer" />
-                        }
-                    />
-                </div>
+                <Popup
+                    content={tooltipText}
+                    size="mini"
+                    className="w-60"
+                    position="top right"
+                    offset="10,0"
+                    trigger={
+                        <Icon name="question circle" className="cursor-pointer"/>
+                    }
+                />
             </div>
-        )
-    }
+        </div>
+    );
 
     useEffect(() => {
         if (list.length > 0) {
@@ -128,8 +127,10 @@ function ConstructionModule() {
                                 <Container>
 
                                     <div className="cursor-pointer text-blue-400 hover:text-blue-500 flex items-center text-xl gap-2">
+
                                         <div className="m-0 font-bold">How to construct a transaction</div>
-                                        <Icon size="small" name="question circle" className="m-0 cursor-pointer" />
+                                        <Icon size="small" name="question circle" className="m-0 cursor-pointer"/>
+
                                     </div>
 
                                 </Container>
@@ -143,14 +144,14 @@ function ConstructionModule() {
                             <Menu compact icon='labeled' size="small">
 
                                 <Menu.Item name='add-data-store' onClick={() => setDataStore(emptyDataStore)}>
-                                    <Icon name="chart bar" className="text-gray-600" />Add Data Store
+                                    <Icon name="chart bar" className="text-gray-600"/>Add Data Store
                                 </Menu.Item>
 
                                 <Menu.Item name='add-value-store' onClick={() => setValueStore(emptyValueStore)}>
-                                    <Icon name="currency" className="text-gray-600" />Add Value Store
+                                    <Icon name="currency" className="text-gray-600"/>Add Value Store
                                 </Menu.Item>
 
-                                <AddEditPrioritizationFeeModal />
+                                <AddEditPrioritizationFeeModal/>
 
                             </Menu>
 
@@ -217,13 +218,12 @@ function ConstructionModule() {
                                         <Table.HeaderCell colSpan={7} width={16} textAlign="right" className="p-2">
 
                                             <div className="flex w-full justify-between items-center">
-                                                <Button disabled={!prevAvailable} icon="chevron left" size="mini" onClick={() => handlePaginationChange("back")} />
+                                                <Button disabled={!prevAvailable} icon="chevron left" size="mini" onClick={() => handlePaginationChange("back")}/>
                                                 <div className="text-gray-500">
                                                     Page {activePage} of {totalPages}
                                                 </div>
-                                                <Button disabled={!nextAvailable} icon="chevron right" size="mini" onClick={() => handlePaginationChange("forward")} />
+                                                <Button disabled={!nextAvailable} icon="chevron right" size="mini" onClick={() => handlePaginationChange("forward")}/>
                                             </div>
-
 
                                         </Table.HeaderCell>
 
@@ -237,48 +237,35 @@ function ConstructionModule() {
 
                     </Grid.Row>
 
-                    {dataStore && <AddEditDataStoreModal dataStore={dataStore} onClose={() => setDataStore(null)} />}
+                    {dataStore && <AddEditDataStoreModal dataStore={dataStore} onClose={() => setDataStore(null)}/>}
 
-                    {valueStore && <AddEditValueStoreModal valueStore={valueStore} onClose={() => setValueStore(null)} />}
+                    {valueStore && <AddEditValueStoreModal valueStore={valueStore} onClose={() => setValueStore(null)}/>}
 
                     <Grid.Row>
 
-                        <Grid.Column width={12} textAlign="left" className="pl-0">
+                        <Grid.Column width={12} className="p-0 flex flex-col justify-between">
 
-                            <div className="flex flex-col items-start">
-                                <div className="flex text-xl font-bold">
-                                    Change Address
-                                    <label className="flex justify-between text-xs font-bold mb-0.5 ml-5">
-                                        <Checkbox
-                                            checked={changeReturnAddress}
-                                            onChange={() => setChangeReturnAddress(prevState => !prevState)}
-                                            label={<label className={"labelCheckbox"}>Use Custom Address</label>}
-                                            className="small-checkbox flex justify-center items-center text-xs uppercase font-bold relative -top-0"
-                                        />
-                                    </label>
-                                </div>
-                                <div className="text-sm">Your change address is where remaining UTXOs will go.<br />
-                                    This defaults to the first sending wallet, though you may choose which wallet to use.
-                                </div>
-                            </div>
-
-                            <div className="flex justify-start mt-4">
-                                <ChangeReturnAddress disabled={!changeReturnAddress} />
-                            </div>
+                            <ChangeReturnAddress/>
 
                         </Grid.Column>
 
-                        <Grid.Column width={4} className="p-0 flex flex-col justify-between item">
+                        <Grid.Column width={4} className="p-0 flex flex-col justify-between gap-2">
 
-                            <Container>
+                            <Container className="flex flex-col gap-1">
 
-                                <TxFeesDisplay tooltipText="The minimum tx fee + any prioritization fees" feesLabel="Tx Fee" feesAmount={fees.prioritizationFee} />
-                                <TxFeesDisplay tooltipText="The sum of the cost of each store" feesLabel="Store Fees" feesAmount={txsFees} />
-                                <TxFeesDisplay tooltipText="The sum of all transaction fees" feesLabel="Total Fees" feesAmount={parseInt(fees.prioritizationFee, 10) + txsFees} />
+                                <TxFeesDisplay tooltipText="The minimum tx fee + any prioritization fees" feesLabel="Tx Fee" feesAmount={fees.prioritizationFee}/>
+                                <TxFeesDisplay tooltipText="The sum of the cost of each store" feesLabel="Store Fees" feesAmount={txsFees}/>
+                                <TxFeesDisplay tooltipText="The sum of all transaction fees" feesLabel="Total Fees" feesAmount={parseInt(fees.prioritizationFee, 10) + txsFees}/>
 
                             </Container>
 
-                            <Button color="teal" content='Send Transaction' disabled={isEmpty(list)} onClick={handleSendTransaction} className="m-0" />
+                            <Button
+                                color="teal"
+                                content="Send Transaction"
+                                disabled={isEmpty(list)}
+                                onClick={handleSendTransaction}
+                                className="m-0"
+                            />
 
                         </Grid.Column>
 
