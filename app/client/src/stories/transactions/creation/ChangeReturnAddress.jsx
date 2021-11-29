@@ -14,7 +14,7 @@ export default function ChangeReturnAddress() {
     const [showChangeReturnAddressModal, setShowChangeReturnAddressModal] = useState(false);
 
     return (
-        <div className="flex flex-col justify-between item gap-2">
+        <>
 
             <div className="flex flex-col items-start">
 
@@ -23,11 +23,12 @@ export default function ChangeReturnAddress() {
                     <Popup
                         size="mini"
                         className="w-60"
-                        offset="10,0"
+                        position="right center"
+                        offset={"0,2"}
                         trigger={
-                            <div className="flex items-center text-xl gap-2">
+                            <div className="flex items-center text-xl gap-2 cursor-pointer">
                                 <div className="m-0 font-bold">Change Address</div>
-                                <Icon size="small" name="question circle" className="m-0 cursor-pointer"/>
+                                <Icon size="small" name="question circle" className="m-0"/>
                             </div>
                         }
                         content={
@@ -58,6 +59,6 @@ export default function ChangeReturnAddress() {
                 onClose={() => setShowChangeReturnAddressModal(false)}
             />
 
-        </div>
+        </>
     )
 }

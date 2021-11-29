@@ -243,13 +243,13 @@ function ConstructionModule() {
 
                     <Grid.Row>
 
-                        <Grid.Column width={12} className="p-0">
+                        <Grid.Column width={12} className="p-0 flex flex-col justify-between">
 
                             <ChangeReturnAddress/>
 
                         </Grid.Column>
 
-                        <Grid.Column width={4} className="p-0 flex flex-col justify-between item gap-2">
+                        <Grid.Column width={4} className="p-0 flex flex-col justify-between gap-2">
 
                             <Container className="flex flex-col gap-1">
 
