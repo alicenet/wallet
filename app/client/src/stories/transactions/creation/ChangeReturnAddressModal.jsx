@@ -36,7 +36,7 @@ export default function ChangeReturnAddressModal({ open, onClose }) {
 
     useEffect(() => {
         if (Web3.utils.isAddress(selectedReturnWallet)) {
-            dispatch(TRANSACTION_ACTIONS.saveChangeReturnAddress(selectedReturnWallet));
+            dispatch(TRANSACTION_ACTIONS.saveChangeReturnAddress(utils.string.removeHexPrefix(selectedReturnWallet)));
         }
     }, [selectedReturnWallet, dispatch]);
 

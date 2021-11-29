@@ -26,6 +26,18 @@ export function splitStringWithEllipsis(str, lengthOnSides = 3) {
 }
 
 /**
+ * Removes the Hex prefix
+ * @param { String } address
+ * @returns Returns the address
+ */
+export function removeHexPrefix(address) {
+    if (address.indexOf('0x') >= 0) {
+        return address.slice(2);
+    }
+    return address;
+}
+
+/**
  * Return true of passed string resembles an expected TxHash
  * @param { String } hash 
  * @returns 

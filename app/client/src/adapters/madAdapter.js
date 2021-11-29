@@ -489,9 +489,7 @@ class MadNetAdapter {
     async viewTransaction(txHash) {
         try {
             this.transactionHash.set(txHash);
-            if (txHash.indexOf('0x') >= 0) {
-                txHash = txHash.slice(2);
-            }
+            txHash = utils.string.removeHexPrefix(txHash);
             let Tx = await this.wallet().Rpc.getMinedTransaction(txHash);
             this.transaction.set(Tx["Tx"]);
             let txHeight = await this.wallet().Rpc.getTxBlockHeight(txHash);
