@@ -1,10 +1,10 @@
 import React from 'react';
 import useFormState from 'hooks/useFormState';
 import { useDispatch, useSelector } from 'react-redux';
+import { Button, Form, Header, Icon, Modal } from 'semantic-ui-react';
+
 import { MODAL_ACTION_TYPES } from 'redux/constants/_constants';
-import { Button, Form, Header, Modal, Icon } from 'semantic-ui-react';
 import { electronStoreCommonActions } from 'store/electronStoreHelper';
-import { classNames } from 'util/_util';
 
 /**
  * Password request modal -- Redux state handles open/close as well as the success-submit callback.
@@ -54,18 +54,29 @@ export default function PasswordRequestModal() {
             <Modal.Content>
 
                 <Form size="small" className="mt-4" onSubmit={() => onSubmit(tryPassword)} error={!!formState.password.error}>
-                    <Form.Input type={showPassword ? "text" : "password"} error={!!formState.password.error} value={formState.password.value} onChange={e => formSetter.setPassword(e.target.value)}
-                        icon={<Icon link name={showPassword ? "eye" : "eye slash"} onClick={ () => setShowPassword(s => !s)} />}
+
+                    <Form.Input
+                        type={showPassword ? "text" : "password"}
+                        error={!!formState.password.error}
+                        value={formState.password.value}
+                        onChange={e => formSetter.setPassword(e.target.value)}
+                        icon={<Icon link name={showPassword ? "eye" : "eye slash"} onClick={() => setShowPassword(s => !s)}/>}
                     />
+
                 </Form>
 
             </Modal.Content>
 
-            <Modal.Actions className={classNames({ "flex justify-between": !!formState.password.error })}>
-                {!!formState.password.error ? (
-                    <Button size="mini" content="Can't Remember Password" basic color="orange" onClick={() => console.log("CAT TODO!")}/>
-                ) : null}
-                <Button size="mini" content={formState.password.error ? "Try Again" : "Submit"} basic color={formState.password.error ? "red" : "green"} onClick={() => onSubmit(tryPassword)}/>
+            <Modal.Actions>
+
+                <Button
+                    size="mini"
+                    content={formState.password.error ? "Try Again" : "Submit"}
+                    basic
+                    color={formState.password.error ? "red" : "green"}
+                    onClick={() => onSubmit(tryPassword)}
+                />
+
             </Modal.Actions>
 
         </Modal>
