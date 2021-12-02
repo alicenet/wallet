@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from 'App.jsx';
-import * as serviceWorker from './serviceWorker';
 
 /* Styles */
 import 'react-toastify/dist/ReactToastify.css';
@@ -19,5 +18,3 @@ ReactDOM.render(
     </Provider>,
     document.getElementById('root')
 );
-
-serviceWorker.unregister();
