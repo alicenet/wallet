@@ -263,8 +263,11 @@ export const getAndStoreRecentTXsForAddress = (address, curve) => {
  */
 export const sendTransactionReducerTXs = () => {
     return async (dispatch, getState) => {
-        let txReducerTxs = getState().transaction.list;
+
+        const state = getState();
+        let txReducerTxs = state.transaction.list;
         let preppedTxObjs = [] // Convert to proper tx format for madNetAdapter
+        
         txReducerTxs.forEach((tx) => {
             if (tx.type === transactionTypes.DATA_STORE) {
                 preppedTxObjs.push(
@@ -278,12 +281,32 @@ export const sendTransactionReducerTXs = () => {
                 throw new Error("sendTransactionReducerTXs received incorrect txType of type: ", tx.type);
             }
         })
-        // Add each tx to the txOutList of the madNetAdapter
-        preppedTxObjs.forEach(tx => {
-            madNetAdapter.addTxOut(tx);
+
+        console.log({
+            txReducerTxs: txReducerTxs,
+            preppedTxObjs: preppedTxObjs,
         })
 
+
+        // Add each tx to the txOutList of the madNetAdapter
+        preppedTxObjs.forEach(tx => {
+            let addAttempt = madNetAdapter.addTxOut(tx);
+        })
+
+        console.log(madNetAdapter.wallet());
+
         console.debug("MadNetAdapter TxOuts pending: ", madNetAdapter.txOuts);
+
+        // Create the fee input
+        let feePayerWallet = state.transaction.feePayer.wallet;
+        let txFee = state.transaction.fees.txFee;
+
+        console.log({
+            feePayerWallet: feePayerWallet,
+            txFee: txFee,
+        })
+
+        await madNetAdapter.wallet().Transaction.createTxFee(feePayerWallet.address, feePayerWallet.curve, txFee);
 
         let tx = await madNetAdapter.createTx();
 
@@ -322,6 +345,8 @@ export const sendTransactionReducerTXs = () => {
         dispatch({ type: TRANSACTION_ACTION_TYPES.SET_LAST_SENT_TX_HASH, payload: "" });
         // Reset TxFeePayer for next cycles
         dispatch(TRANSACTION_ACTIONS.clearFeePayer());
+        // Remove any user input or store fees from fee state
+        dispatch(TRANSACTION_ACTIONS.resetFeeState());
 
         return tx;
     }

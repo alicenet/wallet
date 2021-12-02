@@ -1,5 +1,7 @@
 import { TRANSACTION_ACTION_TYPES } from '../constants/_constants';
 import { default_log as log } from 'log/logHelper';
+import madNetAdapter from 'adapters/madAdapter';
+import BigInt from 'big-integer';
 
 //////////////////////////////////
 /* External Async Action Calls */
@@ -159,6 +161,29 @@ export function clearPolledTxs() {
     }
 }
 
+export function resetFeeState() {
+    return async function (dispatch, getState) {
+        const state = getState();
+        const madNetFees = state.adapter.madNetAdapter.fees;
+        // Reset FEE state to existing fee state
+        let fees = {
+            atomicSwapFee: madNetFees.atomicSwapFee, // Hex Parsed Base Atomic Swap Fee from RPC.getFees()
+            atomicSwapFees: 0, // Total Fees for all atomicSwap VOUTs in txList
+            dataStoreFee: madNetFees.dataStoreFee, // Hex Parsed Base DataStore fee from RPC.getFees()
+            dataStoreFees: 0, // Total Fees for all dataStore VOUTs in txList
+            depositFees: 0, // Any fees surrounding deposits for data stores
+            valueStoreFee: madNetFees.valueStoreFee, // Hex Parsed Base ValueStore from RPC.getFees()
+            valueStoreFees: 0, // Total Fees for all valueStore VOUTs in txList
+            minTxFee: madNetFees.minTxFee, // Parsed minimum tx fee
+            prioritizationFee: 0, // Any additional priortization fee set by the user
+            txFee: 0, // Prioritization + Minimum Fee
+            totalFee: 0, // Total TX Fee ( All Store Fees + Min Fee + Prioritization )
+        }
+        fees.txFee = fees.minTxFee + fees.prioritizationFee;
+        dispatch({ type: TRANSACTION_ACTION_TYPES.UPDATE_FEES_BY_TYPE, payload: fees })
+    }
+}
+
 /**
  * Parse and update any passed fees to human readable state in the reducer -- Additionally calculates any fee changes when called
  * -- Should be called when making adjustments to transaction.list or priotization fee changes
@@ -177,8 +202,6 @@ export function parseAndUpdateFees(rpcFees) {
         const madNetFees = rpcFees ? rpcFees : state.adapter.madNetAdapter.fees;
         const txList = state.transaction.list;
 
-        console.log(madNetFees);
-
         // Convert RPC Fees to human readable format for transaction reducer state
         Object.keys(madNetFees).map(key => {
             madNetFees[key] = parseInt(madNetFees[key], 16);
@@ -190,13 +213,20 @@ export function parseAndUpdateFees(rpcFees) {
             atomicSwapFees: 0, // Total Fees for all atomicSwap VOUTs in txList
             dataStoreFee: madNetFees.dataStoreFee, // Hex Parsed Base DataStore fee from RPC.getFees()
             dataStoreFees: 0, // Total Fees for all dataStore VOUTs in txList
+            depositFees: 0, // Any fees surrounding deposits for data stores
             valueStoreFee: madNetFees.valueStoreFee, // Hex Parsed Base ValueStore from RPC.getFees()
             valueStoreFees: 0, // Total Fees for all valueStore VOUTs in txList
             minTxFee: madNetFees.minTxFee, // Parsed minimum tx fee
-            prioritizationFee: 0, // Any additional priortization fee set by the user
+            prioritizationFee: state.transaction.fees.prioritizationFee, // Any additional priortization fee set by the user
             txFee: 0, // Prioritization + Minimum Fee
             totalFee: 0, // Total TX Fee ( All Store Fees + Min Fee + Prioritization )
         }
+
+        // Grab MadNetAdapter instance for the MadNetJS Wallet instance
+        const madWallet = madNetAdapter.wallet();
+
+        // Note the current epoch for DataStore Reward calculations
+        const currentEpoch = await madWallet.Rpc.getEpoch();
 
         // If the txList > 0, we need to calculate total fees
         if (txList.length > 0) {
@@ -205,7 +235,39 @@ export function parseAndUpdateFees(rpcFees) {
                 let tx = txList[i];
                 // Is DataStore
                 if (tx.type === 1) {
-                    fees.dataStoreFees += fees.dataStoreFee;
+                    // fees.dataStoreFees += fees.dataStoreFee;
+                    console.log("DataStoreInList:", tx);
+                    // Additionally calculate the deposit costs
+                    let storeFee = (await madWallet.Transaction.Utils.calculateFee(fees.dataStoreFee, tx.duration)).toString();
+                    let depositFee = (await madWallet.Transaction.Utils.calculateDeposit(Buffer.from(tx.value).toString('hex'), tx.duration)).toString();
+
+                    // Check if the datastore exists and if a reward will be redeemed. . .
+                    let dsIndex = Buffer.from(tx.key, "utf8").toString("hex").toLowerCase().padStart(64, "0");
+                    let DS = await madWallet.Rpc.getDataStoreByIndex(tx.from, 1, dsIndex);
+
+                    let rewardTotal = 0;
+                    if (DS) {
+                        // Use current epoch for issues at 
+                        let reward = await madWallet.Transaction.Utils.remainigDeposit(DS, currentEpoch);
+                        if (reward) {
+                            // + BigInt(BigInt("0x" + DS["DataStore"]["DSLinker"]["DSPreImage"]["Deposit"])
+                            // replace with depositFee?
+                            rewardTotal = BigInt(rewardTotal) + BigInt(BigInt(depositFee) - BigInt(reward));
+                        }
+                    }
+
+                    console.log({
+                        DS: DS,
+                        dsIndex: dsIndex,
+                        currentEpoch: currentEpoch,
+                        storeFee: storeFee,
+                        depositFee: depositFee,
+                        reward: rewardTotal.toString(),
+                    })
+
+                    // Add the deposit fee and storage fee to the total dataStoreFees
+                    fees.dataStoreFees += parseInt(depositFee);
+                    fees.dataStoreFees += parseInt(storeFee);
                 }
                 // Is ValueStore
                 else if (tx.type === 2) {
@@ -220,12 +282,8 @@ export function parseAndUpdateFees(rpcFees) {
         }
 
         fees.txFee = fees.minTxFee + fees.prioritizationFee;
-        fees.totalFee = fees.txFee + fees.valueStoreFees + fees.dataStoreFees + fees.atomicSwapFees;
 
-        console.log({
-            txList: txList,
-            fees: fees,
-        });
+        fees.totalFee = fees.txFee + fees.valueStoreFees + fees.dataStoreFees + fees.atomicSwapFees;
 
         dispatch({ type: TRANSACTION_ACTION_TYPES.UPDATE_FEES_BY_TYPE, payload: fees })
 

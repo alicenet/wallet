@@ -10,6 +10,7 @@ export const initialTransactionState = {
         atomicSwapFees: 0, // Total Fees for all atomicSwap VOUTs in txList
         dataStoreFee: 0, // Hex Parsed Base DataStore fee from RPC.getFees()
         dataStoreFees: 0, // Total Fees for all dataStore VOUTs in txList
+        depositFees: 0, // Any fees surrounding deposits for data stores
         valueStoreFee: 0, // Hex Parsed Base ValueStore from RPC.getFees()
         valueStoreFees: 0, // Total Fees for all valueStore VOUTs in txList
         minTxFee: 0, // Parsed minimum tx fee
@@ -67,6 +68,7 @@ export default function transactionReducer(state = initialTransactionState, acti
                     atomicSwapFees: typeof action.payload.atomicSwapFees !== 'undefined' ? action.payload.atomicSwapFees : state.fees.atomicSwapFees,
                     dataStoreFee: typeof action.payload.dataStoreFee !== 'undefined' ? action.payload.dataStoreFee : state.fees.dataStoreFee,
                     dataStoreFees: typeof action.payload.dataStoreFees !== 'undefined' ? action.payload.dataStoreFees : state.fees.dataStoreFees,
+                    depositFees: typeof action.payload.depositFees !== 'undefined' ? action.payload.depositFees : state.fees.dataStoreFees,
                     valueStoreFee: typeof action.payload.valueStoreFee !== 'undefined' ? action.payload.valueStoreFee : state.fees.valueStoreFee,
                     valueStoreFees: typeof action.payload.valueStoreFees !== 'undefined' ? action.payload.valueStoreFees : state.fees.valueStoreFees,
                     minTxFee: typeof action.payload.minTxFee !== 'undefined' ? action.payload.minTxFee : state.fees.minTxFee,

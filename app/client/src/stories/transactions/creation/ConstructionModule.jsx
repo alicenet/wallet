@@ -253,9 +253,13 @@ function ConstructionModule() {
 
                             <Container className="flex flex-col gap-1">
 
-                                <TxFeesDisplay tooltipText="The minimum tx fee + any prioritization fees" feesLabel="Tx Fee" feesAmount={fees.prioritizationFee}/>
-                                <TxFeesDisplay tooltipText="The sum of the cost of each store" feesLabel="Store Fees" feesAmount={txsFees}/>
-                                <TxFeesDisplay tooltipText="The sum of all transaction fees" feesLabel="Total Fees" feesAmount={parseInt(fees.prioritizationFee, 10) + txsFees}/>
+                                {/* 
+                                        TOTAL FEE GETS +1 to account for addiitonal ChangeOut ValueStore Only on UI side, not feeState as we dont want to actually send + 1
+                                        -- There is a chance the UTXOs will be spent evenly, but is unlikely and if this occurs is a +1 in the user favor, instead of a -1
+                                */}
+                                <TxFeesDisplay tooltipText="The minimum + prioritization + changeout(+1)" feesLabel="Tx Fee" feesAmount={fees.txFee + 1}/>
+                                <TxFeesDisplay tooltipText="The sum of the cost of each store and deposits" feesLabel="Store Fees" feesAmount={fees.dataStoreFees + fees.valueStoreFees}/>
+                                <TxFeesDisplay tooltipText="The sum of all transaction fees" feesLabel="Total Fees" feesAmount={fees.totalFee + 1}/>
 
                             </Container>
 

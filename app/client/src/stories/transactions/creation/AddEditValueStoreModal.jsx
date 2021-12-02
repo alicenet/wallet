@@ -11,9 +11,10 @@ export default function AddEditValueStoreModal({ valueStore, onClose }) {
 
     const dispatch = useDispatch();
 
-    const { internal, external } = useSelector(state => ({
+    const { internal, external, fees } = useSelector(state => ({
         internal: state.vault.wallets.internal,
         external: state.vault.wallets.external,
+        fees: state.transaction.fees,
     }));
 
     const wallets = useMemo(() => (internal.concat(external)).map(wallet => {
@@ -65,7 +66,9 @@ export default function AddEditValueStoreModal({ valueStore, onClose }) {
 
             <Modal.Header className="text-center">
 
-                <Header as="h4" className="uppercase" color="purple">{`${isEditing ? 'Edit' : 'Add'} Value Store`}</Header>
+                <Header as="h4" className="uppercase" color="purple">{`${isEditing ? 'Edit' : 'Add'} Value Store`}
+                    <Header.Subheader className="text-xs">Base Fee Per Value Store: {fees.valueStoreFee} MadByte{fees.valueStoreFee > 1 ? "s" : ""}</Header.Subheader>
+                 </Header>
 
             </Modal.Header>
 

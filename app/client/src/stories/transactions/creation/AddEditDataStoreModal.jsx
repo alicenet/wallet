@@ -11,9 +11,10 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
 
     const dispatch = useDispatch();
 
-    const { internal, external } = useSelector(state => ({
+    const { internal, external, fees } = useSelector(state => ({
         internal: state.vault.wallets.internal,
         external: state.vault.wallets.external,
+        fees: state.transaction.fees,
     }));
 
     const wallets = React.useMemo(() => (internal.concat(external)).map(wallet => {
@@ -63,7 +64,9 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
 
             <Modal.Header className="text-center">
 
-                <Header as="h4" className="uppercase" color="purple">{`${isEditing ? 'Edit' : 'Add'} Data Store`}</Header>
+                <Header as="h4" className="uppercase" color="purple">{`${isEditing ? 'Edit' : 'Add'} Data Store`}
+                    <Header.Subheader className="text-xs">Fee Per Data Store: {fees.dataStoreFee} MadByte{fees.dataStoreFee > 1 ? "s" : ""}</Header.Subheader>
+                </Header>
 
             </Modal.Header>
 
@@ -143,10 +146,14 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
 
             <Modal.Actions className="flex justify-between">
 
-                <Button color="orange" className="m-0" basic onClick={onClose} content="Close"/>
+                <Button color="orange" className="m-0" basic onClick={onClose} content="Close" />
+
+                <div className="flex flex-column justify-center items-center text-sm">
+                    Total Store Cost: 
+                </div>
 
                 <Button
-                    icon={<Icon name='chart bar'/>}
+                    icon={<Icon name='chart bar' />}
                     className="m-0"
                     content={`${isEditing ? 'Edit' : 'Add'} Data Store`}
                     basic

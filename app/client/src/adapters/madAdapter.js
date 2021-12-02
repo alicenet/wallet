@@ -26,6 +26,9 @@ class MadNetAdapter {
             mad_net_provider: false,
         }
 
+        // Error cache -- Cache first errors so that on retries the correct error is relayed to the user
+        this.errors = {};
+
         this.connected = this._handleReduxStateValue(["connected"]);
         this.failed = this._handleReduxStateValue(["error"]);
         this.MaxDataStoreSize = 2097152;
@@ -376,6 +379,11 @@ class MadNetAdapter {
             return await this.monitorPending();
         }
         catch (ex) {
+            if (!this['sendTx-attempts'] || this['sendTx-attempts'] === 1) {
+                // Only overwrite error on first attempt
+                console.log("UDPATE-ERROR", ex)
+                this.errors['sendTx'] = ex;
+            }
             await this.backOffRetry('sendTx')
             if (this['sendTx-attempts'] > 2) {
                 // Clear txOuts on a final fail
@@ -383,7 +391,7 @@ class MadNetAdapter {
                 this.changeAddress.set({});
                 await this.wallet().Transaction._reset();
                 await this.backOffRetry('sendTx', true)
-                return { error: ex.message }
+                return { error: this.errors['sendTx'].message }
             }
             await this.sleep(this['sendTx-timeout']);
             return await this.sendTx();
