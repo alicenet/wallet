@@ -359,6 +359,7 @@ class MadNetAdapter {
             return ({ error: "Waiting for pending transaction to be mined" });
         }
         this.pendingTxStatus.set("Sending transaction")
+        console.log(this.wallet());
         for await (const txOut of this.txOuts.get()) {
             try {
                 switch (txOut.type) {
