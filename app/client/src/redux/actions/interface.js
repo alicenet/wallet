@@ -17,3 +17,12 @@ export function toggleGlobalLoadingBool(isLoading) {
 export function DEBUG_toggleShowDebug(showDebug) {
     return { type: INTERFACE_ACTION_TYPES.DEBUG_TOGGLE_SHOW_DEBUG, payload: typeof showDebug !== "undefined" ? showDebug : undefined }
 }
+
+/**
+ * Toggle the interface theme between light and dark modes
+ * @returns { Object } - Action object to be passed as first parameter within Redux.dispatch()
+ */
+export function toggleTheme() {
+
+    return { type: INTERFACE_ACTION_TYPES.TOGGLE_THEME }
+}
