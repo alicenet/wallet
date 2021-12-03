@@ -39,6 +39,26 @@ function ConstructionModule() {
     const nextAvailable = (activePage + 1) <= totalPages;
     const prevAvailable = (activePage - 1) !== 0;
 
+    const listHasValueStores = useMemo(() => {
+        let hasVS = false;
+        list.forEach((tx) => {
+            if (tx.type === transactionTypes.VALUE_STORE) {
+                hasVS = true;
+            }
+        })
+        return hasVS;
+    }, [list])
+
+    const valueStoreTotal = useMemo(() => {
+        let total = 0;
+        list.forEach(tx => {
+            if (tx.type === transactionTypes.VALUE_STORE) {
+                total += parseInt(tx.value);
+            }
+        })
+        return total;
+    }, [list])
+
     const handlePaginationChange = (direction) => {
         if (direction === "back") {
             if (prevAvailable) {
@@ -70,7 +90,7 @@ function ConstructionModule() {
                     position="top right"
                     offset="10,0"
                     trigger={
-                        <Icon name="question circle" className="cursor-pointer"/>
+                        <Icon name="question circle" className="cursor-pointer" />
                     }
                 />
             </div>
@@ -97,20 +117,6 @@ function ConstructionModule() {
         }
     }, [list, activePage]);
 
-    const txsFees = useMemo(
-        () => {
-            if (list.length > 0) {
-                return list.reduce((total, transaction) => {
-                    if (transaction.type === transactionTypes.VALUE_STORE) {
-                        return parseInt(fees.valueStoreFee, 10) + total;
-                    }
-                    return parseInt(fees.dataStoreFee, 10) + total;
-                }, 0);
-            }
-            return 0;
-        }, [list, fees]
-    );
-
     return (
         <Page showMenu>
 
@@ -129,7 +135,7 @@ function ConstructionModule() {
                                     <div className="cursor-pointer text-blue-400 hover:text-blue-500 flex items-center text-xl gap-2">
 
                                         <div className="m-0 font-bold">How to construct a transaction</div>
-                                        <Icon size="small" name="question circle" className="m-0 cursor-pointer"/>
+                                        <Icon size="small" name="question circle" className="m-0 cursor-pointer" />
 
                                     </div>
 
@@ -144,14 +150,14 @@ function ConstructionModule() {
                             <Menu compact icon='labeled' size="small">
 
                                 <Menu.Item name='add-data-store' onClick={() => setDataStore(emptyDataStore)}>
-                                    <Icon name="chart bar" className="text-gray-600"/>Add Data Store
+                                    <Icon name="chart bar" className="text-gray-600" />Add Data Store
                                 </Menu.Item>
 
                                 <Menu.Item name='add-value-store' onClick={() => setValueStore(emptyValueStore)}>
-                                    <Icon name="currency" className="text-gray-600"/>Add Value Store
+                                    <Icon name="currency" className="text-gray-600" />Add Value Store
                                 </Menu.Item>
 
-                                <AddEditPrioritizationFeeModal/>
+                                <AddEditPrioritizationFeeModal />
 
                             </Menu>
 
@@ -218,11 +224,11 @@ function ConstructionModule() {
                                         <Table.HeaderCell colSpan={7} width={16} textAlign="right" className="p-2">
 
                                             <div className="flex w-full justify-between items-center">
-                                                <Button disabled={!prevAvailable} icon="chevron left" size="mini" onClick={() => handlePaginationChange("back")}/>
+                                                <Button disabled={!prevAvailable} icon="chevron left" size="mini" onClick={() => handlePaginationChange("back")} />
                                                 <div className="text-gray-500">
                                                     Page {activePage} of {totalPages}
                                                 </div>
-                                                <Button disabled={!nextAvailable} icon="chevron right" size="mini" onClick={() => handlePaginationChange("forward")}/>
+                                                <Button disabled={!nextAvailable} icon="chevron right" size="mini" onClick={() => handlePaginationChange("forward")} />
                                             </div>
 
                                         </Table.HeaderCell>
@@ -237,15 +243,15 @@ function ConstructionModule() {
 
                     </Grid.Row>
 
-                    {dataStore && <AddEditDataStoreModal dataStore={dataStore} onClose={() => setDataStore(null)}/>}
+                    {dataStore && <AddEditDataStoreModal dataStore={dataStore} onClose={() => setDataStore(null)} />}
 
-                    {valueStore && <AddEditValueStoreModal valueStore={valueStore} onClose={() => setValueStore(null)}/>}
+                    {valueStore && <AddEditValueStoreModal valueStore={valueStore} onClose={() => setValueStore(null)} />}
 
                     <Grid.Row>
 
                         <Grid.Column width={12} className="p-0">
 
-                            <ChangeReturnAddress/>
+                            <ChangeReturnAddress />
 
                         </Grid.Column>
 
@@ -253,13 +259,10 @@ function ConstructionModule() {
 
                             <Container className="flex flex-col gap-1">
 
-                                {/* 
-                                        TOTAL FEE GETS +1 to account for addiitonal ChangeOut ValueStore Only on UI side, not feeState as we dont want to actually send + 1
-                                        -- There is a chance the UTXOs will be spent evenly, but is unlikely and if this occurs is a +1 in the user favor, instead of a -1
-                                */}
-                                <TxFeesDisplay tooltipText="The minimum + prioritization + changeout(+1)" feesLabel="Tx Fee" feesAmount={fees.txFee + 1}/>
-                                <TxFeesDisplay tooltipText="The sum of the cost of each store and deposits" feesLabel="Store Fees" feesAmount={fees.dataStoreFees + fees.valueStoreFees}/>
-                                <TxFeesDisplay tooltipText="The sum of all transaction fees" feesLabel="Total Fees" feesAmount={fees.totalFee + 1}/>
+                                <TxFeesDisplay tooltipText="The minimum + prioritization + changeout(+1)" feesLabel="Tx Fee" feesAmount={fees.txFee} />
+                                <TxFeesDisplay tooltipText="The sum of the cost of each store and deposits" feesLabel="Store Fees" feesAmount={fees.dataStoreFees + fees.valueStoreFees} />
+                                <TxFeesDisplay tooltipText="The sum of any value moved" feesLabel="Value" feesAmount={valueStoreTotal} />
+                                <TxFeesDisplay tooltipText="The total TX Cost" feesLabel="Total Cost" feesAmount={fees.totalFee + valueStoreTotal} />
 
                             </Container>
 

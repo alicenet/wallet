@@ -334,8 +334,27 @@ class MadNetAdapter {
         return { get: getter, set: setter };
     }
 
-    // Create the transaction from user inputed TxOuts
-    async createTx() {
+    /**
+     * Both create the TX object and send it via RPC methods
+     */
+    async createAndSendTx() {
+        return await this.createTx(true);
+    }
+
+    /**
+     * After createTx has been called, get estimated fees for the Tx
+     * @returns { Object } - Estmated Fees object
+     */
+    async getEstimatedFees() {
+        return await this.wallet().Transaction.getTxFeeEstimates(this.changeAddress.get()["address"], this.changeAddress.get()["bnCurve"]);
+    }
+
+    /**
+     * Create Tx from sent txOuts
+     * @param { Boolean } send - Should the tx also be sent?
+     * @returns 
+     */
+    async createTx(sendTx = false) {
         if (this.pendingTx.get()) {
             return ({ error: "Waiting for pending transaction to be mined" });
         }
@@ -362,7 +381,7 @@ class MadNetAdapter {
                 return ({ error: ex.message })
             }
         }
-        return await this.sendTx();
+        return sendTx ? await this.sendTx() : true; // Just return true if no failure on a create only request
     }
 
     async sendTx() {
@@ -598,7 +617,7 @@ class MadNetAdapter {
         try {
             let newTxOuts = [];
             this.txOuts.set(newTxOuts);
-            log.debug("Mad Net Adapter: Cleared TXOuts")
+            log.debug("Mad Net Adapter: Cleared TXOuts :", this.txOuts.get());
             return newTxOuts;
         }
         catch (ex) {

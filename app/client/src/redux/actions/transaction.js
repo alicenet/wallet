@@ -1,7 +1,8 @@
 import { TRANSACTION_ACTION_TYPES } from '../constants/_constants';
 import { default_log as log } from 'log/logHelper';
 import madNetAdapter from 'adapters/madAdapter';
-import BigInt from 'big-integer';
+import { ADAPTER_ACTIONS } from './_actions';
+import utils from 'util/_util';
 
 //////////////////////////////////
 /* External Async Action Calls */
@@ -228,61 +229,47 @@ export function parseAndUpdateFees(rpcFees) {
         // Note the current epoch for DataStore Reward calculations
         const currentEpoch = await madWallet.Rpc.getEpoch();
 
-        // If the txList > 0, we need to calculate total fees
+        // Get estimate fees from madWalletFakeTx -- These fees resemble the fees per store and not deposit fees on DataStores
+        // We can get the store fee per idx in the iteration below
+        let estimateFees = await dispatch(ADAPTER_ACTIONS.createAndClearFakeTxForFeeEstimates());
+        log.debug("parseAndUpdateFees :: MadWalletJS.Transaction.Tx.estimateFees():", estimateFees);
+
+        // If the txList > 0, we need to calculate any special/specific fees such as datastore deposit cost
+        // Per store/vout fee will be calced at the end
+        let txTypesByIdx = []; // Note types by IDX for base fee calc below
+
         if (txList.length > 0) {
             // Add a fee for each instance of the respective tx type to the total type fees
             for (let i = 0; i < txList.length; i++) {
                 let tx = txList[i];
-                // Is DataStore
-                if (tx.type === 1) {
-                    // fees.dataStoreFees += fees.dataStoreFee;
-                    console.log("DataStoreInList:", tx);
-                    // Additionally calculate the deposit costs
-                    let storeFee = (await madWallet.Transaction.Utils.calculateFee(fees.dataStoreFee, tx.duration)).toString();
-                    let depositFee = (await madWallet.Transaction.Utils.calculateDeposit(Buffer.from(tx.value).toString('hex'), tx.duration)).toString();
-
-                    // Check if the datastore exists and if a reward will be redeemed. . .
-                    let dsIndex = Buffer.from(tx.key, "utf8").toString("hex").toLowerCase().padStart(64, "0");
-                    let DS = await madWallet.Rpc.getDataStoreByIndex(tx.from, 1, dsIndex);
-
-                    let rewardTotal = 0;
-                    if (DS) {
-                        // Use current epoch for issues at 
-                        let reward = await madWallet.Transaction.Utils.remainigDeposit(DS, currentEpoch);
-                        if (reward) {
-                            // + BigInt(BigInt("0x" + DS["DataStore"]["DSLinker"]["DSPreImage"]["Deposit"])
-                            // replace with depositFee?
-                            rewardTotal = BigInt(rewardTotal) + BigInt(BigInt(depositFee) - BigInt(reward));
-                        }
-                    }
-
-                    console.log({
-                        DS: DS,
-                        dsIndex: dsIndex,
-                        currentEpoch: currentEpoch,
-                        storeFee: storeFee,
-                        depositFee: depositFee,
-                        reward: rewardTotal.toString(),
-                    })
-
-                    // Add the deposit fee and storage fee to the total dataStoreFees
-                    fees.dataStoreFees += parseInt(depositFee);
-                    fees.dataStoreFees += parseInt(storeFee);
-                }
-                // Is ValueStore
-                else if (tx.type === 2) {
-                    fees.valueStoreFees += fees.valueStoreFee;
-
-                }
-                // Is Atomic Swap -- For future use
-                else if (tx.type === 3) {
-                    fees.atomicSwapFees += fees.atomicSwapFee;
+                txTypesByIdx.push(tx.type);
+                log.debug("Parsed " + utils.transaction.txTypeToName(tx.type) + "for fee estimation", {
+                    txIDX: i,
+                    tx: tx,
+                    currentEpoch: currentEpoch,
+                    storeFee: parseInt(estimateFees.costByVoutIdx[i]), // This fee will include any rewards and deposit fee
+                })
+            }
+        }
+        // Get base store fees if estimateFees was successful 
+        // -- If not still allow RPC fees to be set to state
+        if (!!estimateFees) {
+            for (let i = 0; i < estimateFees.costByVoutIdx.length; i++) {
+                let fee = estimateFees.costByVoutIdx[i];
+                let type = txTypesByIdx[i];
+                // If Undefined it is most likely a valuestore added by the wallet to balance ins/outs for change or data store rewards
+                log.debug("Base fee: " + fee + " for store type " + utils.transaction.txTypeToName(type) + " added.");
+                switch (type) {
+                    case 1: fees.dataStoreFees += parseInt(fee); break;
+                    case 2: fees.valueStoreFees += parseInt(fee); break;
+                    case 3: fees.atomicSwapFees += parseInt(fee); break;
+                    // If Undefined it is most likely a valuestore added by the wallet to balance ins/outs for change or data store rewards
+                    default: fees.valueStoreFees += parseInt(fee); break;
                 }
             }
         }
 
         fees.txFee = fees.minTxFee + fees.prioritizationFee;
-
         fees.totalFee = fees.txFee + fees.valueStoreFees + fees.dataStoreFees + fees.atomicSwapFees;
 
         dispatch({ type: TRANSACTION_ACTION_TYPES.UPDATE_FEES_BY_TYPE, payload: fees })

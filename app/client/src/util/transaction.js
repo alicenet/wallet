@@ -178,3 +178,14 @@ export const parseDsLinkers = async (dsLinkers) => {
     return data;
 
 }
+
+export const txTypeToName = (typeInt) => {
+    let type;
+    switch (typeInt) {
+        case 1: type = "DataStore"; break;
+        case 2: type = "ValueStore"; break;
+        case 3: type = "AtomicSwapStore"; break;
+        default: type = "Assumed ValueStore(undefined)"; break;
+    }
+    return type;
+}

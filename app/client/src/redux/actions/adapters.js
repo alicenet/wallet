@@ -259,56 +259,103 @@ export const getAndStoreRecentTXsForAddress = (address, curve) => {
 }
 
 /**
+ * Prep TX Objects into MadNetAdapter state -- Requires forwarded dispatch state
+ * @param { Object } state - Forwarded dispatch -- getState() state
+ */
+const _prepTxObjectsToMadNetAdapter = async (state) => {
+
+    let txReducerTxs = state.transaction.list;
+    let preppedTxObjs = [] // Convert to proper tx format for madNetAdapter
+
+    txReducerTxs.forEach((tx) => {
+        if (tx.type === transactionTypes.DATA_STORE) {
+            preppedTxObjs.push(
+                transactionUtils.createDataStoreObject(tx.from, tx.key, tx.value, tx.duration)
+            );
+        } else if (tx.type === transactionTypes.VALUE_STORE) {
+            preppedTxObjs.push(
+                transactionUtils.createValueStoreObject(tx.from, tx.to, tx.value, tx.bnCurve)
+            );
+        } else {
+            throw new Error("sendTransactionReducerTXs received incorrect txType of type: ", tx.type);
+        }
+    })
+
+    // Add each tx to the txOutList of the madNetAdapter
+    preppedTxObjs.forEach(tx => {
+        madNetAdapter.addTxOut(tx);
+    })
+
+    log.debug("Prepped TX Objects To MadNetAdapter ( Not in MadWalletJS Instance yet) => ", {
+        txReducerTxs: txReducerTxs,
+        preppedTxObjs: preppedTxObjs,
+    });
+
+    return true;
+
+}
+
+/**
+ * Creates a fake TX using madWallet instance, estimates fees, and immediately clears it for the next estimate or real transaction
+ * @returns { Object || Boolean } - Successful fee estimate will return an object with fees or false for any failure in estimation
+ */
+export const createAndClearFakeTxForFeeEstimates = () => {
+    return async (dispatch, getState) => {
+
+        const state = getState();
+        
+        // If feePayer doesn't exist or no TXs, we are not in a state to estimate fees yet
+        if (!state.transaction.feePayer.wallet || state.transaction.list.length === 0) {
+            return false;
+        }
+
+        await _prepTxObjectsToMadNetAdapter(state);
+
+        log.debug("MadNetAdapter FAKE_TxOuts(ForFeeEstimates) pending: ", madNetAdapter.txOuts.get());
+
+        // Create the fee input
+        let feePayerWallet = state.transaction.feePayer.wallet;
+        let txFee = state.transaction.fees.txFee;
+
+        log.debug("Fee Payer Wallet && txFee for fakeEstimateTx:", {
+            feePayerWallet: feePayerWallet,
+            txFee: txFee,
+        })
+
+        await madNetAdapter.wallet().Transaction.createTxFee(feePayerWallet.address, feePayerWallet.curve, txFee);
+        await madNetAdapter.createTx();
+        let estimateFees = await madNetAdapter.getEstimatedFees();
+        
+        // After fees have been estimated clear the tx state from the adapter
+        madNetAdapter.clearTXouts();
+
+        return estimateFees;
+
+    }
+}
+
+/**
  * Aggregate the TXs from the transaction reduce into the madNetAdapter state and send the grouped tx
  */
 export const sendTransactionReducerTXs = () => {
     return async (dispatch, getState) => {
 
         const state = getState();
-        let txReducerTxs = state.transaction.list;
-        let preppedTxObjs = [] // Convert to proper tx format for madNetAdapter
-        
-        txReducerTxs.forEach((tx) => {
-            if (tx.type === transactionTypes.DATA_STORE) {
-                preppedTxObjs.push(
-                    transactionUtils.createDataStoreObject(tx.from, tx.key, tx.value, tx.duration)
-                );
-            } else if (tx.type === transactionTypes.VALUE_STORE) {
-                preppedTxObjs.push(
-                    transactionUtils.createValueStoreObject(tx.from, tx.to, tx.value, tx.bnCurve)
-                );
-            } else {
-                throw new Error("sendTransactionReducerTXs received incorrect txType of type: ", tx.type);
-            }
-        })
+        await _prepTxObjectsToMadNetAdapter(state);
 
-        console.log({
-            txReducerTxs: txReducerTxs,
-            preppedTxObjs: preppedTxObjs,
-        })
-
-
-        // Add each tx to the txOutList of the madNetAdapter
-        preppedTxObjs.forEach(tx => {
-            let addAttempt = madNetAdapter.addTxOut(tx);
-        })
-
-        console.log(madNetAdapter.wallet());
-
-        console.debug("MadNetAdapter TxOuts pending: ", madNetAdapter.txOuts);
+        log.debug("MadNetAdapter TxOuts pending: ", madNetAdapter.txOuts.get());
 
         // Create the fee input
         let feePayerWallet = state.transaction.feePayer.wallet;
         let txFee = state.transaction.fees.txFee;
 
-        console.log({
+        log.debug("Fee Payer Wallet && txFee for sendTx:", {
             feePayerWallet: feePayerWallet,
             txFee: txFee,
         })
 
         await madNetAdapter.wallet().Transaction.createTxFee(feePayerWallet.address, feePayerWallet.curve, txFee);
-
-        let tx = await madNetAdapter.createTx();
+        let tx = await madNetAdapter.createAndSendTx();
 
         try {
             // Grab any owners, and send to balance updater for those addresses
@@ -320,7 +367,7 @@ export const sendTransactionReducerTXs = () => {
                 for (let i = 0; i < ownersToBalFetch.length; i++) {
                     let owner = ownersToBalFetch[i];
                     await dispatch(getAndStoreLatestBalancesForAddress(owner));
-                    // await dispatch(getAndStoreRecentTXsForAddress(owner));
+                    // await dispatch(getAndStoreRecentTXsForAddress(owner)); // Only if we want to refetch RecentTXs ( API Intensive )
                 }
             }
 
