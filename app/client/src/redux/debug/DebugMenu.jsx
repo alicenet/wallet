@@ -13,7 +13,7 @@ export default function DebugMenu() {
     const toggleDebugMenu = () => { dispatch(INTERFACE_ACTIONS.DEBUG_toggleShowDebug()); }
 
     const getMenuItems = () => {
-        return Object.keys(views).map(viewName => <Menu.Item content={views[viewName]} onClick={() => setCurrentView(views[viewName])} active={currentView === views[viewName]} />);
+        return Object.keys(views).map(viewName => <Menu.Item key={views[viewName]} content={views[viewName]} onClick={() => setCurrentView(views[viewName])} active={currentView === views[viewName]} />);
     }
 
     return (

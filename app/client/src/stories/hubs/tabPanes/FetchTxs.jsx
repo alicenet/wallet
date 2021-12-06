@@ -82,13 +82,15 @@ export default function FetchTxs() {
         return (
             <Table basic celled compact className="text-xs">
                 <Table.Header fullWidth>
-                    <Table.HeaderCell>TX Hash</Table.HeaderCell>
-                    <Table.HeaderCell>VINs</Table.HeaderCell>
-                    <Table.HeaderCell>VOuts</Table.HeaderCell>
-                    <Table.HeaderCell>Total Value</Table.HeaderCell>
-                    <Table.HeaderCell>Value Stores</Table.HeaderCell>
-                    <Table.HeaderCell>Data Stores</Table.HeaderCell>
-                    <Table.HeaderCell></Table.HeaderCell>
+                    <Table.Row>
+                        <Table.HeaderCell>TX Hash</Table.HeaderCell>
+                        <Table.HeaderCell>VINs</Table.HeaderCell>
+                        <Table.HeaderCell>VOuts</Table.HeaderCell>
+                        <Table.HeaderCell>Total Value</Table.HeaderCell>
+                        <Table.HeaderCell>Value Stores</Table.HeaderCell>
+                        <Table.HeaderCell>Data Stores</Table.HeaderCell>
+                        <Table.HeaderCell></Table.HeaderCell>
+                    </Table.Row>
                 </Table.Header>
                 <Table.Body>
                     {rows}
