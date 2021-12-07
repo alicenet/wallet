@@ -50,7 +50,7 @@ export default function ExportPrivateKeyModal() {
 
                 <Form error={!!password.error} size="small" className="mt-2" onSubmit={(e) => { e.preventDefault(); removeWallet(); }}>
 
-                    <Form.Group widths>
+                    <Form.Group>
 
                         <Form.Input width={6} type={showPass ? "text" : "password"} size="small" label={(vaultExists ? "Vault " : "Admin ") + "Password"} placeholder="Password"
                             value={password.value}

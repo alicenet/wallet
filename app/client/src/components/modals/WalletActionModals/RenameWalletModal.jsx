@@ -72,7 +72,7 @@ export default function RenameWalletModal() {
 
                 <Form error={!!error} size="small" className="mt-8" onSubmit={(e) => { e.preventDefault(); onSubmit(updateName) }}>
 
-                    <Form.Group widths>
+                    <Form.Group>
 
                         <Form.Input width={10} size="small" label="New Wallet Name" placeholder="Wallet #2"
                             value={formState.name.value}
