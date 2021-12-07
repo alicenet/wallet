@@ -2,6 +2,7 @@ import log from 'loglevel';
 
 // Log Module Names
 export const logModules = {
+    DEFAULT: "DEFAULT_LOG",
     ELECTRON_STORE_HELPER: "ELECTRON_STORE_HELPER", // store/electronStoreHelper.js
     ELECTRON_STORE_MESSENGER: "ELECTRON_STORE_HELPER", // store/electronStoreHelper.js
     REDUX_STATE: "REDUX_STATE",  // All things redux state, primarily reducer updates
@@ -14,6 +15,7 @@ const EXCLUSIVE = false; // logModules.WALLET_MANAGER_MIDDLEWARE // Flag a modul
 
 // Log Modules Levels -- Set as needed
 const logLevels = {
+    DEFAULT: exclusityCheck("DEBUG", logModules.DEFAULT),
     ELECTRON_STORE_HELPER: exclusityCheck("DEBUG", logModules.ELECTRON_STORE_HELPER),
     ELECTRON_STORE_MESSENGER: exclusityCheck("DEBUG", logModules.ELECTRON_STORE_MESSENGER),
     REDUX_STATE: exclusityCheck("DEBUG", logModules.REDUX_STATE),
@@ -33,7 +35,9 @@ const getSetLogLevel = (moduleType) => {
     return log.getLogger(moduleType);
 };
 
+log.setLevel(logLevels.DEFAULT);
 export const default_log = log;
+
 export const electronStoreHelper_logger = getSetLogLevel(logModules.ELECTRON_STORE_HELPER);
 export const electronStoreMessenger_logger = getSetLogLevel(logModules.ELECTRON_STORE_MESSENGER);
 export const reduxState_logger = getSetLogLevel(logModules.REDUX_STATE);

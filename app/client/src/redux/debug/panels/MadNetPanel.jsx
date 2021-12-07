@@ -31,7 +31,8 @@ export default function Web3Panel() {
     }
 
     const sendTx = async () => {
-        await madNetAdapter.createTx()
+        await madNetAdapter.createTx();
+        await madNetAdapter.sendTx();
     }
 
     const getWalletButtons = (cb = () => { }) => {

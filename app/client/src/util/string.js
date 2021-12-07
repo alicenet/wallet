@@ -56,3 +56,12 @@ export function prettyifyUnderscoreKey(input) {
     let keyWords = keyString.map(word => (upperFirst(word)));
     return keyWords.join(" ");
 }
+
+/**
+ * Pluralize a string based on a passed boolean parameter
+ * @param { String } string - The string to pluralize
+ * @param { Boolean } isPluralBool - Supply the boolean condition to determine if the string should have an 's' appended 
+ */
+export function pluralStringCheck(string, isPluralBool) {
+    return isPluralBool ? string + "s" : string;
+}

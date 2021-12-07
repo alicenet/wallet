@@ -1,7 +1,7 @@
 import store from '../redux/store/store';
 import BigInt from "big-integer";
 import { ADAPTER_ACTION_TYPES, TRANSACTION_ACTION_TYPES } from 'redux/constants/_constants';
-import { ADAPTER_ACTIONS } from 'redux/actions/_actions';
+import { ADAPTER_ACTIONS, TRANSACTION_ACTIONS } from 'redux/actions/_actions';
 import { getMadWalletInstance } from 'redux/middleware/WalletManagerMiddleware'
 import { default_log as log } from 'log/logHelper'
 import { SyncToastMessageWarning, SyncToastMessageSuccess } from 'components/customToasts/CustomToasts'
@@ -25,6 +25,9 @@ class MadNetAdapter {
             mad_net_chainID: false,
             mad_net_provider: false,
         }
+
+        // Error cache -- Cache first errors so that on retries the correct error is relayed to the user
+        this.errors = {};
 
         this.connected = this._handleReduxStateValue(["connected"]);
         this.failed = this._handleReduxStateValue(["error"]);
@@ -67,6 +70,11 @@ class MadNetAdapter {
         // Set default dsView
         this.dsView = this._handleReduxStateValue(["dataExplore", "dsView"]);
         this.dsView.set([]);
+
+        // Set fees 
+        this.fees = this._handleReduxStateValue(["fees"]);
+        this.fees.set({});
+
     }
 
     /**
@@ -87,6 +95,21 @@ class MadNetAdapter {
                 toast.success(<SyncToastMessageSuccess basic title="Success" message="MadNet Connected" />, { className: "basic", "autoClose": 2400 })
             }
             store.dispatch(ADAPTER_ACTIONS.setMadNetBusy(false));
+            // Attempt to get fees -- RPC will throw if unfetchable
+            let fees = await this.wallet().Rpc.getFees();
+            // Re-assign to internal camelCase keys
+            this.fees.set({
+                atomicSwapFee: fees.AtomicSwapFee,
+                dataStoreFee: fees.DataStoreFee,
+                minTxFee: fees.MinTxFee,
+                valueStoreFee: fees.ValueStoreFee
+            });
+            store.dispatch(TRANSACTION_ACTIONS.parseAndUpdateFees({
+                atomicSwapFee: fees.AtomicSwapFee,
+                dataStoreFee: fees.DataStoreFee,
+                minTxFee: fees.MinTxFee,
+                valueStoreFee: fees.ValueStoreFee
+            }));
             return { success: true }
         }
         catch (ex) {
@@ -311,7 +334,19 @@ class MadNetAdapter {
         return { get: getter, set: setter };
     }
 
-    // Create the transaction from user inputed TxOuts
+    /**
+     * After createTx has been called, get estimated fees for the Tx
+     * @returns { Object } - Estmated Fees object
+     */
+    async getEstimatedFees() {
+        return await this.wallet().Transaction.getTxFeeEstimates(this.changeAddress.get()["address"], this.changeAddress.get()["bnCurve"]);
+    }
+
+    /**
+     * Create Tx from sent txOuts
+     * @param { Boolean } send - Should the tx also be sent?
+     * @returns 
+     */
     async createTx() {
         if (this.pendingTx.get()) {
             return ({ error: "Waiting for pending transaction to be mined" });
@@ -339,7 +374,7 @@ class MadNetAdapter {
                 return ({ error: ex.message })
             }
         }
-        return await this.sendTx();
+        return true; // Just return true if no failure
     }
 
     async sendTx() {
@@ -356,6 +391,11 @@ class MadNetAdapter {
             return await this.monitorPending();
         }
         catch (ex) {
+            if (!this['sendTx-attempts'] || this['sendTx-attempts'] === 1) {
+                // Only overwrite error on first attempt
+                log.error("UDPATE-ERROR", ex)
+                this.errors['sendTx'] = ex;
+            }
             await this.backOffRetry('sendTx')
             if (this['sendTx-attempts'] > 2) {
                 // Clear txOuts on a final fail
@@ -363,7 +403,7 @@ class MadNetAdapter {
                 this.changeAddress.set({});
                 await this.wallet().Transaction._reset();
                 await this.backOffRetry('sendTx', true)
-                return { error: ex.message }
+                return { error: this.errors['sendTx'].message }
             }
             await this.sleep(this['sendTx-timeout']);
             return await this.sendTx();
@@ -568,7 +608,7 @@ class MadNetAdapter {
         try {
             let newTxOuts = [];
             this.txOuts.set(newTxOuts);
-            log.debug("Mad Net Adapter: Cleared TXOuts")
+            log.debug("Mad Net Adapter: Cleared TXOuts :", this.txOuts.get());
             return newTxOuts;
         }
         catch (ex) {

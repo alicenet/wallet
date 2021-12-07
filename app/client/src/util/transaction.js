@@ -3,12 +3,19 @@ import { getMadWalletInstance } from "redux/middleware/WalletManagerMiddleware";
 export const transactionTypes = {
     DATA_STORE: 1,
     VALUE_STORE: 2,
+    ATOMIC_SWAP_STORE: 3,
 }
 
 export const transactionStatus = {
     CREATION: 1,
     LOADING: 2,
     INSPECTION: 3,
+}
+
+export const storeTypes = {
+    DATA_STORE: 1,
+    VALUE_STORE: 2,
+    ATOMIC_SWAP_STORE: 3
 }
 
 const transactionStatusProgression = [transactionStatus.CREATION, transactionStatus.LOADING, transactionStatus.INSPECTION];
@@ -177,4 +184,15 @@ export const parseDsLinkers = async (dsLinkers) => {
 
     return data;
 
+}
+
+export const txTypeToName = (typeInt) => {
+    let type;
+    switch (typeInt) {
+        case 1: type = "DataStore"; break;
+        case 2: type = "ValueStore"; break;
+        case 3: type = "AtomicSwapStore"; break;
+        default: type = "Assumed ValueStore(undefined)"; break;
+    }
+    return type;
 }

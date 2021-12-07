@@ -1,5 +1,8 @@
 import { TRANSACTION_ACTION_TYPES } from '../constants/_constants';
 import { default_log as log } from 'log/logHelper';
+import madNetAdapter from 'adapters/madAdapter';
+import { ADAPTER_ACTIONS } from './_actions';
+import utils from 'util/_util';
 
 //////////////////////////////////
 /* External Async Action Calls */
@@ -13,6 +16,7 @@ import { default_log as log } from 'log/logHelper';
 export function setPrioritizationFee(fee) {
     return async function (dispatch) {
         dispatch({ type: TRANSACTION_ACTION_TYPES.SET_PRIORITIZATION_FEE, payload: fee });
+        dispatch(parseAndUpdateFees());
     }
 }
 
@@ -106,6 +110,7 @@ export function addStore(transaction) {
     return async function (dispatch) {
         dispatch({ type: TRANSACTION_ACTION_TYPES.ADD_TO_LIST, payload: transaction });
         dispatch(parseDefaultFeePayer());
+        dispatch(parseAndUpdateFees());
     }
 }
 
@@ -129,6 +134,7 @@ export function editStore(transaction) {
 export function removeItem(index) {
     return async function (dispatch) {
         dispatch({ type: TRANSACTION_ACTION_TYPES.REMOVE_FROM_LIST, payload: index });
+        dispatch(parseAndUpdateFees());
     }
 }
 
@@ -154,4 +160,120 @@ export function clearPolledTxs() {
     return async function (dispatch) {
         dispatch({ type: TRANSACTION_ACTION_TYPES.CLEAR_POLLED_TX });
     }
+}
+
+export function resetFeeState() {
+    return async function (dispatch, getState) {
+        const state = getState();
+        const madNetFees = state.adapter.madNetAdapter.fees;
+        // Reset FEE state to existing fee state
+        let fees = {
+            atomicSwapFee: madNetFees.atomicSwapFee, // Hex Parsed Base Atomic Swap Fee from RPC.getFees()
+            atomicSwapFees: 0, // Total Fees for all atomicSwap VOUTs in txList
+            dataStoreFee: madNetFees.dataStoreFee, // Hex Parsed Base DataStore fee from RPC.getFees()
+            dataStoreFees: 0, // Total Fees for all dataStore VOUTs in txList
+            depositFees: 0, // Any fees surrounding deposits for data stores
+            valueStoreFee: madNetFees.valueStoreFee, // Hex Parsed Base ValueStore from RPC.getFees()
+            valueStoreFees: 0, // Total Fees for all valueStore VOUTs in txList
+            minTxFee: madNetFees.minTxFee, // Parsed minimum tx fee
+            prioritizationFee: 0, // Any additional priortization fee set by the user
+            txFee: 0, // Prioritization + Minimum Fee
+            totalFee: 0, // Total TX Fee ( All Store Fees + Min Fee + Prioritization )
+        }
+        fees.txFee = fees.minTxFee + fees.prioritizationFee;
+        dispatch({ type: TRANSACTION_ACTION_TYPES.UPDATE_FEES_BY_TYPE, payload: fees })
+    }
+}
+
+/**
+ * Parse and update any passed fees to human readable state in the reducer -- Additionally calculates any fee changes when called
+ * -- Should be called when making adjustments to transaction.list or priotization fee changes
+ * @param { Object } rpcFees 
+ * @property { BigIntHexString } rpcFees.atomicSwapFee - Atomic Swap fee from RPC.getFees()
+ * @property { BigIntHexString } rpcFees.dataStoreFee - Data Store Fee from RPC.getFees()
+ * @property { BigIntHexString } rpcFees.valueStoreFee - Value Store Fee from RPC.getFees()
+ * @property { BigIntHexString } rpcFees.minTxFee - Min TX Fee from RPC.getFees()
+ * @property { Integer } rpcFees.prioritizationFee - Prioritization fee to use if any -- Will use existing state if available for calculation
+ */
+export function parseAndUpdateFees(rpcFees) {
+    return async function (dispatch, getState) {
+
+        const state = getState();
+
+        const madNetFees = rpcFees ? rpcFees : state.adapter.madNetAdapter.fees;
+        const txList = state.transaction.list;
+
+        // Convert RPC Fees to human readable format for transaction reducer state
+        Object.keys(madNetFees).map(key => {
+            madNetFees[key] = parseInt(madNetFees[key], 16);
+        })
+
+        // Build fees from passed paramaters or available state
+        let fees = {
+            atomicSwapFee: madNetFees.atomicSwapFee, // Hex Parsed Base Atomic Swap Fee from RPC.getFees()
+            atomicSwapFees: 0, // Total Fees for all atomicSwap VOUTs in txList
+            dataStoreFee: madNetFees.dataStoreFee, // Hex Parsed Base DataStore fee from RPC.getFees()
+            dataStoreFees: 0, // Total Fees for all dataStore VOUTs in txList
+            depositFees: 0, // Any fees surrounding deposits for data stores
+            valueStoreFee: madNetFees.valueStoreFee, // Hex Parsed Base ValueStore from RPC.getFees()
+            valueStoreFees: 0, // Total Fees for all valueStore VOUTs in txList
+            minTxFee: madNetFees.minTxFee, // Parsed minimum tx fee
+            prioritizationFee: state.transaction.fees.prioritizationFee, // Any additional priortization fee set by the user
+            txFee: 0, // Prioritization + Minimum Fee
+            totalFee: 0, // Total TX Fee ( All Store Fees + Min Fee + Prioritization )
+        }
+
+        // Grab MadNetAdapter instance for the MadNetJS Wallet instance
+        const madWallet = madNetAdapter.wallet();
+
+        // Note the current epoch for DataStore Reward calculations
+        const currentEpoch = await madWallet.Rpc.getEpoch();
+
+        // Get estimate fees from madWalletFakeTx -- These fees resemble the fees per store and not deposit fees on DataStores
+        // We can get the store fee per idx in the iteration below
+        let estimateFees = await dispatch(ADAPTER_ACTIONS.createAndClearFakeTxForFeeEstimates());
+        log.debug("parseAndUpdateFees :: MadWalletJS.Transaction.Tx.estimateFees():", estimateFees);
+
+        // If the txList > 0, we need to calculate any special/specific fees such as datastore deposit cost
+        // Per store/vout fee will be calced at the end
+        let txTypesByIdx = []; // Note types by IDX for base fee calc below
+
+        if (txList.length > 0) {
+            // Add a fee for each instance of the respective tx type to the total type fees
+            for (let i = 0; i < txList.length; i++) {
+                let tx = txList[i];
+                txTypesByIdx.push(tx.type);
+                log.debug("Parsed " + utils.transaction.txTypeToName(tx.type) + "for fee estimation", {
+                    txIDX: i,
+                    tx: tx,
+                    currentEpoch: currentEpoch,
+                    storeFee: parseInt(estimateFees.costByVoutIdx[i]), // This fee will include any rewards and deposit fee
+                })
+            }
+        }
+        // Get base store fees if estimateFees was successful 
+        // -- If not still allow RPC fees to be set to state
+        if (!!estimateFees) {
+            for (let i = 0; i < estimateFees.costByVoutIdx.length; i++) {
+                let fee = estimateFees.costByVoutIdx[i];
+                let type = txTypesByIdx[i];
+                // If Undefined it is most likely a valuestore added by the wallet to balance ins/outs for change or data store rewards
+                log.debug("Base fee: " + fee + " for store type " + utils.transaction.txTypeToName(type) + " added.");
+                switch (type) {
+                    case utils.transaction.transactionTypes.DATA_STORE: fees.dataStoreFees += parseInt(fee); break;
+                    case utils.transaction.transactionTypes.VALUE_STORE: fees.valueStoreFees += parseInt(fee); break;
+                    case utils.transaction.transactionTypes.ATOMIC_SWAP_STORE: fees.atomicSwapFees += parseInt(fee); break;
+                    // If Undefined it is most likely a valuestore added by the wallet to balance ins/outs for change or data store rewards
+                    default: fees.valueStoreFees += parseInt(fee); break;
+                }
+            }
+        }
+
+        fees.txFee = fees.minTxFee + fees.prioritizationFee;
+        fees.totalFee = fees.txFee + fees.valueStoreFees + fees.dataStoreFees + fees.atomicSwapFees;
+
+        dispatch({ type: TRANSACTION_ACTION_TYPES.UPDATE_FEES_BY_TYPE, payload: fees })
+
+    }
+
 }

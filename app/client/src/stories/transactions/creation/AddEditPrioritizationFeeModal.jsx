@@ -11,18 +11,8 @@ export default function AddEditPrioritizationFeeModal() {
     const dispatch = useDispatch();
 
     const [openModal, setOpenModal] = React.useState(false)
-    const [minFee, setMinFee] = React.useState(0);
 
-    // Get TX Fee
-    React.useEffect(() => {
-        // For fetching the minimum transaction fee
-        const getTxFee = async () => {
-            let minFee = 0; // TODO: Await Adapter Call
-            setMinFee(minFee);
-        }
-
-        getTxFee();
-    })
+    const { minFee } = useSelector(state => ({ minFee: state.transaction.fees.minTxFee }))
 
     const { prioritizationFee, feePayer, txList } = useSelector(state => ({
         prioritizationFee: state.transaction.fees.prioritizationFee,
@@ -31,7 +21,7 @@ export default function AddEditPrioritizationFeeModal() {
     }));
 
     const handleSubmit = async () => {
-        dispatch(TRANSACTION_ACTIONS.setPrioritizationFee(formState.Fee.value));
+        dispatch(TRANSACTION_ACTIONS.setPrioritizationFee(parseInt(formState.Fee.value)));
         setOpenModal(false);
     };
 
@@ -72,8 +62,8 @@ export default function AddEditPrioritizationFeeModal() {
                         <Grid.Row>
                             <Grid.Column width="16">
                                 <p>
-                                    MadNet Transactions cost a minimum fee. <br/>
-                                    You may provide additional MadBytes to give your transaction priority. <br/> 
+                                    MadNet Transactions cost a minimum fee. <br />
+                                    You may provide additional MadBytes to give your transaction priority. <br />
                                 </p>
                             </Grid.Column>
                         </Grid.Row>
@@ -98,7 +88,7 @@ export default function AddEditPrioritizationFeeModal() {
                                     error={!!formState.Fee.error && { content: formState.Fee.error }}
                                 />
 
-                                <ChangeFeePayer/>
+                                <ChangeFeePayer />
 
                             </Grid.Column>
 

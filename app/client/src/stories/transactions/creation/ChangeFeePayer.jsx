@@ -32,8 +32,6 @@ function ChangeFeePayer({ disabled = false }) {
         dispatch(TRANSACTION_ACTIONS.setFeePayer(selectedWallet, true));
     };
 
-    console.log(feePayerWallet);
-
     return (
         <Form size="small" className="small-checkbox">
             <Form.Dropdown
