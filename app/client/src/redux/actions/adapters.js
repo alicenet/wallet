@@ -356,7 +356,14 @@ export const sendTransactionReducerTXs = () => {
         })
 
         await madNetAdapter.wallet().Transaction.createTxFee(feePayerWallet.address, feePayerWallet.curve, txFee);
-        let tx = await madNetAdapter.createAndSendTx();
+        
+        // First create the transaction
+        let create = await madNetAdapter.createTx();
+        if (create.error) {
+            return {error: "Unable to create transaction: " + String(create.error) }
+        }
+        // If OK Then send it
+        let tx = await madNetAdapter.sendTx();
 
         try {
             // Grab any owners, and send to balance updater for those addresses

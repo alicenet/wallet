@@ -65,7 +65,7 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
             <Modal.Header className="text-center">
 
                 <Header as="h4" className="uppercase" color="purple">{`${isEditing ? 'Edit' : 'Add'} Data Store`}
-                    <Header.Subheader className="text-xs">Fee Per Data Store: {fees.dataStoreFee} MadByte{fees.dataStoreFee > 1 ? "s" : ""}</Header.Subheader>
+                    <Header.Subheader className="text-xs">Fee Per Data Store: {fees.dataStoreFee} {utils.string.pluralStringCheck("MadByte", fees.dataStoreFee > 1)}</Header.Subheader>
                 </Header>
 
             </Modal.Header>

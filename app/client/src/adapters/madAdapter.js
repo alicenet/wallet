@@ -335,13 +335,6 @@ class MadNetAdapter {
     }
 
     /**
-     * Both create the TX object and send it via RPC methods
-     */
-    async createAndSendTx() {
-        return await this.createTx(true);
-    }
-
-    /**
      * After createTx has been called, get estimated fees for the Tx
      * @returns { Object } - Estmated Fees object
      */
@@ -354,12 +347,11 @@ class MadNetAdapter {
      * @param { Boolean } send - Should the tx also be sent?
      * @returns 
      */
-    async createTx(sendTx = false) {
+    async createTx() {
         if (this.pendingTx.get()) {
             return ({ error: "Waiting for pending transaction to be mined" });
         }
         this.pendingTxStatus.set("Sending transaction")
-        console.log(this.wallet());
         for await (const txOut of this.txOuts.get()) {
             try {
                 switch (txOut.type) {
@@ -382,7 +374,7 @@ class MadNetAdapter {
                 return ({ error: ex.message })
             }
         }
-        return sendTx ? await this.sendTx() : true; // Just return true if no failure on a create only request
+        return true; // Just return true if no failure
     }
 
     async sendTx() {
@@ -401,7 +393,7 @@ class MadNetAdapter {
         catch (ex) {
             if (!this['sendTx-attempts'] || this['sendTx-attempts'] === 1) {
                 // Only overwrite error on first attempt
-                console.log("UDPATE-ERROR", ex)
+                log.error("UDPATE-ERROR", ex)
                 this.errors['sendTx'] = ex;
             }
             await this.backOffRetry('sendTx')

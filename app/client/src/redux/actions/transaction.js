@@ -260,9 +260,9 @@ export function parseAndUpdateFees(rpcFees) {
                 // If Undefined it is most likely a valuestore added by the wallet to balance ins/outs for change or data store rewards
                 log.debug("Base fee: " + fee + " for store type " + utils.transaction.txTypeToName(type) + " added.");
                 switch (type) {
-                    case 1: fees.dataStoreFees += parseInt(fee); break;
-                    case 2: fees.valueStoreFees += parseInt(fee); break;
-                    case 3: fees.atomicSwapFees += parseInt(fee); break;
+                    case utils.transaction.transactionTypes.DATA_STORE: fees.dataStoreFees += parseInt(fee); break;
+                    case utils.transaction.transactionTypes.VALUE_STORE: fees.valueStoreFees += parseInt(fee); break;
+                    case utils.transaction.transactionTypes.ATOMIC_SWAP_STORE: fees.atomicSwapFees += parseInt(fee); break;
                     // If Undefined it is most likely a valuestore added by the wallet to balance ins/outs for change or data store rewards
                     default: fees.valueStoreFees += parseInt(fee); break;
                 }

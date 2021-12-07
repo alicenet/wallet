@@ -3,12 +3,19 @@ import { getMadWalletInstance } from "redux/middleware/WalletManagerMiddleware";
 export const transactionTypes = {
     DATA_STORE: 1,
     VALUE_STORE: 2,
+    ATOMIC_SWAP_STORE: 3,
 }
 
 export const transactionStatus = {
     CREATION: 1,
     LOADING: 2,
     INSPECTION: 3,
+}
+
+export const storeTypes = {
+    DATA_STORE: 1,
+    VALUE_STORE: 2,
+    ATOMIC_SWAP_STORE: 3
 }
 
 const transactionStatusProgression = [transactionStatus.CREATION, transactionStatus.LOADING, transactionStatus.INSPECTION];
