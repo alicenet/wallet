@@ -204,7 +204,7 @@ export function parseAndUpdateFees(rpcFees) {
         const txList = state.transaction.list;
 
         // Convert RPC Fees to human readable format for transaction reducer state
-        Object.keys(madNetFees).map(key => {
+        Object.keys(madNetFees).forEach(key => {
             madNetFees[key] = parseInt(madNetFees[key], 16);
         })
 

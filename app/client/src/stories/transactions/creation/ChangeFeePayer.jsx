@@ -1,13 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Form } from 'semantic-ui-react';
 import { useDispatch, useSelector } from 'react-redux';
-import head from 'lodash/head';
 import utils from 'util/_util';
-import Web3 from 'web3';
-import { toast } from 'react-toastify';
 import { TRANSACTION_ACTIONS } from 'redux/actions/_actions';
 
-import { SyncToastMessageWarning } from 'components/customToasts/CustomToasts';
 
 function ChangeFeePayer({ disabled = false }) {
 

@@ -6,7 +6,6 @@ import utils from 'util/_util';
 import usePrevious from 'hooks/usePrevious';
 import { useHistory } from 'react-router';
 import copy from 'copy-to-clipboard';
-import { default_log as log } from 'log/logHelper';
 
 export default function Datastores({ wallet }) {
 
@@ -105,7 +104,8 @@ export default function Datastores({ wallet }) {
         }
 
         fetchDatastores();
-    }, [wallet, page, lastWallet?.address]);
+        // Functioning as intended -- using es-lint-disable
+    }, [wallet, page, lastWallet?.address]); //eslint-disable-line
 
     const getDatastoreDisplay = () => {
 

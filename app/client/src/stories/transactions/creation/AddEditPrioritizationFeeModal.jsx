@@ -14,9 +14,8 @@ export default function AddEditPrioritizationFeeModal() {
 
     const { minFee } = useSelector(state => ({ minFee: state.transaction.fees.minTxFee }))
 
-    const { prioritizationFee, feePayer, txList } = useSelector(state => ({
+    const { prioritizationFee, txList } = useSelector(state => ({
         prioritizationFee: state.transaction.fees.prioritizationFee,
-        feePayer: state.transaction.feePayer,
         txList: state.transaction.list,
     }));
 
