@@ -5,7 +5,6 @@ import copy from 'copy-to-clipboard';
 
 import { ADAPTER_ACTIONS, MODAL_ACTIONS } from 'redux/actions/_actions';
 import { curveTypes } from 'util/wallet';
-import utils from 'util/_util';
 
 export default function Overview({ wallet }) {
 

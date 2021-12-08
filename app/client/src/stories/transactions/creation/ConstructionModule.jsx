@@ -39,16 +39,6 @@ function ConstructionModule() {
     const nextAvailable = (activePage + 1) <= totalPages;
     const prevAvailable = (activePage - 1) !== 0;
 
-    const listHasValueStores = useMemo(() => {
-        let hasVS = false;
-        list.forEach((tx) => {
-            if (tx.type === transactionTypes.VALUE_STORE) {
-                hasVS = true;
-            }
-        })
-        return hasVS;
-    }, [list])
-
     const valueStoreTotal = useMemo(() => {
         let total = 0;
         list.forEach(tx => {
