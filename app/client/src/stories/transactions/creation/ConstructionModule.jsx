@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Button, Container, Grid, Header, Icon, Menu, Popup, Segment, Table } from 'semantic-ui-react';
+import { Button, Container, Grid, Header, Icon, Menu, Popup, Segment, Table, Message } from 'semantic-ui-react';
 import { useDispatch, useSelector } from 'react-redux';
 import isEmpty from 'lodash/isEmpty';
 import chunk from 'lodash/chunk';
@@ -237,15 +237,24 @@ function ConstructionModule() {
 
                     {valueStore && <AddEditValueStoreModal valueStore={valueStore} onClose={() => setValueStore(null)} />}
 
-                    <Grid.Row>
+                    <Grid.Row columns={3}>
 
-                        <Grid.Column width={12} className="p-0 flex flex-col justify-between">
+                        <Grid.Column className="p-0 flex flex-col justify-between">
 
                             <ChangeReturnAddress />
 
                         </Grid.Column>
 
-                        <Grid.Column width={4} className="p-0 flex flex-col justify-between gap-2">
+                        <Grid.Column className="p-0 flex flex-col justify-end items-start" >
+                            {/*Map any errors to the UI */}
+                            {fees.errors.map( (err) => {
+                                return (
+                                    <Message size="mini" error content={err} />
+                                )
+                            })}
+                        </Grid.Column>
+
+                        <Grid.Column className="p-0 flex flex-col justify-between gap-2">
 
                             <Container className="flex flex-col gap-1">
 
@@ -257,9 +266,9 @@ function ConstructionModule() {
                             </Container>
 
                             <Button
-                                color="teal"
+                                color={fees.errors?.length > 0 ? "red" : "teal"}
                                 content="Send Transaction"
-                                disabled={isEmpty(list)}
+                                disabled={isEmpty(list) || fees.errors?.length > 0}
                                 onClick={handleSendTransaction}
                                 className="m-0"
                             />

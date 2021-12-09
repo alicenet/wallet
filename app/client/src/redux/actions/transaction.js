@@ -221,6 +221,7 @@ export function parseAndUpdateFees(rpcFees) {
             prioritizationFee: state.transaction.fees.prioritizationFee, // Any additional priortization fee set by the user
             txFee: 0, // Prioritization + Minimum Fee
             totalFee: 0, // Total TX Fee ( All Store Fees + Min Fee + Prioritization )
+            errors: [] // Errors in fee estimation
         }
 
         // Grab MadNetAdapter instance for the MadNetJS Wallet instance
@@ -232,6 +233,19 @@ export function parseAndUpdateFees(rpcFees) {
         // Get estimate fees from madWalletFakeTx -- These fees resemble the fees per store and not deposit fees on DataStores
         // We can get the store fee per idx in the iteration below
         let estimateFees = await dispatch(ADAPTER_ACTIONS.createAndClearFakeTxForFeeEstimates());
+
+        // If estimation has errors, parse them and set to state for UI digestion
+        if (estimateFees.errors) {
+            let feeErrors = estimateFees.errors;
+            for (let i=0; i < feeErrors.length ; i++) {
+                let error = feeErrors[i].error;
+                if (error.msg === "Insufficient Funds") {
+                    console.log("HITTT3233")
+                    fees.errors.push(`${utils.wallet.getWalletNameFromAddress(error.details.account.address)} has insufficient funds`);
+                }
+            }
+        }
+
         log.debug("parseAndUpdateFees :: MadWalletJS.Transaction.Tx.estimateFees():", estimateFees);
 
         // If the txList > 0, we need to calculate any special/specific fees such as datastore deposit cost
@@ -253,7 +267,7 @@ export function parseAndUpdateFees(rpcFees) {
         }
         // Get base store fees if estimateFees was successful 
         // -- If not still allow RPC fees to be set to state
-        if (!!estimateFees) {
+        if (!!estimateFees && !estimateFees.error) {
             for (let i = 0; i < estimateFees.costByVoutIdx.length; i++) {
                 let fee = estimateFees.costByVoutIdx[i];
                 let type = txTypesByIdx[i];

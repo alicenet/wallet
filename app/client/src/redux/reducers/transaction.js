@@ -17,6 +17,7 @@ export const initialTransactionState = {
         prioritizationFee: 0, // Any additional priortization fee set by the user
         txFee: 0, // Prioritization + Minimum Fee
         totalFee: 0, // Total TX Fee ( All Store Fees + Min Fee + Prioritization )
+        errors: [], // Any fee estimation errors -- Strings of error messages for the user to resolve
     },
     feePayer: {
         wallet: null, // Wallet object of the fee payer, and override notification -- Should exist in internal/external vault state wallets and set through Adjust TX Fee Modal
@@ -75,6 +76,7 @@ export default function transactionReducer(state = initialTransactionState, acti
                     prioritizationFee: typeof action.payload.prioritizationFee !== 'undefined' ? action.payload.prioritizationFee : state.fees.prioritizationFee,
                     txFee: typeof action.payload.txFee !== 'undefined' ? action.payload.txFee : state.fees.txFee,
                     totalFee: typeof action.payload.totalFee !== 'undefined' ? action.payload.totalFee : state.fees.totalFee,
+                    errors: typeof action.payload.errors !== 'undefined' ? action.payload.errors : state.fees.errors,
                 },
             });
 

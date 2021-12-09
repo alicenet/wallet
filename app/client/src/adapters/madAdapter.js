@@ -339,7 +339,7 @@ class MadNetAdapter {
      * @returns { Object } - Estmated Fees object
      */
     async getEstimatedFees() {
-        return await this.wallet().Transaction.getTxFeeEstimates(this.changeAddress.get()["address"], this.changeAddress.get()["bnCurve"]);
+        return await this.wallet().Transaction.getTxFeeEstimates(this.changeAddress.get()["address"], this.changeAddress.get()["bnCurve"], [], true);
     }
 
     /**
@@ -391,9 +391,8 @@ class MadNetAdapter {
             return await this.monitorPending();
         }
         catch (ex) {
-            if (!this['sendTx-attempts'] || this['sendTx-attempts'] === 1) {
+            if (!this['sendTx-attempts']) {
                 // Only overwrite error on first attempt
-                log.error("UDPATE-ERROR", ex)
                 this.errors['sendTx'] = ex;
             }
             await this.backOffRetry('sendTx')
