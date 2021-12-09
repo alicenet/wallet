@@ -16,6 +16,7 @@ export default function PasswordRequestModal() {
     const [formState, formSetter, onSubmit] = useFormState([
         {
             name: 'password',
+            type: 'string',
             isRequired: true,
             validation: {
                 check: async (password) => await electronStoreCommonActions.checkPasswordAgainstPreflightHash(password), // Check password against preflight hash

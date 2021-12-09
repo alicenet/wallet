@@ -23,6 +23,7 @@ function UnlockExistingVault() {
     const [formState, formSetter, onSubmit] = useFormState([
         {
             name: 'password',
+            type: 'string',
             validation: {
                 check: async (password) => await electronStoreCommonActions.checkPasswordAgainstPreflightHash(password), // Check password against preflight hash
                 message: 'Vault password incorrect. Please try again.'
