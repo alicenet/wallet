@@ -73,7 +73,7 @@ export default function Hub() {
 
                         <Container className="flex flex-col gap-10 h-full">
 
-                            <Container className="gap-3 flex flex-row justify-center items-center text-justify">
+                            <Container className="gap-3 flex flex-row justify-center items-center text-justify add-wallets">
 
                                 <Button circular size={openDrawer ? 'mini' : 'mini'} className="m-0" icon="add" onClick={gotoAddWallet}/>
 

@@ -72,7 +72,7 @@ function HeaderMenu({ showMenu }) {
 
                     <Container fluid className="flex flex-row items-center gap-4">
 
-                        <Image src={MadIcon} size="mini" />
+                        <Image src={MadIcon} size="mini" className="logo" />
 
                         <Container fluid>
 

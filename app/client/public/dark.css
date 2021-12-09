@@ -1,159 +1,89 @@
 #root {
-    color: #f0ece2 !important;
-    background-color: #212121 !important;
+    background: #292b2d !important;
+}
+
+.ui.segment {
+    color: #ffffff !important;
+    background: #313436 !important;
+}
+
+.ui.segment .text-gray-800 {
+    color: #ffffff !important;
+}
+
+.ui {
+    color: #ffffff !important;
 }
 
 .logo {
-    filter: invert(100%) !important;
+    filter: invert(100%);
 }
 
-.ui.tabular.menu {
-    border-bottom: 1px solid #95D8DE !important;
+.labelCheckbox {
+    color: #ffffff !important;
 }
 
-.ui.tabular.menu .item {
-    color: #f0ece2 !important;
+.ui.menu .item {
+    color: #ffffff !important;
 }
 
-.ui.secondary.pointing.menu .active.item {
-    color: #95D8DE !important;
-    border-color: #95D8DE !important;
+.ui.menu .active.item {
+    border-color: #ffffff !important;
 }
 
-.ui.secondary.pointing.menu .item {
-    color: #f0ece2 !important;
+div .ui.toggle.checkbox label,
+div .ui.checked.toggle.checkbox label,
+div .ui.toggle.checkbox input:checked ~ .box,
+div .ui.toggle.checkbox input:checked ~ label {
+    color: #ffffff !important;
+}
+
+.ui.toggle.checkbox .box:before, .ui.toggle.checkbox label:before {
+    background: #8aa9bd !important;
+}
+
+.ui.form .field > label {
+    color: #ffffff !important;
+}
+
+.add-wallets button {
+    color: #000000 !important;
+}
+
+.add-wallets > .text-gray-700 {
+    color: #ffffff !important;
+}
+
+.triangle.icon {
+    color: #000000 !important;
+}
+
+.ui.mini.popup {
+    color: #000000 !important;
+}
+
+.ui.selection.dropdown {
+    color: #000000 !important;
+}
+
+.ui.secondary.pointing.menu a.header.item {
+    color: #ffffff !important;
 }
 
 .ui.tabular.menu .active.item {
-    color: #383838 !important;
-    background: none #95D8DE !important;
-    background-color: #95D8DE !important;
-    border-color: #95D8DE !important;
+    background: transparent !important;
 }
 
-.ui.segment:not(.notifySegments), .ui.placeholder.segment {
-    background: #383838 !important;
-    background-color: #383838 !important;
-    color: #f0ece2 !important;
+.ui.modal > .content,
+.ui.modal > .header,
+.ui.modal > .actions {
+    background: #292b2d !important;
 }
 
-input[type=password], input[type=text], .ui.selection.dropdown, .ui.selection.active.dropdown .menu, input:not([type]) {
-    background-color: #212121 !important;
-    border-color: #383838 !important;
-    color: #95D8DE !important;
+.ui.small.compact.labeled.icon.menu {
+    background: #7f8285 !important;
 }
 
-.ui.blue.button {
-    background-color: #95D8DE !important;
-    color: #212121 !important;
-}
-
-.ui.green.button {
-    background-color: #4aec75 !important;
-    color: #212121 !important;
-}
-
-.ui.violet.button, .ui.red.button {
-    background-color: #ff6464 !important;
-    color: #212121 !important;
-}
-
-.ui.card, .ui.cards > .card {
-    background-color: #59849F !important;
-    color: #212121 !important;
-}
-
-.ui.selection.dropdown .menu > .item {
-    border-top: 1px solid #FF6FFD !important;
-}
-
-h1, h2, h3 {
-    color: #f0ece2 !important;
-}
-
-.w {
-    color: #f0ece2 !important;
-}
-
-.b {
-    color: #212121 !important;
-}
-
-.red {
-    color: #ff6464 !important;
-}
-
-.blue {
-    color: #95D8DE !important;
-}
-
-.green {
-    color: #4aec75 !important;
-}
-
-.purple {
-    color: #FF6FFD !important;
-}
-
-.ui.segments:not(.horizontal) > .segment:first-child, .ui.segments:not(.horizontal) > .segment:last-child, .notifySegments {
-    background: #95D8DE !important;
-    background-color: #95D8DE !important;
-    color: #212121 !important;
-}
-
-.ui.dropdown .menu .selected.item, .ui.dropdown.selected {
-    color: #f0ece2 !important;
-}
-
-.ui.selection.visible.dropdown > .text:not(.default), .ui.dropdown .menu > .item {
-    color: #f0ece2 !important;
-}
-
-.ui.form .field > label, .inline.fields > label {
-    color: #f0ece2 !important;
-}
-
-.ui.modal > *, .ui.tiny.modal > * {
-    background: #ff6464 !important;
-    color: #212121 !important;
-}
-
-.blocksModal > *, .ui.modal > * {
-    background: #212121 !important;
-    color: #212121 !important;
-}
-
-.Toastify__toast--success {
-    background-color: #4aec75 !important;
-    color: #212121 !important;
-}
-
-.Toastify__toast--error {
-    background-color: #ff6464 !important;
-    color: #212121 !important;
-}
-
-.Toastify__toast--info {
-    background-color: #95D8DE !important;
-    color: #212121 !important;
-}
-
-.Toastify__toast--warning {
-    background-color: #fff974 !important;
-    color: #212121 !important;
-}
-
-.ui.statistic > .value, .ui.statistics .statistic > .value, .ui.statistic > .label, .ui.statistics .statistic > .label {
-    color: #95D8DE !important;
-}
-
-.ui.styled.accordion, .ui.styled.accordion .accordion {
-    background: #95D8DE !important;
-    background-color: #95D8DE !important;
-    color: #212121 !important;
-}
-
-.txView {
-    margin: unset !important;
-    background: #212121 !important;
+.ui.small.compact.labeled.icon.menu a > i {
+    color: #ffffff !important;
 }

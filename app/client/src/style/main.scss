@@ -16,6 +16,11 @@ html, body, #root {
 /* Semantic Very Specific Additional Class Overwrites */
 ////////////////////////////////////////////////////////
 
+/* Avoid last item border rounding */
+.ui.compact.menu .item:last-child {
+    border-radius: 0 !important;
+}
+
 /* To be used as custom label class within a checkbox */
 .labelCheckbox  {
     display: flex !important;
