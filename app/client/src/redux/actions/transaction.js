@@ -240,7 +240,6 @@ export function parseAndUpdateFees(rpcFees) {
             for (let i=0; i < feeErrors.length ; i++) {
                 let error = feeErrors[i].error;
                 if (error.msg === "Insufficient Funds") {
-                    console.log("HITTT3233")
                     fees.errors.push(`${utils.wallet.getWalletNameFromAddress(error.details.account.address)} has insufficient funds`);
                 }
             }
