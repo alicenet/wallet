@@ -120,12 +120,12 @@ export default function AddEditValueStoreModal({ valueStore, onClose }) {
                                     onChange={toggleCurveType}
                                     label={
                                         <>
-                                            <label className={"labelCheckbox"}>Use BN Curve</label>
+                                            <label className={"labelCheckbox"}>Is BN Curve</label>
                                             <Popup
                                                 size="mini"
                                                 position="right center"
                                                 trigger={<Icon name="question circle" className="ml-1 mb-1.5"/>}
-                                                content="Generate public address with BN Curve"
+                                                content="Is this a BN Curve address?"
                                             />
                                         </>
                                     }
