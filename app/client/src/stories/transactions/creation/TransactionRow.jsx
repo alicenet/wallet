@@ -71,21 +71,27 @@ export default function TransactionRow({ transaction, index, onUpdate }) {
                 }
             />
 
-            <Popup
-                size="mini"
-                offset={"0,1"}
-                className="text-xs"
-                trigger={
-                    <Table.Cell className="py-0 px-2 cursor-pointer" onClick={() => copy(transaction.to)}>
-                        {utils.string.splitStringWithEllipsis(transaction.to, 5)} ( Click To Copy )
-                    </Table.Cell>
-                }
-                content={
-                    <>
-                        <span className="font-bold">To</span><br/>{transaction.to}
-                    </>
-                }
-            />
+            <Table.Cell className="py-0 px-2 cursor-pointer" onClick={() => copy(transaction.to)}>
+                <Popup
+                    size="mini"
+                    offset={"0,1"}
+                    className="text-xs"
+                    trigger={
+                        <div>
+                            {transaction.to && <>
+                                {utils.string.splitStringWithEllipsis(transaction.to, 5)}
+                                <Icon name="copy outline" className="ml-1 mb-2 cursor-pointer"/>
+                            </>}
+                        </div>
+
+                    }
+                    content={
+                        <>
+                            <span className="font-bold">To</span><br/>{transaction.to}
+                        </>
+                    }
+                />
+            </Table.Cell>
 
             <Table.Cell className="py-0 px-2">{transaction.key}</Table.Cell>
 
