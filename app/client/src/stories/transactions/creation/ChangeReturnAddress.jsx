@@ -27,7 +27,7 @@ export default function ChangeReturnAddress() {
                         offset={"0,2"}
                         trigger={
                             <div className="flex items-center text-xl gap-2 cursor-pointer">
-                                <div className="m-0 font-bold">Change Address</div>
+                                <div className="m-0 font-bold text-sm">Change Address</div>
                                 <Icon size="small" name="question circle" className="m-0"/>
                             </div>
                         }

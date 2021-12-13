@@ -325,7 +325,7 @@ export const createAndClearFakeTxForFeeEstimates = () => {
         await madNetAdapter.wallet().Transaction.createTxFee(feePayerWallet.address, feePayerWallet.curve, txFee);
         await madNetAdapter.createTx();
         let estimateFees = await madNetAdapter.getEstimatedFees();
-        
+
         // After fees have been estimated clear the tx state from the adapter and the wallet
         await madNetAdapter.wallet().Transaction._reset();
         madNetAdapter.clearTXouts();
