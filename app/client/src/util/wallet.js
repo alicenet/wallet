@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { utilsWallet_logger as log } from 'log/logHelper';
 import store from 'redux/store/store'
 const bip39 = require('bip39');
+const MadNetWalletJS = require('madwalletjs')
 var HDKey = require('hdkey');
 
 /** Creates a raw state wallet object from a wallet_name and private key
@@ -166,7 +167,9 @@ export function generateKeystore(asBlob, password, curve = curveTypes.SECP256K1)
     web3.eth.accounts.wallet.add(wallet[0])
     let ks = web3.eth.accounts.wallet.encrypt(password)
     let keystore = ks[0];
-    if (curve === curveTypes.BARRETO_NAEHRIG) { keystore["curve"] = curveTypes.BARRETO_NAEHRIG } // Note the curve if BN -- This gets removed on reads
+    if (curve === curveTypes.BARRETO_NAEHRIG) {
+        keystore["curve"] = curveTypes.BARRETO_NAEHRIG
+    } // Note the curve if BN -- This gets removed on reads
     let ksJSONBlob = new Blob([JSON.stringify(keystore, null, 2)]);
     return asBlob ? ksJSONBlob : keystore;
 }
@@ -243,7 +246,7 @@ export function getWalletNameFromAddress(address) {
 export function userOwnsAddress(address) {
     let walletState = store.getState().vault.wallets
     let wallets = [...walletState.internal, ...walletState.external]
-    let owns = wallets.some( w => {
+    let owns = wallets.some(w => {
         return w.address === address;
     })
     return owns;
@@ -266,6 +269,35 @@ export function getVaultWalletByAddress(address) {
     let wallets = [...walletState.internal, ...walletState.external];
     let foundWallet = wallets.filter(wallet => wallet.address === address)?.[0];
     return !foundWallet ? false : foundWallet;
+}
+
+/**
+ * Return the secp256k1 derived public key for a given private key
+ * @returns {String} - secp256k1 derived public key string
+ */
+export async function getSecp256k1FromPrivKey(privK) {
+    let walletInstance = new MadNetWalletJS();
+    await walletInstance.Account.addAccount(privK, curveTypes.SECP256K1);
+    return walletInstance.Account.accounts[0].address;
+}
+
+/**
+ * Return the barreto-naehrig derived public key for a given private key
+ * @returns {String} - barreto-naehrig derived public key string
+ */
+export async function getBNfromPrivKey(privK) {
+    let walletInstance = new MadNetWalletJS();
+    await walletInstance.Account.addAccount(privK, curveTypes.BARRETO_NAEHRIG);
+    return walletInstance.Account.accounts[0].address;
+}
+
+/**
+ * Returns both the secp256k1 and barreto-naehrig derived public keys for a given private key
+ * @param { String } privK 
+ * @returns {Array[{String}, {String}]} - An array of strings: [secp256k1PublicAddress, bnPublicAddress]
+ */
+export async function getPubKeysFromPrivKey(privK) {
+    return await Promise.all([getSecp256k1FromPrivKey(privK), getBNfromPrivKey(privK)]);
 }
 
 export const curveTypes = {

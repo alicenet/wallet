@@ -3,6 +3,7 @@ import { Grid, Menu } from 'semantic-ui-react';
 import VaultSegment from './VaultSegment.jsx';
 import MnemonicSegment from './MnemonicSegment.jsx';
 import OptOutSegment from './OptOutSegment.jsx';
+import MiscSegment from './MiscSigment.jsx';
 
 export default function VaultPanel() {
 
@@ -27,6 +28,7 @@ export default function VaultPanel() {
                     <Menu.Item active={isActiveBlock(0)} index={0} onClick={handleClick} content="Mnemonic" />
                     <Menu.Item active={isActiveBlock(1)} index={1} onClick={handleClick} content="Vault/Wallets" />
                     <Menu.Item active={isActiveBlock(2)} index={2} onClick={handleClick} content="Optout/Wallets" />
+                    <Menu.Item active={isActiveBlock(3)} index={3} onClick={handleClick} content="Misc" />
                 </Menu>
             </Grid.Column>
 
@@ -48,6 +50,13 @@ export default function VaultPanel() {
             {visibilityShim(isActiveBlock(2), (
                 <Grid.Column width={16}>
                     <OptOutSegment />
+                </Grid.Column>
+            ))}
+
+            {/* Misc Segment */}
+            {visibilityShim(isActiveBlock(3), (
+                <Grid.Column width={16}>
+                    <MiscSegment />
                 </Grid.Column>
             ))}
 
