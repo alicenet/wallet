@@ -140,7 +140,7 @@ export default function Overview({ wallet }) {
                             {vaultExists && (
                                 <Button className="text-purple-700 text-sm bg-transparent p-0.5 pl-0 hover:underline" onClick={openRenameWalletModal}>Rename Wallet</Button>
                             )} {/* Currently Vault Only */}
-                            <Button className="text-purple-700 text-sm bg-transparent p-0.5 pl-0 hover:underline" onClick={openXportPrivKModal}>Export Private Key</Button>
+                            <Button className="text-purple-700 text-sm bg-transparent p-0.5 pl-0 hover:underline" onClick={openXportPrivKModal}>Show Private Key</Button>
                             {/** -- Placeholder for feature addition
                              {!wallet.isInternal && (
                                 <Button className="text-red-700 text-sm bg-transparent p-0.5" onClick={openRemoveWalletModal}>Remove Wallet</Button>

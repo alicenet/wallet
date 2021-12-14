@@ -74,16 +74,16 @@ export default function ExportPrivateKeyModal() {
 
             <Modal.Header>
                 <Header as="h4">
-                    Export Private Key For Wallet: <span className="text-blue-500">{targetWallet.name}</span>
+                    Show Private Key For Wallet: <span className="text-blue-500">{targetWallet.name}</span>
                     <Header.Subheader>
-                        Get PrivK For Address: <span className="text-purple-500">{stringUtils.splitStringWithEllipsis(targetWallet.address, 4)}</span>
+                        Showing PrivK For Address: <span className="text-purple-500">{stringUtils.splitStringWithEllipsis(targetWallet.address, 4)}</span>
                     </Header.Subheader>
                 </Header>
             </Modal.Header>
 
             <Modal.Content className="text-sm">
                 <p>
-                    Exporting your private key is considered an administrative action.
+                    Showing your private key is considered an administrative action.
                 </p>
                 <p>
                     Please provide your {vaultExists ? "vault" : "administrative"} password below to show your private key for 15 seconds.
