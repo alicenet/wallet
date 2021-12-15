@@ -1,6 +1,6 @@
 import React from 'react'
 import { useFormState } from 'hooks/_hooks';
-import { Button, Checkbox, Form, Header, Icon } from 'semantic-ui-react';
+import { Button, Checkbox, Form, Header, Icon, Popup } from 'semantic-ui-react';
 import utils from 'util/_util.js';
 import { curveTypes } from 'util/wallet.js';
 
@@ -107,7 +107,7 @@ export default function GenerateKeystoreForm(
                                     basic ref={downloadRef}
                                     href={keystoreDL ? URL.createObjectURL(keystoreDL.data) : ""} download={keystoreDL.filename}
                                 />
-                                <Button.Or text="or" />
+                                <Button.Or text="or"/>
                                 <Button
                                     content="Load"
                                     icon="arrow alternate circle right"
@@ -138,7 +138,7 @@ export default function GenerateKeystoreForm(
             <Form.Input
                 size="small"
                 label="Keystore Password"
-                icon={<Icon name={showPassword ? "eye" : "eye slash"} onClick={() => setShowPassword(s => !s)} link />}
+                icon={<Icon name={showPassword ? "eye" : "eye slash"} onClick={() => setShowPassword(s => !s)} link/>}
                 type={showPassword ? "string" : "password"} value={formState.password.value}
                 onChange={e => formSetter.setPassword(e.target.value)}
                 error={!!formState.password.error && { content: formState.password.error }}
@@ -152,11 +152,22 @@ export default function GenerateKeystoreForm(
                         <Checkbox
                             checked={curveType === curveTypes.BARRETO_NAEHRIG}
                             onChange={toggleCurveType}
-                            label={<label className={"labelCheckbox"}>Use BN Curve</label>}
+                            label={
+                                <>
+                                    <label className={"labelCheckbox"}>Use BN Curve</label>
+                                    <Popup
+                                        size="mini"
+                                        position="right center"
+                                        offset={"0,2"}
+                                        trigger={<Icon name="question circle" className="ml-1 mb-1.5" style={{ marginRight: "-.035rem" }}/>}
+                                        content="Force the address generation by BN Curve. This will be detected if it is in the keystore"
+                                    />
+                                </>
+                            }
                             className="flex justify-center items-center text-xs uppercase font-bold relative -top-0"
                         />
                     </label>
-                } 
+                }
                 type={showPassword ? "string" : "password"} value={formState.verifiedPassword.value}
                 onChange={e => formSetter.setVerifiedPassword(e.target.value)}
                 action={{ content: "Generate", size: "mini", onClick: () => onSubmit(generateWallet), icon: "refresh", className: "w-28" }}
@@ -181,8 +192,8 @@ export default function GenerateKeystoreForm(
         </Form>
 
         <div className="flex justify-between mt-12 w-96">
-            <Form.Button basic content={cancelText} color="orange" onClick={cancelFunction} />
-            <Form.Button disabled={!keystoreDL} color="green" basic content={submitText} onClick={loadKeystore} />
+            <Form.Button basic content={cancelText} color="orange" onClick={cancelFunction} icon="x"/>
+            <Form.Button disabled={!keystoreDL} color="green" basic content={submitText} onClick={loadKeystore} icon="thumbs up"/>
         </div>
 
     </>)
