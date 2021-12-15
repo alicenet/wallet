@@ -1,8 +1,6 @@
 import React from 'react';
-import { Form, Header, Label, Message, Segment } from 'semantic-ui-react';
-import { useDispatch, useSelector } from 'react-redux';
-import { DButton } from '../../DebugPanel';
-import { classNames } from 'util/generic';
+import { Form, Header, Message, Segment } from 'semantic-ui-react';
+import { useSelector } from 'react-redux';
 import utils from 'util/_util';
 
 export default function MiscSegment() {
@@ -33,7 +31,7 @@ export default function MiscSegment() {
     return (
         <Segment>
 
-            <Header as="h5"> Derive Public Keys  </Header>
+            <Header as="h5">Derive Public Keys</Header>
 
             <Form size="mini">
 
@@ -52,7 +50,7 @@ export default function MiscSegment() {
 
                 <Form.Group>
                     {[...vault.wallets.internal, ...vault.wallets.external].map(wallet => {
-                        return <Form.Button content={wallet.name} size="mini" onClick={() => setPrivK(wallet.privK)} />
+                        return <Form.Button content={wallet.name} size="mini" onClick={() => setPrivK(wallet.privK)}/>
                     })}
                 </Form.Group>
 
