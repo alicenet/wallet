@@ -26,11 +26,11 @@ export default function ImportPrivateKeyForm({ submitText, submitFunction, cance
     const [curveType, setCurveType] = useState(curveTypes.SECP256K1);
     const toggleCurveType = () => setCurveType(s => s === curveTypes.SECP256K1 ? curveTypes.BARRETO_NAEHRIG : curveTypes.SECP256K1)
 
-    const verifyPrivKey = () => {
+    const verifyPrivKey = async () => {
         setLoading(true);
         try {
             // Passback a temporarily wrapped keystore for simplicity with password ""
-            let ks = walletUtils.generateKeystoreFromPrivK(formState.privateKey.value, "", curveType)
+            let ks = await walletUtils.generateKeystoreFromPrivK(formState.privateKey.value, "", curveType)
             setError(false);
             submitFunction({
                 locked: ks,

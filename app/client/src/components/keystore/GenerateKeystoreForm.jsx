@@ -35,8 +35,6 @@ export default function GenerateKeystoreForm(
 
     const downloadRef = React.useRef();
 
-    // CAT TODO ADD CURVE SWITCH
-
     const loadKeystore = () => {
         let fr = new FileReader();
         fr.readAsText(keystoreDL.data)

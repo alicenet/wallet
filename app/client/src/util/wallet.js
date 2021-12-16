@@ -2,6 +2,7 @@ import Web3 from 'web3';
 import { v4 as uuidv4 } from 'uuid';
 import { utilsWallet_logger as log } from 'log/logHelper';
 import store from 'redux/store/store'
+import { walletUtils } from './_util';
 const bip39 = require('bip39');
 const MadNetWalletJS = require('madwalletjs')
 var HDKey = require('hdkey');
@@ -12,12 +13,11 @@ var HDKey = require('hdkey');
  * @param { String } privK - The private key of this wallet - extracted from the vault
  * @param { Int } curve - Curve type  
  */
-export function generateBasicWalletObject(walletName, privK, curve) {
+export async function generateBasicWalletObject(walletName, privK, curve) {
     // Derrive public key and public address to state for ease of use
     return {
         name: walletName,
-        // pubAdd: "PUBLIC_ADDRESS_DERRIVE", // TBD if needed
-        // pubKey: "PUBLIC_KEY_DERRIVE", // TBD if neede
+        address: curve === curveTypes.SECP256K1 ? await getSecp256k1FromPrivKey(privK) : await getBNfromPrivKey(privK),
         curve: curve,
         privK: privK,
         stateId: uuidv4(), // Initialized State ID for quick client side identification -- Not stored elsewhere, can be used as key in map() if needed
@@ -161,15 +161,17 @@ export function unlockKeystore(keystore, password) {
  * @param { CurveType } curve - Curve if desired, default to type 1
  * @returns { Blob || JSON String } - JSON Blob || Json String
  */
-export function generateKeystore(asBlob, password, curve = curveTypes.SECP256K1) {
+export async function generateKeystore(asBlob, password, curve = curveTypes.SECP256K1) {
     let web3 = new Web3();
     let wallet = web3.eth.accounts.wallet.create(1)
     web3.eth.accounts.wallet.add(wallet[0])
     let ks = web3.eth.accounts.wallet.encrypt(password)
     let keystore = ks[0];
+    // Note the curve && address if BN -- Curve gets removed on reads
     if (curve === curveTypes.BARRETO_NAEHRIG) {
+        keystore["address"] = await getBNfromPrivKey(strip0x(wallet[0].privateKey));;
         keystore["curve"] = curveTypes.BARRETO_NAEHRIG
-    } // Note the curve if BN -- This gets removed on reads
+    }
     let ksJSONBlob = new Blob([JSON.stringify(keystore, null, 2)]);
     return asBlob ? ksJSONBlob : keystore;
 }
@@ -180,12 +182,16 @@ export function generateKeystore(asBlob, password, curve = curveTypes.SECP256K1)
  * @param {*} password 
  * @param {*} curve 
  */
-export function generateKeystoreFromPrivK(privK, password, curve = curveTypes.SECP256K1) {
+export async function generateKeystoreFromPrivK(privK, password, curve = curveTypes.SECP256K1) {
     let web3 = new Web3();
     web3.eth.accounts.wallet.add(privK);
     let ks = web3.eth.accounts.wallet.encrypt(password);
     let keystore = ks[0];
-    if (curve === curveTypes.BARRETO_NAEHRIG) { keystore["curve"] = curveTypes.BARRETO_NAEHRIG } // Note the curve if BN -- This gets removed on reads
+    // Note the curve && address if BN -- Curve gets removed on reads
+    if (curve === curveTypes.BARRETO_NAEHRIG) { 
+        keystore["address"] = await getBNfromPrivKey(privK);
+        keystore["curve"] = curveTypes.BARRETO_NAEHRIG 
+    }
     return keystore;
 }
 
