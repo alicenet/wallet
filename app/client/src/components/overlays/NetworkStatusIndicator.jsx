@@ -9,7 +9,7 @@ export default function NetworkStatusIndicator() {
         madConnected, madBusy,
         vaultExists
     } = useSelector(s => ({
-        web3Connected: s.adapter.web3Adapter.connected, 
+        web3Connected: s.adapter.web3Adapter.connected,
         web3Busy: s.adapter.web3Adapter.busy,
         madConnected: s.adapter.madNetAdapter.connected,
         madBusy: s.adapter.madNetAdapter.busy,
@@ -27,8 +27,8 @@ export default function NetworkStatusIndicator() {
                 <div className="font-bold font-mono">
                     ETH
                 </div>
-                <div className="relative" style={{top: "-1px", marginLeft: "4px"}}>
-                    <StatusLight color={web3Color} />
+                <div className="relative" style={{ top: "-1px", marginLeft: "4px" }}>
+                    <StatusLight color={web3Color}/>
                 </div>
             </div>
 
@@ -36,8 +36,8 @@ export default function NetworkStatusIndicator() {
                 <div className="font-bold text-gray-600 font-mono">
                     MAD
                 </div>
-                <div className='relative' style={{top: "-1px", marginLeft: "4px"}}>
-                    <StatusLight color={madColor} />
+                <div className='relative' style={{ top: "-1px", marginLeft: "4px" }}>
+                    <StatusLight color={madColor}/>
                 </div>
             </div>
 
@@ -47,16 +47,16 @@ export default function NetworkStatusIndicator() {
 
 }
 
-function StatusLight({ className, color, ...props }) {
+function StatusLight({ className, color }) {
 
-    let baseClass = "rounded-full border-solid border " + (className ? (" " + className) : "");
+    let baseClass = classNames("rounded-full border-solid border", { className: className });
     let colorClass = color === "red" ? "bg-red-500" : color === "yellow" ? "bg-yellow-500 animate-pulse" : color === "green" ? "bg-green-400" : "bg-gray-400";
     let colorBorderClass = color === "red" ? "border-red-400" : color === "yellow" ? "border-yellow-400" : color === "green" ? "border-green-300" : "border-gray-500";
 
     let fullClass = classNames(baseClass, colorClass, colorBorderClass);
 
     return (
-        <div className={fullClass} style={{width: "7px", height: "7px"}} />
+        <div className={fullClass} style={{ width: "7px", height: "7px" }}/>
     )
 
 }
