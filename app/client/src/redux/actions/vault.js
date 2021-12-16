@@ -172,7 +172,7 @@ export function addExternalWalletToState(keystore, password, walletName) {
         if (additions.error) { return additions }
         // If additions.external does not have atleast one wallet, something is wrong
         if (additions.external.length < 1) {
-            log.error("An attempt to add no additional wallets to redux state was almost made after a Middleware Action to Add a KeyStore Wallet")
+            log.error("An attempt to add no additional wallets to redux state was almost made after a Middleware Action to ADD_WALLET_FROM_KEYSTORE")
             return additions;
         }
         let added = await dispatch({ type: VAULT_ACTION_TYPES.ADD_EXTERNAL_WALLET, payload: additions.external[0] });
