@@ -30,6 +30,7 @@ export default function PasswordRequestModal() {
 
     const closeModal = async () => {
         formSetter.setPassword('');
+        formSetter.clearPasswordError();
         dispatch({ type: MODAL_ACTION_TYPES.CLOSE_PW_REQUEST });
     };
 
@@ -59,11 +60,12 @@ export default function PasswordRequestModal() {
 
             <Modal.Content>
 
-                <Form size="small" className="mt-4" onSubmit={() => onSubmit(tryPassword)} error={!!formState.password.error}>
+                <Form size="small" className="mini-error-form text-left" onSubmit={() => onSubmit(tryPassword)} error={!!formState.password.error}>
 
                     <Form.Input
+                        label="Keystore Password"
                         type={showPassword ? "text" : "password"}
-                        error={!!formState.password.error}
+                        error={!!formState.password.error && { content: formState.password.error }}
                         value={formState.password.value}
                         onChange={e => formSetter.setPassword(e.target.value)}
                         icon={<Icon link name={showPassword ? "eye" : "eye slash"} onClick={() => setShowPassword(s => !s)}/>}
