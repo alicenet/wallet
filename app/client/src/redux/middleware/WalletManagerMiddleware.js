@@ -19,7 +19,7 @@ export default function WalletManagerMiddleware(storeAPI) {
                 case MIDDLEWARE_ACTION_TYPES.INIT_MAD_WALLET:
                     return initMadWallet(action.payload, storeAPI.dispatch);
                 case MIDDLEWARE_ACTION_TYPES.ADD_WALLET_FROM_KEYSTORE:
-                    return addWalletFromKeystore(action.payload.data, action.payload.name, storeAPI.dispatch);
+                    return addWalletFromKeystore(action.payload.data, action.payload.name, storeAPI.dispatch, storeAPI.getState);
                 case MIDDLEWARE_ACTION_TYPES.ADD_NEXT_HD_WALLET:
                     return addNextHDWallet(storeAPI, action.payload.name);
                 case MIDDLEWARE_ACTION_TYPES.REINSTANCE_MAD_WALLET:
@@ -123,7 +123,7 @@ function initMadWallet(initPayload, dispatch) {
  * @param { Function } dispatch - Redux Dispatch 
  * @returns { Object } - List of added wallets
  */
-function addWalletFromKeystore(keystore, walletName, dispatch) {
+function addWalletFromKeystore(keystore, walletName, dispatch, getState) {
     return new Promise(async res => {
         // Extract pkey from keystore
         let pKey = keystore.privateKey;
@@ -132,6 +132,14 @@ function addWalletFromKeystore(keystore, walletName, dispatch) {
         // Verify curve
         if (curve !== curveTypes.SECP256K1 && curve !== curveTypes.BARRETO_NAEHRIG) {
             throw new Error("An invalid curve was found within a keystore: " + curve);
+        }
+        // Verify that the private key is not already being used with a wallet in state
+        const walletState = getState().vault.wallets;
+        const wallets = [...walletState.internal, ...walletState.external]
+
+        let pKeyMatches = wallets.filter(wallet => wallet.privK === util.wallet.strip0x(pKey));
+        if (pKeyMatches.length > 0) {
+            res({ error: "This private key is already loaded as wallet: " + pKeyMatches[0].name });
         }
         // Add the private key to the MadWalletJS instance
         try {
