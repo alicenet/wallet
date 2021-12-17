@@ -1,6 +1,6 @@
 import MadWallet from 'madwalletjs';
 import { MIDDLEWARE_ACTION_TYPES, VAULT_ACTION_TYPES } from '../constants/_constants';
-import util from 'util/_util';
+import util, { walletUtils } from 'util/_util';
 import { walletManMiddleware_logger as log } from '../../log/logHelper.js'
 import { curveTypes } from 'util/wallet';
 import utils from 'util/_util';
@@ -48,8 +48,8 @@ function reinstanceMadWallet() {
  * @param { Integer } curve - Curve to use
  * @param { String } name - Wallet Name
  * */
-function _walletArrayStructure(pKey, curve, name) {
-    return [pKey, curve, name];
+function _walletArrayStructure(pKey, curve, name, address = "") {
+    return [pKey, curve, name, address];
 }
 
 /**
@@ -66,10 +66,10 @@ function initMadWallet(initPayload, dispatch) {
         for (let walletType in initPayload.wallets) {
             for (let wallet of initPayload.wallets[walletType]) {
                 if (walletType === "internal") {
-                    internalAccountAdds.push(_walletArrayStructure(wallet.privK, wallet.curve, wallet.name));
+                    internalAccountAdds.push(_walletArrayStructure(wallet.privK, wallet.curve, wallet.name, wallet.address));
                 }
                 else { // else, is an external wallet
-                    externalAccountAdds.push(_walletArrayStructure(wallet.privK, wallet.curve, wallet.name));
+                    externalAccountAdds.push(_walletArrayStructure(wallet.privK, wallet.curve, wallet.name, wallet.address));
                 }
             }
         }
@@ -137,7 +137,8 @@ function addWalletFromKeystore(keystore, walletName, dispatch) {
         try {
             await madWallet.Account.addAccount(pKey, curve);
             // Balance the wallet state to redux with the wallet name
-            let externalAdds = [_walletArrayStructure(util.wallet.strip0x(pKey), curve, walletName)];
+            let address = curve === curveTypes.BARRETO_NAEHRIG ? await utils.wallet.getBNfromPrivKey(pKey) : await utils.wallet.getSecp256k1FromPrivKey(pKey);
+            let externalAdds = [_walletArrayStructure(util.wallet.strip0x(pKey), curve, walletName, address)];
             let balancedState = await buildBalancedWalletState([], externalAdds);
             res(balancedState)
         } catch (ex) {
@@ -193,15 +194,30 @@ function addNextHDWallet(storeAPI, walletName) {
  * @returns { Object } - Object with internal and external wallet arrays 
  */
 function buildBalancedWalletState(internalAdds, externalAdds) {
-    return new Promise(res => {
+    return new Promise(async res => {
         let allToAdd = [...internalAdds, ...externalAdds];
         let internalWallets = []; // Final Internal State Array
         let externalWallets = []; // Final External State Array
         for (let account of madWallet.Account.accounts) {
             let signerKeyToUse = parseInt(account.MultiSigner.curve) === 1 ? "secpSigner" : "bnSigner";  // Key to use under MultiSigner for this account to get privK
+
             let privK = account.MultiSigner[signerKeyToUse].privK; // Note the privK
+            let address = account.address; // Note the address from madWalletJS
+
+            // Additionally check the expected derrived address relative to the curve from signerKey for the filtering process
             privK = util.wallet.strip0x(privK); // Use 0x-stripped pkey
-            let match = allToAdd.filter(addition => addition[0] === privK)[0]; // Match privK to an account from MadNetWallet.accounts if available
+            let matches = allToAdd.filter(addition => {
+                if (addition[0] === privK && addition[3] === address) {
+                    return true;
+                }
+                return false;
+            });
+            // Match privK to an account from MadNetWallet.accounts if available -- This should only match once per iteration
+            let match = matches[0];
+
+            if (matches.length > 1) {
+                throw Error("During balancing, a private key & address combo was filtered twice. This signals a duplicate wallet. Verify state balancing does not allow multiple matches per iteration. Check all forwarded paramaters and current state.")
+            }
             // Construct the wallet based off of data creation from madwallet -- We let mad wallet build this data and then store it back to state 
             if (!match) {
                 log.warn("No match found for recently added wallet list against a MadWalletJS Account List -- This is normal during additions up to the current wallet count, only matches need balanced.")
@@ -220,8 +236,8 @@ function buildBalancedWalletState(internalAdds, externalAdds) {
             else {
                 externalWallets.push(walletObj);
             }
-            res({ internal: internalWallets, external: externalWallets });
         };
+        res({ internal: internalWallets, external: externalWallets });
     })
 }
 

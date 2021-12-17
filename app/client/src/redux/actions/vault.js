@@ -36,7 +36,7 @@ export function generateNewSecureHDVault(mnemonic, password, curveType = util.wa
     return async function (dispatch) {
         // Anytime we generate a vault make sure to note the curve in the vault store as well 
         // -- This prevents immediately generated vault from not having the correct curve for new wallet generations
-        dispatch({type: VAULT_ACTION_TYPES.SET_CURVE, payload: curveType})
+        dispatch({ type: VAULT_ACTION_TYPES.SET_CURVE, payload: curveType })
         let [preflightHash, firstWalletNode] = await electronStoreCommonActions.createNewSecureHDVault(mnemonic, password, curveType);
         electronStoreCommonActions.storePreflightHash(preflightHash); // Store preflight hash for pre-action auth checking
         let firstWallet = utils.wallet.generateBasicWalletObject("Main Wallet", firstWalletNode.privateKey.toString('hex'), curveType)
@@ -89,23 +89,23 @@ export function loadSecureHDVaultFromStorage(password) {
         for (let i = 0; i < hdLoadCount; i++) {
             hdNodesToLoad.push(i);
         }
+
         const internalHDWallets = await wu.streamLineHDWalletNodesFromMnemonic(mnemonic, hdNodesToLoad);
         const preInitPayload = { wallets: { internal: [], external: [] } }; // Payload needed by initMadWallet() in WalletManagerMiddleware
-        internalHDWallets.forEach((walletNode, nodeIdx) => {
-            const walletName = unlockedVault.wallets.internal[nodeIdx].name; // Pair walletNode IDX with it's name
+
+        for (let i = 0; i < internalHDWallets.length; i++) {
+            const walletNode = internalHDWallets[i];
+            const walletName = unlockedVault.wallets.internal[i].name; // Pair walletNode IDX with it's name
             // Construct the wallet Object
-            const internalWalletObj = utils.wallet.generateBasicWalletObject(walletName, walletNode.privateKey.toString('hex'), hdCurve);
+            const internalWalletObj = await utils.wallet.generateBasicWalletObject(walletName, walletNode.privateKey.toString('hex'), hdCurve);
             preInitPayload.wallets.internal.push(internalWalletObj); // Add it to the wallet init
-        })
+        }
+
         // Add externals to preInit
-        unlockedVault.wallets.external.forEach(wallet => {
-            const internalWalletObj = {
-                name: wallet.name,
-                privK: wallet.privK,
-                curve: wallet.curve,
-            }
+        for (let wallet of unlockedVault.wallets.external) {
+            const internalWalletObj = await utils.wallet.generateBasicWalletObject(wallet.name, wallet.privK, wallet.curve);
             preInitPayload.wallets.external.push(internalWalletObj); // Add it to the wallet init
-        })
+        }
 
         // Load any stored configuration values
         let configLoaded = await dispatch(CONFIG_ACTIONS.loadConfigurationValuesFromStore());
@@ -170,6 +170,11 @@ export function addExternalWalletToState(keystore, password, walletName) {
         let additions = await dispatch({ type: MIDDLEWARE_ACTION_TYPES.ADD_WALLET_FROM_KEYSTORE, payload: unlocked }); // Pass off to MadWalletMiddleware to finish state balancing
         // Waiting for the above to dispatch will prevent doubles from being added -- MadWalletJS will catch them
         if (additions.error) { return additions }
+        // If additions.external does not have atleast one wallet, something is wrong
+        if (additions.external.length < 1) {
+            log.error("An attempt to add no additional wallets to redux state was almost made after a Middleware Action to ADD_WALLET_FROM_KEYSTORE")
+            return additions;
+        }
         let added = await dispatch({ type: VAULT_ACTION_TYPES.ADD_EXTERNAL_WALLET, payload: additions.external[0] });
         // When adding external wallets we need to check if this addition is to an existing vault -- If not, make sure we set optout as true.
         let hasVault = getState().vault.exists;
@@ -225,7 +230,6 @@ export function renameWalletByAddress(targetWallet, newName, password) {
         let internalWallets = [...wallets.internal];
         let externalWallets = [...wallets.external];
         // First determine if internal or external
-        console.log(targetWallet, password, targetWallet.isInternal, "UHOH")
         // Is internal
         if (targetWallet.isInternal) {
             let internalTargetIndex = internalWallets.findIndex(e => (targetWallet.address === e.address));
