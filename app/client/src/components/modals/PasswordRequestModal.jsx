@@ -28,6 +28,11 @@ export default function PasswordRequestModal() {
 
     const [showPassword, setShowPassword] = React.useState(false);
 
+    const closeModal = async () => {
+        formSetter.setPassword('');
+        dispatch({ type: MODAL_ACTION_TYPES.CLOSE_PW_REQUEST });
+    };
+
     const tryPassword = async () => {
         formSetter.setPassword('');
         callback(formState.password.value);
@@ -70,13 +75,19 @@ export default function PasswordRequestModal() {
 
             <Modal.Actions>
 
-                <Button
-                    size="mini"
-                    content={formState.password.error ? "Try Again" : "Submit"}
-                    basic
-                    color={formState.password.error ? "red" : "green"}
-                    onClick={() => onSubmit(tryPassword)}
-                />
+                <div className="flex justify-between">
+
+                    <Button size="small" color="orange" content="Close" onClick={closeModal} basic/>
+
+                    <Button
+                        size="mini"
+                        content={formState.password.error ? "Try Again" : "Submit"}
+                        basic
+                        color={formState.password.error ? "red" : "green"}
+                        onClick={() => onSubmit(tryPassword)}
+                    />
+
+                </div>
 
             </Modal.Actions>
 

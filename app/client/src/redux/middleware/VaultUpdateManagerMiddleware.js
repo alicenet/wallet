@@ -65,7 +65,7 @@ function syncStateToStore(storeAPI, reason) {
         onClick: () => {
             storeAPI.dispatch({
                 type: MODAL_ACTION_TYPES.OPEN_PW_REQUEST, payload: {
-                    reason: "Vault Syncronization -- " + reason,
+                    reason: "Vault Synchronization | " + reason,
                     cb: async (password) => {
                         await electronStoreCommonActions.updateVaultWallets(password, stateWallets)
                         toast.success(<SyncToastMessageSuccess title="Success" message={reason} />, {
