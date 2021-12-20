@@ -21,6 +21,7 @@ import * as WalletActionModals from 'components/modals/_walletActionModals';
 // Global Modals
 import PasswordRequestModal from 'components/modals/PasswordRequestModal';
 import { WalletHubProvider } from 'context/WalletHubContext';
+import RedirectIfLocked from "./components/hocs/RedirectIfLocked";
 
 /**
  * Main App Entrypoint
@@ -63,9 +64,11 @@ function App() {
                 <Route exact path="/returningUserLoad/hasKeystores" component={ReturningUserLoadFlows.HasExistingKeystores}/>
 
                 {/* Wallet Hub -- Send here if vault exists */}
-                <WalletHubProvider>
-                    <Route exact path="/hub" component={Hubs.ReturningUserHub}/>
-                </WalletHubProvider>
+                <RedirectIfLocked>
+                    <WalletHubProvider>
+                        <Route exact path="/hub" component={Hubs.ReturningUserHub}/>
+                    </WalletHubProvider>
+                </RedirectIfLocked>
 
                 {/* Add Wallet -- Add Wallet Menu && Screens */}
                 <Route exact path="/addWallet/menu" component={AddWallet.AddWalletMenu}/>
@@ -75,8 +78,10 @@ function App() {
                 <Route exact path="/addWallet/verify" component={AddWallet.VerifyImport}/>
 
                 {/* Construct Hub */}
-                <Route exact path="/transactions" component={Transactions.Construct}/>
-                <Route exact path="/inspectTx" component={Transactions.InspectionModule}/>
+                <RedirectIfLocked>
+                    <Route exact path="/transactions" component={Transactions.Construct}/>
+                    <Route exact path="/inspectTx" component={Transactions.InspectionModule}/>
+                </RedirectIfLocked>
 
                 {/* Settings */}
                 <Route exact path="/wallet/settings" component={Settings.Settings}/>

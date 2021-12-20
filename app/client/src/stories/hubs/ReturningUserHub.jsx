@@ -21,8 +21,6 @@ export default function Hub() {
     const [openDrawer, setOpenDrawer] = React.useState(true);
     const { selectedWallet, setSelectedWallet, activeTabPane, setActiveTabPane } = useContext(WalletHubContext);
 
-    const { vaultExistsAndIsLocked } = useSelector(s => ({ vaultExistsAndIsLocked: s.vault.is_locked }))
-
     const gotoAddWallet = () => {
         history.push('/addWallet/menu');
     }
@@ -30,12 +28,6 @@ export default function Hub() {
     const handleTabChange = (e, { activeIndex }) => {
         setActiveTabPane(activeIndex);
     };
-
-    useEffect(() => {
-        if (vaultExistsAndIsLocked) {
-            history.push('/'); // Send to root for appropriate redirect
-        }
-    }, [vaultExistsAndIsLocked, history])
 
     useEffect(() => {
         if (wallets.length > 0 && !selectedWallet) {
