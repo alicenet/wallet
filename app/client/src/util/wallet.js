@@ -2,7 +2,6 @@ import Web3 from 'web3';
 import { v4 as uuidv4 } from 'uuid';
 import { utilsWallet_logger as log } from 'log/logHelper';
 import store from 'redux/store/store'
-import { walletUtils } from './_util';
 const bip39 = require('bip39');
 const MadNetWalletJS = require('madwalletjs')
 var HDKey = require('hdkey');
@@ -14,7 +13,7 @@ var HDKey = require('hdkey');
  * @param { Int } curve - Curve type  
  */
 export async function generateBasicWalletObject(walletName, privK, curve) {
-    // Derrive public key and public address to state for ease of use
+    // Derive public key and public address to state for ease of use
     return {
         name: walletName,
         address: curve === curveTypes.SECP256K1 ? await getSecp256k1FromPrivKey(privK) : await getBNfromPrivKey(privK),
@@ -123,16 +122,6 @@ export function streamLineHDWalletNodesFromMnemonic(mnemonic, nodeNums) {
         })
         res(derrivedWallets);
     })
-}
-
-/**
- * Return the equivelent integer for a given curvetype as used in MadWallet-JS
- */
-export function curveStringToNum(curveString) {
-    if (curveString !== "secp256k1" && curveString !== "barreto-naehrig") {
-        throw new Error("Invalid curve name: ", curveString);
-    }
-    return curveString === "secp256k1" ? 1 : 2; // 1 is secp, 2 for bn
 }
 
 /**

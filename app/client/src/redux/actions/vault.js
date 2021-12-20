@@ -1,3 +1,4 @@
+import React from 'react';
 import { VAULT_ACTION_TYPES, MIDDLEWARE_ACTION_TYPES } from 'redux/constants/_constants';
 import { getMadWalletInstance } from 'redux/middleware/WalletManagerMiddleware'
 import { electronStoreCommonActions, electronStoreUtilityActons } from '../../store/electronStoreHelper';
@@ -13,10 +14,10 @@ import { SyncToastMessageSuccess } from 'components/customToasts/CustomToasts';
 
 /* !!!!!!! ____   ATTENTION: ______ !!!!!!!!  
 
-It is critical that new vault actions have implementations written in the WalletManagerMiddleware to facilitate syncronous state between
+It is critical that new vault actions have implementations written in the WalletManagerMiddleware to facilitate synchronous state between
 the global MadNetJS Wallet and the Redux State! 
 
-To facilitate the Virtual DOM being updated when wallet mutation happens, we store a immutable state collection of
+To facilitate the Virtual DOM being updated when wallet mutation happens, we store an immutable state collection of
 what the MadNetWallet object in ../middleware/WalletManagerMiddleware is composed of to the reduxState :: Immutable keys are stored in state, while
 the mutable Wallet objects themselves are handled within MadNetWalletJS's instance 
 
@@ -194,7 +195,7 @@ export function addExternalWalletToState(keystore, password, walletName) {
  * @returns {Object<MadWallet-JS>}
  */
 export function getMadWallet() {
-    return function (dispatch) {
+    return function () {
         return getMadWalletInstance();
     }
 }
@@ -206,12 +207,12 @@ export function getMadWallet() {
 export function lockVault() {
     return async function (dispatch) {
         return new Promise(async res => {
+            toast.success(<SyncToastMessageSuccess hideIcon basic message="Locked & Disconnected" />, { autoClose: 1750, className: "basic" })
             await dispatch({ type: MIDDLEWARE_ACTION_TYPES.REINSTANCE_MAD_WALLET });
             await dispatch({ type: VAULT_ACTION_TYPES.LOCK_VAULT });
-            // Additionally mark web3 and madnet as not connected so they can be reinstanced on reconnect
+            // Additionally, mark web3 and madnet as not connected so they can be instanced on reconnect
             web3Adapter.setDefaultState(); // Mark default state on web3 adapter --
             await dispatch(ADAPTER_ACTIONS.disconnectAdapters()) // Mark adapter state back to default and disconnected
-            toast.success(<SyncToastMessageSuccess hideIcon basic message="Locked & Disconnected" />, { autoClose: 1750, className: "basic" })
             res(true);
         })
     }

@@ -1,6 +1,6 @@
 import MadWallet from 'madwalletjs';
 import { MIDDLEWARE_ACTION_TYPES, VAULT_ACTION_TYPES } from '../constants/_constants';
-import util, { walletUtils } from 'util/_util';
+import util from 'util/_util';
 import { walletManMiddleware_logger as log } from '../../log/logHelper.js'
 import { curveTypes } from 'util/wallet';
 import utils from 'util/_util';
