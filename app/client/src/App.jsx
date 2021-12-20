@@ -21,7 +21,7 @@ import * as WalletActionModals from 'components/modals/_walletActionModals';
 // Global Modals
 import PasswordRequestModal from 'components/modals/PasswordRequestModal';
 import { WalletHubProvider } from 'context/WalletHubContext';
-import RedirectIfLocked from "./components/hocs/RedirectIfLocked";
+import RedirectIfLocked from './components/hocs/RedirectIfLocked';
 
 /**
  * Main App Entrypoint
