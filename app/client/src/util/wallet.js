@@ -170,8 +170,9 @@ export async function generateKeystore(asBlob, password, curve = curveTypes.SECP
  * @param {*} privK 
  * @param {*} password 
  * @param {*} curve 
+ * @param {*} asBlob
  */
-export async function generateKeystoreFromPrivK(privK, password, curve = curveTypes.SECP256K1) {
+export async function generateKeystoreFromPrivK(privK, password, curve = curveTypes.SECP256K1, asBlob) {
     let web3 = new Web3();
     web3.eth.accounts.wallet.add(privK);
     let ks = web3.eth.accounts.wallet.encrypt(password);
@@ -181,7 +182,8 @@ export async function generateKeystoreFromPrivK(privK, password, curve = curveTy
         keystore["address"] = await getBNfromPrivKey(privK);
         keystore["curve"] = curveTypes.BARRETO_NAEHRIG 
     }
-    return keystore;
+    let ksJSONBlob = new Blob([JSON.stringify(keystore, null, 2)]);
+    return asBlob ? ksJSONBlob : keystore;
 }
 
 /** Standardized Wallet Data Object for State Storage and General Use

@@ -51,6 +51,7 @@ export default function Overview({ wallet }) {
     const openRenameWalletModal = () => { dispatch(MODAL_ACTIONS.openRenameWalletModal(wallet)) }
 
     const openXportPrivKModal = () => { dispatch(MODAL_ACTIONS.openXportPrivKModal(wallet)) }
+    const openXportKeystoreModal = () => {dispatch(MODAL_ACTIONS.openXportKeyStoreModal(wallet))}
 
     const copyAddress = () => {
         setCopyClick(true);
@@ -141,6 +142,7 @@ export default function Overview({ wallet }) {
                                 <Button className="text-purple-700 text-sm bg-transparent p-0.5 pl-0 hover:underline" onClick={openRenameWalletModal}>Rename Wallet</Button>
                             )} {/* Currently Vault Only */}
                             <Button className="text-purple-700 text-sm bg-transparent p-0.5 pl-0 hover:underline" onClick={openXportPrivKModal}>Show Private Key</Button>
+                            <Button className="text-purple-700 text-sm bg-transparent p-0.5 pl-0 hover:underline" onClick={openXportKeystoreModal}>Export Keystore</Button>
                             {/** -- Placeholder for feature addition
                              {!wallet.isInternal && (
                                 <Button className="text-red-700 text-sm bg-transparent p-0.5" onClick={openRemoveWalletModal}>Remove Wallet</Button>

@@ -4,8 +4,9 @@ import { MODAL_ACTION_TYPES } from '../constants/_constants';
 const initialModalState = {
     password_req_modal: false,
     password_req_reason: "",
-    password_req_cb: () => {}, // Function for password request modal cb
+    password_req_cb: () => { }, // Function for password request modal cb
     export_privK_modal: false, // Is this modal open?
+    export_ks_modal: false, // Is this modal open?
     remove_wallet_modal: false, // Is this modal open?
     rename_wallet_modal: false, // Is this modal open?
     wallet_action_target: false, // What is the target wallet for the action modals
@@ -63,6 +64,18 @@ export default function modalReducer(state = initialModalState, action) {
         case MODAL_ACTION_TYPES.CLOSE_XPORT_PRIVK:
             return Object.assign({}, state, {
                 export_privK_modal: false,
+                wallet_action_target: false,
+            });
+
+        case MODAL_ACTION_TYPES.OPEN_XPORT_KS:
+            return Object.assign({}, state, {
+                export_ks_modal: true,
+                wallet_action_target: action.payload,
+            });
+
+        case MODAL_ACTION_TYPES.CLOSE_XPORT_KS:
+            return Object.assign({}, state, {
+                export_ks_modal: false,
                 wallet_action_target: false,
             });
 

@@ -113,6 +113,7 @@ function App() {
                 <WalletActionModals.RenameWalletModal/>
                 <WalletActionModals.RemoveWalletModal/>
                 <WalletActionModals.ExportPrivateKeyModal/>
+                <WalletActionModals.ExportKeystoreModal/>
 
             </Router>
         </Container>
