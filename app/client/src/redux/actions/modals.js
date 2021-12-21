@@ -53,3 +53,21 @@ export function closeExportPrivateKeyModal() {
         dispatch({ type: MODAL_ACTION_TYPES.CLOSE_XPORT_PRIVK });
     }
 }
+
+/**
+ * Opens the modal for exporting the keystore for the specified wallet
+ * @param { Object } walletTarget - Wallet state object from from redux state 
+ * @returns 
+ */
+ export function openXportKeyStoreModal(walletTarget) {
+    return function (dispatch) {
+        dispatch({ type: MODAL_ACTION_TYPES.OPEN_XPORT_KS, payload: walletTarget });
+    }
+}
+
+/** Inverse to the above -- Action will clear the wallet_action_target from state */
+export function closeExportKeyStoreModal() {
+    return function (dispatch) {
+        dispatch({ type: MODAL_ACTION_TYPES.CLOSE_XPORT_KS });
+    }
+}
