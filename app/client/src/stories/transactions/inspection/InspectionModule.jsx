@@ -8,6 +8,7 @@ import { useHistory } from 'react-router-dom';
 import utils, { stringUtils } from 'util/_util';
 import { getMadWalletInstance } from 'redux/middleware/WalletManagerMiddleware';
 import { classNames } from 'util/generic';
+import Web3 from 'web3';
 
 const madWalletJS = getMadWalletInstance();
 
@@ -43,6 +44,7 @@ function InspectionModule() {
     };
 
     const txObj = !tx.error ? utils.transaction.parseRpcTxObject(tx.txDetails || tx) : tx;
+    const txFee = Web3.utils.toBN(String(txObj.wholeTx.Fee)).toString();
 
     // Need a state for the async owner extraction
     const [voutOwners, setVoutOwners] = React.useState(Array(txObj && txObj.voutCount));
@@ -75,8 +77,8 @@ function InspectionModule() {
                 <div className="ml-3">
                     <Label size="mini"
                         content={isString ? utils.generic.hexToUtf8Str(value) : parseInt(value, 16).toLocaleString()}
-                    />                        
-                    
+                    />
+
                 </div>
             </div>
         )
@@ -206,7 +208,12 @@ function InspectionModule() {
                 <Grid.Column width={16} className="p-0 self-center text-md" style={{ height: "370px" }}>
 
                     {!txObj.error && (<>
-                        <Header textAlign="left" sub className="mb-2 text-lg"><span className="text-gray-700">TxHash: </span> <span className="text-gray-500">{txObj["txHash"]}</span> </Header>
+                        <Header textAlign="left" sub className="mb-2 text-lg"><span className="text-gray-700">
+                            TxHash: </span> <span className="text-gray-500">{txObj["txHash"]}</span>
+                        </Header>
+                        <div className="flex justify-start mb-3">
+                            <Label className="text-xs">TxFee: {txFee} MadBytes</Label>
+                        </div>
                         <VinTable />
                         <VoutTable />
                     </>)}
