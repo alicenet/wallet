@@ -48,7 +48,7 @@ export default function AddEditPrioritizationFeeModal() {
 
             <Modal.Header className="text-center">
 
-                <Header as="h4" className="uppercase" color="purple">{`Prioritization Fee`}</Header>
+                <Header as="h4" className="uppercase" color="purple">Prioritization Fee</Header>
 
             </Modal.Header>
 
