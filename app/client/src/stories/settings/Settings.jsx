@@ -42,7 +42,7 @@ function Settings() {
     ]
 
     return (
-        <Page>
+        <Page showNetworkStatus>
 
             <Grid textAlign="center" className="m-0">
 

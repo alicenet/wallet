@@ -110,7 +110,7 @@ function ConstructionModule() {
     }, [list, activePage]);
 
     return (
-        <Page showMenu>
+        <Page showMenu showNetworkStatus>
 
             <Container>
 

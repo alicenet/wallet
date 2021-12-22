@@ -106,7 +106,6 @@ function App() {
 
                 <DebugTools/>
 
-                <NetworkStatusIndicator/>
                 <ToastContainer position="bottom-right"/>
 
                 <PasswordRequestModal/>

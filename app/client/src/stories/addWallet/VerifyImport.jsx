@@ -1,5 +1,5 @@
-import React from 'react';
-import { Container, Grid, Header, Button, Message, Loader } from 'semantic-ui-react'
+import React, { useEffect, useState } from 'react';
+import { Button, Container, Grid, Header, Loader, Message } from 'semantic-ui-react'
 import { useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { VAULT_ACTIONS } from 'redux/actions/_actions';
@@ -8,6 +8,7 @@ import { default_log as log } from 'log/logHelper';
 import MadWalletJs from 'madwalletjs';
 import { walletUtils } from 'util/_util';
 import { curveTypes } from 'util/wallet';
+import Page from 'layout/Page';
 
 export default function VerifyImport() {
 
@@ -16,23 +17,23 @@ export default function VerifyImport() {
     // Forwarded state
     const toLoad = history?.location?.state?.toLoad;
     // Local State
-    const [potentialWallet, setPotentialWallet] = React.useState(false);
+    const [potentialWallet, setPotentialWallet] = useState(false);
 
-    const [addressLoading, setAddressLoading] = React.useState(false);
-    const [verifyLoading, setVerifyLoading] = React.useState(false);
+    const [addressLoading, setAddressLoading] = useState(false);
+    const [verifyLoading, setVerifyLoading] = useState(false);
 
-    const [success, setSuccess] = React.useState(false);
-    const [error, setError] = React.useState(false);
+    const [success, setSuccess] = useState(false);
+    const [error, setError] = useState(false);
 
     // If state doesn't exist, push the user back to the addWalletsMenu
-    React.useEffect(() => {
+    useEffect(() => {
         if (!toLoad) {
             history.push('/addWallet/menu')
         }
     }, [history, toLoad])
 
     // Use an empty MadNetWalletJS Instance to extract potential wallet information
-    React.useEffect(() => {
+    useEffect(() => {
 
         const getPotentialWallet = async () => {
             // Create temp instance
@@ -76,53 +77,68 @@ export default function VerifyImport() {
     }
 
     return (
+        <Page showNetworkStatus>
 
-        <Container fluid className="h-full flex items-center justify-center">
+            <Container fluid className="h-full flex items-center justify-center">
 
-            <Grid textAlign="center">
+                <Grid textAlign="center">
 
-                <Grid.Column width={16} className="mb-8">
+                    <Grid.Column width={16} className="mb-8">
 
-                    <Header className="text-gray-500 mb-8">Verify Import</Header>
+                        <Header className="text-gray-500 mb-8">Verify Import</Header>
 
-                    <div className="text-sm">
+                        <div className="text-sm">
 
-                        <p>Please verify that the below address is the expected public address.</p>
+                            <p>Please verify that the below address is the expected public address.</p>
 
-                        <p>If it is not please cancel, and import with a different curve.</p>
+                            <p>If it is not please cancel, and import with a different curve.</p>
 
-                    </div>
-
-                </Grid.Column>
-
-                <Grid.Column width={16} className="flex flex-auto flex-col items-center">
-
-                    <div className="flex flex-row items-center">
-                        <span className="font-bold uppercase">Public Address: &nbsp; </span> {addressLoading ? <Loader className="ml-4 " inline active size="mini" /> : potentialWallet.address}
-                    </div>
-
-                </Grid.Column>
-
-                <Grid.Column width={16} className="flex flex-auto flex-col items-center mt-8">
-
-                    <div className="flex flex-col gap-2 w-72">
-                        <Button loading={verifyLoading} content={error ? "Try Again" : "Verify Import"} basic color={error ? "red" : "green"} size="small" onClick={verify} />
-                        <Button content="Cancel" onClick={() => history.push('/addWallet/menu')} basic color="orange" size="small" />
-                    </div>
-
-                    {error && (
-                        <div className="absolute -bottom-16 inset-center">
-                            <Message error content={error} size="mini" />
                         </div>
-                    )}
 
+                    </Grid.Column>
 
-                </Grid.Column>
+                    <Grid.Column width={16} className="flex flex-auto flex-col items-center">
 
-            </Grid>
+                        <div className="flex flex-row items-center">
+                            <span className="font-bold uppercase">Public Address: &nbsp; </span> {addressLoading ?
+                            <Loader className="ml-4" inline active size="mini"/> : potentialWallet.address}
+                        </div>
 
-        </Container>
+                    </Grid.Column>
 
+                    <Grid.Column width={16} className="flex flex-auto flex-col items-center mt-8">
+
+                        <div className="flex flex-col gap-2 w-72">
+                            <Button
+                                loading={verifyLoading}
+                                content={error ? "Try Again" : "Verify Import"}
+                                basic
+                                color={error ? "red" : "green"}
+                                size="small"
+                                onClick={verify}
+                            />
+                            <Button
+                                content="Cancel"
+                                onClick={() => history.push('/addWallet/menu')}
+                                basic
+                                color="orange"
+                                size="small"
+                            />
+                        </div>
+
+                        {error && (
+                            <div className="absolute -bottom-16 inset-center">
+                                <Message error content={error} size="mini"/>
+                            </div>
+                        )}
+
+                    </Grid.Column>
+
+                </Grid>
+
+            </Container>
+
+        </Page>
     )
 
 }

@@ -1,12 +1,11 @@
 import React from 'react';
-
 import PropTypes from 'prop-types';
-
 import { Container } from 'semantic-ui-react';
 
 import HeaderMenu from './HeaderMenu';
+import NetworkStatusIndicator from 'components/overlays/NetworkStatusIndicator';
 
-const Page = ({ children, showMenu }) => {
+const Page = ({ children, showMenu, showNetworkStatus }) => {
 
     return (
         <Container className="h-full flex flex-col" fluid>
@@ -18,6 +17,8 @@ const Page = ({ children, showMenu }) => {
                 {children}
 
             </Container>
+
+            {showNetworkStatus && <NetworkStatusIndicator/>}
 
         </Container>
     );

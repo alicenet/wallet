@@ -9,7 +9,7 @@ function LoadingModule() {
     const pendingTxHash = useSelector(state => (state.transaction.lastSentTxHash))
 
     return (
-        <Page showMenu>
+        <Page showMenu showNetworkStatus>
 
             <Grid textAlign="center" className="m-0" container>
 

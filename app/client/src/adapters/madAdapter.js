@@ -1,5 +1,5 @@
 import store from '../redux/store/store';
-import BigInt from "big-integer";
+import BigInt from 'big-integer';
 import { ADAPTER_ACTION_TYPES, TRANSACTION_ACTION_TYPES } from 'redux/constants/_constants';
 import { ADAPTER_ACTIONS, TRANSACTION_ACTIONS } from 'redux/actions/_actions';
 import { getMadWalletInstance } from 'redux/middleware/WalletManagerMiddleware'

@@ -48,16 +48,16 @@ function AdvancedSettings() {
     };
 
     const notifyError = message => {
-        toast.error(<SyncToastMessageWarning title="Error" message={message} />, { autoClose: 2000 });
+        toast.error(<SyncToastMessageWarning title="Error" message={message}/>, { autoClose: 2000 });
         dispatch(INTERFACE_ACTIONS.toggleGlobalLoadingBool(false));
     };
 
     const notifySuccess = message => {
-        toast.success(<SyncToastMessageSuccess title="Success" message={message} />, { autoClose: 1000 });
+        toast.success(<SyncToastMessageSuccess title="Success" message={message}/>, { autoClose: 1000 });
         dispatch(INTERFACE_ACTIONS.toggleGlobalLoadingBool(false));
     };
 
-    // Instead we can pull in the default values from the context and use it as a local setter, and propagate those changes upwards to redux
+    // Instead, we can pull in the default values from the context and use it as a local setter, and propagate those changes upwards to redux
     const handleLoadDefaultValues = async () => {
         formSetter.setMadNetProvider(initialConfigurationState.mad_net_provider);
         formSetter.setEthereumProvider(initialConfigurationState.ethereum_provider);
@@ -76,7 +76,7 @@ function AdvancedSettings() {
 
                 <Grid.Column width={16} className="p-0 self-center">
 
-                    <Header content="Advanced Settings" as="h3" className="m-0" />
+                    <Header content="Advanced Settings" as="h3" className="m-0"/>
 
                 </Grid.Column>
 
@@ -124,7 +124,13 @@ function AdvancedSettings() {
 
                         <div>
 
-                            <Button color="orange" basic content="Go Back" className="m-0" onClick={history.goBack} />
+                            <Button
+                                color="orange"
+                                basic
+                                content="Go Back"
+                                className="m-0"
+                                onClick={history.goBack}
+                            />
 
                         </div>
 
@@ -132,12 +138,27 @@ function AdvancedSettings() {
 
                             <Button.Group>
 
-                                <Button disabled={loading} color="purple" icon="save" basic content="Save" className="m-0" onClick={() => onSubmit(handleSubmit)} />
+                                <Button
+                                    disabled={loading}
+                                    color="purple"
+                                    icon="save"
+                                    basic
+                                    content="Save"
+                                    className="m-0"
+                                    onClick={() => onSubmit(handleSubmit)}
+                                />
 
-                                <Button.Or className="w-0 self-center text-sm" />
+                                <Button.Or className="w-0 self-center text-sm"/>
 
-                                <Button disabled={loading} color="purple" icon="undo alternate" basic content="Load Defaults" className="m-0"
-                                    onClick={handleLoadDefaultValues} />
+                                <Button
+                                    disabled={loading}
+                                    color="purple"
+                                    icon="undo alternate"
+                                    basic
+                                    content="Load Defaults"
+                                    className="m-0"
+                                    onClick={handleLoadDefaultValues}
+                                />
 
                             </Button.Group>
 

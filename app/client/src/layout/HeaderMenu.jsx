@@ -96,7 +96,7 @@ function HeaderMenu({ showMenu }) {
                 <div className="flex">
 
                     {
-                        !vaultLocked && !pathIsLockExempt() &&
+                        showMenu && !vaultLocked && !pathIsLockExempt() &&
                         <Popup size="mini" disabled={hideGenericTooltips}
                             content="Lock Vault"
                             position="right center"
@@ -118,7 +118,7 @@ function HeaderMenu({ showMenu }) {
                     }
 
                     {
-                        existingAccount && !vaultLocked &&
+                        showMenu && existingAccount && !vaultLocked &&
                         <Popup size="mini" disabled={hideGenericTooltips}
                             content="Open Settings"
                             position="right center"

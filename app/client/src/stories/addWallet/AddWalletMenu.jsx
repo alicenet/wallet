@@ -3,6 +3,8 @@ import { Button, Container, Grid, Header } from 'semantic-ui-react'
 import { useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
+import Page from 'layout/Page';
+
 export default function AddWalletMenu() {
 
     const history = useHistory();
@@ -21,53 +23,55 @@ export default function AddWalletMenu() {
     }
 
     return (
+        <Page showNetworkStatus>
 
-        <Container fluid className="h-full flex items-center justify-center">
+            <Container fluid className="h-full flex items-center justify-center">
 
-            <Grid textAlign="center">
+                <Grid textAlign="center">
 
-                <Grid.Column width={16} className="mb-8">
+                    <Grid.Column width={16} className="mb-8">
 
-                    <Header className="text-gray-500 mb-8">Add New Wallet</Header>
+                        <Header className="text-gray-500 mb-8">Add New Wallet</Header>
 
-                    <div className="text-sm">
+                        <div className="text-sm">
 
-                        <p>A wallet can be generated against your mnemonic or imported.</p>
+                            <p>A wallet can be generated against your mnemonic or imported.</p>
 
-                        <p>Please note that imported wallets are not recoverable from your seed phrase.</p>
+                            <p>Please note that imported wallets are not recoverable from your seed phrase.</p>
 
-                    </div>
+                        </div>
 
-                </Grid.Column>
+                    </Grid.Column>
 
-                <Grid.Column width={16} className="flex flex-auto flex-col items-center gap-5">
+                    <Grid.Column width={16} className="flex flex-auto flex-col items-center gap-5">
 
-                    <div className="flex flex-auto flex-col items-center gap-3 w-72">
+                        <div className="flex flex-auto flex-col items-center gap-3 w-72">
 
-                        {
-                            walletButtons.map((walletButton, index) =>
-                                <Button
-                                    labelPosition="left"
-                                    basic
-                                    color={walletButton.color || "purple"}
-                                    size="small"
-                                    key={`wallet-button-${index}`}
-                                    content={walletButton.content}
-                                    icon={walletButton.icon}
-                                    className="w-56 text-left"
-                                    onClick={walletButton.onClick}
-                                />
-                            )
-                        }
+                            {
+                                walletButtons.map((walletButton, index) =>
+                                    <Button
+                                        labelPosition="left"
+                                        basic
+                                        color={walletButton.color || "purple"}
+                                        size="small"
+                                        key={`wallet-button-${index}`}
+                                        content={walletButton.content}
+                                        icon={walletButton.icon}
+                                        className="w-56 text-left"
+                                        onClick={walletButton.onClick}
+                                    />
+                                )
+                            }
 
-                    </div>
+                        </div>
 
-                </Grid.Column>
+                    </Grid.Column>
 
-            </Grid>
+                </Grid>
 
-        </Container>
+            </Container>
 
+        </Page>
     )
 
 }

@@ -55,7 +55,7 @@ export default function Hub() {
     ];
 
     return (
-        <Page showMenu>
+        <Page showMenu showNetworkStatus>
 
             <div className="relative">
 
