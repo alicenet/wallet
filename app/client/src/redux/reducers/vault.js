@@ -27,6 +27,7 @@ export const buildVaultStateObject = ({ exists = null, isLocked = null, optout =
             external: externalWallets, // Array of <WalletObject>s as defined below
             internal: internalWallets, // Array of <WalletObject>s as defined below
         },
+        balancesLoading: false, // Are balances being fetched?
         balances: {
             // Contains array of following obj structures:
             // eth: 0
@@ -89,6 +90,12 @@ export default function vaultReducer(state = initialVaultState, action) {
             log.debug("Setting new balances state:", action.payload);
             return Object.assign({}, state, {
                 balances: action.payload
+            })
+
+        case VAULT_ACTION_TYPES.SET_BALANCES_LOADING:
+            log.debug("Setting balancesLoading to false.", action.payload);
+            return Object.assign({}, state, {
+                balancesLoading: action.payload,
             })
 
         case VAULT_ACTION_TYPES.UPDATE_RECENT_TXS_BY_ADDRESS:

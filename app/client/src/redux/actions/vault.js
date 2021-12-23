@@ -28,6 +28,15 @@ the mutable Wallet objects themselves are handled within MadNetWalletJS's instan
 */
 
 /**
+ * Set the balances loading state to true
+ */
+export function setBalancesLoading(bool) {
+    return async function (dispatch) {
+        dispatch({type: VAULT_ACTION_TYPES.SET_BALANCES_LOADING, payload: bool});
+    }
+}
+
+/**
  * Stores new HD Vault to state, as well as storing to the secure-electron-store -- WARNING: This erases stored vault! Use for new vault initiation ONLY
  * @param {String} mnemonic - Mnemonic to use to generate new vault
  * @param {String} password  - Password to encrypt vault with

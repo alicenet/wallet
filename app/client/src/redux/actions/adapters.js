@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import { SyncToastMessageSuccess } from 'components/customToasts/CustomToasts';
 import { transactionTypes } from 'util/transaction';
 import utils, { genericUtils, transactionUtils } from 'util/_util';
-import { TRANSACTION_ACTIONS } from './_actions';
+import { TRANSACTION_ACTIONS, VAULT_ACTIONS } from './_actions';
 import { getMadWalletInstance } from 'redux/middleware/WalletManagerMiddleware';
 
 export const setWeb3Connected = (isConnected) => {
@@ -154,6 +154,10 @@ export const disconnectAdapters = () => {
  */
 export const getAndStoreLatestBalancesForAddress = (address) => {
     return async (dispatch, getState) => {
+
+        // Anytime balances are being loaded, set the loader to true
+        dispatch(VAULT_ACTIONS.setBalancesLoading(true));
+
         let state = getState();
         let wallets = [...state.vault.wallets.internal, ...state.vault.wallets.external];
         let web3Connected = state.adapter.web3Adapter.connected;
@@ -192,10 +196,14 @@ export const getAndStoreLatestBalancesForAddress = (address) => {
         // Second get madBytes balance/utxos -- Only if madNet connected
         if (madNetConnected) {
             balancePromises.push(madNetAdapter.getMadWalletBalanceWithUTXOsForAddress(address));
-        } else { log.debug("Skipping madBytes/UTXO balance fetch for address: " + address + " :: MadNet not connected.") }
+        } else { 
+            addressBalances.madBytes = "Not Connected"
+            log.debug("Skipping madBytes/UTXO balance fetch for address: " + address + " :: MadNet not connected.") 
+        }
 
         // If neither mad or web3 is connected, don't bother to try and pull balances
         if (!madNetConnected && !web3Connected) {
+            dispatch(VAULT_ACTIONS.setBalancesLoading(false));
             return false;
         }
 
@@ -227,6 +235,7 @@ export const getAndStoreLatestBalancesForAddress = (address) => {
         dispatch({ type: VAULT_ACTION_TYPES.SET_BALANCES_STATE, payload: updatedBalanceState })
 
         // Return latest found balances and the complete updated balance state
+        dispatch(VAULT_ACTIONS.setBalancesLoading(false));
         return [addressBalances, updatedBalanceState];
 
     }
