@@ -156,7 +156,7 @@ export const getAndStoreLatestBalancesForAddress = (address) => {
     return async (dispatch, getState) => {
 
         // Anytime balances are being loaded, set the loader to true
-        dispatch(VAULT_ACTIONS.setBalancesLoadingTrue());
+        dispatch(VAULT_ACTIONS.setBalancesLoading(true));
 
         let state = getState();
         let wallets = [...state.vault.wallets.internal, ...state.vault.wallets.external];
@@ -203,7 +203,7 @@ export const getAndStoreLatestBalancesForAddress = (address) => {
 
         // If neither mad or web3 is connected, don't bother to try and pull balances
         if (!madNetConnected && !web3Connected) {
-            dispatch(VAULT_ACTIONS.setBalancesLoadingFalse());
+            dispatch(VAULT_ACTIONS.setBalancesLoading(false));
             return false;
         }
 
@@ -235,7 +235,7 @@ export const getAndStoreLatestBalancesForAddress = (address) => {
         dispatch({ type: VAULT_ACTION_TYPES.SET_BALANCES_STATE, payload: updatedBalanceState })
 
         // Return latest found balances and the complete updated balance state
-        dispatch(VAULT_ACTIONS.setBalancesLoadingFalse());
+        dispatch(VAULT_ACTIONS.setBalancesLoading(false));
         return [addressBalances, updatedBalanceState];
 
     }

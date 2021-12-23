@@ -92,16 +92,10 @@ export default function vaultReducer(state = initialVaultState, action) {
                 balances: action.payload
             })
 
-        case VAULT_ACTION_TYPES.SET_BALANCES_LOADING_FALSE:
-            log.debug("Setting balancesLoading to false.");
+        case VAULT_ACTION_TYPES.SET_BALANCES_LOADING:
+            log.debug("Setting balancesLoading to false.", action.payload);
             return Object.assign({}, state, {
-                balancesLoading: false
-            })
-
-        case VAULT_ACTION_TYPES.SET_BALANCES_LOADING_TRUE:
-            log.debug("Setting balancesLoading to true.");
-            return Object.assign({}, state, {
-                balancesLoading: true
+                balancesLoading: action.payload,
             })
 
         case VAULT_ACTION_TYPES.UPDATE_RECENT_TXS_BY_ADDRESS:

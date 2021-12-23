@@ -30,15 +30,9 @@ the mutable Wallet objects themselves are handled within MadNetWalletJS's instan
 /**
  * Set the balances loading state to true
  */
-export function setBalancesLoadingTrue() {
+export function setBalancesLoading(bool) {
     return async function (dispatch) {
-        dispatch({type: VAULT_ACTION_TYPES.SET_BALANCES_LOADING_TRUE});
-    }
-}
-
-export function setBalancesLoadingFalse() {
-    return async function (dispatch) {
-        dispatch({type: VAULT_ACTION_TYPES.SET_BALANCES_LOADING_FALSE});
+        dispatch({type: VAULT_ACTION_TYPES.SET_BALANCES_LOADING, payload: bool});
     }
 }
 
