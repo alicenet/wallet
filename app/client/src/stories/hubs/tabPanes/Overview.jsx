@@ -9,30 +9,29 @@ import { curveTypes } from 'util/wallet';
 export default function Overview({ wallet }) {
 
     const dispatch = useDispatch();
-    const [loader, setLoader] = React.useState("");
     const [copyClick, setCopyClick] = React.useState(0);
 
-    const { madNetConnected, web3Connected, vaultExists, balances } = useSelector(state => (
+
+    const { madNetConnected, web3Connected, vaultExists, balances, balancesLoading } = useSelector(state => (
         {
             web3Connected: state.adapter.web3Adapter.connected,
             madNetConnected: state.adapter.madNetAdapter.connected,
             vaultExists: state.vault.exists,
             balances: state.vault.balances,
+            balancesLoading: state.vault.balancesLoading
         }));
 
     const thisWalletBalances = balances[wallet.address] ? balances[wallet.address] : false;
     const fetchBalances = React.useCallback(async () => {
-        setLoader("balances");
         await dispatch(ADAPTER_ACTIONS.getAndStoreLatestBalancesForAddress(wallet.address))
-        setLoader(false);
     }, [wallet, dispatch])
 
     // Only fetch balances when connected status changes and is true.
     React.useEffect(() => {
-        if ((web3Connected || madNetConnected) && !balances[wallet.address] && loader !== "balances") {
+        if ((web3Connected || madNetConnected) && !balances[wallet.address] && !balancesLoading) {
             fetchBalances();
         }
-    }, [web3Connected, madNetConnected, wallet, fetchBalances, balances, loader])
+    }, [web3Connected, madNetConnected, wallet, fetchBalances, balances, balancesLoading])
 
     const MicroBalanceLoader = ({ balanceType, balanceKey, balanceAllowance }) => {
 
@@ -40,9 +39,9 @@ export default function Overview({ wallet }) {
             <div className="text-xs">
                 <div className="text-right w-24 inline font-bold">{balanceType}:</div>
                 <div className="ml-2 text-left inline text-gray-500">
-                    {loader === "balances" ? ". . ." :
+                    {balancesLoading ? <div className="ellipses-after inline"></div> :
                         thisWalletBalances[balanceKey] ? (thisWalletBalances[balanceKey]) : ""}
-                    {balanceAllowance ? " / " + (thisWalletBalances[balanceAllowance]) : ""}
+                    {balanceAllowance && !balancesLoading ? " / " + (thisWalletBalances[balanceAllowance]) : ""}
                 </div>
             </div>
         )
