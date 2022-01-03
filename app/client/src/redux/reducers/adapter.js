@@ -6,7 +6,7 @@ export const initialAdapterState = {
     web3Adapter: {
         connected: false, // Has the web3 instance been initiated and is it connected?
         busy: false,
-        error: false, // If an error has occurred when interracting with the ethereum provider
+        error: false, // If an error has occurred when interacting with the ethereum provider
         epoch: false, // Current epoch time -- False if not able to || hasn't been polled
         validators: false, // Current number of validators -- False if not able to || hasn't been polled
         max_validators: false, // Max number of validators -- False if not able to || hasn't been polled

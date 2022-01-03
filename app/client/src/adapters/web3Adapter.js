@@ -5,8 +5,7 @@ import { ADAPTER_ACTIONS } from 'redux/actions/_actions';
 import { default_log as log } from 'log/logHelper'
 import { history } from 'history/history';
 
-import { SyncToastMessageSuccess } from 'components/customToasts/CustomToasts';
-import { SyncToastMessageWarning } from 'components/customToasts/CustomToasts';
+import { SyncToastMessageSuccess, SyncToastMessageWarning } from 'components/customToasts/CustomToasts';
 import { toast } from 'react-toastify';
 
 const reqContracts = ["staking", "validators", "deposit", "stakingToken", "utilityToken"]
@@ -14,19 +13,19 @@ const REGISTRY_VERSION = "/v1"; // CHANGE OR PUT IN SETTINGS
 
 const Web3Error = ({ msg }) => {
     return (
-        <SyncToastMessageWarning basic title="Web3 Connection Error" message={msg} />
-    )
+        <SyncToastMessageWarning basic title="Web3 Connection Error" message={msg}/>
+    );
 }
 
 const Web3ErrToastOpts = { className: "basic", "autoClose": 5000, "onClick": () => { history.push("/wallet/advancedSettings") } };
 
 /**
- * Web3Adapter that provides ethereum access acrosss the application 
- * Note: Core state that may need to propagate UI changes has been moved to the redux state 
+ * Web3Adapter that provides ethereum access across the application
+ * Note: Core state that may need to propagate UI changes has been moved to the redux state
  * It is advised to export a singleton instance of this class, as it will monitor for state updates and adjust accordingly after initiation
- * 
+ *
  * After instancing the Web3Adapter it must be initiated prior to use -- Once initiated it will remain available until close
-*/
+ */
 class Web3Adapter {
 
     constructor() {
@@ -57,7 +56,7 @@ class Web3Adapter {
         this.lastNotedConfig = {
             ethereum_provider: false,
             registry_contract_address: false,
-        }
+        };
     }
 
     /**
@@ -78,29 +77,29 @@ class Web3Adapter {
         if (connected.error) {
             store.dispatch(ADAPTER_ACTIONS.setWeb3Connected(false)) // On any error dispatch not connected state
             store.dispatch(ADAPTER_ACTIONS.setWeb3Busy(false));
-            toast.error(<Web3Error msg="Verify Settings" />, Web3ErrToastOpts)
-            return { error: connected.error }
+            toast.error(<Web3Error msg="Verify Settings"/>, Web3ErrToastOpts);
+            return { error: connected.error };
         }
         // Set and get the latest contract info
         await this._setAndGetInfo();
         // Verify that both provider and registry contract are available
         if (!this._getEthereumProviderFromStore()) {
-            store.dispatch(ADAPTER_ACTIONS.setWeb3Connected(false)) // On any error dispatch not connected state
+            store.dispatch(ADAPTER_ACTIONS.setWeb3Connected(false)); // On any error dispatch not connected state
             store.dispatch(ADAPTER_ACTIONS.setWeb3Busy(false));
-            toast.error(<Web3Error msg="Verify Eth Provider" />, Web3ErrToastOpts)
+            toast.error(<Web3Error msg="Verify Eth Provider"/>, Web3ErrToastOpts);
             return { error: "No Ethereum provider found in state." };
         }
         if (!this._getRegistryContractFromStore()) {
-            store.dispatch(ADAPTER_ACTIONS.setWeb3Connected(false)) // On any error dispatch not connected state
+            store.dispatch(ADAPTER_ACTIONS.setWeb3Connected(false)); // On any error dispatch not connected state
             store.dispatch(ADAPTER_ACTIONS.setWeb3Busy(false));
-            toast.error(<Web3Error msg="Verify Registry Contract" />, Web3ErrToastOpts)
+            toast.error(<Web3Error msg="Verify Registry Contract"/>, Web3ErrToastOpts);
             return { error: "No registry contract found in state." };
         }
         // If all of this passes, note that the instance is connected
         store.dispatch(ADAPTER_ACTIONS.setWeb3Connected(true));
         store.dispatch(ADAPTER_ACTIONS.setWeb3Busy(false));
         if (!config.preventToast) {
-            toast.success(<SyncToastMessageSuccess basic title="Success" message="Web3 Connected" />, { className: "basic", "autoClose": 2400, delay: 1000 })
+            toast.success(<SyncToastMessageSuccess basic title="Success" message="Web3 Connected"/>, { className: "basic", "autoClose": 2400, delay: 1000 });
         }
         return { success: true };
     }
@@ -109,7 +108,7 @@ class Web3Adapter {
         this.lastNotedConfig = {
             ethereum_provider: ethereumProvider,
             registry_contract_address: registryContractAddress,
-        }
+        };
     }
 
     // Set adapter default state -- for disconnecting
@@ -118,10 +117,10 @@ class Web3Adapter {
     }
 
     /**
-     * Setup listeners on the redux store for configuration changes -- This may not be needed at the moment 
+     * Setup listeners on the redux store for configuration changes -- This may not be needed at the moment
      */
     async _listenToStore() {
-        // Alwats cancel previous subscription
+        // Always cancel previous subscription
         if (this.subscribed) {
             return; // Call the subscribed function to unsubscribe from the store if a previous subscription exists
         }
@@ -132,13 +131,13 @@ class Web3Adapter {
             let isLocked = state.vault.is_locked;
             // If at any point attempts are made when the vault is locked -- Ignore them
             if (isLocked) {
-                log.debug("Skipping subscription checks on Web3 Adapter -- Account is locked")
-                return
+                log.debug("Skipping subscription checks on Web3 Adapter -- Account is locked");
+                return;
             }
             let newNotableState = {
                 ethereum_provider: latestConfig.ethereum_provider,
                 registry_contract_address: latestConfig.registry_contract_address,
-            }
+            };
             let updateOccurance = await (() => {
                 return new Promise(res => {
                     Object.keys(newNotableState).forEach(key => {
@@ -148,10 +147,10 @@ class Web3Adapter {
                     })
                     res(false);
                 })
-            })()
+            })();
             if (updateOccurance) {
-                if (!this.isInitializing) { // Guard againt re-entrancies on initializing
-                    log.debug("Configuration change for Web3 Adapter -- Reinitializing")
+                if (!this.isInitializing) { // Guard against re-entrances on initializing
+                    log.debug("Configuration change for Web3 Adapter -- Reinitializing");
                     this.isInitializing = true;
                     await this.__init({ preventToast: true, reinit: true });
                     this.isInitializing = false;
@@ -174,7 +173,7 @@ class Web3Adapter {
         return store.getState().config.ethereum_provider;
     }
 
-    /** 
+    /**
      * Sets and returns a new web3 instance for this adapter referencing the current state's provider and registry contracts
      * @returns { Web3 } - Web3 Instance referencing latest ethereum provider from state
      */
@@ -200,7 +199,7 @@ class Web3Adapter {
             for await (let contract of reqContracts) {
                 let contractAddr = await registryContract.methods.lookup(contract + REGISTRY_VERSION).call();
                 let newContract = new this.web3.eth.Contract(ABI[contract], contractAddr);
-                let info = {}
+                let info = {};
                 info["name"] = contract;
                 info["instance"] = newContract;
                 contractList.push(info);
@@ -228,16 +227,15 @@ class Web3Adapter {
     /**
      * Add an account to the adapter/web3 instance and retrieve latest info for it.
      * Upon getting the latest information, return that as well.
-     * @param { String } privK - Private key for the account to add. 
-     * @returns 
+     * @param { String } privK - Private key for the account to add.
+     * @returns
      */
     async useAccount(privK) {
         try {
             let account = await this.web3.eth.accounts.privateKeyToAccount("0x" + privK);
             await this.web3.eth.accounts.wallet.add(account);
             this.selectedAddress = account["address"];
-            let accountInfo = await this.updateAccount()
-            return accountInfo;
+            return await this.updateAccount();
         } catch (ex) {
             return { error: ex }
         }
@@ -262,14 +260,14 @@ class Web3Adapter {
             };
             return this.account;
         } catch (ex) {
-            return { error: ex }
+            return { error: ex };
         }
     }
 
     /**
      * Get ETH, Staking, and Utility account balances for a specified address
-     * @param { String } address 
-     * @returns { Object } - Object containing balance keys: "eth", "stakingToken", and "utilityToken" 
+     * @param { String } address
+     * @returns { Object } - Object containing balance keys: "eth", "stakingToken", and "utilityToken"
      */
     async getAccountBalances(address) {
         try {
@@ -289,7 +287,7 @@ class Web3Adapter {
             };
             return balances;
         } catch (ex) {
-            return { error: ex }
+            return { error: ex };
         }
     }
 
@@ -314,7 +312,7 @@ class Web3Adapter {
             let method = await ABI[contract].find(e => e["name"] === fn);
             if (!method) {
                 throw new Error({
-                    "arguemnt": "Invalid Method"
+                    "argument": "Invalid Method"
                 });
             }
             return method;
@@ -333,7 +331,7 @@ class Web3Adapter {
         try {
             let contract = await this.getContract(c);
             let method = await this.getMethod(c, m);
-            let args = []
+            let args = [];
             for (let i = 0; i < method.inputs.length; i++) {
                 if (data[method.inputs[i].name]) {
                     args.push(data[method.inputs[i].name]);
@@ -342,7 +340,7 @@ class Web3Adapter {
             if (args.length !== method.inputs.length) {
                 throw new Error({
                     "arguments": "Method arguments do not match given arguments"
-                })
+                });
             }
             let ret;
             let [gasPrice, gasEst] = await this.getGas(contract, method, args);
@@ -351,19 +349,22 @@ class Web3Adapter {
                     ret = await contract.methods[method.name](...args).call({
                         from: this.selectedAddress
                     });
-                } else {
+                }
+                else {
                     ret = await contract.methods[method.name]().call({
                         from: this.selectedAddress
                     });
                 }
-            } else {
+            }
+            else {
                 if (args && args.length > 0) {
                     await contract.methods[method.name](...args).send({
                         from: this.selectedAddress,
                         gasPrice: gasPrice,
                         gas: gasEst
                     });
-                } else {
+                }
+                else {
                     await contract.methods[method.name]().send({
                         from: this.selectedAddress,
                         gasPrice: gasPrice,
@@ -386,22 +387,23 @@ class Web3Adapter {
         try {
             let contract = await this.getContract(c);
             let method = await this.getMethod(c, m);
-            let args = []
+            let args = [];
             for (let i = 0; i < method.inputs.length; i++) {
                 if (data[method.inputs[i].name]) {
                     args.push(data[method.inputs[i].name]);
                 }
             }
             if (args.length !== method.inputs.length) {
-                return { error: "Arguments given do not match contract method arguments" }
+                return { error: "Arguments given do not match contract method arguments" };
             }
             if (method.stateMutability === 'view') {
                 await this.call(contract, method, args);
-            } else {
+            }
+            else {
                 await this.send(contract, method, args);
             }
         } catch (ex) {
-            return { error: ex }
+            return { error: ex };
         }
     }
 
@@ -415,7 +417,8 @@ class Web3Adapter {
                     gasPrice: gasPrice,
                     gas: gasEst
                 });
-            } else {
+            }
+            else {
                 await contract.methods[fn.name]().call({
                     from: this.selectedAddress,
                     gasPrice: gasPrice,
@@ -439,7 +442,8 @@ class Web3Adapter {
                     gasPrice: gasPrice,
                     gas: gasEst
                 });
-            } else {
+            }
+            else {
                 tx = await contract.methods[fn.name]().send({
                     from: this.selectedAddress,
                     gasPrice: gasPrice,
@@ -448,12 +452,12 @@ class Web3Adapter {
             }
             await this.updateAccount();
         } catch (ex) {
-            return { error: ex.message }
+            return { error: ex.message };
         }
         return {
             "msg": "Tx Hash: " + this.trimTxHash(tx.transactionHash),
             "type": "success"
-        }
+        };
     }
 
     // Get Staking and Validator information for the selectedAddress
@@ -468,7 +472,8 @@ class Web3Adapter {
                 isStaking = true;
                 rewardBalance = await this.internalMethod("staking", "balanceReward");
                 unlockedBalance = await this.internalMethod("staking", "balanceUnlocked");
-            } else {
+            }
+            else {
                 isStaking = false;
             }
             let validatorCount = await this.internalMethod("validators", "validatorCount");
@@ -491,7 +496,7 @@ class Web3Adapter {
 
     /**
      * Get Ethereum balance in "Ether"
-     * @param { String } address 
+     * @param { String } address
      * @returns { String } - Balance
      */
     async getEthBalance(address) {
@@ -499,14 +504,14 @@ class Web3Adapter {
             let balance = await this.web3.utils.fromWei(await this.web3.eth.getBalance(address ? address : this.selectedAddress), 'ether');
             return balance.substring(0, 12);
         } catch (ex) {
-            return { error: ex }
+            return { error: ex };
         }
     }
 
     /**
      * Fetch STAKE and UTIL token balances
-     * @param { String } address - Addres to fetch the balances for 
-     * @returns 
+     * @param { String } address - Address to fetch the balances for
+     * @returns
      */
     async getTokenBalances(address) {
         try {
@@ -522,7 +527,7 @@ class Web3Adapter {
 
             return [stakingBalance, stakingAllowance, utilityBalance, utilityAllowance];
         } catch (ex) {
-            return [{ error: ex }]
+            return [{ error: ex }];
         }
     }
 
@@ -535,7 +540,8 @@ class Web3Adapter {
                 gasEst = await contract.methods[fn.name](...args).estimateGas({
                     from: this.selectedAddress
                 });
-            } else {
+            }
+            else {
                 gasEst = await contract.methods[fn.name]().estimateGas({
                     from: this.selectedAddress
                 });
@@ -553,7 +559,7 @@ class Web3Adapter {
                 "amount": amount
             });
         } catch (ex) {
-            return ({ error: ex.message })
+            return ({ error: ex.message });
         }
     }
 
@@ -566,45 +572,45 @@ class Web3Adapter {
             data["wad"] = amount;
             await this.method("stakingToken", "approve", data);
         } catch (ex) {
-            return { error: ex.message }
+            return { error: ex.message };
         }
     }
 
     // Approve utility token spending allowance of utility token from staking contract
     async approveUtilityAllowance(amount) {
         try {
-            let data = {}
-            let deposit = await this.getContract("deposit")
+            let data = {};
+            let deposit = await this.getContract("deposit");
             data["guy"] = deposit["_address"];
             data["wad"] = amount;
             await this.method("utilityToken", "approve", data);
         } catch (ex) {
-            return ({ error: ex.message })
+            return ({ error: ex.message });
         }
     }
 
     // Add or Remove selected address as a validator
     async addRemoveValidator(fn) {
         try {
-            let data = {}
+            let data = {};
             data["_validator"] = this.selectedAddress;
             data["_madID"] = [];
             data["_madID"].push(String("1"));
             data["_madID"].push(String("2"));
             await this.method("validators", fn, data);
         } catch (ex) {
-            return ({ error: ex.message })
+            return ({ error: ex.message });
         }
     }
 
     // Lock or Unlock staking balance
     async lockUnlockStake(amount, fn) {
         try {
-            let data = {}
+            let data = {};
             data["amount"] = amount;
             await this.method("staking", fn, data);
         } catch (ex) {
-            return ({ error: ex.message })
+            return ({ error: ex.message });
         }
     }
 
@@ -614,21 +620,20 @@ class Web3Adapter {
     async getEpoch() {
         try {
             let epoch = await this.internalMethod("staking", "currentEpoch");
-            store.dispatch(ADAPTER_ACTIONS.setWeb3Epoch(epoch))
+            store.dispatch(ADAPTER_ACTIONS.setWeb3Epoch(epoch));
             return epoch;
         } catch (ex) {
-            store.dispatch(ADAPTER_ACTIONS.setWeb3Epoch(""))
-            return { error: ex }
+            store.dispatch(ADAPTER_ACTIONS.setWeb3Epoch(""));
+            return { error: ex };
         }
     }
 
     // Trim txHash for readability
     trimTxHash(txHash) {
         try {
-            let trimmed = "0x" + txHash.substring(0, 6) + "..." + txHash.substring(txHash.length - 6)
-            return trimmed
+            return "0x" + txHash.substring(0, 6) + "..." + txHash.substring(txHash.length - 6);
         } catch (ex) {
-            throw String(ex)
+            throw String(ex);
         }
     }
 }

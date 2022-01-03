@@ -4,7 +4,6 @@ import { MemoryRouter as Router, Route, Switch } from 'react-router-dom';
 import DebugPanel, { handleDebugListener } from 'redux/debug/DebugPanel';
 import { ToastContainer } from 'react-toastify';
 import { history } from 'history/history';
-import NetworkStatusIndicator from 'components/overlays/NetworkStatusIndicator';
 
 import util from 'util/_util';
 
