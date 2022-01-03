@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { Button, Container, Grid, Header, Radio } from 'semantic-ui-react';
 
-import { CONFIG_ACTIONS, INTERFACE_ACTIONS } from 'redux/actions/_actions';
+import { CONFIG_ACTIONS, INTERFACE_ACTIONS, MODAL_ACTIONS } from 'redux/actions/_actions';
 import Page from 'layout/Page';
 
 function Settings() {
@@ -18,6 +18,10 @@ function Settings() {
         hideGenericTooltips: s.config.hide_generic_tooltips,
         useDarkTheme: s.interface.useDarkTheme,
     }));
+
+    const openResetWallet = () => {
+        dispatch(MODAL_ACTIONS.openResetWalletModal());
+    }
 
     const toggleAdvancedFeatures = () => {
         dispatch(CONFIG_ACTIONS.saveConfigurationValues({
@@ -62,6 +66,8 @@ function Settings() {
                         <Button icon="key" color="purple" basic content="Import Private Key" className="m-0" onClick={() => history.push('/addWallet/importPrivateKey')}/>
                         <Button icon="cog" disabled={!showAdvancedFeatures} color="purple" basic content="Advanced Settings" className="m-0"
                                 onClick={() => history.push('/wallet/advancedSettings')}/>
+
+                        <Button disabled={!showAdvancedFeatures} icon="delete" color="red" basic content="Wallet Reset" className="m-0" onClick={openResetWallet}/>
 
                     </Container>
 

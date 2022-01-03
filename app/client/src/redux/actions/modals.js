@@ -41,7 +41,7 @@ export function closeRemoveWalletModal() {
  * @param { Object } walletTarget - Wallet state object from from redux state 
  * @returns 
  */
- export function openXportPrivKModal(walletTarget) {
+export function openXportPrivKModal(walletTarget) {
     return function (dispatch) {
         dispatch({ type: MODAL_ACTION_TYPES.OPEN_XPORT_PRIVK, payload: walletTarget });
     }
@@ -59,7 +59,7 @@ export function closeExportPrivateKeyModal() {
  * @param { Object } walletTarget - Wallet state object from from redux state 
  * @returns 
  */
- export function openXportKeyStoreModal(walletTarget) {
+export function openXportKeyStoreModal(walletTarget) {
     return function (dispatch) {
         dispatch({ type: MODAL_ACTION_TYPES.OPEN_XPORT_KS, payload: walletTarget });
     }
@@ -69,5 +69,25 @@ export function closeExportPrivateKeyModal() {
 export function closeExportKeyStoreModal() {
     return function (dispatch) {
         dispatch({ type: MODAL_ACTION_TYPES.CLOSE_XPORT_KS });
+    }
+}
+
+/**
+ * Closes the modal for resetting the wallet
+ * @returns { Null }
+ */
+export function closeResetWalletModal() {
+    return function (dispatch) {
+        dispatch({ type: MODAL_ACTION_TYPES.CLOSE_RESET_WALLET });
+    }
+}
+
+/**
+ * Opens the modal for resetting the wallet
+ * @returns { Null }
+ */
+export function openResetWalletModal() {
+    return function (dispatch) {
+        dispatch({ type: MODAL_ACTION_TYPES.OPEN_RESET_WALLET });
     }
 }

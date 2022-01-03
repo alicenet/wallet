@@ -22,6 +22,7 @@ import * as WalletActionModals from 'components/modals/_walletActionModals';
 import PasswordRequestModal from 'components/modals/PasswordRequestModal';
 import { WalletHubProvider } from 'context/WalletHubContext';
 import RedirectIfLocked from './components/hocs/RedirectIfLocked';
+import ResetWalletModal from 'components/modals/ResetWalletModal';
 
 /**
  * Main App Entrypoint
@@ -109,6 +110,7 @@ function App() {
                 <ToastContainer position="bottom-right"/>
 
                 <PasswordRequestModal/>
+                <ResetWalletModal/>
                 <WalletActionModals.RenameWalletModal/>
                 <WalletActionModals.RemoveWalletModal/>
                 <WalletActionModals.ExportPrivateKeyModal/>

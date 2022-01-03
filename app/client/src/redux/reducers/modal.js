@@ -9,6 +9,7 @@ const initialModalState = {
     export_ks_modal: false, // Is this modal open?
     remove_wallet_modal: false, // Is this modal open?
     rename_wallet_modal: false, // Is this modal open?
+    reset_wallet_modal: false, // Is this modal open?
     wallet_action_target: false, // What is the target wallet for the action modals
 }
 
@@ -77,6 +78,16 @@ export default function modalReducer(state = initialModalState, action) {
             return Object.assign({}, state, {
                 export_ks_modal: false,
                 wallet_action_target: false,
+            });
+
+        case MODAL_ACTION_TYPES.OPEN_RESET_WALLET:
+            return Object.assign({}, state, {
+                reset_wallet_modal: true,
+            });
+
+        case MODAL_ACTION_TYPES.CLOSE_RESET_WALLET:
+            return Object.assign({}, state, {
+                reset_wallet_modal: false,
             });
 
         default: return state;
