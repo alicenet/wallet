@@ -1,3 +1,4 @@
+import React from 'react';
 import { ADAPTER_ACTION_TYPES, TRANSACTION_ACTION_TYPES, VAULT_ACTION_TYPES } from '../constants/_constants';
 import web3Adapter from 'adapters/web3Adapter';
 import { default_log as log } from 'log/logHelper';
@@ -116,11 +117,12 @@ export const initAdapters = () => {
         // TODO: Check both states -- throw different errors!
         let web3Connected = await dispatch(initWeb3({ preventToast: true })); // Attempt to init web3Adapter -- Adapter will handle error toasts
         let madConnected = await dispatch(initMadNet({ preventToast: true })); // Attempt to init madAdapter -- Adapter will handle error toasts
+
         if (web3Connected.error && madConnected) {
             toast.success(<SyncToastMessageSuccess basic message="MadNet Connected"/>, { className: "basic", "autoClose": 2400 });
             return { success: true } // This is a partial success but the above adapter will issue the error
         }
-        else if (web3Connected && madConnected.error) {
+        else if (madConnected.error && web3Connected) {
             toast.success(<SyncToastMessageSuccess basic message="Web3 Connected"/>, { className: "basic", "autoClose": 2400 });
             return { success: true } // This is a partial success but the above adapter will issue the error       
         }
@@ -142,7 +144,6 @@ export const initAdapters = () => {
                 }
             };
         }
-
     }
 }
 

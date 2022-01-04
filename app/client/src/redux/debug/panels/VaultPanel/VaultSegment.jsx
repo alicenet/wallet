@@ -54,10 +54,6 @@ export default function VaultSegment() {
         await dispatch(VAULT_ACTIONS.addInternalWalletToState(newWalletName));
     }
 
-    // const deleteVault = () => {
-    //     console.log('TBD: DELETE VAULT')
-    // }
-
     //////////////////////
     // Micro Components //
     //////////////////////

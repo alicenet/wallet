@@ -1,4 +1,4 @@
-import store from '../redux/store/store';
+import store from 'redux/store/store';
 import Web3 from 'web3';
 import ABI from './abi.js';
 import { ADAPTER_ACTIONS } from 'redux/actions/_actions';
