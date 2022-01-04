@@ -77,6 +77,7 @@ class Web3Adapter {
         if (connected.error) {
             store.dispatch(ADAPTER_ACTIONS.setWeb3Connected(false)) // On any error dispatch not connected state
             store.dispatch(ADAPTER_ACTIONS.setWeb3Busy(false));
+            store.dispatch(ADAPTER_ACTIONS.setWeb3Error(connected.error.message));
             toast.error(<Web3Error msg="Verify Settings"/>, Web3ErrToastOpts);
             return { error: connected.error };
         }
@@ -84,18 +85,22 @@ class Web3Adapter {
         await this._setAndGetInfo();
         // Verify that both provider and registry contract are available
         if (!this._getEthereumProviderFromStore()) {
+            const error = "No Ethereum provider found in state.";
             store.dispatch(ADAPTER_ACTIONS.setWeb3Connected(false)); // On any error dispatch not connected state
             store.dispatch(ADAPTER_ACTIONS.setWeb3Busy(false));
+            store.dispatch(ADAPTER_ACTIONS.setWeb3Error(error));
             toast.error(<Web3Error msg="Verify Eth Provider"/>, Web3ErrToastOpts);
-            return { error: "No Ethereum provider found in state." };
+            return { error };
         }
         if (!this._getRegistryContractFromStore()) {
+            const error = "No registry contract found in state.";
             store.dispatch(ADAPTER_ACTIONS.setWeb3Connected(false)); // On any error dispatch not connected state
             store.dispatch(ADAPTER_ACTIONS.setWeb3Busy(false));
+            store.dispatch(ADAPTER_ACTIONS.setWeb3Error(error));
             toast.error(<Web3Error msg="Verify Registry Contract"/>, Web3ErrToastOpts);
             return { error: "No registry contract found in state." };
         }
-        // If all of this passes, note that the instance is connected
+        // If all of these passes, note that the instance is connected
         store.dispatch(ADAPTER_ACTIONS.setWeb3Connected(true));
         store.dispatch(ADAPTER_ACTIONS.setWeb3Busy(false));
         if (!config.preventToast) {

@@ -4,7 +4,7 @@ import { classNames } from 'util/_util';
 import { Button, Form, Grid, Header, Icon, Modal } from 'semantic-ui-react';
 import { toast } from "react-toastify";
 
-import { SyncToastMessageSuccess, SyncToastMessageWarning } from "components/customToasts/CustomToasts";
+import { SyncToastMessageSuccess, SyncToastMessageWarning } from 'components/customToasts/CustomToasts';
 import { CONFIG_ACTIONS, INTERFACE_ACTIONS } from 'redux/actions/_actions';
 import useFormState from 'hooks/useFormState';
 
@@ -14,11 +14,15 @@ export default function NetworkStatusIndicator() {
 
     const [openModal, setOpenModal] = useState(false);
 
-    const { web3Connected, web3Busy, madConnected, madBusy, madNetProvider, ethereumProvider, registryContractAddress } = useSelector(s => ({
+    const { web3Connected, web3Error, web3Busy, madConnected, madError, madBusy, madNetProvider, ethereumProvider, registryContractAddress } = useSelector(s => ({
         web3Connected: s.adapter.web3Adapter.connected,
+        web3Error: s.adapter.web3Adapter.error,
         web3Busy: s.adapter.web3Adapter.busy,
+
         madConnected: s.adapter.madNetAdapter.connected,
+        madError: s.adapter.madNetAdapter.error,
         madBusy: s.adapter.madNetAdapter.busy,
+
         madNetProvider: s.config.mad_net_provider,
         ethereumProvider: s.config.ethereum_provider,
         registryContractAddress: s.config.registry_contract_address,
@@ -123,7 +127,7 @@ export default function NetworkStatusIndicator() {
                                 required
                                 value={formState.MadNetProvider.value}
                                 onChange={e => formSetter.setMadNetProvider(e.target.value)}
-                                error={!!formState.MadNetProvider.error && { content: formState.MadNetProvider.error }}
+                                error={(!!formState.MadNetProvider.error && { content: formState.MadNetProvider.error }) || madError}
                             />
 
                             <Form.Input
@@ -142,7 +146,7 @@ export default function NetworkStatusIndicator() {
                                 required
                                 value={formState.EthereumProvider.value}
                                 onChange={e => formSetter.setEthereumProvider(e.target.value)}
-                                error={!!formState.EthereumProvider.error && { content: formState.EthereumProvider.error }}
+                                error={(!!formState.EthereumProvider.error && { content: formState.EthereumProvider.error }) || web3Error}
                             />
 
                         </Form>
