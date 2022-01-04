@@ -52,20 +52,14 @@ export const setMadNetBusy = busyState => {
  * @returns
  */export const initWeb3 = (initConfig) => {
     return async (dispatch, getState) => {
-        let isConnected = getState().adapter.web3Adapter.connected;
-        if (!isConnected) {
-            let connected = await web3Adapter.__init(initConfig);
-            if (connected.error) {
-                return { error: connected.error };
-            }
-            else {
-                return true;
-            }
+        let connected = await web3Adapter.__init(initConfig);
+        if (connected.error) {
+            return { error: connected.error };
         }
         else {
-            log.warn("Web3 connection attempt made while already connected. -- Normal on lock/unlock cycles.");
-            return { error: "State determined Web3 is already connected. If this is not correct, investigate for errors. :: This is normal after a wallet lock cycle." }
+            return true;
         }
+
     }
 }
 
@@ -94,19 +88,12 @@ export const setMadNetKeyChainValue = (keyChain, value) => {
  */
 export const initMadNet = (initConfig) => {
     return async (dispatch, getState) => {
-        let isConnected = getState().adapter.madNetAdapter.connected;
-        if (!isConnected) {
-            let connected = await madNetAdapter.__init(initConfig);
-            if (connected.error) {
-                return { error: connected.error };
-            }
-            else {
-                return true;
-            }
+        let connected = await madNetAdapter.__init(initConfig);
+        if (connected.error) {
+            return { error: connected.error };
         }
         else {
-            log.warn("MadNet connection attempt made while already connected -- Normal on lock/unlock cycles.");
-            return { error: "State determined MadNet is already connected. If this is not correct, investigate for errors. :: This is normal after a wallet lock cycle." };
+            return true;
         }
     }
 }
@@ -114,20 +101,17 @@ export const initMadNet = (initConfig) => {
 // Single dispatch to call for initiating both Web3 and MadNet adapters after vault unlocking / wallet loads
 export const initAdapters = () => {
     return async (dispatch, getState) => {
-        // TODO: Check both states -- throw different errors!
+
         let web3Connected = await dispatch(initWeb3({ preventToast: true })); // Attempt to init web3Adapter -- Adapter will handle error toasts
         let madConnected = await dispatch(initMadNet({ preventToast: true })); // Attempt to init madAdapter -- Adapter will handle error toasts
 
         if (web3Connected.error && madConnected) {
-            toast.success(<SyncToastMessageSuccess basic message="MadNet Connected"/>, { className: "basic", "autoClose": 2400 });
             return { success: true } // This is a partial success but the above adapter will issue the error
         }
         else if (madConnected.error && web3Connected) {
-            toast.success(<SyncToastMessageSuccess basic message="Web3 Connected"/>, { className: "basic", "autoClose": 2400 });
             return { success: true } // This is a partial success but the above adapter will issue the error       
         }
         else if (web3Connected && madConnected) {
-            toast.success(<SyncToastMessageSuccess basic message="MadNet & Web3 Connected"/>, { className: "basic", "autoClose": 2400 });
             // Refetch balance for primary wallet if it exists on success
             let wallets = [...getState().vault.wallets.internal, ...getState().vault.wallets.external];
             if (wallets.length === 0) {

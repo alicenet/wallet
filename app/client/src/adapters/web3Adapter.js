@@ -13,7 +13,7 @@ const REGISTRY_VERSION = "/v1"; // CHANGE OR PUT IN SETTINGS
 
 const Web3Error = ({ msg }) => {
     return (
-        <SyncToastMessageWarning basic title="Web3 Connection Error" message={msg}/>
+        <SyncToastMessageWarning title="Web3 Error" message={msg}/>
     );
 }
 
@@ -66,12 +66,13 @@ class Web3Adapter {
      * @property { Bool } config.reinit - Is this a reinitialization run?
      */
     async __init(config = {}) {
+        console.log("WEB3CONFIG", config)
         // On init, mark as busy
         store.dispatch(ADAPTER_ACTIONS.setWeb3Busy(true));
         // On init, note the last configuration state
         this._updateLastNotedConfig();
         // Set up subscribe and listen to store events
-        await this._listenToStore();
+        // await this._listenToStore(); // Don't listen -- Use manual update in adapter actions
         // Set the latest contracts
         let connected = await this._setAndGetUptoDateContracts();
         if (connected.error) {
@@ -100,9 +101,10 @@ class Web3Adapter {
             toast.error(<Web3Error msg="Verify Registry Contract"/>, Web3ErrToastOpts);
             return { error: "No registry contract found in state." };
         }
-        // If all of these passes, note that the instance is connected
+        // If all of these passes, note that the instance is connected and no error has occurred
         store.dispatch(ADAPTER_ACTIONS.setWeb3Connected(true));
         store.dispatch(ADAPTER_ACTIONS.setWeb3Busy(false));
+        store.dispatch(ADAPTER_ACTIONS.setWeb3Error(false));
         if (!config.preventToast) {
             toast.success(<SyncToastMessageSuccess basic title="Success" message="Web3 Connected"/>, { className: "basic", "autoClose": 2400, delay: 1000 });
         }
@@ -124,6 +126,7 @@ class Web3Adapter {
     /**
      * Setup listeners on the redux store for configuration changes -- This may not be needed at the moment
      */
+    // -- Potentially to be deprecated -- Not used as of store listen update
     async _listenToStore() {
         // Always cancel previous subscription
         if (this.subscribed) {

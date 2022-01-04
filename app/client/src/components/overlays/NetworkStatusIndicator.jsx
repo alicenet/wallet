@@ -5,7 +5,7 @@ import { Button, Form, Grid, Header, Icon, Modal } from 'semantic-ui-react';
 import { toast } from "react-toastify";
 
 import { SyncToastMessageSuccess, SyncToastMessageWarning } from 'components/customToasts/CustomToasts';
-import { CONFIG_ACTIONS, INTERFACE_ACTIONS } from 'redux/actions/_actions';
+import { ADAPTER_ACTIONS, CONFIG_ACTIONS, INTERFACE_ACTIONS } from 'redux/actions/_actions';
 import useFormState from 'hooks/useFormState';
 
 export default function NetworkStatusIndicator() {
@@ -42,6 +42,8 @@ export default function NetworkStatusIndicator() {
 
     const handleSubmit = async () => {
 
+        toast.dismiss(); // Dismiss previous toasts before retrying
+
         dispatch(INTERFACE_ACTIONS.toggleGlobalLoadingBool(true));
         const result = await dispatch(CONFIG_ACTIONS.saveConfigurationValues({
             madNetProvider: formState.MadNetProvider.value,
@@ -54,16 +56,18 @@ export default function NetworkStatusIndicator() {
         }
         else {
             notifySuccess('Settings were updated');
+            // Dispatch an init, to retry connections if not connected
+            dispatch(ADAPTER_ACTIONS.initAdapters());
         }
     };
 
     const notifyError = message => {
-        toast.error(<SyncToastMessageWarning title="Error" message={message}/>, { autoClose: 2000 });
+        toast.error(<SyncToastMessageWarning title="Error" message={message} />, { autoClose: 2000 });
         dispatch(INTERFACE_ACTIONS.toggleGlobalLoadingBool(false));
     };
 
     const notifySuccess = message => {
-        toast.success(<SyncToastMessageSuccess title="Success" message={message}/>, { autoClose: 1000 });
+        toast.success(<SyncToastMessageSuccess title="Success" message={message} />, { autoClose: 1000 });
         dispatch(INTERFACE_ACTIONS.toggleGlobalLoadingBool(false));
     };
 
@@ -80,7 +84,7 @@ export default function NetworkStatusIndicator() {
                             MAD
                         </div>
                         <div className="relative" style={{ top: "-1px", marginLeft: "4px" }}>
-                            <StatusLight color={madColor}/>
+                            <StatusLight color={madColor} />
                         </div>
                     </div>
 
@@ -89,7 +93,7 @@ export default function NetworkStatusIndicator() {
                             ETH
                         </div>
                         <div className="relative" style={{ top: "-1px", marginLeft: "4px" }}>
-                            <StatusLight color={web3Color}/>
+                            <StatusLight color={web3Color} />
                         </div>
                     </div>
 
@@ -119,7 +123,7 @@ export default function NetworkStatusIndicator() {
                                             Madnet Provider
                                         </div>
                                         <div className="relative" style={{ top: "-1px", marginLeft: "4px" }}>
-                                            <StatusLight color={madColor}/>
+                                            <StatusLight color={madColor} />
                                         </div>
                                     </div>
                                 }
@@ -138,7 +142,7 @@ export default function NetworkStatusIndicator() {
                                             Ethereum Provider
                                         </div>
                                         <div className="relative" style={{ top: "-1px", marginLeft: "4px" }}>
-                                            <StatusLight color={web3Color}/>
+                                            <StatusLight color={web3Color} />
                                         </div>
                                     </div>
                                 }
@@ -158,10 +162,10 @@ export default function NetworkStatusIndicator() {
 
             <Modal.Actions className="flex justify-between">
 
-                <Button color="orange" className="m-0" basic onClick={handleClose} content="Close"/>
+                <Button color="orange" className="m-0" basic onClick={handleClose} content="Close" />
 
                 <Button
-                    icon={<Icon name='sync'/>}
+                    icon={<Icon name='sync' />}
                     className="m-0"
                     content="Retry"
                     basic
@@ -185,7 +189,7 @@ function StatusLight({ className, color }) {
     let fullClass = classNames(baseClass, colorClass, colorBorderClass);
 
     return (
-        <div className={fullClass} style={{ width: "7px", height: "7px" }}/>
+        <div className={fullClass} style={{ width: "7px", height: "7px" }} />
     )
 
 }

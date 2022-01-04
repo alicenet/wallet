@@ -3,6 +3,7 @@ import { ADAPTER_ACTION_TYPES, CONFIG_ACTION_TYPES } from 'redux/constants/_cons
 import { reduxState_logger as log } from 'log/logHelper'
 import { useFallbackValueForUndefinedInput } from 'util/generic';
 import { initialConfigurationState } from 'redux/reducers/configuration';
+import { ADAPTER_ACTIONS, VAULT_ACTIONS } from './_actions';
 
 /**
  * Load default values to every field under configuration
@@ -39,9 +40,10 @@ export function saveConfigurationValues({ chainId, madNetProvider, ethProvider, 
             }
             // Write any config saves to the electron store and dispatch the config update
             electronStoreCommonActions.storeConfigurationValues(updateObject);
+            // dispatch({ type: ADAPTER_ACTION_TYPES.SET_WEB3_ERROR, payload: false }); Shouldn't be needed?
+            // dispatch({ type: ADAPTER_ACTION_TYPES.SET_MADNET_ERROR, payload: false });
             dispatch({ type: CONFIG_ACTION_TYPES.SAVE_CONFIGURATION, payload: updateObject });
-            dispatch({ type: ADAPTER_ACTION_TYPES.SET_WEB3_ERROR, payload: false });
-            dispatch({ type: ADAPTER_ACTION_TYPES.SET_MADNET_ERROR, payload: false });
+            // dispatch(ADAPTER_ACTIONS.initAdapters());
             return true;
         } catch (ex) {
             return { error: ex };
