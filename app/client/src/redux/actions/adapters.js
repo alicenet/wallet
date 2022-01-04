@@ -56,10 +56,7 @@ export const setMadNetBusy = busyState => {
         if (connected.error) {
             return { error: connected.error };
         }
-        else {
-            return true;
-        }
-
+        return true;
     }
 }
 
@@ -92,9 +89,7 @@ export const initMadNet = (initConfig) => {
         if (connected.error) {
             return { error: connected.error };
         }
-        else {
-            return true;
-        }
+        return true;
     }
 }
 
