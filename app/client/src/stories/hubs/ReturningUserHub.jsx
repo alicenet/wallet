@@ -30,7 +30,6 @@ export default function Hub() {
     };
 
     useEffect(() => {
-        console.log(wallets);
         if (wallets.length > 0 && !selectedWallet) {
             setSelectedWallet(head(wallets));
         }
