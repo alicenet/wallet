@@ -73,7 +73,7 @@ export default function NetworkStatusIndicator() {
             onClose={handleClose}
             size="small"
             trigger={
-                <div className="flex flex-col absolute bottom-0.5 left-1 text-xs" onClick={() => setOpenModal(true)}>
+                <div className="flex flex-col absolute bottom-0.5 left-1 text-xs cursor-pointer" onClick={() => setOpenModal(true)}>
 
                     <div className="flex items-center text-gray-600">
                         <div className="font-bold font-mono">
