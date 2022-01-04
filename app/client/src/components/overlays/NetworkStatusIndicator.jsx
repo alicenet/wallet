@@ -123,6 +123,7 @@ export default function NetworkStatusIndicator() {
                                         </div>
                                     </div>
                                 }
+                                disabled={madBusy}
                                 placeholder='Enter MadNet Provider'
                                 required
                                 value={formState.MadNetProvider.value}
@@ -142,6 +143,7 @@ export default function NetworkStatusIndicator() {
                                         </div>
                                     </div>
                                 }
+                                disabled={web3Busy}
                                 placeholder='Enter Ethereum Provider'
                                 required
                                 value={formState.EthereumProvider.value}
