@@ -46,21 +46,23 @@ export const setMadNetBusy = busyState => {
 }
 
 /**
- * If web3Adapter is not in a connected state attempt a connect
- * @param { Object } initConfig - Init config passthrough for the web3Adapter __init function
- * @returns 
+ * If web3Adapter is not in a connected state attempt to connect
+ * @param { Object } initConfig - Init config pass through for the web3Adapter __init function
+ * @returns
  */export const initWeb3 = (initConfig) => {
     return async (dispatch, getState) => {
         let isConnected = getState().adapter.web3Adapter.connected;
         if (!isConnected) {
             let connected = await web3Adapter.__init(initConfig);
             if (connected.error) {
-                return { error: connected.error }
-            } else {
+                return { error: connected.error };
+            }
+            else {
                 return true;
             }
-        } else {
-            log.warn("Web3 connection attempt made while already connected. -- Normal on lock/unlock cycles.")
+        }
+        else {
+            log.warn("Web3 connection attempt made while already connected. -- Normal on lock/unlock cycles.");
             return { error: "State determined Web3 is already connected. If this is not correct, investigate for errors. :: This is normal after a wallet lock cycle." }
         }
     }
@@ -69,25 +71,25 @@ export const setMadNetBusy = busyState => {
 export const setMadNetConnected = (isConnected) => {
     return dispatch => {
         dispatch({ type: ADAPTER_ACTION_TYPES.SET_MADNET_CONNECTED, payload: isConnected })
-    }
+    };
 }
 
 export const setMadNetError = (error) => {
     return dispatch => {
         dispatch({ type: ADAPTER_ACTION_TYPES.SET_MADNET_ERROR, payload: error })
-    }
+    };
 }
 
 export const setMadNetKeyChainValue = (keyChain, value) => {
     return dispatch => {
         dispatch({ type: ADAPTER_ACTION_TYPES.SET_MADNET_KEYCHAIN_VALUE, payload: { keyChain: keyChain, value: value } })
-    }
+    };
 }
 
 /**
- * If madNetAdapter is not in a connected state attempt a connect
+ * If madNetAdapter is not in a connected state attempt to connect
  * @param { Object } initConfig - Init config passthrough for the madNetAdapter __init function
- * @returns 
+ * @returns
  */
 export const initMadNet = (initConfig) => {
     return async (dispatch, getState) => {
@@ -96,12 +98,14 @@ export const initMadNet = (initConfig) => {
             let connected = await madNetAdapter.__init(initConfig);
             if (connected.error) {
                 return { error: connected.error };
-            } else {
+            }
+            else {
                 return true;
             }
-        } else {
-            log.warn("MadNet connection attempt made while already connected -- Normal on lock/unlock cycles.")
-            return { error: "State determined MadNet is already connected. If this is not correct, investigate for errors. :: This is normal after a wallet lock cycle." }
+        }
+        else {
+            log.warn("MadNet connection attempt made while already connected -- Normal on lock/unlock cycles.");
+            return { error: "State determined MadNet is already connected. If this is not correct, investigate for errors. :: This is normal after a wallet lock cycle." };
         }
     }
 }
@@ -113,28 +117,30 @@ export const initAdapters = () => {
         let web3Connected = await dispatch(initWeb3({ preventToast: true })); // Attempt to init web3Adapter -- Adapter will handle error toasts
         let madConnected = await dispatch(initMadNet({ preventToast: true })); // Attempt to init madAdapter -- Adapter will handle error toasts
         if (web3Connected.error && madConnected) {
-            toast.success(<SyncToastMessageSuccess basic message="MadNet Connected" />, { className: "basic", "autoClose": 2400 })
+            toast.success(<SyncToastMessageSuccess basic message="MadNet Connected"/>, { className: "basic", "autoClose": 2400 });
             return { success: true } // This is a partial success but the above adapter will issue the error
-        } else if (web3Connected && madConnected.error) {
-            toast.success(<SyncToastMessageSuccess basic message="Web3 Connected" />, { className: "basic", "autoClose": 2400 })
+        }
+        else if (web3Connected && madConnected.error) {
+            toast.success(<SyncToastMessageSuccess basic message="Web3 Connected"/>, { className: "basic", "autoClose": 2400 });
             return { success: true } // This is a partial success but the above adapter will issue the error       
         }
         else if (web3Connected && madConnected) {
-            toast.success(<SyncToastMessageSuccess basic message="MadNet & Web3 Connected" />, { className: "basic", "autoClose": 2400 })
+            toast.success(<SyncToastMessageSuccess basic message="MadNet & Web3 Connected"/>, { className: "basic", "autoClose": 2400 });
             // Refetch balance for primary wallet if it exists on success
             let wallets = [...getState().vault.wallets.internal, ...getState().vault.wallets.external];
             if (wallets.length === 0) {
                 return { success: true }
             }
             dispatch(getAndStoreLatestBalancesForAddress(wallets[0]?.address));
-            return { success: true }
-        } else {
+            return { success: true };
+        }
+        else {
             return {
                 error: "Unable to initiate both adapters -- Verify network configuration, and check property errors for error collection if needed on subsequent runs.", errors: {
                     web3: web3Connected.error,
-                    madNet: madConnected.erros,
+                    madNet: madConnected.error,
                 }
-            }
+            };
         }
 
     }
@@ -144,12 +150,12 @@ export const initAdapters = () => {
 export const disconnectAdapters = () => {
     return async (dispatch) => {
         dispatch({ type: ADAPTER_ACTION_TYPES.SET_DISCONNECTED });
-    }
+    };
 }
 
 /**
  * Get and store the latest balances for a given address to redux state
- * @param { String } address 
+ * @param { String } address
  * @returns { Array } [latestAddressBalances, allBalances]
  */
 export const getAndStoreLatestBalancesForAddress = (address) => {
@@ -173,14 +179,14 @@ export const getAndStoreLatestBalancesForAddress = (address) => {
             utilAllowance: "Not Available",
             madBytes: "Not Available",
             madUTXOs: [],
-        }
+        };
 
         let balancePromises = []; // [eth, [stake,stakeAllow,util,utilAllow], [madBytes, UTXOs]]
 
         // First get eth/staking/util balances -- Only if web3 connected
         if (web3Connected) {
             // Get the account privK based on the address from state to add to web3 to fetch balance information
-            let wallet
+            let wallet;
             try {
                 wallet = wallets.filter(wal => wal.address === address)[0];
                 balancePromises.push(web3Adapter.useAccount(wallet.privK));
@@ -191,17 +197,18 @@ export const getAndStoreLatestBalancesForAddress = (address) => {
         // Push an IIFE for a false resolving promise to position 0, to maintain array positions for the Promise.all resolve
         else {
             balancePromises.push((() => (new Promise(res => (res(false)))))());
-            log.debug("Skipping eth/staking/util balance fetch for address: " + address + " :: Web3 not connected.")
+            log.debug("Skipping eth/staking/util balance fetch for address: " + address + " :: Web3 not connected.");
         }
         // Second get madBytes balance/utxos -- Only if madNet connected
         if (madNetConnected) {
             balancePromises.push(madNetAdapter.getMadWalletBalanceWithUTXOsForAddress(address));
-        } else { 
+        }
+        else {
             addressBalances.madBytes = "Not Connected"
-            log.debug("Skipping madBytes/UTXO balance fetch for address: " + address + " :: MadNet not connected.") 
+            log.debug("Skipping madBytes/UTXO balance fetch for address: " + address + " :: MadNet not connected.");
         }
 
-        // If neither mad or web3 is connected, don't bother to try and pull balances
+        // If neither mad nor web3 is connected, don't bother to try and pull balances
         if (!madNetConnected && !web3Connected) {
             dispatch(VAULT_ACTIONS.setBalancesLoading(false));
             return false;
@@ -229,10 +236,10 @@ export const getAndStoreLatestBalancesForAddress = (address) => {
         let updatedBalanceState = {
             ...balanceState,
             [address]: addressBalances
-        }
+        };
 
         // Set new balance to state
-        dispatch({ type: VAULT_ACTION_TYPES.SET_BALANCES_STATE, payload: updatedBalanceState })
+        dispatch({ type: VAULT_ACTION_TYPES.SET_BALANCES_STATE, payload: updatedBalanceState });
 
         // Return latest found balances and the complete updated balance state
         dispatch(VAULT_ACTIONS.setBalancesLoading(false));
@@ -244,14 +251,15 @@ export const getAndStoreLatestBalancesForAddress = (address) => {
 /**
  * Get and store recent TXs for a specific address into vault.recentTxs
  * @param { String } address - Address to fetch TXs for
+ * @param { Integer } curve - Curve to use
  */
 export const getAndStoreRecentTXsForAddress = (address, curve) => {
-    return async (dispatch, useState) => {
+    return async (dispatch) => {
         log.debug("Fetching recent TXs for addresses: ", address);
         let [txs, currentBlock] = await madNetAdapter.getPrevTransactions([{ //eslint-disable-line
             address: address,
             curve: curve,
-        }])
+        }]);
         // Mark index 0 as false to signify that a check has happened
         if (txs.length === 0) {
             txs = [false];
@@ -261,39 +269,41 @@ export const getAndStoreRecentTXsForAddress = (address, curve) => {
                 address: address,
                 txs: txs,
             }
-        })
-        log.debug("Recent TXs fetched and updated to state for address: ", address)
+        });
+        log.debug("Recent TXs fetched and updated to state for address: ", address);
         return true;
     }
 }
 
 /**
- * Prep TX Objects into MadNetAdapter state -- Requires forwarded dispatch state
+ * Prep TX Objects into MadNetAdapter state -- Requires a forwarded dispatch state
  * @param { Object } state - Forwarded dispatch -- getState() state
  */
 const _prepTxObjectsToMadNetAdapter = async (state) => {
 
     let txReducerTxs = state.transaction.list;
-    let preppedTxObjs = [] // Convert to proper tx format for madNetAdapter
+    let preppedTxObjs = []; // Convert to proper tx format for madNetAdapter
 
     txReducerTxs.forEach((tx) => {
         if (tx.type === transactionTypes.DATA_STORE) {
             preppedTxObjs.push(
                 transactionUtils.createDataStoreObject(tx.from, tx.key, tx.value, tx.duration)
             );
-        } else if (tx.type === transactionTypes.VALUE_STORE) {
+        }
+        else if (tx.type === transactionTypes.VALUE_STORE) {
             preppedTxObjs.push(
                 transactionUtils.createValueStoreObject(tx.from, tx.to, tx.value, tx.bnCurve)
             );
-        } else {
+        }
+        else {
             throw new Error("sendTransactionReducerTXs received incorrect txType of type: ", tx.type);
         }
-    })
+    });
 
     // Add each tx to the txOutList of the madNetAdapter
     preppedTxObjs.forEach(tx => {
         madNetAdapter.addTxOut(tx);
-    })
+    });
 
     log.debug("Prepped TX Objects To MadNetAdapter ( Not in MadWalletJS Instance yet) => ", {
         txReducerTxs: txReducerTxs,
@@ -301,7 +311,6 @@ const _prepTxObjectsToMadNetAdapter = async (state) => {
     });
 
     return true;
-
 }
 
 /**
@@ -312,7 +321,7 @@ export const createAndClearFakeTxForFeeEstimates = () => {
     return async (dispatch, getState) => {
 
         const state = getState();
-        
+
         // If feePayer doesn't exist or no TXs, we are not in a state to estimate fees yet
         if (!state.transaction.feePayer.wallet || state.transaction.list.length === 0) {
             return false;
@@ -329,7 +338,7 @@ export const createAndClearFakeTxForFeeEstimates = () => {
         log.debug("Fee Payer Wallet && txFee for fakeEstimateTx:", {
             feePayerWallet: feePayerWallet,
             txFee: txFee,
-        })
+        });
 
         await madNetAdapter.wallet().Transaction.createTxFee(feePayerWallet.address, feePayerWallet.curve, txFee);
         await madNetAdapter.createTx();
@@ -340,7 +349,6 @@ export const createAndClearFakeTxForFeeEstimates = () => {
         madNetAdapter.clearTXouts();
 
         return estimateFees;
-
     }
 }
 
@@ -362,21 +370,21 @@ export const sendTransactionReducerTXs = () => {
         log.debug("Fee Payer Wallet && txFee for sendTx:", {
             feePayerWallet: feePayerWallet,
             txFee: txFee,
-        })
+        });
 
         await madNetAdapter.wallet().Transaction.createTxFee(feePayerWallet.address, feePayerWallet.curve, txFee);
-        
+
         // First create the transaction
         let create = await madNetAdapter.createTx();
         if (create.error) {
-            return {error: "Unable to create transaction: " + String(create.error) }
+            return { error: "Unable to create transaction: " + String(create.error) }
         }
-        // If OK Then send it
+        // If OK, send it
         let tx = await madNetAdapter.sendTx();
 
         try {
             // Grab any owners, and send to balance updater for those addresses
-            let txDatas = utils.transaction.parseRpcTxObject(tx.txDetails)
+            let txDatas = utils.transaction.parseRpcTxObject(tx.txDetails);
             // Wrap in nested function to await within the context of this function only.
             const sendForBalances = async (ownersToBalFetch) => {
                 // Give the network a few seconds to catch up after the success
@@ -386,7 +394,7 @@ export const sendTransactionReducerTXs = () => {
                     await dispatch(getAndStoreLatestBalancesForAddress(owner));
                     // await dispatch(getAndStoreRecentTXsForAddress(owner)); // Only if we want to refetch RecentTXs ( API Intensive )
                 }
-            }
+            };
 
             let owners = [];
             const madWalletInstance = getMadWalletInstance();
