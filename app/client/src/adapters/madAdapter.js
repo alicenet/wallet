@@ -85,7 +85,6 @@ class MadNetAdapter {
      * @property { Bool } config.reinit - Is this a reinit cycle?
      */
     async __init(config = {}) {
-        console.log("MADCONFIG", config)
         store.dispatch(ADAPTER_ACTIONS.setMadNetBusy(true));
         // this._listenToStore(); // Don't listen -- Use manual update in adapter actions
         try {

@@ -66,7 +66,6 @@ class Web3Adapter {
      * @property { Bool } config.reinit - Is this a reinitialization run?
      */
     async __init(config = {}) {
-        console.log("WEB3CONFIG", config)
         // On init, mark as busy
         store.dispatch(ADAPTER_ACTIONS.setWeb3Busy(true));
         // On init, note the last configuration state
