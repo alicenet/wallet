@@ -40,8 +40,6 @@ function AdvancedSettings() {
             registryContractAddress: formState.RegistryContractAddress.value
         }));
 
-        console.log(registryContractAddress);
-
         if (result.error) {
             notifyError('There was an error while saving changes');
         }

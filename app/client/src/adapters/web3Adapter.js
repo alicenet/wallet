@@ -100,7 +100,7 @@ class Web3Adapter {
             toast.error(<Web3Error msg="Verify Registry Contract"/>, Web3ErrToastOpts);
             return { error: "No registry contract found in state." };
         }
-        // If all of these passes, note that the instance is connected and no error has occurred
+        // If all of these pass, note that the instance is connected and no error has occurred
         store.dispatch(ADAPTER_ACTIONS.setWeb3Connected(true));
         store.dispatch(ADAPTER_ACTIONS.setWeb3Busy(false));
         store.dispatch(ADAPTER_ACTIONS.setWeb3Error(false));
