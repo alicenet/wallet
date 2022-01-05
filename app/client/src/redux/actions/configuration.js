@@ -39,10 +39,7 @@ export function saveConfigurationValues({ chainId, madNetProvider, ethProvider, 
             }
             // Write any config saves to the electron store and dispatch the config update
             electronStoreCommonActions.storeConfigurationValues(updateObject);
-            // dispatch({ type: ADAPTER_ACTION_TYPES.SET_WEB3_ERROR, payload: false }); Shouldn't be needed?
-            // dispatch({ type: ADAPTER_ACTION_TYPES.SET_MADNET_ERROR, payload: false });
             dispatch({ type: CONFIG_ACTION_TYPES.SAVE_CONFIGURATION, payload: updateObject });
-            // dispatch(ADAPTER_ACTIONS.initAdapters());
             return true;
         } catch (ex) {
             return { error: ex };
