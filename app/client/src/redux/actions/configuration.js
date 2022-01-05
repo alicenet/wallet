@@ -3,7 +3,6 @@ import { ADAPTER_ACTION_TYPES, CONFIG_ACTION_TYPES } from 'redux/constants/_cons
 import { reduxState_logger as log } from 'log/logHelper'
 import { useFallbackValueForUndefinedInput } from 'util/generic';
 import { initialConfigurationState } from 'redux/reducers/configuration';
-import { ADAPTER_ACTIONS, VAULT_ACTIONS } from './_actions';
 
 /**
  * Load default values to every field under configuration
