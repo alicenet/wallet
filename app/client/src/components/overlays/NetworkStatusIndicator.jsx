@@ -92,8 +92,8 @@ export default function NetworkStatusIndicator() {
             size="small"
             trigger={
                 <div className={classNames(
-                    "group transition-all transition-slow ease hover:bg-gray-400 hover:bg-opacity-50 hover:w-20 w-12 flex flex-col absolute bottom-0 left-0 text-xs cursor-pointer p-1 rounded-tr bg-gray-300", 
-                    {"bg-red-300 bg-opacity-60 hover:bg-red-300" : anyError} )} 
+                    "group transition-all transition-slow ease hover:w-14 w-12 flex flex-col absolute bottom-0 left-0 text-xs cursor-pointer p-1 rounded-tr", 
+                    {"" : anyError} )} 
                     onClick={() => setOpenModal(true)}
                 >
 
@@ -113,10 +113,6 @@ export default function NetworkStatusIndicator() {
                         <div className="relative" style={{ top: "-1px", marginLeft: "4px" }}>
                             <StatusLight color={web3Color} />
                         </div>
-                    </div>
-
-                    <div className={classNames("text-gray-600 transition-all transition-slowest ease opacity-0 absolute top-1 right-1 group-hover:opacity-100", {"text-red-400": anyError})}>
-                        <Icon className="text-sm" name="external alternate"/>
                     </div>
 
                 </div>

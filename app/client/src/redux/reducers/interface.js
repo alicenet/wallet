@@ -23,6 +23,7 @@ export default function interfaceReducer(state = initialInterfaceState, action) 
             });
 
         case INTERFACE_ACTION_TYPES.TOGGLE_THEME:
+            console.log(window.setDark);
             state.useDarkTheme ? window.setLight() : window.setDark();
             return Object.assign({}, state, {
                 useDarkTheme: !state.useDarkTheme,
