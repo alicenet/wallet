@@ -3,8 +3,6 @@ import { ADAPTER_ACTION_TYPES, TRANSACTION_ACTION_TYPES, VAULT_ACTION_TYPES } fr
 import web3Adapter from 'adapters/web3Adapter';
 import { default_log as log } from 'log/logHelper';
 import madNetAdapter from 'adapters/madAdapter';
-import { toast } from 'react-toastify';
-import { SyncToastMessageSuccess } from 'components/customToasts/CustomToasts';
 import { transactionTypes } from 'util/transaction';
 import utils, { genericUtils, transactionUtils } from 'util/_util';
 import { TRANSACTION_ACTIONS, VAULT_ACTIONS } from './_actions';
