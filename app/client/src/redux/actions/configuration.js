@@ -1,8 +1,8 @@
 import { electronStoreCommonActions } from 'store/electronStoreHelper';
-import { CONFIG_ACTION_TYPES } from '../constants/_constants';
-import { initialConfigurationState } from '../reducers/configuration'
+import { ADAPTER_ACTION_TYPES, CONFIG_ACTION_TYPES } from 'redux/constants/_constants';
 import { reduxState_logger as log } from 'log/logHelper'
 import { useFallbackValueForUndefinedInput } from 'util/generic';
+import { initialConfigurationState } from 'redux/reducers/configuration';
 
 /**
  * Load default values to every field under configuration
@@ -49,7 +49,7 @@ export function saveConfigurationValues({ chainId, madNetProvider, ethProvider, 
 
 /**
  * Load configuration values from the store to current redux state
- * @returns 
+ * @returns
  */
 export function loadConfigurationValuesFromStore() {
     return async function (dispatch) {
@@ -62,6 +62,8 @@ export function loadConfigurationValuesFromStore() {
                 throw new Error(loadedConfig.error)
             }
             dispatch({ type: CONFIG_ACTION_TYPES.SAVE_CONFIGURATION, payload: loadedConfig });
+            dispatch({ type: ADAPTER_ACTION_TYPES.SET_WEB3_ERROR, payload: false });
+            dispatch({ type: ADAPTER_ACTION_TYPES.SET_MADNET_ERROR, payload: false });
             return true;
         } catch (ex) {
             return { error: ex };

@@ -8,7 +8,7 @@ import { toast } from 'react-toastify';
 
 import Page from 'layout/Page';
 import { useFormState } from 'hooks/_hooks';
-import { CONFIG_ACTIONS, INTERFACE_ACTIONS } from 'redux/actions/_actions';
+import { ADAPTER_ACTIONS, CONFIG_ACTIONS, INTERFACE_ACTIONS } from 'redux/actions/_actions';
 import { initialConfigurationState } from 'redux/reducers/configuration'; // <= We can import this to use as a local setter
 import { SyncToastMessageSuccess, SyncToastMessageWarning } from 'components/customToasts/CustomToasts';
 
@@ -31,6 +31,7 @@ function AdvancedSettings() {
     ]);
 
     const handleSubmit = async () => {
+        toast.dismiss(); // Dismiss previous toasts before retrying
 
         dispatch(INTERFACE_ACTIONS.toggleGlobalLoadingBool(true));
         const result = await dispatch(CONFIG_ACTIONS.saveConfigurationValues({
@@ -44,6 +45,8 @@ function AdvancedSettings() {
         }
         else {
             notifySuccess('Settings were updated');
+            // Dispatch an init, to retry connections if not connected
+            dispatch(ADAPTER_ACTIONS.initAdapters());
         }
     };
 
@@ -67,6 +70,7 @@ function AdvancedSettings() {
         await dispatch(CONFIG_ACTIONS.loadDefaultValues());
 
         notifySuccess('Default values loaded');
+        dispatch(ADAPTER_ACTIONS.initAdapters());
     }
 
     return (

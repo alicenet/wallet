@@ -82,6 +82,7 @@ function VerifyYourSeedPhrase() {
                         {shuffledSeedPhrase.map((word, index) =>
                             <Button
                                 key={`seed-phrase-btn-${index}`}
+                                size="small"
                                 className="mx-2 my-1"
                                 color="blue"
                                 content={word}

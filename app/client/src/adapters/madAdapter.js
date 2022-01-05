@@ -86,7 +86,7 @@ class MadNetAdapter {
      */
     async __init(config = {}) {
         store.dispatch(ADAPTER_ACTIONS.setMadNetBusy(true));
-        this._listenToStore();
+        // this._listenToStore(); // Don't listen -- Use manual update in adapter actions
         try {
             this._updateLastNotedConfig();
             await this.wallet().Rpc.setProvider(this.provider())
@@ -132,6 +132,7 @@ class MadNetAdapter {
     /**
      * Setup listeners on the redux store for configuration changes -- This may not be needed at the moment
      */
+    // -- Potentially to be deprecated -- Not used as of store listen update
     async _listenToStore() {
         // Always cancel previous subscription
         if (this.subscribed) {
