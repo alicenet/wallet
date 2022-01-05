@@ -18,6 +18,7 @@ module.exports = {
             transitionProperty: {
                 'left': 'left',
                 'width': 'width',
+                'height': 'height',
             },
         },
     },
@@ -25,7 +26,10 @@ module.exports = {
         extend: {
             margin: ['last', 'first'],
             rotate: ['group-hover'],
+            visibility: ['group-hover'],
         },
+        width: ["responsive", "hover", "focus"],
+        height: ["responsive", "hover", "focus"],
     },
     plugins: [],
     corePlugins: [

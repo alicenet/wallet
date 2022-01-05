@@ -28,13 +28,25 @@ export default function NetworkStatusIndicator() {
         registryContractAddress: s.config.registry_contract_address,
     }));
 
+    const anyError = madError || web3Error;
+
     const [formState, formSetter, onSubmit] = useFormState([
         { name: 'MadNetProvider', display: 'MadNet Provider', type: 'url', isRequired: true, value: madNetProvider },
         { name: 'EthereumProvider', display: 'Ethereum Provider', type: 'url', isRequired: true, value: ethereumProvider },
+        { name: 'RegistryContractAddress', display: 'Registry Contract Address', type: 'string', isRequired: true, value: registryContractAddress },
     ]);
 
     const handleClose = () => {
         setOpenModal(false);
+    }
+
+    // Catch possible registry contract errors
+    let registryContractError = "";
+    if (web3Error && web3Error.indexOf("Returned values aren't valid, did it run Out of Gas? You might also see this error if you are not using the correct ABI ") !== -1 ) {
+        registryContractError = "Ethereum errors can related to the Registry Address, please verify it."
+    }
+    if (web3Error && web3Error.indexOf("is invalid, the capitalization checksum test failed") !== -1) {
+        registryContractError = "Validate the above contract address."
     }
 
     const web3Color = web3Busy ? "yellow" : web3Connected ? "green" : "red";
@@ -48,7 +60,7 @@ export default function NetworkStatusIndicator() {
         const result = await dispatch(CONFIG_ACTIONS.saveConfigurationValues({
             madNetProvider: formState.MadNetProvider.value,
             ethProvider: formState.EthereumProvider.value,
-            registryContractAddress
+            registryContractAddress: formState.RegistryContractAddress.value
         }));
 
         if (result.error) {
@@ -71,15 +83,21 @@ export default function NetworkStatusIndicator() {
         dispatch(INTERFACE_ACTIONS.toggleGlobalLoadingBool(false));
     };
 
+{/* <div className="flex flex-col absolute bottom-0 left-0 text-xs cursor-pointer bg-red-300 animate-pulse p-1" */}
+
     return (
         <Modal
             open={openModal}
             onClose={handleClose}
             size="small"
             trigger={
-                <div className="flex flex-col absolute bottom-0.5 left-1 text-xs cursor-pointer" onClick={() => setOpenModal(true)}>
+                <div className={classNames(
+                    {"group transition-all transition-slow ease hover:bg-gray-400 hover:bg-opacity-50 hover:w-20 w-12 flex flex-col absolute bottom-0 left-0 text-xs cursor-pointer p-1 rounded-tr bg-gray-300": true}, 
+                    {"bg-red-300 bg-opacity-60 hover:bg-red-300" : anyError} )} 
+                    onClick={() => setOpenModal(true)}
+                >
 
-                    <div className="flex items-center text-gray-600">
+                    <div className={classNames({"flex items-center text-gray-600" : true}, {"animate-pulse text-red-600": madError})}>
                         <div className="font-bold font-mono">
                             MAD
                         </div>
@@ -88,13 +106,17 @@ export default function NetworkStatusIndicator() {
                         </div>
                     </div>
 
-                    <div className="flex items-center text-gray-600">
+                    <div className={classNames({"flex items-center text-gray-600" : true}, {"animate-pulse text-red-600": web3Error})}>
                         <div className="font-bold font-mono">
                             ETH
                         </div>
                         <div className="relative" style={{ top: "-1px", marginLeft: "4px" }}>
                             <StatusLight color={web3Color} />
                         </div>
+                    </div>
+
+                    <div className={classNames({"text-gray-600 transition-all transition-slowest ease opacity-0 absolute top-1 right-1 group-hover:opacity-100" : true}, {"text-red-400": anyError})}>
+                        <Icon className="text-sm" name="external alternate"/>
                     </div>
 
                 </div>
@@ -153,6 +175,23 @@ export default function NetworkStatusIndicator() {
                                 value={formState.EthereumProvider.value}
                                 onChange={e => formSetter.setEthereumProvider(e.target.value)}
                                 error={(!!formState.EthereumProvider.error && { content: formState.EthereumProvider.error }) || web3Error}
+                            />
+
+                            <Form.Input
+                                id='registryContractAddress'
+                                label={
+                                    <div className="flex items-center">
+                                        <div className="font-bold">
+                                            Registry Contract Address
+                                        </div>
+                                    </div>
+                                }
+                                disabled={web3Busy}
+                                placeholder='Enter Registry Contract Address'
+                                required
+                                value={formState.RegistryContractAddress.value}
+                                onChange={e => formSetter.setRegistryContractAddress(e.target.value)}
+                                error={(!!formState.RegistryContractAddress.error && { content: formState.RegistryContractAddress.error }) || !!registryContractError && {content: registryContractError}}
                             />
 
                         </Form>
