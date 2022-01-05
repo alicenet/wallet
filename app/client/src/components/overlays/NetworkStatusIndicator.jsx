@@ -92,12 +92,12 @@ export default function NetworkStatusIndicator() {
             size="small"
             trigger={
                 <div className={classNames(
-                    {"group transition-all transition-slow ease hover:bg-gray-400 hover:bg-opacity-50 hover:w-20 w-12 flex flex-col absolute bottom-0 left-0 text-xs cursor-pointer p-1 rounded-tr bg-gray-300": true}, 
+                    "group transition-all transition-slow ease hover:bg-gray-400 hover:bg-opacity-50 hover:w-20 w-12 flex flex-col absolute bottom-0 left-0 text-xs cursor-pointer p-1 rounded-tr bg-gray-300", 
                     {"bg-red-300 bg-opacity-60 hover:bg-red-300" : anyError} )} 
                     onClick={() => setOpenModal(true)}
                 >
 
-                    <div className={classNames({"flex items-center text-gray-600" : true}, {"animate-pulse text-red-600": madError})}>
+                    <div className={classNames("flex items-center text-gray-600", {"animate-pulse text-red-600": madError})}>
                         <div className="font-bold font-mono">
                             MAD
                         </div>
@@ -106,7 +106,7 @@ export default function NetworkStatusIndicator() {
                         </div>
                     </div>
 
-                    <div className={classNames({"flex items-center text-gray-600" : true}, {"animate-pulse text-red-600": web3Error})}>
+                    <div className={classNames("flex items-center text-gray-600", {"animate-pulse text-red-600": web3Error})}>
                         <div className="font-bold font-mono">
                             ETH
                         </div>
@@ -115,7 +115,7 @@ export default function NetworkStatusIndicator() {
                         </div>
                     </div>
 
-                    <div className={classNames({"text-gray-600 transition-all transition-slowest ease opacity-0 absolute top-1 right-1 group-hover:opacity-100" : true}, {"text-red-400": anyError})}>
+                    <div className={classNames("text-gray-600 transition-all transition-slowest ease opacity-0 absolute top-1 right-1 group-hover:opacity-100", {"text-red-400": anyError})}>
                         <Icon className="text-sm" name="external alternate"/>
                     </div>
 
