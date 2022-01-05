@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, Header, Form, Icon, Button, Placeholder } from 'semantic-ui-react'
+import { Modal, Header, Form, Icon, Button } from 'semantic-ui-react'
 import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux';
 import { MODAL_ACTIONS } from 'redux/actions/_actions';
@@ -127,7 +127,6 @@ export default function ExportKeystoreModal() {
             </Modal.Actions>
 
         </Modal>
-
     )
 
 }
