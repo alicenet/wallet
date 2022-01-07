@@ -43,7 +43,7 @@ export default function RecentTxs({ wallet }) {
     }
 
     const handleCopy = (tx) => {
-        copy(tx["Tx"]["Vin"][0]["TXInLinker"].TxHash, {message: 'Press #{key} to copy'})
+        copy(tx["Tx"]["Vin"][0]["TXInLinker"].TxHash)
         toast.success(<SyncToastMessageSuccess basic title="Success" message="TX Hash copied"/>, { className: "basic", "autoClose": 2400 })
     }
 
