@@ -7,6 +7,8 @@ import { ADAPTER_ACTIONS } from 'redux/actions/_actions';
 import { Button, Icon, Loader, Popup, Segment, Table } from 'semantic-ui-react';
 import utils, { stringUtils } from 'util/_util';
 import copy from 'copy-to-clipboard';
+import { toast } from 'react-toastify';
+import { SyncToastMessageSuccess } from 'components/customToasts/CustomToasts'
 
 export default function RecentTxs({ wallet }) {
 
@@ -40,6 +42,11 @@ export default function RecentTxs({ wallet }) {
         })
     }
 
+    const handleCopy = (tx) => {
+        copy(tx["Tx"]["Vin"][0]["TXInLinker"].TxHash, {message: 'Press #{key} to copy'})
+        toast.success(<SyncToastMessageSuccess basic title="Success" message="TX Hash copied"/>, { className: "basic", "autoClose": 2400 })
+    }
+
     React.useEffect(() => {
         // If the wallet flips, cancel loading module, allow it to happen in the bg for the last wallet(s)
         setFetchLoading(false);
@@ -67,7 +74,7 @@ export default function RecentTxs({ wallet }) {
             return (<Table.Row className="">
                 <Popup
                     trigger={
-                        <Table.Cell className="cursor-pointer hover:bg-gray-100" onClick={() => copy(tx["Tx"]["Vin"][0]["TXInLinker"].TxHash, {message: 'Press #{key} to copy'})}>
+                        <Table.Cell className="cursor-pointer hover:bg-gray-100" onClick={() => handleCopy(tx)}>
                             {stringUtils.splitStringWithEllipsis(tx["Tx"]["Vin"][0]["TXInLinker"].TxHash, "10")}
                         </Table.Cell>
                     }
