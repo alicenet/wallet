@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useFormState } from 'hooks/_hooks';
 import { Checkbox, Form, Header, Icon, Message, Popup } from 'semantic-ui-react';
 
-import { walletUtils } from 'util/_util';
+import utils, { walletUtils } from 'util/_util';
 import { curveTypes } from 'util/wallet';
 import { default_log as log } from 'log/logHelper'
 import { isDebug } from 'util/generic';
@@ -29,6 +29,7 @@ export default function ImportPrivateKeyForm({ submitText, submitFunction, cance
     const verifyPrivKey = async () => {
         setLoading(true);
         try {
+            await utils.generic.waitFor(10); // I have no idea why this works, but component won't render loader without it. INVESTIGATE IF YOU WISH -- Ask Adam for Theories -- I will dig more when time
             // Passback a temporarily wrapped keystore for simplicity with password ""
             let ks = await walletUtils.generateKeystoreFromPrivK(formState.privateKey.value, "", curveType)
             setError(false);
