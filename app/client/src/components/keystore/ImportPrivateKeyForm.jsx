@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useFormState } from 'hooks/_hooks';
 import { Checkbox, Form, Header, Icon, Message, Popup } from 'semantic-ui-react';
 
-import utils, { walletUtils } from 'util/_util';
+import { walletUtils } from 'util/_util';
 import { curveTypes } from 'util/wallet';
 import { default_log as log } from 'log/logHelper'
 import { isDebug } from 'util/generic';
@@ -21,35 +21,54 @@ export default function ImportPrivateKeyForm({ submitText, submitFunction, cance
     ]);
 
     const [error, setError] = useState(false);
+    const [ks, setKS] = useState(null);
     const [success] = useState(false);
     const [loading, setLoading] = useState(false);
     const [curveType, setCurveType] = useState(curveTypes.SECP256K1);
     const toggleCurveType = () => setCurveType(s => s === curveTypes.SECP256K1 ? curveTypes.BARRETO_NAEHRIG : curveTypes.SECP256K1)
 
     const verifyPrivKey = async () => {
-        setLoading(true);
         try {
-            await utils.generic.waitFor(10); // I have no idea why this works, but component won't render loader without it. INVESTIGATE IF YOU WISH -- Ask Adam for Theories -- I will dig more when time
-            // Passback a temporarily wrapped keystore for simplicity with password ""
-            let ks = await walletUtils.generateKeystoreFromPrivK(formState.privateKey.value, "", curveType)
-            setError(false);
-            submitFunction({
-                locked: ks,
-                password: "",
-                walletName: formState.walletName.value,
-                success: true,
-                error: false,
-            });
+            const generatedKS = await walletUtils.generateKeystoreFromPrivK(formState.privateKey.value, "", curveType);
+            setKS(generatedKS);
         } catch (ex) {
             log.error(ex);
             setError(ex.message);
         }
-        setLoading(false);
     }
+
+    useEffect(() => {
+        async function triggerVerifyPrivKey() {
+            await verifyPrivKey();
+        }
+
+        if (loading) {
+            setKS(null);
+            setError(false);
+            triggerVerifyPrivKey();
+        }
+    }, [loading]);
+
+    useEffect(() => {
+        if (ks) {
+            if (!error) {
+                submitFunction({
+                    locked: ks,
+                    password: "",
+                    walletName: formState.walletName.value,
+                    success: true,
+                    error: false,
+                });
+            }
+            else {
+                setLoading(false);
+            }
+        }
+    }, [ks, error, submitFunction]);
 
     return (
 
-        <Form error={error} size="mini" className="max-w-md w-72 text-left" onSubmit={() => onSubmit(verifyPrivKey)}>
+        <Form error={error} size="mini" className="max-w-md w-72 text-left" onSubmit={() => onSubmit(() => setLoading(true))}>
 
             {!hideTitle && (
                 <Header as="h4" textAlign="center">Load A Keystore</Header>
@@ -110,7 +129,7 @@ export default function ImportPrivateKeyForm({ submitText, submitFunction, cance
                 basic
                 loading={loading}
                 className="mt-16"
-                onClick={() => onSubmit(verifyPrivKey)}
+                onClick={() => onSubmit(() => setLoading(true))}
                 color={error ? "red" : "green"}
                 disabled={success}
                 content={error ? "Try Again" : success ? "Success" : submitText || "Add Wallet"}
