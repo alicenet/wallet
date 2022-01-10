@@ -81,7 +81,7 @@ function CreateAKeystore() {
                     ) : (
                         <>
 
-                            <p>Please select a password to secure your keystore and act as a general administrative password.</p>
+                            <p>Please select a password to secure your keystore.</p>
 
                             <p>The keystore password will be used to lock your keystore. You will need it to load this wallet again.</p>
 
