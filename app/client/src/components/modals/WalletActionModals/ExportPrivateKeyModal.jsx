@@ -1,8 +1,7 @@
-import React from 'react';
-import { Modal, Header, Form, Icon, Button, Placeholder } from 'semantic-ui-react'
-import { useSelector } from 'react-redux'
+import React, { useEffect, useState } from 'react';
+import { Button, Form, Header, Icon, Modal, Placeholder } from 'semantic-ui-react'
+import { useDispatch, useSelector } from 'react-redux'
 import { stringUtils } from 'util/_util'
-import { useDispatch } from 'react-redux';
 import { MODAL_ACTIONS } from 'redux/actions/_actions';
 import { electronStoreCommonActions } from 'store/electronStoreHelper';
 import copy from 'copy-to-clipboard';
@@ -11,21 +10,20 @@ export default function ExportPrivateKeyModal() {
 
     const dispatch = useDispatch()
 
-    const { isOpen, targetWallet, vaultExists } = useSelector(s => ({
+    const { isOpen, targetWallet } = useSelector(s => ({
         isOpen: s.modal.export_privK_modal,
         targetWallet: s.modal.wallet_action_target,
-        vaultExists: s.vault.exists,
     }))
 
-    const [password, setPassword] = React.useState({ value: "", error: "" });
-    const [showPass, setShowPass] = React.useState(false);
-    const [keyVisible, setKeyVisible] = React.useState(false);
+    const [password, setPassword] = useState({ value: "", error: "" });
+    const [showPass, setShowPass] = useState(false);
+    const [keyVisible, setKeyVisible] = useState(false);
 
-    const [visibleTime, setVisibleTime] = React.useState(0);
-    const [copyClick, setCopyClick] = React.useState(0);
+    const [visibleTime, setVisibleTime] = useState(0);
+    const [copyClick, setCopyClick] = useState(0);
 
     // Countdown for visibility
-    React.useEffect(() => {
+    useEffect(() => {
         if (visibleTime !== 0 && visibleTime > 0 && visibleTime < 15) {
             setTimeout(() => {
                 setVisibleTime(s => s - 1)
@@ -34,7 +32,7 @@ export default function ExportPrivateKeyModal() {
     }, [visibleTime])
 
     // Clear on open changes
-    React.useEffect(() => {
+    useEffect(() => {
         setKeyVisible(false);
         setVisibleTime(0);
         setPassword("");
@@ -82,11 +80,12 @@ export default function ExportPrivateKeyModal() {
             </Modal.Header>
 
             <Modal.Content className="text-sm">
+
                 <p>
                     Showing your private key is considered an administrative action.
                 </p>
                 <p>
-                    Please provide your {vaultExists ? "vault" : "administrative"} password below to show your private key for 15 seconds.
+                    Please provide your vault password below to show your private key for 15 seconds.
                 </p>
 
                 <div className="mt-2">
@@ -98,28 +97,48 @@ export default function ExportPrivateKeyModal() {
                 </div>
 
                 {keyVisible ? (<div className="h-10 flex items-center cursor-pointer hover:text-gray-600" onClick={copyPkey}>
-                    {targetWallet.privK}
-                    <Icon name="copy outline" className="ml-1 mb-2 cursor-pointer" />
-                    {!!copyClick && (
-                        <div className="relative inline text-xs mb-2 text-gray-500">
-                            Copied to clipboard!
-                        </div>
-                    )}
-                </div>) :
+                        {targetWallet.privK}
+                        <Icon name="copy outline" className="ml-1 mb-2 cursor-pointer"/>
+                        {!!copyClick && (
+                            <div className="relative inline text-xs mb-2 text-gray-500">
+                                Copied to clipboard!
+                            </div>
+                        )}
+                    </div>) :
                     <Placeholder className="h-10">
-                        <Placeholder.Line />
+                        <Placeholder.Line/>
                     </Placeholder>
                 }
 
-                <Form error={!!password.error} size="small" className="mt-2" onSubmit={(e) => { e.preventDefault(); showKey(); }}>
+                <Form
+                    error={!!password.error}
+                    size="small"
+                    className="mt-2"
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        showKey();
+                    }}
+                >
 
                     <Form.Group>
 
-                        <Form.Input width={6} type={showPass ? "text" : "password"} size="small" label={(vaultExists ? "Vault " : "Admin ") + "Password"} placeholder="Password"
+                        <Form.Input
+                            width={6}
+                            type={showPass ? "text" : "password"}
+                            size="small"
+                            label="Vault Password"
+                            placeholder="Password"
                             value={password.value}
                             onChange={e => setPassword({ value: e.target.value })}
                             error={!!password.error && { content: password.error }}
-                            icon={<Icon color={keyVisible ? "green" : "black"} name={keyVisible ? "thumbs up" : showPass ? "eye" : "eye slash"} link onClick={keyVisible ? null : () => setShowPass(s => !s)}/>}
+                            icon={
+                                <Icon
+                                    color={keyVisible ? "green" : "black"}
+                                    name={keyVisible ? "thumbs up" : showPass ? "eye" : "eye slash"}
+                                    link
+                                    onClick={keyVisible ? null : () => setShowPass(s => !s)}
+                                />
+                            }
                         />
 
                     </Form.Group>
@@ -131,8 +150,15 @@ export default function ExportPrivateKeyModal() {
             <Modal.Actions>
 
                 <div className="flex justify-between">
-                    <Button size="small" color="orange" content="Close" onClick={closeModal} basic />
-                    <Button size="small" content={password.error ? "Try Again" : "Show Key"} disabled={visibleTime !== 0} color={password.error ? "red" : "purple"} basic onClick={showKey} />
+                    <Button size="small" color="orange" content="Close" onClick={closeModal} basic/>
+                    <Button
+                        size="small"
+                        content={password.error ? "Try Again" : "Show Key"}
+                        disabled={visibleTime !== 0}
+                        color={password.error ? "red" : "purple"}
+                        basic
+                        onClick={showKey}
+                    />
                 </div>
 
             </Modal.Actions>
