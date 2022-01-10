@@ -59,28 +59,29 @@ function CreateAKeystore() {
 
                 <Grid.Column width={16} className="p-0 text-sm self-center">
 
-                    {keystore ? (<div className="flex flex-col items-center justify-center">
+                    {keystore ? (
+                        <div className="flex flex-col items-center justify-center">
 
-                        <p>Alright, this is the last step! </p>
-                        <p>We just need a name to reference this keystore by</p>
+                            <p>Alright, this is the last step! </p>
+                            <p>We just need a name to reference this keystore by</p>
 
-                        <Form size="mini" className="w-60 mt-12 mini-error-form">
-                            <Form.Input
-                                className="text-left"
-                                value={formState.name.value}
-                                onChange={e => formSetter.setName(e.target.value)}
-                                label="Wallet Name"
-                                placeholder="My New Keystore"
-                                error={!!loadError && { content: loadError }}
-                            />
-                            <Form.Button color="green" basic content="Confirm Name" className="mt-16" fluid onClick={dispatchWalletUpdate}/>
-                        </Form>
+                            <Form size="mini" className="w-60 mt-12 mini-error-form">
+                                <Form.Input
+                                    className="text-left"
+                                    value={formState.name.value}
+                                    onChange={e => formSetter.setName(e.target.value)}
+                                    label="Wallet Name"
+                                    placeholder="My New Keystore"
+                                    error={!!loadError && { content: loadError }}
+                                />
+                                <Form.Button color="green" basic content="Confirm Name" className="mt-16" fluid onClick={dispatchWalletUpdate}/>
+                            </Form>
 
-
-                    </div>) : (
+                        </div>
+                    ) : (
                         <>
 
-                            <p>Please select a password to secure your keystore and act as a general administration password.</p>
+                            <p>Please select a password to secure your keystore and act as a general administrative password.</p>
 
                             <p>The keystore password will be used to lock your keystore. You will need it to load this wallet again.</p>
 
@@ -88,7 +89,6 @@ function CreateAKeystore() {
 
                         </>
                     )}
-
 
                 </Grid.Column>
 

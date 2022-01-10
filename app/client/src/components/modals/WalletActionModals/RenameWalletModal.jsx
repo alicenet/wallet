@@ -11,10 +11,9 @@ export default function RenameWalletModal() {
 
     const dispatch = useDispatch()
 
-    const { vaultExists, isOpen, targetWallet } = useSelector(s => ({
+    const { isOpen, targetWallet } = useSelector(s => ({
         isOpen: s.modal.rename_wallet_modal,
         targetWallet: s.modal.wallet_action_target,
-        vaultExists: s.vault.exists,
     }));
 
     const [formState, formSetter, onSubmit] = useFormState([
@@ -65,11 +64,12 @@ export default function RenameWalletModal() {
             </Modal.Header>
 
             <Modal.Content className="text-sm">
+
                 <p>
                     Renaming your wallet is considered an administrative action.
                 </p>
                 <p>
-                    Please provide your {vaultExists ? "vault" : "administrative"} password and desired wallet name below
+                    Please provide your vault password and desired wallet name below.
                 </p>
 
                 <Form
@@ -97,7 +97,7 @@ export default function RenameWalletModal() {
                             width={6}
                             type="password"
                             size="small"
-                            label={(vaultExists ? "Vault " : "Admin ") + "Password"}
+                            label="Vault Password"
                             placeholder="Password"
                             value={formState.password.value}
                             onChange={e => formSetter.setPassword(e.target.value)}
