@@ -11,8 +11,8 @@ export default function AddWalletMenu() {
     const { vaultExists } = useSelector(state => ({ vaultExists: state.vault.exists }))
 
     let walletButtons = [
-        { content: "Import Keystore", icon: "download", onClick: () => history.push('/addWallet/importKeystore') },
         { content: "Generate Keystore", icon: "plus", onClick: () => history.push('/addWallet/generateKeystore') },
+        { content: "Import Keystore", icon: "download", onClick: () => history.push('/addWallet/importKeystore') },
         { content: "Import Private Key", icon: "download", onClick: () => history.push('/addWallet/importPrivateKey') },
         { content: "Go Back", icon: "arrow left", onClick: () => history.push('/hub'), color: "orange" },
     ]
