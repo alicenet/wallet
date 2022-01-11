@@ -26,7 +26,8 @@ export default function GenerateKeystoreForm(
 ) {
     const [formState, formSetter, onSubmit] = useFormState([
         { name: 'password', type: 'password', value: defaultPassword, isRequired: true },
-        { name: 'verifiedPassword', display: 'Verify Password', type: 'verified-password', isRequired: true }
+        { name: 'verifiedPassword', display: 'Verify Password', type: 'verified-password', isRequired: true },
+        { name: 'walletName', type: 'string', isRequired: true },
     ]);
     const [showPassword, setShowPassword] = React.useState(false);
     const [keystoreDL, setKeystoreDL] = React.useState(false);
@@ -41,7 +42,7 @@ export default function GenerateKeystoreForm(
         fr.onload = (res) => {
             let ksJSON = JSON.parse(res.target.result);
             if (submitFunction) {
-                submitFunction(ksJSON, formState.password.value);
+                submitFunction(ksJSON, formState.password.value, formState.walletName.value);
             }
         }
     }
@@ -70,6 +71,26 @@ export default function GenerateKeystoreForm(
             <Form size="mini" className="max-w-lg" onSubmit={e => e.preventDefault()}>
 
                 {!hideTitle && <Header as="h4">{customTitle}</Header>}
+
+                <Form.Input
+                        label={
+                            <>
+                                <label className="inline text-left">Wallet Name</label>
+                                <Popup
+                                    size="mini"
+                                    position="right center"
+                                    offset={"4,2"}
+                                    trigger={
+                                        <Icon name="question circle" className="ml-1" />
+                                    }
+                                    content="How this wallet will be referenced"
+                                />
+                            </>
+                        }
+                        type="text" value={formState.walletName.value}
+                        onChange={e => formSetter.setWalletName(e.target.value)}
+                        error={!!formState.walletName.error && { content: formState.walletName.error }}
+                    />
 
                 <Form.Group widths="equal">
 
@@ -132,6 +153,26 @@ export default function GenerateKeystoreForm(
         <Form size="mini" className="w-96 mb-12 mini-error-form text-left">
 
             {!hideTitle && <Header as="h4">{customTitle}</Header>}
+
+            <Form.Input
+                label={
+                    <>
+                        <label className="inline text-left">Wallet Name</label>
+                        <Popup
+                            size="mini"
+                            position="right center"
+                            offset={"4,2"}
+                            trigger={
+                                <Icon name="question circle" className="ml-1" />
+                            }
+                            content="How this wallet will be referenced"
+                        />
+                    </>
+                }
+                type="text" value={formState.walletName.value}
+                onChange={e => formSetter.setWalletName(e.target.value)}
+                error={!!formState.walletName.error && { content: formState.walletName.error }}
+            />
 
             <Form.Input
                 size="small"

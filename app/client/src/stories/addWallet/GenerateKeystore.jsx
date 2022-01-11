@@ -1,22 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Grid, Header, Message } from 'semantic-ui-react'
 import { useHistory } from 'react-router-dom';
-
+import { useDispatch } from 'react-redux';
 import GenerateKeystoreForm from 'components/keystore/GenerateKeystoreForm';
 import Page from 'layout/Page';
+import { VAULT_ACTIONS } from 'redux/actions/_actions';
+import { default_log as log } from 'log/logHelper';
 
 export default function GenerateKeystore() {
 
     const history = useHistory();
-
+    const dispatch = useDispatch();
+    
     const [success, setSuccess] = useState(false);
+    const [error, setError] = useState(false);
+    const [results, setResult] = useState(false);
 
-    const loadKeystore = async (results) => {
+    const loadKeystore = async (results, password, name) => {
         if (results.error) { return } // Error handled internally of form
         else {
+            let added = await dispatch(VAULT_ACTIONS.addExternalWalletToState(results, password, name));
+            if (added.error) {
+                log.error(added.error);
+                return setError(added.error);
+            }
+            setResult(results);
             setSuccess(true);
         }
     }
+
+    useEffect(() => {
+        if(success){
+            history.push("/hub", {
+                toLoad: results,
+            })
+        }
+    }, [success, results, history])
 
     return (
         <Page showNetworkStatus>
@@ -46,6 +65,12 @@ export default function GenerateKeystore() {
                         {success && (
                             <div className="absolute -bottom-16 inset-center">
                                 <Message success content="Keystore loaded" size="mini"/>
+                            </div>
+                        )}
+
+                        {error && (
+                            <div className="absolute -bottom-16 inset-center">
+                                <Message error content={error} size="mini"/>
                             </div>
                         )}
 
