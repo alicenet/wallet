@@ -76,6 +76,7 @@ function App() {
                 <Route exact path="/addWallet/importKeystore" component={AddWallet.ImportKeystore}/>
                 <Route exact path="/addWallet/importPrivateKey" component={AddWallet.ImportPrivateKey}/>
                 <Route exact path="/addWallet/verify" component={AddWallet.VerifyImport}/>
+                <Route exact path="/addWallet/generateKeystore" component={AddWallet.GenerateKeystore}/>
 
                 {/* Construct Hub */}
                 <RedirectIfLocked>

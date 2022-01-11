@@ -187,12 +187,10 @@ export default function GenerateKeystoreForm(
                 }}
             />
 
+            <Form.Button fluid size="small" basic content={cancelText} color="orange" onClick={cancelFunction} icon="x"/>
+            <Form.Button fluid size="small" disabled={!keystoreDL} color="green" basic content={submitText} onClick={loadKeystore} icon="thumbs up"/>
+        
         </Form>
-
-        <div className="flex justify-between mt-12 w-96">
-            <Form.Button basic content={cancelText} color="orange" onClick={cancelFunction} icon="x"/>
-            <Form.Button disabled={!keystoreDL} color="green" basic content={submitText} onClick={loadKeystore} icon="thumbs up"/>
-        </div>
 
     </>)
 
