@@ -6,7 +6,7 @@ import { VAULT_ACTIONS } from 'redux/actions/_actions';
 import { default_log as log } from 'log/logHelper';
 
 import MadWalletJs from 'madwalletjs';
-import { walletUtils } from 'util/_util';
+import utils, { walletUtils } from 'util/_util';
 import { curveTypes } from 'util/wallet';
 import Page from 'layout/Page';
 
@@ -62,7 +62,8 @@ export default function VerifyImport() {
 
     const verify = async () => {
         setVerifyLoading(true);
-
+        
+        await utils.generic.waitFor(0); // See ImportPrivateKey.jsx comment for why this works.
         let added = await dispatch(VAULT_ACTIONS.addExternalWalletToState(toLoad.locked, toLoad.password, toLoad.walletName));
 
         setVerifyLoading(false);
