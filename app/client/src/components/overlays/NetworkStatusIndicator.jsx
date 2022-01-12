@@ -187,7 +187,7 @@ export default function NetworkStatusIndicator() {
                                 required
                                 value={formState.RegistryContractAddress.value}
                                 onChange={e => formSetter.setRegistryContractAddress(e.target.value)}
-                                error={(!!formState.RegistryContractAddress.error && { content: formState.RegistryContractAddress.error }) || !!registryContractError && {content: registryContractError}}
+                                error={(!!formState.RegistryContractAddress.error && { content: formState.RegistryContractAddress.error }) || (!!registryContractError && {content: registryContractError})}
                             />
 
                         </Form>
