@@ -48,7 +48,11 @@ function reinstanceMadWallet() {
  * @param { Integer } curve - Curve to use
  * @param { String } name - Wallet Name
  * */
-function _walletArrayStructure(pKey, curve, name, address = "") {
+async function _walletArrayStructure(pKey, curve, name, address = "") {
+    // If no address passed, shim it for checks that may rely on it
+    if (!address) {
+        address = curve === curveTypes.SECP256K1 ? await util.wallet.getSecp256k1FromPrivKey(pKey) : await util.wallet.getBNfromPrivKey(pKey);
+    }
     return [pKey, curve, name, address];
 }
 
@@ -58,7 +62,7 @@ function _walletArrayStructure(pKey, curve, name, address = "") {
  * @returns { Array } [isDone?, [array of errors] ]
  */
 function initMadWallet(initPayload, dispatch) {
-    return new Promise(res => {
+    return new Promise(async res => {
         log.debug("Initiating MadWallet Instance & Synchronizing to Redux State. . .")
         // Extract all wallets from payload and add to MadWallet.Accounts
         let internalAccountAdds = []; // Internal HD Accounts
@@ -66,10 +70,10 @@ function initMadWallet(initPayload, dispatch) {
         for (let walletType in initPayload.wallets) {
             for (let wallet of initPayload.wallets[walletType]) {
                 if (walletType === "internal") {
-                    internalAccountAdds.push(_walletArrayStructure(wallet.privK, wallet.curve, wallet.name, wallet.address));
+                    internalAccountAdds.push(await _walletArrayStructure(wallet.privK, wallet.curve, wallet.name, wallet.address));
                 }
                 else { // else, is an external wallet
-                    externalAccountAdds.push(_walletArrayStructure(wallet.privK, wallet.curve, wallet.name, wallet.address));
+                    externalAccountAdds.push(await _walletArrayStructure(wallet.privK, wallet.curve, wallet.name, wallet.address));
                 }
             }
         }
@@ -146,7 +150,7 @@ function addWalletFromKeystore(keystore, walletName, dispatch, getState) {
             await madWallet.Account.addAccount(pKey, curve);
             // Balance the wallet state to redux with the wallet name
             let address = curve === curveTypes.BARRETO_NAEHRIG ? await utils.wallet.getBNfromPrivKey(pKey) : await utils.wallet.getSecp256k1FromPrivKey(pKey);
-            let externalAdds = [_walletArrayStructure(util.wallet.strip0x(pKey), curve, walletName, address)];
+            let externalAdds = [await _walletArrayStructure(util.wallet.strip0x(pKey), curve, walletName, address)];
             let balancedState = await buildBalancedWalletState([], externalAdds);
             res(balancedState)
         } catch (ex) {
@@ -177,12 +181,12 @@ function addNextHDWallet(storeAPI, walletName) {
         // Derrive the next path from the HD Chain retrieved from the mnemonic
         let nextHdWallet = await utils.wallet.streamLineHDWalletNodeFromMnemonic(mnemonic, nextDerrivationPath);
         // Generate internal wallet object
-        let walletObj = utils.wallet.generateBasicWalletObject(walletName, nextHdWallet.privateKey.toString('hex'), desiredCurve);
+        let walletObj = await utils.wallet.generateBasicWalletObject(walletName, nextHdWallet.privateKey.toString('hex'), desiredCurve);
         // Add the private key to the MadWalletJS instance
         try {
             await madWallet.Account.addAccount(walletObj.privK, walletObj.curve);
             // Balance the wallet state to redux with the wallet name
-            let internalAdds = [_walletArrayStructure(util.wallet.strip0x(walletObj.privK), walletObj.curve, walletObj.name)];
+            let internalAdds = [await _walletArrayStructure(util.wallet.strip0x(walletObj.privK), walletObj.curve, walletObj.name)];
             let balancedState = await buildBalancedWalletState(internalAdds, []);
             res(balancedState)
         } catch (ex) {
