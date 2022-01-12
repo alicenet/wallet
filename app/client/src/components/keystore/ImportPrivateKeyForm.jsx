@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useFormState } from 'hooks/_hooks';
 import { Checkbox, Form, Header, Icon, Message, Popup } from 'semantic-ui-react';
 
-import utils, { walletUtils } from 'util/_util';
+import { walletUtils } from 'util/_util';
 import { curveTypes } from 'util/wallet';
 import { default_log as log } from 'log/logHelper'
 import { isDebug } from 'util/generic';
@@ -21,53 +21,34 @@ export default function ImportPrivateKeyForm({ submitText, submitFunction, cance
     ]);
 
     const [error, setError] = useState(false);
-    const [ks, setKS] = useState(null);
     const [success] = useState(false);
     const [loading, setLoading] = useState(false);
     const [curveType, setCurveType] = useState(curveTypes.SECP256K1);
     const toggleCurveType = () => setCurveType(s => s === curveTypes.SECP256K1 ? curveTypes.BARRETO_NAEHRIG : curveTypes.SECP256K1)
 
-    const submit = () => {
-        onSubmit( async () => {
-            setLoading(true);
-            await utils.generic.waitFor(0); // Frees thread long enough for loader ui render to propagate. 
-            // The next function eventually calls a low nested syncronously blocking loop that prevents the render, this await will alow it to catch.
-            // It is known this is wonky, and we all hate it, but many calls in the depedency chain have yet to be promisified
-            verifyPrivKey();
-        });
-    }
-
     const verifyPrivKey = async () => {
+        setLoading(true);
         try {
-            const generatedKS = await walletUtils.generateKeystoreFromPrivK(formState.privateKey.value, "", curveType);
-            setKS(generatedKS);
+            // Passback a temporarily wrapped keystore for simplicity with password ""
+            let ks = await walletUtils.generateKeystoreFromPrivK(formState.privateKey.value, "", curveType)
             setError(false);
+            submitFunction({
+                locked: ks,
+                password: "",
+                walletName: formState.walletName.value,
+                success: true,
+                error: false,
+            });
         } catch (ex) {
             log.error(ex);
-            setLoading(false);
             setError(ex.message);
         }
+        setLoading(false);
     }
-
-    useEffect(() => {
-        if (ks) {
-            if (!error) {
-                submitFunction({
-                    locked: ks,
-                    password: "",
-                    walletName: formState.walletName.value,
-                    success: true,
-                    error: false,
-                });
-            } else {
-                setLoading(false);
-            }
-        }
-    }, [ks, error, submitFunction, formState.walletName.value]);
 
     return (
 
-        <Form error={error} size="mini" className="max-w-md w-72 text-left" onSubmit={() => onSubmit(() => setLoading(true))}>
+        <Form error={error} size="mini" className="max-w-md w-72 text-left" onSubmit={() => onSubmit(verifyPrivKey)}>
 
             {!hideTitle && (
                 <Header as="h4" textAlign="center">Load A Keystore</Header>
@@ -91,8 +72,8 @@ export default function ImportPrivateKeyForm({ submitText, submitFunction, cance
                                         size="mini"
                                         position="right center"
                                         offset={"0,2"}
-                                        trigger={<Icon name="question circle" className="ml-1 mb-1.5" style={{ marginRight: "-.035rem" }} />}
-                                        content="Generate public address with BN Curve" />
+                                        trigger={<Icon name="question circle" className="ml-1 mb-1.5" style={{ marginRight: "-.035rem" }}/>}
+                                        content="Generate public address with BN Curve"/>
                                 </>
                             }
                             className="flex justify-center items-center text-xs uppercase font-bold relative top-0"
@@ -111,7 +92,7 @@ export default function ImportPrivateKeyForm({ submitText, submitFunction, cance
                             position="right center"
                             offset={"4,2"}
                             trigger={
-                                <Icon name="question circle" className="ml-1" />
+                                <Icon name="question circle" className="ml-1"/>
                             }
                             content="How this wallet will be referenced"
                         />
@@ -128,7 +109,7 @@ export default function ImportPrivateKeyForm({ submitText, submitFunction, cance
                 basic
                 loading={loading}
                 className="mt-16"
-                onClick={submit}
+                onClick={() => onSubmit(verifyPrivKey)}
                 color={error ? "red" : "green"}
                 disabled={success}
                 content={error ? "Try Again" : success ? "Success" : submitText || "Add Wallet"}

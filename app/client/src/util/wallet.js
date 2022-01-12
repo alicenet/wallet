@@ -280,7 +280,7 @@ export async function getSecp256k1FromPrivKey(privK) {
 
 /**
  * Return the barreto-naehrig derived public key for a given private key
- * @returns {Promise<String>} - barreto-naehrig derived public key string
+ * @returns {String} - barreto-naehrig derived public key string
  */
 export async function getBNfromPrivKey(privK) {
     let walletInstance = new MadNetWalletJS();
