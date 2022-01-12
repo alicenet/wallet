@@ -49,7 +49,7 @@ function reinstanceMadWallet() {
  * @param { String } name - Wallet Name
  * */
 async function _walletArrayStructure(pKey, curve, name, address = "") {
-    // If no address passed, shim it for checks
+    // If no address passed, shim it for checks that may rely on it
     if (!address) {
         address = curve === curveTypes.SECP256K1 ? await util.wallet.getSecp256k1FromPrivKey(pKey) : await util.wallet.getBNfromPrivKey(pKey);
     }
