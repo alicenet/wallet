@@ -60,14 +60,27 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
         onClose();
     };
 
-    useEffect(()=>{
+    useEffect(() => {
         const calculateFee = async () => {
-            const fee = await madWallet.Transaction.Utils.calculateFee(fees.totalFee, formState.Duration.value)
-            setCalculatedFee(fee)
+            try{
+                if(formState.Duration.value && formState.Value.value){                
+                    const dataStoreFee = await madWallet.Transaction.Utils.calculateFee(fees.dataStoreFee, formState.Duration.value);
+                    const depositFee = await madWallet.Transaction.Utils.calculateDeposit(formState.Value.value, formState.Duration.value);
+                    
+                    // eslint-disable-next-line no-undef
+                    const totalStoreCost = BigInt(dataStoreFee) + BigInt(depositFee) + BigInt(fees.dataStoreFee)
+                    setCalculatedFee(totalStoreCost);
+                }
+            }catch(error){
+                console.log(error)
+                setCalculatedFee(0);
+            }
         }
-        calculateFee()
+        calculateFee();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    },[fees, formState.Duration.value])
+    },[fees, formState.Duration.value, formState.Value.value]);
+
+    const totalStoreCostLabel = calculatedFee ? `Total Store Cost: ${calculatedFee} ${utils.string.pluralStringCheck("MadByte", calculatedFee > 1)}` : ''
 
     return (
         <Modal
@@ -163,7 +176,7 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
                 <Button color="orange" className="m-0" basic onClick={onClose} content="Close" />
 
                 <div className="flex flex-column justify-center items-center text-sm">
-                    {calculatedFee && `Total Store Cost: ${calculatedFee}`}
+                    {totalStoreCostLabel}
                 </div>
 
                 <Button
