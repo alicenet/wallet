@@ -11,6 +11,7 @@ import shuffle from 'lodash/shuffle';
 
 import Page from '../../layout/Page';
 import { isDebug } from 'util/generic';
+import { isEqual } from 'lodash';
 
 function VerifyYourSeedPhrase() {
 
@@ -37,7 +38,7 @@ function VerifyYourSeedPhrase() {
     }, [seedPhraseIsCorrect]);
 
     React.useEffect(() => {
-        setSeedPhraseIsCorrect(chosenPhrase.length === 12);
+        setSeedPhraseIsCorrect(isDebug ? chosenPhrase.length === 12 : isEqual(chosenPhrase, seedPhrase.split(" ")));
     }, [chosenPhrase]);
 
     const handlePhraseClick = (word, index) => {
