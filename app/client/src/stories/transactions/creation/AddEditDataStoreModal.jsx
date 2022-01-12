@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Form, Grid, Header, Icon, Modal } from 'semantic-ui-react';
 import { useFormState } from 'hooks/_hooks';
 import { useDispatch, useSelector } from 'react-redux';
@@ -6,8 +6,13 @@ import has from 'lodash/has';
 
 import { TRANSACTION_ACTIONS } from 'redux/actions/_actions';
 import utils, { transactionTypes } from 'util/_util';
+import { getMadWalletInstance } from "redux/middleware/WalletManagerMiddleware";
 
 export default function AddEditDataStoreModal({ dataStore, onClose }) {
+
+    let madWallet = getMadWalletInstance();
+
+    const [calculatedFee, setCalculatedFee] = useState(0);
 
     const dispatch = useDispatch();
 
@@ -54,6 +59,15 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
         }
         onClose();
     };
+
+    useEffect(()=>{
+        const calculateFee = async () => {
+            const fee = await madWallet.Transaction.Utils.calculateFee(fees.totalFee, formState.Duration.value)
+            setCalculatedFee(fee)
+        }
+        calculateFee()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[fees, formState.Duration.value])
 
     return (
         <Modal
@@ -149,7 +163,7 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
                 <Button color="orange" className="m-0" basic onClick={onClose} content="Close" />
 
                 <div className="flex flex-column justify-center items-center text-sm">
-                    Total Store Cost: 
+                    {calculatedFee && `Total Store Cost: ${calculatedFee}`}
                 </div>
 
                 <Button
