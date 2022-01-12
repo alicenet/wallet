@@ -67,7 +67,7 @@ export default function ImportPrivateKeyForm({ submitText, submitFunction, cance
 
     return (
 
-        <Form error={error} size="mini" className="max-w-md w-72 text-left" onSubmit={() => onSubmit(() => setLoading(true))}>
+        <Form error={error} size="mini" className="max-w-md w-72 text-left" onSubmit={submit}>
 
             {!hideTitle && (
                 <Header as="h4" textAlign="center">Load A Keystore</Header>
