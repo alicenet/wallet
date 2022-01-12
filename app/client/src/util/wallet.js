@@ -270,7 +270,7 @@ export function getVaultWalletByAddress(address) {
 
 /**
  * Return the secp256k1 derived public key for a given private key
- * @returns {String} - secp256k1 derived public key string
+ * @returns {Promise<String>} - secp256k1 derived public key string
  */
 export async function getSecp256k1FromPrivKey(privK) {
     let walletInstance = new MadNetWalletJS();
@@ -280,7 +280,7 @@ export async function getSecp256k1FromPrivKey(privK) {
 
 /**
  * Return the barreto-naehrig derived public key for a given private key
- * @returns {String} - barreto-naehrig derived public key string
+ * @returns {Promise<String>} - barreto-naehrig derived public key string
  */
 export async function getBNfromPrivKey(privK) {
     let walletInstance = new MadNetWalletJS();
