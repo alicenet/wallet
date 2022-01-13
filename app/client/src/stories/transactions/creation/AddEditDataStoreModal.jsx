@@ -12,6 +12,7 @@ import { getMadWalletInstance } from "redux/middleware/WalletManagerMiddleware";
 export default function AddEditDataStoreModal({ dataStore, onClose }) {
 
     const [calculatedFee, setCalculatedFee] = useState(0);
+    const [error, setError] = useState('')
 
     const dispatch = useDispatch();
 
@@ -62,8 +63,9 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
     useEffect(() => {
         const calculateFee = async () => {
             try{
-                if(formState.Duration.value && formState.Value.value){  
-                    let madWallet = getMadWalletInstance();              
+                setError('');
+                if(formState.Duration.value && formState.Value.value){
+                    let madWallet = getMadWalletInstance();
                     const dataStoreFee = await madWallet.Transaction.Utils.calculateFee(fees.dataStoreFee, formState.Duration.value);
                     let rawValue = Buffer(formState.Value.value).toString('hex');
                     const depositFee = await madWallet.Transaction.Utils.calculateDeposit(rawValue, formState.Duration.value);
@@ -72,6 +74,7 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
                 }
             }catch(error){
                 console.log(error)
+                setError('Could not calculate cost, please check your inputs')
                 setCalculatedFee(0);
             }
         }
@@ -79,7 +82,7 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
 
     },[fees, formState.Duration.value, formState.Value.value]);
 
-    const totalStoreCostLabel = calculatedFee ? `Total Store Cost: ${calculatedFee} ${utils.string.pluralStringCheck("MadByte", calculatedFee > 1)}` : ''
+    const totalStoreCostLabel = calculatedFee ? `Add Datastore for ${calculatedFee} ${utils.string.pluralStringCheck("MadByte", calculatedFee > 1)}` : ''
 
     return (
         <Modal
@@ -175,13 +178,13 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
                 <Button color="orange" className="m-0" basic onClick={onClose} content="Close" />
 
                 <div className="flex flex-column justify-center items-center text-sm">
-                    {totalStoreCostLabel}
+                    {error}
                 </div>
 
                 <Button
                     icon={<Icon name='chart bar' />}
                     className="m-0"
-                    content={`${isEditing ? 'Edit' : 'Add'} Data Store`}
+                    content={totalStoreCostLabel}
                     basic
                     color="teal"
                     onClick={() => onSubmit(handleSubmit)}
