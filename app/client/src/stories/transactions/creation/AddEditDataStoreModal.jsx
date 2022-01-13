@@ -82,7 +82,7 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
 
     },[fees, formState.Duration.value, formState.Value.value]);
 
-    const totalStoreCostLabel = calculatedFee ? `Add Datastore for ${calculatedFee} ${utils.string.pluralStringCheck("MadByte", calculatedFee > 1)}` : ''
+    const totalStoreCostLabel = calculatedFee ? `${calculatedFee}` : '0'
 
     return (
         <Modal
@@ -184,7 +184,7 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
                 <Button
                     icon={<Icon name='chart bar' />}
                     className="m-0"
-                    content={totalStoreCostLabel}
+                    content={"Add Datastore for " + totalStoreCostLabel + " MadBytes"}
                     basic
                     color="teal"
                     onClick={() => onSubmit(handleSubmit)}
