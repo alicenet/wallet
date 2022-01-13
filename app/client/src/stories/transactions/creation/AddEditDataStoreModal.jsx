@@ -3,14 +3,13 @@ import { Button, Form, Grid, Header, Icon, Modal } from 'semantic-ui-react';
 import { useFormState } from 'hooks/_hooks';
 import { useDispatch, useSelector } from 'react-redux';
 import has from 'lodash/has';
+import BigInt from 'big-integer';
 
 import { TRANSACTION_ACTIONS } from 'redux/actions/_actions';
 import utils, { transactionTypes } from 'util/_util';
 import { getMadWalletInstance } from "redux/middleware/WalletManagerMiddleware";
 
 export default function AddEditDataStoreModal({ dataStore, onClose }) {
-
-    let madWallet = getMadWalletInstance();
 
     const [calculatedFee, setCalculatedFee] = useState(0);
 
@@ -63,12 +62,12 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
     useEffect(() => {
         const calculateFee = async () => {
             try{
-                if(formState.Duration.value && formState.Value.value){                
+                if(formState.Duration.value && formState.Value.value){  
+                    let madWallet = getMadWalletInstance();              
                     const dataStoreFee = await madWallet.Transaction.Utils.calculateFee(fees.dataStoreFee, formState.Duration.value);
-                    const depositFee = await madWallet.Transaction.Utils.calculateDeposit(formState.Value.value, formState.Duration.value);
-                    
-                    // eslint-disable-next-line no-undef
-                    const totalStoreCost = BigInt(dataStoreFee) + BigInt(depositFee) + BigInt(fees.dataStoreFee)
+                    let rawValue = Buffer(formState.Value.value).toString('hex');
+                    const depositFee = await madWallet.Transaction.Utils.calculateDeposit(rawValue, formState.Duration.value);
+                    const totalStoreCost = BigInt(dataStoreFee) + BigInt(depositFee);
                     setCalculatedFee(totalStoreCost);
                 }
             }catch(error){
@@ -77,7 +76,7 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
             }
         }
         calculateFee();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
     },[fees, formState.Duration.value, formState.Value.value]);
 
     const totalStoreCostLabel = calculatedFee ? `Total Store Cost: ${calculatedFee} ${utils.string.pluralStringCheck("MadByte", calculatedFee > 1)}` : ''
