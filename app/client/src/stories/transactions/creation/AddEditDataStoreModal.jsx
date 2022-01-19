@@ -1,13 +1,18 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Form, Grid, Header, Icon, Modal } from 'semantic-ui-react';
 import { useFormState } from 'hooks/_hooks';
 import { useDispatch, useSelector } from 'react-redux';
 import has from 'lodash/has';
+import BigInt from 'big-integer';
 
 import { TRANSACTION_ACTIONS } from 'redux/actions/_actions';
 import utils, { transactionTypes } from 'util/_util';
+import { getMadWalletInstance } from "redux/middleware/WalletManagerMiddleware";
 
 export default function AddEditDataStoreModal({ dataStore, onClose }) {
+
+    const [calculatedFee, setCalculatedFee] = useState(0);
+    const [error, setError] = useState('')
 
     const dispatch = useDispatch();
 
@@ -54,6 +59,30 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
         }
         onClose();
     };
+
+    useEffect(() => {
+        const calculateFee = async () => {
+            try{
+                setError('');
+                if(formState.Duration.value && formState.Value.value){
+                    let madWallet = getMadWalletInstance();
+                    const dataStoreFee = await madWallet.Transaction.Utils.calculateFee(fees.dataStoreFee, formState.Duration.value);
+                    let rawValue = Buffer(formState.Value.value).toString('hex');
+                    const depositFee = await madWallet.Transaction.Utils.calculateDeposit(rawValue, formState.Duration.value);
+                    const totalStoreCost = BigInt(dataStoreFee) + BigInt(depositFee);
+                    setCalculatedFee(totalStoreCost);
+                }
+            }catch(error){
+                console.log(error)
+                setError('Could not calculate cost, please check your inputs')
+                setCalculatedFee(0);
+            }
+        }
+        calculateFee();
+
+    },[fees, formState.Duration.value, formState.Value.value]);
+
+    const totalStoreCostLabel = calculatedFee ? `${calculatedFee}` : '0'
 
     return (
         <Modal
@@ -149,13 +178,13 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
                 <Button color="orange" className="m-0" basic onClick={onClose} content="Close" />
 
                 <div className="flex flex-column justify-center items-center text-sm">
-                    Total Store Cost: 
+                    {error}
                 </div>
 
                 <Button
                     icon={<Icon name='chart bar' />}
                     className="m-0"
-                    content={`${isEditing ? 'Edit' : 'Add'} Data Store`}
+                    content={"Add Datastore for " + totalStoreCostLabel + " MadBytes"}
                     basic
                     color="teal"
                     onClick={() => onSubmit(handleSubmit)}
