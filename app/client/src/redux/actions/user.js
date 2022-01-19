@@ -63,7 +63,7 @@ export function setDesiredCurveType(curveType) {
 
 /**
  * This is the initial user account check for setting initial state.
- * Once ran once, we prevent it from dispatching again via checking for state first
+ * After the first run, we prevent it from dispatching again via checking for state first
  * @returns 
  */
 export function initialUserAccountCheck() {
