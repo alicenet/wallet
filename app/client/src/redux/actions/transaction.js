@@ -203,12 +203,12 @@ export function parseAndUpdateFees(rpcFees) {
         const madNetFees = rpcFees ? rpcFees : state.adapter.madNetAdapter.fees;
         const txList = state.transaction.list;
 
-        // Convert RPC Fees to human readable format for transaction reducer state
+        // Convert RPC Fees to human-readable format for transaction reducer state
         Object.keys(madNetFees).forEach(key => {
             madNetFees[key] = parseInt(madNetFees[key], 16);
         })
 
-        // Build fees from passed paramaters or available state
+        // Build fees from passed parameters or available state
         let fees = {
             atomicSwapFee: madNetFees.atomicSwapFee, // Hex Parsed Base Atomic Swap Fee from RPC.getFees()
             atomicSwapFees: 0, // Total Fees for all atomicSwap VOUTs in txList
@@ -248,7 +248,7 @@ export function parseAndUpdateFees(rpcFees) {
         log.debug("parseAndUpdateFees :: MadWalletJS.Transaction.Tx.estimateFees():", estimateFees);
 
         // If the txList > 0, we need to calculate any special/specific fees such as datastore deposit cost
-        // Per store/vout fee will be calced at the end
+        // Per store/vout fee will be called at the end
         let txTypesByIdx = []; // Note types by IDX for base fee calc below
 
         if (txList.length > 0) {
