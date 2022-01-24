@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Button, Container, Form, Grid, Header, Icon } from 'semantic-ui-react';
 import ForgottenKeystorePasswordModal from './ForgottenKeystorePasswordModal';
@@ -22,7 +22,7 @@ function HasExistingKeystores() {
     const history = useHistory();
     const dispatch = useDispatch();
 
-    const [showForgottenPasswordModal, setShowForgottenPasswordModal] = React.useState(false);
+    const [showForgottenPasswordModal, setShowForgottenPasswordModal] = useState(false);
     const [formState, formSetter, onSubmit] = useFormState([
         {
             name: 'password',
@@ -40,13 +40,12 @@ function HasExistingKeystores() {
             }
         }
     ]);
-    const [showPassword, setShowPassword] = React.useState(false);
-
-    const [keystoreData, setKeystoreData] = React.useState([]); // Collection of stores 
-    const [keystoreUnlocked, setKeystoreUnlocked] = React.useState(false);
-    const [activeKeystore, setActiveKeystore] = React.useState(0);
-    const [activeAddress, setActiveAddress] = React.useState("");
-    const [notEnoughKeystoresError, setNotEnoughKeystoresError] = React.useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [keystoreData, setKeystoreData] = useState([]); // Collection of stores
+    const [keystoreUnlocked, setKeystoreUnlocked] = useState(false);
+    const [activeKeystore, setActiveKeystore] = useState(0);
+    const [activeAddress, setActiveAddress] = useState("");
+    const [notEnoughKeystoresError, setNotEnoughKeystoresError] = useState(false);
 
     const dispatchOnceLoaded = () => {
         dispatch({ type: VAULT_ACTION_TYPES.MARK_UNLOCKED });
@@ -67,7 +66,7 @@ function HasExistingKeystores() {
         if (keystoreData.length - (activeKeystore + 1) === 0) {
             dispatchOnceLoaded();
         }
-    }
+    };
 
     const skipStore = () => {
         // If this is the last keystore and no keystores have been loaded show error
@@ -83,33 +82,33 @@ function HasExistingKeystores() {
             formSetter.setPassword("");
             setActiveKeystore(s => s + 1);
         }
-    }
+    };
 
     // Onload, check for existing keystores and, in sequence request the passwords for them
-    React.useEffect(() => {
+    useEffect(() => {
         const checkForKeystores = async () => {
             let keystoreData = await electronStoreCommonActions.checkForOptoutStores();
             setKeystoreData(keystoreData);
         }
         checkForKeystores();
-    }, [])
+    }, []);
 
-    React.useEffect(() => {
+    useEffect(() => {
         try {
             let address = utils.string.splitStringWithEllipsis(JSON.parse(keystoreData[activeKeystore]?.keystore).address, 4);
             setActiveAddress(address);
         } catch (ex) {
             setActiveAddress("");
         }
-    }, [activeKeystore, keystoreData])
+    }, [activeKeystore, keystoreData]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (formState.password.error) {
             setShowForgottenPasswordModal(true);
         }
     }, [formState]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (notEnoughKeystoresError) {
             toast.error(
                 <SyncToastMessageWarning
