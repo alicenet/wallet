@@ -1,4 +1,5 @@
 import React from 'react';
+import { reduxState_logger as rLog } from 'log/logHelper';
 
 import { Button, Container, Form, Grid, Header, Icon } from 'semantic-ui-react';
 import ForgottenKeystorePasswordModal from './ForgottenKeystorePasswordModal';
@@ -9,7 +10,7 @@ import { useFormState } from 'hooks/_hooks';
 import { toast } from 'react-toastify';
 import has from 'lodash/has';
 
-import { ADAPTER_ACTIONS, VAULT_ACTIONS } from 'redux/actions/_actions'
+import { ADAPTER_ACTIONS, VAULT_ACTIONS, CONFIG_ACTIONS } from 'redux/actions/_actions'
 import { electronStoreCommonActions } from 'store/electronStoreHelper'
 
 import utils from 'util/_util';
@@ -57,7 +58,13 @@ function HasExistingKeystores() {
         setActiveKeystore(s => s + 1); // Go to next keystore
         // +1 to adjust for state change above that hasn't happened yet -- Checking if anymore keystores remain to look at
         if (keystoreData.length - (activeKeystore + 1) === 0) {
-            dispatch({type: VAULT_ACTION_TYPES.MARK_UNLOCKED});
+            // Load any stored configuration values
+            let configLoaded = await dispatch(CONFIG_ACTIONS.loadConfigurationValuesFromStore());
+            if (configLoaded.error) {
+                rLog.debug(configLoaded.error);
+                toast.error("Error loading configuration values.");
+            }
+            dispatch({ type: VAULT_ACTION_TYPES.MARK_UNLOCKED });
             dispatch(ADAPTER_ACTIONS.initAdapters())
             history.push('/hub')
         }
