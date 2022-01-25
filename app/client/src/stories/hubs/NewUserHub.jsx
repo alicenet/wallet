@@ -1,28 +1,35 @@
-import React from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 import { Button, Container, Grid, Header, Image, Modal } from 'semantic-ui-react';
 
 import MadIcon from 'Assets/icon.png';
 
 import { USER_ACTIONS } from 'redux/actions/_actions';
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 function NewUserHub() {
 
-    const [openModal, setOpenModal] = React.useState(false)
+    const [openModal, setOpenModal] = useState(false)
 
     const history = useHistory();
+    const location = useLocation();
     const dispatch = useDispatch();
 
-    /* Check if user has a vault behind the scenes */
-    React.useEffect(() => {
-        const checkForAccount = async () => {
-            let hasAccount = await dispatch(USER_ACTIONS.initialUserAccountCheck());
-            if (hasAccount.vault) { return history.push('/returningUserLoad/hasExistingVault'); }
-            if (hasAccount.optout) { return history.push('/returningUserLoad/hasKeystores'); }
-        }
-        checkForAccount();
-    }, [history, dispatch]);
+    const { exists, optout, vaultLocked } = useSelector(s => ({
+        vaultLocked: s.vault.is_locked,
+        exists: s.vault.exists,
+        optout: s.vault.optout,
+    }));
+
+    useEffect(() => {
+        dispatch(USER_ACTIONS.initialUserAccountCheck());
+    },[dispatch])
+    
+    useEffect(() => {
+        /* Check if user has a vault behind the scenes */
+        if(vaultLocked && exists) { history.push('/returningUserLoad/hasExistingVault'); }
+        if(optout) { history.push('/returningUserLoad/hasKeystores'); }
+    },[vaultLocked, optout, exists, history, location])
 
     const useRecoveryPhrase = () => {
         dispatch(USER_ACTIONS.clearMnemonic());
