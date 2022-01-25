@@ -14,7 +14,7 @@ export const initialTransactionState = {
         valueStoreFee: 0, // Hex Parsed Base ValueStore from RPC.getFees()
         valueStoreFees: 0, // Total Fees for all valueStore VOUTs in txList
         minTxFee: 0, // Parsed minimum tx fee
-        prioritizationFee: 0, // Any additional priortization fee set by the user
+        prioritizationFee: 0, // Any additional prioritization fee set by the user
         txFee: 0, // Prioritization + Minimum Fee
         totalFee: 0, // Total TX Fee ( All Store Fees + Min Fee + Prioritization )
         errors: [], // Any fee estimation errors -- Strings of error messages for the user to resolve

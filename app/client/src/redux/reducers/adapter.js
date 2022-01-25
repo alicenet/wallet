@@ -1,7 +1,7 @@
 import { ADAPTER_ACTION_TYPES } from '../constants/_constants';
 import { reduxState_logger as log } from '../../log/logHelper';
 
-//  Any user editable and saveable configurations are loaded here
+//  Any user editable and savable configurations are loaded here
 export const initialAdapterState = {
     web3Adapter: {
         connected: false, // Has the web3 instance been initiated and is it connected?
