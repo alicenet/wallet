@@ -268,3 +268,43 @@ export function renameWalletByAddress(targetWallet, newName, password) {
 
     }
 }
+
+/**
+ * Remove a wallet from the vault referenced by address and push the update to the store
+ * -- Requires password
+ * @param { Object } targetWallet -- Wallet object from redux state
+ * @param { String } password -- Vault or administrative password -- For writing updates to store 
+ */
+export function removeWalletByAddress(targetWallet, password) {
+    return async function (dispatch, getState) {
+        // Get latest wallet state and create mutable instances of internal/external state
+        let wallets = getState().vault.wallets;
+        let internalWallets = [...wallets.internal];
+        let externalWallets = [...wallets.external];
+
+        // First determine if internal or external
+        // Is internal
+        if (targetWallet.isInternal) {
+            internalWallets = internalWallets.filter(e => (targetWallet.address !== e.address));
+        }
+        // Else external...
+        else {
+            externalWallets = externalWallets.filter(e => (targetWallet.address !== e.address));
+        }
+
+        // Recompile newly mutated wallet states
+        let newWalletsState = { internal: internalWallets, external: externalWallets };
+        
+        try {
+            // Submit the update to the redux store --
+            await dispatch({ type: VAULT_ACTION_TYPES.SET_WALLETS_STATE, payload: newWalletsState })
+            // Submit it to the electron helper for writing the vault --
+            await electronStoreCommonActions.updateVaultWallets(password, newWalletsState);
+        } catch (ex) {
+            return { error: ex }
+        }
+
+        return true;
+
+    }
+}

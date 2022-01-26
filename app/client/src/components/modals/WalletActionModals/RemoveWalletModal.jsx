@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Form, Header, Icon, Modal } from 'semantic-ui-react'
 import { useDispatch, useSelector } from 'react-redux'
-import { MODAL_ACTIONS } from 'redux/actions/_actions';
+import { MODAL_ACTIONS, VAULT_ACTIONS } from 'redux/actions/_actions';
+import { getMadWalletInstance } from 'redux/middleware/WalletManagerMiddleware';
+import { electronStoreCommonActions } from 'store/electronStoreHelper';
+import { useFormState } from 'hooks/_hooks';
 
-export default function ExportPrivateKeyModal() {
+export default function RemoveWalletModal() {
 
     const dispatch = useDispatch()
 
@@ -12,21 +15,53 @@ export default function ExportPrivateKeyModal() {
         targetWallet: s.modal.wallet_action_target,
     }))
 
-    const [password, setPassword] = useState({ value: "", error: "" });
+    const [formState, formSetter, onSubmit] = useFormState([
+        { name: 'password', display: 'Vault Password', type: 'password', isRequired: true }
+    ]);
+
+    const [error, setError] = useState();
+    const [loading, setLoading] = useState(false);
     const [showPass, setShowPass] = useState(false);
+
+    let madWallet = getMadWalletInstance();
 
     // Clear on open changes
     useEffect(() => {
-        setPassword("");
+        formSetter.setPassword("");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isOpen])
 
     const removeWallet = async () => {
         // => TBD
+        console.log(madWallet)
+        console.log(targetWallet)
+        
+        setLoading(true);
+        setError('');
+        if (!await electronStoreCommonActions.checkPasswordAgainstPreflightHash(formState.password.value)) {
+            setLoading(false);
+            return setError("Incorrect password");
+        }
+        let deleteWallet = await dispatch(VAULT_ACTIONS.removeWalletByAddress(targetWallet, formState.password.value));
+        setLoading(false);
+        if (deleteWallet.error) {
+            return setError(deleteWallet.error);
+        }
+        else {
+            closeModal();
+        }
     }
 
     const closeModal = () => {
         dispatch(MODAL_ACTIONS.closeRemoveWalletModal())
     };
+
+    const submit = e => {
+        onSubmit( async () => {
+            e.preventDefault();
+            removeWallet();
+        });
+    }
 
     return (
 
@@ -48,13 +83,10 @@ export default function ExportPrivateKeyModal() {
                 </p>
 
                 <Form
-                    error={!!password.error}
+                    error={!!error}
                     size="small"
                     className="mt-2"
-                    onSubmit={(e) => {
-                        e.preventDefault();
-                        removeWallet();
-                    }}
+                    onSubmit={submit}
                 >
 
                     <Form.Group>
@@ -65,9 +97,9 @@ export default function ExportPrivateKeyModal() {
                             size="small"
                             label="Vault Password"
                             placeholder="Password"
-                            value={password.value}
-                            onChange={e => setPassword({ value: e.target.value })}
-                            error={!!password.error && { content: password.error }}
+                            value={formState.password.value}
+                            onChange={e => formSetter.setPassword(e.target.value)}
+                            error={!!error}
                             icon={<Icon name={showPass ? "eye" : "eye slash"} link onClick={() => setShowPass(s => !s)}/>}
                         />
 
@@ -81,7 +113,7 @@ export default function ExportPrivateKeyModal() {
 
                 <div className="flex justify-between">
                     <Button size="small" color="orange" content="Close" onClick={closeModal} basic/>
-                    <Button size="small" content={password.error ? "Try Again" : "Delete Wallet"} color={password.error ? "red" : "purple"} basic onClick={removeWallet}/>
+                    <Button size="small" content={error ? "Try Again" : "Delete Wallet"} color={error ? "red" : "purple"} basic onClick={removeWallet} loading={loading}/>
                 </div>
 
             </Modal.Actions>
