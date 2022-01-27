@@ -32,10 +32,6 @@ export default function RemoveWalletModal() {
     }, [isOpen])
 
     const removeWallet = async () => {
-        // => TBD
-        console.log(madWallet)
-        console.log(targetWallet)
-        
         setLoading(true);
         setError('');
         if (!await electronStoreCommonActions.checkPasswordAgainstPreflightHash(formState.password.value)) {
