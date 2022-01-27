@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { reduxState_logger as rLog } from 'log/logHelper';
 
 import { Button, Container, Form, Grid, Header, Icon } from 'semantic-ui-react';
@@ -23,7 +23,7 @@ function HasExistingKeystores() {
     const history = useHistory();
     const dispatch = useDispatch();
 
-    const [showForgottenPasswordModal, setShowForgottenPasswordModal] = React.useState(false);
+    const [showForgottenPasswordModal, setShowForgottenPasswordModal] = useState(false);
     const [formState, formSetter, onSubmit] = useFormState([
         {
             name: 'password',
@@ -41,12 +41,18 @@ function HasExistingKeystores() {
             }
         }
     ]);
-    const [showPassword, setShowPassword] = React.useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [keystoreData, setKeystoreData] = useState([]); // Collection of stores
+    const [keystoreUnlocked, setKeystoreUnlocked] = useState(false);
+    const [activeKeystore, setActiveKeystore] = useState(0);
+    const [activeAddress, setActiveAddress] = useState("");
+    const [notEnoughKeystoresError, setNotEnoughKeystoresError] = useState(false);
 
-    const [keystoreData, setKeystoreData] = React.useState([]); // Collection of stores 
-    const [activeKeystore, setActiveKeystore] = React.useState(0);
-    const [activeAddress, setActiveAddress] = React.useState("");
-    const [notEnoughKeystoresError, setNotEnoughKeystoresError] = React.useState(false);
+    const dispatchOnceLoaded = () => {
+        dispatch({ type: VAULT_ACTION_TYPES.MARK_UNLOCKED });
+        dispatch(ADAPTER_ACTIONS.initAdapters())
+        history.push('/hub')
+    };
 
     // Parse active address
     const handleFormSubmit = async () => {
@@ -56,6 +62,7 @@ function HasExistingKeystores() {
         dispatch(VAULT_ACTIONS.addExternalWalletToState(ks, formState.password.value, ksData.name))
         formSetter.setPassword("");
         setActiveKeystore(s => s + 1); // Go to next keystore
+        setKeystoreUnlocked(true);
         // +1 to adjust for state change above that hasn't happened yet -- Checking if anymore keystores remain to look at
         if (keystoreData.length - (activeKeystore + 1) === 0) {
             // Load any stored configuration values
@@ -64,53 +71,56 @@ function HasExistingKeystores() {
                 rLog.debug(configLoaded.error);
                 toast.error("Error loading configuration values.");
             }
-            dispatch({ type: VAULT_ACTION_TYPES.MARK_UNLOCKED });
-            dispatch(ADAPTER_ACTIONS.initAdapters())
-            history.push('/hub')
+            dispatchOnceLoaded();
         }
-    }
+    };
 
     const skipStore = () => {
         // If this is the last keystore and no keystores have been loaded show error
         if (keystoreData.length - (activeKeystore + 1) === 0) {
-            return setNotEnoughKeystoresError(true);
+            if (keystoreUnlocked) {
+                dispatchOnceLoaded();
+            }
+            else {
+                return setNotEnoughKeystoresError(true);
+            }
         }
         else {
             formSetter.setPassword("");
             setActiveKeystore(s => s + 1);
         }
-    }
+    };
 
     // Onload, check for existing keystores and, in sequence request the passwords for them
-    React.useEffect(() => {
+    useEffect(() => {
         const checkForKeystores = async () => {
             let keystoreData = await electronStoreCommonActions.checkForOptoutStores();
             setKeystoreData(keystoreData);
         }
         checkForKeystores();
-    }, [])
+    }, []);
 
-    React.useEffect(() => {
+    useEffect(() => {
         try {
             let address = utils.string.splitStringWithEllipsis(JSON.parse(keystoreData[activeKeystore]?.keystore).address, 4);
             setActiveAddress(address);
         } catch (ex) {
             setActiveAddress("");
         }
-    }, [activeKeystore, keystoreData])
+    }, [activeKeystore, keystoreData]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (formState.password.error) {
             setShowForgottenPasswordModal(true);
         }
     }, [formState]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (notEnoughKeystoresError) {
             toast.error(
                 <SyncToastMessageWarning
                     title="Error"
-                    message="One keystore must be loaded." />,
+                    message="One keystore must be loaded."/>,
                 { autoClose: 3000, onClose: () => { setNotEnoughKeystoresError(false) } });
         }
     }, [notEnoughKeystoresError]);
@@ -122,7 +132,7 @@ function HasExistingKeystores() {
 
                 <Grid.Column width={16} className="p-0 self-center">
 
-                    <Header content="Welcome Back" as="h3" className="m-0" />
+                    <Header content="Welcome Back" as="h3" className="m-0"/>
 
                 </Grid.Column>
 
@@ -158,10 +168,10 @@ function HasExistingKeystores() {
                                     content: formState.password.error,
                                     pointing: 'above',
                                 }}
-                                icon={<Icon name={showPassword ? "eye" : "eye slash"} link onClick={() => setShowPassword(s => !s)} />}
+                                icon={<Icon name={showPassword ? "eye" : "eye slash"} link onClick={() => setShowPassword(s => !s)}/>}
                             />
 
-                            <ForgottenKeystorePasswordModal incorrectPwEntered={showForgottenPasswordModal} />
+                            <ForgottenKeystorePasswordModal incorrectPwEntered={showForgottenPasswordModal}/>
 
                             <div className="font-xs">
                                 {activeKeystore} / {keystoreData.length} keystores examined
@@ -177,8 +187,9 @@ function HasExistingKeystores() {
 
                     <Container className="flex justify-between gap-2">
 
-                        <Button color="orange" basic content='Skip This Store' onClick={skipStore} />
-                        <Button color="teal" basic content='Unlock Store' disabled={!formState.password.value} onClick={() => onSubmit(handleFormSubmit)} />
+                        <Button color="orange" basic content='Skip This Store' onClick={skipStore}/>
+
+                        <Button color="teal" basic content='Unlock Store' disabled={!formState.password.value} onClick={() => onSubmit(handleFormSubmit)}/>
 
                     </Container>
 

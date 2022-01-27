@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Form, Header, Icon, Modal, Placeholder } from 'semantic-ui-react'
-import { useDispatch, useSelector } from 'react-redux'
-import { stringUtils } from 'util/_util'
+import { Button, Form, Header, Icon, Modal, Placeholder } from 'semantic-ui-react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useFormState } from 'hooks/_hooks';
+import { stringUtils } from 'util/_util';
 import { MODAL_ACTIONS } from 'redux/actions/_actions';
 import { electronStoreCommonActions } from 'store/electronStoreHelper';
 import copy from 'copy-to-clipboard';
@@ -15,12 +16,15 @@ export default function ExportPrivateKeyModal() {
         targetWallet: s.modal.wallet_action_target,
     }))
 
-    const [password, setPassword] = useState({ value: "", error: "" });
     const [showPass, setShowPass] = useState(false);
     const [keyVisible, setKeyVisible] = useState(false);
 
     const [visibleTime, setVisibleTime] = useState(0);
     const [copyClick, setCopyClick] = useState(0);
+
+    const [formState, formSetter, onSubmit] = useFormState([
+        { name: 'vaultPassword', display: 'Vault Password', type: 'password', isRequired: true }
+    ]);
 
     // Countdown for visibility
     useEffect(() => {
@@ -35,20 +39,21 @@ export default function ExportPrivateKeyModal() {
     useEffect(() => {
         setKeyVisible(false);
         setVisibleTime(0);
-        setPassword("");
+        formSetter.setVaultPassword("");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isOpen])
 
     const showKey = async () => {
-        if (!password) {
-            return setPassword(state => ({ ...state, error: "Password required." }))
+        if (!formState.vaultPassword) {
+            return formSetter.setVaultPassword(state => ({ ...state, error: "Password required." }))
         }
-        if (!await electronStoreCommonActions.checkPasswordAgainstPreflightHash(password.value)) {
-            setPassword(state => ({ ...state, error: "Incorrect password" }))
+        if (!await electronStoreCommonActions.checkPasswordAgainstPreflightHash(formState.vaultPassword.value)) {
+            formSetter.setVaultPassword(state => ({ ...state, error: "Incorrect password" }))
             return setKeyVisible(false);
         }
         setKeyVisible(true);
         setVisibleTime(14);
-        setPassword(state => ({ ...state, value: "" }));
+        formSetter.setVaultPassword(state => ({ ...state, value: "" }));
         setTimeout(() => {
             setKeyVisible(false);
         }, 14000)
@@ -64,6 +69,13 @@ export default function ExportPrivateKeyModal() {
         setTimeout(() => {
             setCopyClick(false);
         }, 2150)
+    }
+
+    const submit = e => {
+        onSubmit( async () => {
+            e.preventDefault();
+            showKey();
+        });
     }
 
     return (
@@ -111,13 +123,10 @@ export default function ExportPrivateKeyModal() {
                 }
 
                 <Form
-                    error={!!password.error}
+                    error={!!formState.vaultPassword.error}
                     size="small"
                     className="mt-2"
-                    onSubmit={(e) => {
-                        e.preventDefault();
-                        showKey();
-                    }}
+                    onSubmit={submit}
                 >
 
                     <Form.Group>
@@ -127,10 +136,10 @@ export default function ExportPrivateKeyModal() {
                             type={showPass ? "text" : "password"}
                             size="small"
                             label="Vault Password"
-                            placeholder="Password"
-                            value={password.value}
-                            onChange={e => setPassword({ value: e.target.value })}
-                            error={!!password.error && { content: password.error }}
+                            placeholder="Vault Password"
+                            value={formState.vaultPassword.value}
+                            onChange={e => formSetter.setVaultPassword(e.target.value)}
+                            error={!!formState.vaultPassword.error && { content: formState.vaultPassword.error }}
                             icon={
                                 <Icon
                                     color={keyVisible ? "green" : "black"}
@@ -153,9 +162,9 @@ export default function ExportPrivateKeyModal() {
                     <Button size="small" color="orange" content="Close" onClick={closeModal} basic/>
                     <Button
                         size="small"
-                        content={password.error ? "Try Again" : "Show Key"}
+                        content={formState.vaultPassword.error ? "Try Again" : "Show Key"}
                         disabled={visibleTime !== 0}
-                        color={password.error ? "red" : "purple"}
+                        color={formState.vaultPassword.error ? "red" : "purple"}
                         basic
                         onClick={showKey}
                     />

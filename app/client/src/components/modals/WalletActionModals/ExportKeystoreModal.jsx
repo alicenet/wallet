@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Button, Form, Header, Icon, Modal } from 'semantic-ui-react'
-import { useDispatch, useSelector } from 'react-redux'
+import { Button, Form, Header, Icon, Modal } from 'semantic-ui-react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useFormState } from 'hooks/_hooks';
 import { MODAL_ACTIONS } from 'redux/actions/_actions';
 import { electronStoreCommonActions } from 'store/electronStoreHelper';
 import utils from 'util/_util';
@@ -14,18 +15,21 @@ export default function ExportKeystoreModal() {
         targetWallet: s.modal.wallet_action_target,
     }))
 
-    const [password, setPassword] = useState({ value: "", error: "" });
     const [showPass, setShowPass] = useState(false);
     const [keyVisible, setKeyVisible] = useState(false);
-    const [keystorePass, setKeystorePass] = useState("");
     const [keystoreDL, setKeystoreDL] = useState(false);
     const [storePassVisible, setStorePassVisible] = useState(false);
+
+    const [formState, formSetter, onSubmit] = useFormState([
+        { name: 'vaultPassword', display: 'Vault Password', type: 'password', isRequired: true },
+        { name: 'keystorePassword', display: 'Keystore Password', type: 'password', isRequired: true },
+    ]);
 
     // Download keystore reference
     const downloadRef = useRef();
 
     const generateWallet = async () => {
-        let newStoreBlob = await utils.wallet.generateKeystoreFromPrivK(targetWallet.privK, keystorePass.value, targetWallet.curve, true);
+        let newStoreBlob = await utils.wallet.generateKeystoreFromPrivK(targetWallet.privK, formState.keystorePassword.value, targetWallet.curve, true);
         setKeystoreDL({
             filename: "MadWallet_" + targetWallet.name + ".json",
             data: newStoreBlob
@@ -35,23 +39,24 @@ export default function ExportKeystoreModal() {
 
     // Clear on open changes
     useEffect(() => {
-        setPassword("");
+        formSetter.setVaultPassword("");
         setKeystoreDL("");
-        setKeystorePass("");
+        formSetter.setKeystorePassword("");
         setStorePassVisible(false);
         setKeyVisible(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isOpen])
 
     const downloadKeystore = async () => {
-        if (!password) {
-            return setPassword(state => ({ ...state, error: "Password required." }))
+        if (!formState.vaultPassword.value) {
+            return formSetter.setVaultPassword(state => ({ ...state, error: "Password required." }))
         }
-        if (!await electronStoreCommonActions.checkPasswordAgainstPreflightHash(password.value)) {
-            setPassword(state => ({ ...state, error: "Incorrect password" }))
+        if (!await electronStoreCommonActions.checkPasswordAgainstPreflightHash(formState.vaultPassword.value)) {
+            formSetter.setVaultPassword(state => ({ ...state, error: "Incorrect password" }))
             return setKeyVisible(false);
         }
-        if (!keystorePass) {
-            return setKeystorePass({ error: "Must have a password" })
+        if (!formState.keystorePassword.value) {
+            return formSetter.setKeystorePassword({ error: "Must have a password" })
         }
 
         // Download KS Logic
@@ -61,6 +66,13 @@ export default function ExportKeystoreModal() {
     const closeModal = () => {
         dispatch(MODAL_ACTIONS.closeExportKeyStoreModal())
     };
+
+    const submit = e => {
+        onSubmit( async () => {
+            e.preventDefault();
+            downloadKeystore();
+        });
+    }
 
     return (
 
@@ -85,13 +97,10 @@ export default function ExportKeystoreModal() {
                 </p>
 
                 <Form
-                    error={!!keystorePass.error || !!password.error}
+                    error={!!formState.keystorePassword.error || !!formState.vaultPassword.error}
                     size="small"
                     className="mt-2"
-                    onSubmit={(e) => {
-                        e.preventDefault();
-                        downloadKeystore();
-                    }}
+                    onSubmit={submit}
                 >
 
                     <Form.Group>
@@ -101,10 +110,10 @@ export default function ExportKeystoreModal() {
                             type={showPass ? "text" : "password"}
                             size="small"
                             label="Vault Password"
-                            placeholder="Password"
-                            value={password.value}
-                            onChange={e => setPassword({ value: e.target.value })}
-                            error={!!password.error && { content: password.error }}
+                            placeholder="Vault Password"
+                            value={formState.vaultPassword.value}
+                            onChange={e => formSetter.setVaultPassword(e.target.value)}
+                            error={!!formState.vaultPassword.error && { content: formState.vaultPassword.error }}
                             icon={
                                 <Icon color={keyVisible ? "green" : "black"} name={showPass ? "eye" : "eye slash"} link onClick={() => setShowPass(s => !s)}/>
                             }
@@ -113,10 +122,11 @@ export default function ExportKeystoreModal() {
                         <Form.Input
                             width={6}
                             type={storePassVisible ? "text" : "password"}
-                            value={keystorePass.value}
-                            error={!!keystorePass.error && { content: keystorePass.error }}
+                            value={formState.keystorePassword.value}
+                            error={!!formState.keystorePassword.error && { content: formState.keystorePassword.error }}
                             label="Keystore Password"
-                            onChange={e => setKeystorePass({ value: e.target.value, error: "" })}
+                            placeholder="Keystore Password"
+                            onChange={e => formSetter.setKeystorePassword(e.target.value)}
                             icon={
                                 <Icon color={"black"} name={storePassVisible ? "eye" : "eye slash"} link onClick={() => setStorePassVisible(s => !s)}/>
                             }
@@ -136,8 +146,8 @@ export default function ExportKeystoreModal() {
                         size="small"
                         ref={downloadRef}
                         href={keystoreDL ? URL.createObjectURL(keystoreDL.data) : ""} download={keystoreDL.filename}
-                        content={password.error || keystorePass.error ? "Try Again" : keystoreDL ? "Download Keystore" : "Create Keystore"}
-                        color={password.error || keystorePass.error ? "red" : keystoreDL ? "green" : "purple"}
+                        content={formState.vaultPassword.error || formState.keystorePassword.error ? "Try Again" : keystoreDL ? "Download Keystore" : "Create Keystore"}
+                        color={formState.vaultPassword.error || formState.keystorePassword.error ? "red" : keystoreDL ? "green" : "purple"}
                         basic onClick={keystoreDL ? closeModal : downloadKeystore}
                     />
                 </div>
