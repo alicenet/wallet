@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Button, Form, Header, Icon, Modal } from 'semantic-ui-react'
 import { useDispatch, useSelector } from 'react-redux'
 import { MODAL_ACTIONS, VAULT_ACTIONS } from 'redux/actions/_actions';
-import { getMadWalletInstance } from 'redux/middleware/WalletManagerMiddleware';
 import { electronStoreCommonActions } from 'store/electronStoreHelper';
 import { useFormState } from 'hooks/_hooks';
 
@@ -10,10 +9,12 @@ export default function RemoveWalletModal() {
 
     const dispatch = useDispatch()
 
-    const { isOpen, targetWallet } = useSelector(s => ({
+    const { isOpen, targetWallet, exists, optout } = useSelector(s => ({
         isOpen: s.modal.remove_wallet_modal,
         targetWallet: s.modal.wallet_action_target,
-    }))
+        exists: s.vault.exists,
+        optout: s.vault.optout,
+    }));
 
     const [formState, formSetter, onSubmit] = useFormState([
         { name: 'password', display: 'Vault Password', type: 'password', isRequired: true }
@@ -22,8 +23,6 @@ export default function RemoveWalletModal() {
     const [error, setError] = useState();
     const [loading, setLoading] = useState(false);
     const [showPass, setShowPass] = useState(false);
-
-    let madWallet = getMadWalletInstance();
 
     // Clear on open changes
     useEffect(() => {
@@ -38,7 +37,8 @@ export default function RemoveWalletModal() {
             setLoading(false);
             return setError("Incorrect password");
         }
-        let deleteWallet = await dispatch(VAULT_ACTIONS.removeWalletByAddress(targetWallet, formState.password.value));
+
+        let deleteWallet = await dispatch(VAULT_ACTIONS.removeWalletByAddress(targetWallet, formState.password.value, optout, exists));
         setLoading(false);
         if (deleteWallet.error) {
             return setError(deleteWallet.error);

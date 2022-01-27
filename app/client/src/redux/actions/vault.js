@@ -274,8 +274,10 @@ export function renameWalletByAddress(targetWallet, newName, password) {
  * -- Requires password
  * @param { Object } targetWallet -- Wallet object from redux state
  * @param { String } password -- Vault or administrative password -- For writing updates to store 
+ * @param { Boolean } optout -- Index 0 of external wallets must not be allowed removal
+ * @param { Boolean } exists -- A Vault exists. Index 0 of internal wallets must not be allowed removal. All Externals can be removed if a user has a vault
  */
-export function removeWalletByAddress(targetWallet, password) {
+export function removeWalletByAddress(targetWallet, password, optout, exists) {
     return async function (dispatch, getState) {
         // Get latest wallet state and create mutable instances of internal/external state
         let wallets = getState().vault.wallets;
@@ -285,11 +287,19 @@ export function removeWalletByAddress(targetWallet, password) {
         // First determine if internal or external
         // Is internal
         if (targetWallet.isInternal) {
-            internalWallets = internalWallets.filter(e => (targetWallet.address !== e.address));
+            if(exists && internalWallets.findIndex(w => w === targetWallet.address) === 0) {
+                return { error: 'If a Vault exists, main internal wallet must not be removed' }
+            } else {
+                internalWallets = internalWallets.filter(w => (targetWallet.address !== w.address));
+            }
         }
         // Else external...
         else {
-            externalWallets = externalWallets.filter(e => (targetWallet.address !== e.address));
+            if(optout && externalWallets.findIndex(w => w === targetWallet.address) === 0) {
+                return { error: 'If user has opted out, main external wallet must not be removed' }
+            } else {
+                externalWallets = externalWallets.filter(w => (targetWallet.address !== w.address));
+            }
         }
 
         // Recompile newly mutated wallet states
