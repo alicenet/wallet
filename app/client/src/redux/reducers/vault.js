@@ -91,6 +91,12 @@ export default function vaultReducer(state = initialVaultState, action) {
                 unsyncWallets: [ ...state.unsyncWallets,  action.payload.name ]
             })
 
+        case VAULT_ACTION_TYPES.CLEAR_UNSYNCED_WALLETS:
+            log.debug("Reset unsynced wallets");
+            return Object.assign({}, state, {
+                unsyncWallets: []
+            })
+
         case VAULT_ACTION_TYPES.SET_BALANCES_STATE:
             log.debug("Setting new balances state:", action.payload);
             return Object.assign({}, state, {
