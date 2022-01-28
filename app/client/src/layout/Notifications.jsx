@@ -22,7 +22,7 @@ function Notification({ notification, onClose }){
                     reason: "Vault Synchronization | " + notification,
                     cb: async (password) => {
                         await electronStoreCommonActions.updateVaultWallets(password, wallets)
-                        toast.success(<SyncToastMessageSuccess title="Success" message={notification} />, {
+                        toast.success(<SyncToastMessageSuccess title="Success" message="Vault updated!" />, {
                             position: "bottom-right",
                             autoClose: 2400,
                             delay: 500,
