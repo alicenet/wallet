@@ -5,13 +5,16 @@ import { electronStoreCommonActions } from 'store/electronStoreHelper';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { SyncToastMessageSuccess } from 'components/customToasts/CustomToasts';
-import { VAULT_ACTIONS } from 'redux/actions/_actions';
+import { VAULT_ACTION_TYPES } from 'redux/constants/_constants';
 
 function Notification({ notification, onClose }){
     const dispatch = useDispatch();
     const { wallets } = useSelector(state => (
         { wallets: state.vault.wallets }
     ));
+    if(!notification){
+        return <Message success>No notifications</Message>
+    }
     return <Message warning className="cursor-pointer" onClick={
         () => {
             dispatch({
@@ -27,8 +30,7 @@ function Notification({ notification, onClose }){
                             pauseOnHover: true,
                             draggable: true,
                         });
-                        //clear wallets
-                        //dispatch(VAULT_ACTIONS.syncUnsavedWallets())
+                        dispatch({ type: VAULT_ACTION_TYPES.CLEAR_UNSYNCED_WALLETS })
                     }
                 }
             })
@@ -40,20 +42,30 @@ function Notification({ notification, onClose }){
         </Message>
 }
 
+function NotificationIcon({ notifications }) {
+    const hasNotifications = notifications.length > 0;
+    if(hasNotifications){
+        //Show alert for the first notification only
+        return <> <Icon name="bell" className="transform duration-300 group-hover:rotate-90" /> <Label className={`floating ${hasNotifications && 'red'} top-0 left-8 text-micro`}>{1}</Label> </>
+    }
+    return <Icon name="bell slash" />
+}
+
 export function Notifications({ notifications = [] }){
-    const [isOpen, setIsOpen] = useState(false)
+    const [isOpen, setIsOpen] = useState(false);
+
     return <Popup size="mini"
                 content={<Container className="w-64">
                             <div className="text-right cursor-pointer" onClick={() => setIsOpen(false)}><Icon name="close" className="mx-0"/></div>
-                            {/*We are only showing one of the notifications */}
-                            <div>{notifications.length <= 0 ? "No pending alerts" : <Notification notification={notifications[0]} onClose={() => setIsOpen(false)}/>}</div>
+                            {/*We are only showing the first notification */}
+                            <div><Notification notification={notifications[0]} onClose={() => setIsOpen(false)}/></div>
                         </Container>}
                 position="right center" 
                 offset="0, -4"
                 open={isOpen}
                 trigger={
                     <Menu.Item as='a' header  onClick={() => setIsOpen(true)} className="px-3 hover:bg-transparent group">
-                        {notifications.length > 0 ? <><Icon name="bell" className="transform duration-300 group-hover:rotate-90" /><Label className={`floating ${notifications.length > 0 && 'red'} top-0 left-8 text-micro`}>{notifications.length}</Label></> : <Icon name="bell slash" />}
+                        <NotificationIcon notifications={notifications}/>
                     </Menu.Item>
                 }
             />
