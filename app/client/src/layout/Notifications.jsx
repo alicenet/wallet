@@ -1,43 +1,44 @@
 import React, { useState } from 'react';
 import { Container, Label, Icon, Menu, Popup, Message } from 'semantic-ui-react';
-import { MODAL_ACTION_TYPES } from 'redux/constants/_constants';
+import { MODAL_ACTION_TYPES, VAULT_ACTION_TYPES } from 'redux/constants/_constants';
 import { electronStoreCommonActions } from 'store/electronStoreHelper';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { SyncToastMessageSuccess } from 'components/customToasts/CustomToasts';
-import { VAULT_ACTION_TYPES } from 'redux/constants/_constants';
 
 function Notification({ notification, onClose }){
     const dispatch = useDispatch();
     const { wallets } = useSelector(state => (
         { wallets: state.vault.wallets }
     ));
+
     if(!notification){
         return <Message success>No notifications</Message>
     }
+    
     return <Message warning className="cursor-pointer" onClick={
-        () => {
-            dispatch({
-                type: MODAL_ACTION_TYPES.OPEN_PW_REQUEST, payload: {
-                    reason: "Vault Synchronization | " + notification,
-                    cb: async (password) => {
-                        await electronStoreCommonActions.updateVaultWallets(password, wallets)
-                        toast.success(<SyncToastMessageSuccess title="Success" message="Vault updated!" />, {
-                            position: "bottom-right",
-                            autoClose: 2400,
-                            delay: 500,
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            draggable: true,
-                        });
-                        dispatch({ type: VAULT_ACTION_TYPES.CLEAR_UNSYNCED_WALLETS })
+            () => {
+                dispatch({
+                    type: MODAL_ACTION_TYPES.OPEN_PW_REQUEST, payload: {
+                        reason: "Vault Synchronization | " + notification,
+                        cb: async (password) => {
+                            await electronStoreCommonActions.updateVaultWallets(password, wallets)
+                            toast.success(<SyncToastMessageSuccess title="Success" message="Vault updated!" />, {
+                                position: "bottom-right",
+                                autoClose: 2400,
+                                delay: 500,
+                                closeOnClick: true,
+                                pauseOnHover: true,
+                                draggable: true,
+                            });
+                            dispatch({ type: VAULT_ACTION_TYPES.CLEAR_UNSYNCED_WALLETS })
+                        }
                     }
-                }
-            })
-            toast.dismiss()
-            onClose()
-        }
-    }>
+                })
+                toast.dismiss()
+                onClose()
+            }
+        }>
             <div className="font-bold text-sm">Vault Update Request</div>
         </Message>
 }
