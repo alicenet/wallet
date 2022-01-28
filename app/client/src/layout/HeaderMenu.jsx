@@ -3,6 +3,7 @@ import React from 'react';
 import { Container, Header, Icon, Image, Menu, Popup } from 'semantic-ui-react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { Notifications } from './Notifications';
 
 import MadIcon from 'Assets/icon.png';
 import { VAULT_ACTIONS } from 'redux/actions/_actions';
@@ -51,6 +52,9 @@ function HeaderMenu({ showMenu }) {
     const goto = (path) => {
         history.push(path);
     }
+
+    //TODO integrate with state
+   const notifications = [{id:'aaa', title:'Attention required', message:'There is a notification A'}, {id:'bbb', title:'Attention required', message:'There is a notification B'}]
 
     const MenuTabItem = ({ name, activeId, gotoPath }) => {
         return (
@@ -113,7 +117,6 @@ function HeaderMenu({ showMenu }) {
 
                                 </Menu.Item>
                             }
-
                         />
                     }
 
@@ -129,7 +132,10 @@ function HeaderMenu({ showMenu }) {
                                 </Menu.Item>
                             }
                         />
+                    }
 
+                    {
+                        showMenu && existingAccount && !vaultLocked && <Notifications notifications={notifications}/>
                     }
 
                 </div>
