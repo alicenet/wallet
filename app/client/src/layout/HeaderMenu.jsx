@@ -20,9 +20,9 @@ function HeaderMenu({ showMenu }) {
     const history = useHistory();
     const dispatch = useDispatch();
     const location = useLocation();
-    const { hideGenericTooltips, unsyncWallets } = useSelector(state => ({ 
+    const { hideGenericTooltips, unsyncedWallets } = useSelector(state => ({ 
         hideGenericTooltips: state.config.hide_generic_tooltips,
-        unsyncWallets: state.vault.unsyncWallets
+        unsyncedWallets: state.vault.unsyncedWallets
     }))
     const pathname = location.pathname;
 
@@ -138,7 +138,7 @@ function HeaderMenu({ showMenu }) {
                     }
 
                     {
-                        showMenu && existingAccount && !vaultLocked && !!unsyncWallets && 
+                        showMenu && existingAccount && !vaultLocked && !!unsyncedWallets && 
                         <Notifications notifications={notifications} onClick={() => dispatch(VAULT_ACTIONS.syncUnsavedWallets())} />
                     }
 
