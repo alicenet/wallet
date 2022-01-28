@@ -20,7 +20,10 @@ function HeaderMenu({ showMenu }) {
     const history = useHistory();
     const dispatch = useDispatch();
     const location = useLocation();
-    const { hideGenericTooltips } = useSelector(state => ({ hideGenericTooltips: state.config.hide_generic_tooltips }))
+    const { hideGenericTooltips, unsyncWallets } = useSelector(state => ({ 
+        hideGenericTooltips: state.config.hide_generic_tooltips,
+        unsyncWallets: state.vault.unsyncWallets
+    }))
     const pathname = location.pathname;
 
     const [lockIcon, setLockIcon] = React.useState("unlock");
@@ -135,7 +138,8 @@ function HeaderMenu({ showMenu }) {
                     }
 
                     {
-                        showMenu && existingAccount && !vaultLocked && <Notifications notifications={notifications}/>
+                        showMenu && existingAccount && !vaultLocked && !!unsyncWallets && 
+                        <Notifications notifications={notifications} onClick={() => dispatch(VAULT_ACTIONS.syncUnsavedWallets())} />
                     }
 
                 </div>

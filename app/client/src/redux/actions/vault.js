@@ -144,6 +144,12 @@ export function loadSecureHDVaultFromStorage(password) {
     }
 }
 
+export function syncUnsavedWallets() {
+    return async function (dispatch, getState) {
+        return dispatch({ type: ACTION_ELECTRON_SYNC, payload: { reason: "Vault Update Request" } });
+    }
+}
+
 /** After a vault has been decrypted call this actions for any wallets to be added to the internal keyring and to the MadWallet object within state
  * Internal keyring wallets are validated for existence and stored inside the vault
  * @param {String} walletName - The name of the wallet - extracted from the vault
