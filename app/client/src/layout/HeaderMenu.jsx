@@ -56,9 +56,6 @@ function HeaderMenu({ showMenu }) {
         history.push(path);
     }
 
-    //TODO integrate with state
-   const notifications = [{id:'aaa', title:'Attention required', message:'There is a notification A'}, {id:'bbb', title:'Attention required', message:'There is a notification B'}]
-
     const MenuTabItem = ({ name, activeId, gotoPath }) => {
         return (
             <Menu.Item
@@ -139,7 +136,7 @@ function HeaderMenu({ showMenu }) {
 
                     {
                         showMenu && existingAccount && !vaultLocked && !!unsyncedWallets && 
-                        <Notifications notifications={notifications} onClick={() => dispatch(VAULT_ACTIONS.syncUnsavedWallets())} />
+                        <Notifications notifications={unsyncedWallets} onClick={() => dispatch(VAULT_ACTIONS.syncUnsavedWallets())} />
                     }
 
                 </div>
