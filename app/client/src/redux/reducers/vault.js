@@ -27,6 +27,9 @@ export const buildVaultStateObject = ({ exists = null, isLocked = null, optout =
             external: externalWallets, // Array of <WalletObject>s as defined below
             internal: internalWallets, // Array of <WalletObject>s as defined below
         },
+        unsyncedWallets: [
+            // Wallet name
+        ],
         balancesLoading: false, // Are balances being fetched?
         balances: {
             // Contains array of following obj structures:
@@ -77,13 +80,21 @@ export default function vaultReducer(state = initialVaultState, action) {
         case VAULT_ACTION_TYPES.ADD_EXTERNAL_WALLET:
             log.debug("External Wallet Added To Redux State:", action.payload);
             return Object.assign({}, state, {
-                wallets: { internal: state.wallets.internal, external: [...state.wallets.external, action.payload] }
+                wallets: { internal: state.wallets.internal, external: [...state.wallets.external, action.payload] },
+                unsyncedWallets: [ ...state.unsyncedWallets,  action.payload.name ]
             })
 
         case VAULT_ACTION_TYPES.ADD_INTERNAL_WALLET:
             log.debug("Internal Wallet Added To Redux State:", action.payload);
             return Object.assign({}, state, {
-                wallets: { internal: [...state.wallets.internal, action.payload], external: state.wallets.external }
+                wallets: { internal: [...state.wallets.internal, action.payload], external: state.wallets.external },
+                unsyncedWallets: [ ...state.unsyncedWallets,  action.payload.name ]
+            })
+
+        case VAULT_ACTION_TYPES.CLEAR_UNSYNCED_WALLETS:
+            log.debug("Reset unsynced wallets");
+            return Object.assign({}, state, {
+                unsyncedWallets: []
             })
 
         case VAULT_ACTION_TYPES.SET_BALANCES_STATE:

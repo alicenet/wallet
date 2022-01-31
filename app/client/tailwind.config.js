@@ -20,6 +20,9 @@ module.exports = {
                 'width': 'width',
                 'height': 'height',
             },
+            fontSize: {
+                micro: '0.55rem'
+            }
         },
     },
     variants: {

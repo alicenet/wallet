@@ -63,7 +63,7 @@ export default function PasswordRequestModal() {
                 <Form size="small" className="mini-error-form text-left" onSubmit={() => onSubmit(tryPassword)} error={!!formState.password.error}>
 
                     <Form.Input
-                        label="Keystore Password"
+                        label="Vault Password"
                         type={showPassword ? "text" : "password"}
                         error={!!formState.password.error && { content: formState.password.error }}
                         value={formState.password.value}
