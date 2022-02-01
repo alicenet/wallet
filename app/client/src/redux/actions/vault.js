@@ -283,6 +283,11 @@ export function removeWalletByAddress(targetWallet, password, optout, exists) {
         let wallets = getState().vault.wallets;
         try { 
             const newWalletsState = await dispatch({ type: MIDDLEWARE_ACTION_TYPES.REMOVE_WALLET, payload: { wallets, targetWallet, optout, exists } })
+            
+            if(newWalletsState.error) {
+                return { error: newWalletsState.error }
+            }  
+
             // Submit the update to the redux store --
             await dispatch({ type: VAULT_ACTION_TYPES.SET_WALLETS_STATE, payload: newWalletsState })
             

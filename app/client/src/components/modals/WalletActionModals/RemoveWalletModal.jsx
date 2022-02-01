@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { Button, Form, Header, Icon, Modal } from 'semantic-ui-react'
+import { Button, Form, Header, Icon, Modal, Message } from 'semantic-ui-react'
 import { useDispatch, useSelector } from 'react-redux'
 import head from 'lodash/head';
 import { MODAL_ACTIONS, VAULT_ACTIONS } from 'redux/actions/_actions';
@@ -44,11 +44,10 @@ export default function RemoveWalletModal() {
         }
 
         let deleteWallet = await dispatch(VAULT_ACTIONS.removeWalletByAddress(targetWallet, formState.password.value, optout, exists));
-        setLoading(false);
+
         if (deleteWallet.error) {
             return setError(deleteWallet.error);
-        }
-        else {
+        } else {
             closeModal();
             const walletHead = head(wallets.internal) || head(wallets.external);
             setSelectedWallet(walletHead);
@@ -78,12 +77,18 @@ export default function RemoveWalletModal() {
 
             <Modal.Content className="text-sm">
 
-                <p>
-                    Removing a wallet is considered an administrative action.
-                </p>
-                <p>
-                    Please provide your vault password below to confirm this removal.
-                </p>
+                {exists ? 
+                    <>
+                        <p>
+                            Removing a wallet is considered an administrative action.
+                        </p>
+                        <p>
+                            Please provide your vault password below to confirm this removal.
+                        </p>
+                    </> : 
+                    <p>
+                        Please confirm before deleting
+                    </p>}
 
                 <Form
                     error={!!error}
@@ -94,7 +99,7 @@ export default function RemoveWalletModal() {
 
                     <Form.Group>
 
-                        <Form.Input
+                        {exists && <Form.Input
                             width={6}
                             type={showPass ? "text" : "password"}
                             size="small"
@@ -104,11 +109,13 @@ export default function RemoveWalletModal() {
                             onChange={e => formSetter.setPassword(e.target.value)}
                             error={!!error}
                             icon={<Icon name={showPass ? "eye" : "eye slash"} link onClick={() => setShowPass(s => !s)}/>}
-                        />
+                        />}
 
                     </Form.Group>
 
                 </Form>
+                
+                {error && <Message color={error ? "red" : "purple"}>{error}</Message>}
 
             </Modal.Content>
 
@@ -116,7 +123,7 @@ export default function RemoveWalletModal() {
 
                 <div className="flex justify-between">
                     <Button size="small" color="orange" content="Close" onClick={closeModal} basic/>
-                    <Button size="small" content={error ? "Try Again" : "Delete Wallet"} color={error ? "red" : "purple"} basic onClick={removeWallet} loading={loading}/>
+                    <Button size="small" content={error ? "Try Again" : "Delete Wallet"} color={error ? "red" : "purple"} basic onClick={removeWallet} loading={loading && !error}/>
                 </div>
 
             </Modal.Actions>

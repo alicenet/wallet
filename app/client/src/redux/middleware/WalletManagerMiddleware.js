@@ -281,16 +281,16 @@ export function removeWallet({ wallets, targetWallet, optout, exists }){
         // First determine if internal or external
         // Is internal
         if (targetWallet.isInternal) {
-            if(exists && internalWallets.findIndex(w => w === targetWallet.address) === 0) {
-                return { error: 'If a Vault exists, main internal wallet must not be removed' }
+            if(exists && internalWallets.findIndex(w => w.address === targetWallet.address) === 0) {
+                res({ error: 'If a Vault exists, main internal wallet must not be removed' })
             } else {
                 internalWallets = internalWallets.filter(w => (targetWallet.address !== w.address));
             }
         }
         // Else external...
         else {
-            if(optout && externalWallets.findIndex(w => w === targetWallet.address) === 0) {
-                return { error: 'If user has opted out, main external wallet must not be removed' }
+            if(optout && externalWallets.findIndex(w => w.address === targetWallet.address) === 0) {
+                res({ error: 'If user has opted out, main external wallet must not be removed' })
             } else {
                 externalWallets = externalWallets.filter(w => (targetWallet.address !== w.address));
             }
@@ -298,7 +298,6 @@ export function removeWallet({ wallets, targetWallet, optout, exists }){
 
         // Recompile newly mutated wallet states, this should be balancedState
         let newWalletsState = { internal: internalWallets, external: externalWallets };
-
         res(newWalletsState);
     })
 }
