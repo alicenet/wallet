@@ -1,24 +1,29 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { Button, Form, Header, Icon, Modal } from 'semantic-ui-react'
 import { useDispatch, useSelector } from 'react-redux'
+import head from 'lodash/head';
 import { MODAL_ACTIONS, VAULT_ACTIONS } from 'redux/actions/_actions';
 import { electronStoreCommonActions } from 'store/electronStoreHelper';
 import { useFormState } from 'hooks/_hooks';
+import { WalletHubContext } from 'context/WalletHubContext';
 
 export default function RemoveWalletModal() {
 
     const dispatch = useDispatch()
 
-    const { isOpen, targetWallet, exists, optout } = useSelector(s => ({
+    const { isOpen, targetWallet, exists, optout, wallets } = useSelector(s => ({
         isOpen: s.modal.remove_wallet_modal,
         targetWallet: s.modal.wallet_action_target,
         exists: s.vault.exists,
         optout: s.vault.optout,
+        wallets: s.vault.wallets
     }));
 
     const [formState, formSetter, onSubmit] = useFormState([
         { name: 'password', display: 'Vault Password', type: 'password', isRequired: true }
     ]);
+
+    const { setSelectedWallet } = useContext(WalletHubContext);
 
     const [error, setError] = useState();
     const [loading, setLoading] = useState(false);
@@ -45,6 +50,8 @@ export default function RemoveWalletModal() {
         }
         else {
             closeModal();
+            const walletHead = head(wallets.internal) || head(wallets.external);
+            setSelectedWallet(walletHead);
         }
     }
 

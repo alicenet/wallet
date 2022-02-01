@@ -112,9 +112,11 @@ function App() {
                 <PasswordRequestModal/>
                 <ResetWalletModal/>
                 <WalletActionModals.RenameWalletModal/>
-                <WalletActionModals.RemoveWalletModal/>
                 <WalletActionModals.ExportPrivateKeyModal/>
                 <WalletActionModals.ExportKeystoreModal/>
+                <WalletHubProvider>
+                    <WalletActionModals.RemoveWalletModal/>
+                </WalletHubProvider>
 
             </Router>
         </Container>

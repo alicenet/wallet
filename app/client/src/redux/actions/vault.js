@@ -281,35 +281,17 @@ export function removeWalletByAddress(targetWallet, password, optout, exists) {
     return async function (dispatch, getState) {
         // Get latest wallet state and create mutable instances of internal/external state
         let wallets = getState().vault.wallets;
-        let internalWallets = [...wallets.internal];
-        let externalWallets = [...wallets.external];
-
-        // First determine if internal or external
-        // Is internal
-        if (targetWallet.isInternal) {
-            if(exists && internalWallets.findIndex(w => w === targetWallet.address) === 0) {
-                return { error: 'If a Vault exists, main internal wallet must not be removed' }
-            } else {
-                internalWallets = internalWallets.filter(w => (targetWallet.address !== w.address));
-            }
-        }
-        // Else external...
-        else {
-            if(optout && externalWallets.findIndex(w => w === targetWallet.address) === 0) {
-                return { error: 'If user has opted out, main external wallet must not be removed' }
-            } else {
-                externalWallets = externalWallets.filter(w => (targetWallet.address !== w.address));
-            }
-        }
-
-        // Recompile newly mutated wallet states
-        let newWalletsState = { internal: internalWallets, external: externalWallets };
-        
-        try {
+        try { 
+            const newWalletsState = await dispatch({ type: MIDDLEWARE_ACTION_TYPES.REMOVE_WALLET, payload: { wallets, targetWallet, optout, exists } })
             // Submit the update to the redux store --
             await dispatch({ type: VAULT_ACTION_TYPES.SET_WALLETS_STATE, payload: newWalletsState })
+            
+            // Password and updateVaultWallets required for vault users only
             // Submit it to the electron helper for writing the vault --
-            await electronStoreCommonActions.updateVaultWallets(password, newWalletsState);
+            if(exists){
+                await electronStoreCommonActions.updateVaultWallets(password, newWalletsState);
+            }
+            
         } catch (ex) {
             return { error: ex }
         }

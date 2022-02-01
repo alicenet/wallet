@@ -24,6 +24,8 @@ export default function WalletManagerMiddleware(storeAPI) {
                     return addNextHDWallet(storeAPI, action.payload.name);
                 case MIDDLEWARE_ACTION_TYPES.REINSTANCE_MAD_WALLET:
                     return reinstanceMadWallet();
+                case MIDDLEWARE_ACTION_TYPES.REMOVE_WALLET:
+                    return removeWallet(action.payload);
                 default: break;
             }
             // Do anything here: pass the action onwards with next(action),
@@ -259,4 +261,44 @@ function buildBalancedWalletState(internalAdds, externalAdds) {
  */
 export function getMadWalletInstance() {
     return madWallet;
+}
+
+
+/**
+ * Remove a wallet from the vault referenced by address and push the update to the store
+ * -- Requires password
+ * @param { Array } wallets -- Wallets from state
+ * @param { Object } targetWallet -- Wallet object from redux state
+ * @param { Boolean } optout -- Index 0 of external wallets must not be allowed removal
+ * @param { Boolean } exists -- A Vault exists. Index 0 of internal wallets must not be allowed removal. All Externals can be removed if a user has a vault
+ */
+export function removeWallet({ wallets, targetWallet, optout, exists }){
+    return new Promise(async res => {
+
+        let internalWallets = [...wallets.internal];
+        let externalWallets = [...wallets.external];
+
+        // First determine if internal or external
+        // Is internal
+        if (targetWallet.isInternal) {
+            if(exists && internalWallets.findIndex(w => w === targetWallet.address) === 0) {
+                return { error: 'If a Vault exists, main internal wallet must not be removed' }
+            } else {
+                internalWallets = internalWallets.filter(w => (targetWallet.address !== w.address));
+            }
+        }
+        // Else external...
+        else {
+            if(optout && externalWallets.findIndex(w => w === targetWallet.address) === 0) {
+                return { error: 'If user has opted out, main external wallet must not be removed' }
+            } else {
+                externalWallets = externalWallets.filter(w => (targetWallet.address !== w.address));
+            }
+        }
+
+        // Recompile newly mutated wallet states, this should be balancedState
+        let newWalletsState = { internal: internalWallets, external: externalWallets };
+
+        res(newWalletsState);
+    })
 }
