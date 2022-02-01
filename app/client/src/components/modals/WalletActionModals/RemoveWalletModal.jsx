@@ -55,6 +55,9 @@ export default function RemoveWalletModal() {
     }
 
     const closeModal = () => {
+        setLoading(false);
+        setError('');
+        setShowPass(false);
         dispatch(MODAL_ACTIONS.closeRemoveWalletModal())
     };
 
