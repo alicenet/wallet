@@ -44,7 +44,7 @@ export default function RemoveWalletModal() {
         }
 
         let deleteWallet = await dispatch(VAULT_ACTIONS.removeWalletByAddress(targetWallet, formState.password.value, optout, exists));
-
+        setLoading(false);
         if (deleteWallet.error) {
             return setError(deleteWallet.error);
         } else {
