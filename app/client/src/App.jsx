@@ -67,6 +67,8 @@ function App() {
                 <RedirectIfLocked>
                     <WalletHubProvider>
                         <Route exact path="/hub" component={Hubs.ReturningUserHub}/>
+                        {/* Remove Wallet Modal -- Updates selected wallet after delete */}
+                        <WalletActionModals.RemoveWalletModal/>
                     </WalletHubProvider>
                 </RedirectIfLocked>
 
@@ -114,9 +116,6 @@ function App() {
                 <WalletActionModals.RenameWalletModal/>
                 <WalletActionModals.ExportPrivateKeyModal/>
                 <WalletActionModals.ExportKeystoreModal/>
-                <WalletHubProvider>
-                    <WalletActionModals.RemoveWalletModal/>
-                </WalletHubProvider>
 
             </Router>
         </Container>
