@@ -25,13 +25,13 @@ export default function RemoveWalletModal() {
 
     const { setSelectedWallet } = useContext(WalletHubContext);
 
-    const [error, setError] = useState();
+    const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const [showPass, setShowPass] = useState(false);
 
     // Clear on open changes
     useEffect(() => {
-        formSetter.setPassword("");
+        formSetter.setPassword('');
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isOpen])
 
@@ -40,7 +40,7 @@ export default function RemoveWalletModal() {
         setError('');
         if (exists && !await electronStoreCommonActions.checkPasswordAgainstPreflightHash(formState.password.value)) {
             setLoading(false);
-            return setError("Incorrect password");
+            return setError('Incorrect password');
         }
 
         let deleteWallet = await dispatch(VAULT_ACTIONS.removeWalletByAddress(targetWallet, formState.password.value, optout, exists));
