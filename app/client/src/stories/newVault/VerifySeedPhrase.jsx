@@ -1,45 +1,43 @@
-import React from 'react';
-
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-
-import {Button, Container, Grid, Header, Label, Segment, TextArea} from 'semantic-ui-react';
-
-import {useHistory} from 'react-router-dom';
-import {useSelector} from 'react-redux';
-
+import { Button, Container, Grid, Header, Label, Segment, TextArea } from 'semantic-ui-react';
+import { useHistory } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import isEqual from 'lodash/isEqual';
 import shuffle from 'lodash/shuffle';
-
-import Page from '../../layout/Page';
+import Page from 'layout/Page';
 import { isDebug } from 'util/generic';
-import { isEqual } from 'lodash';
 
 function VerifyYourSeedPhrase() {
 
-    const [actionedButtons, setActionedButtons] = React.useState(new Set());
-    const [seedPhraseIsCorrect, setSeedPhraseIsCorrect] = React.useState(false);
-    const [chosenPhrase, setChosenPhrase] = React.useState([]);
-    const [verifyPhraseButtonText, setVerifyPhraseButtonText] = React.useState("Verify Phrase");
-    const [shuffledSeedPhrase, setShuffledSeedPhrase] = React.useState([]);
+    const [actionedButtons, setActionedButtons] = useState(new Set());
+    const [seedPhraseIsCorrect, setSeedPhraseIsCorrect] = useState(false);
+    const [chosenPhrase, setChosenPhrase] = useState([]);
+    const [verifyPhraseButtonText, setVerifyPhraseButtonText] = useState("Verify Phrase");
+    const [shuffledSeedPhrase, setShuffledSeedPhrase] = useState([]);
 
     const history = useHistory();
-    const {seedPhrase} = useSelector(state => ({seedPhrase: state.user.potential_seed_phrase}));
+    const { seedPhrase } = useSelector(state => ({ seedPhrase: state.user.potential_seed_phrase }));
 
-    React.useEffect(() => {
-        if (isDebug) { return  setShuffledSeedPhrase(seedPhrase.split(' ')); } // Skip shuffle for debug mode
+    useEffect(() => {
+        if (isDebug) {
+            return setShuffledSeedPhrase(seedPhrase.split(' '));
+        } // Skip shuffle for debug mode
         setShuffledSeedPhrase(shuffle(seedPhrase.split(' ')));
-    }, [seedPhrase])
+    }, [seedPhrase]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (seedPhraseIsCorrect) {
-            setVerifyPhraseButtonText("Verify Phrase")
-        } else {
-            setVerifyPhraseButtonText("Phrase isn't correct!")
+            setVerifyPhraseButtonText("Verify Phrase");
+        }
+        else {
+            setVerifyPhraseButtonText("Phrase isn't correct!");
         }
     }, [seedPhraseIsCorrect]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         setSeedPhraseIsCorrect(isDebug ? chosenPhrase.length === 12 : isEqual(chosenPhrase, seedPhrase.split(" ")));
-    }, [chosenPhrase]);
+    }, [chosenPhrase, seedPhrase]);
 
     const handlePhraseClick = (word, index) => {
         let phrase = [...chosenPhrase];
@@ -50,8 +48,9 @@ function VerifyYourSeedPhrase() {
                 actionedButtons.delete(index);
                 phrase.splice(indexOf, 1);
             }
-        } else {
-            setActionedButtons(prevState => prevState.add(index))
+        }
+        else {
+            setActionedButtons(prevState => prevState.add(index));
             phrase.push(word);
         }
         setChosenPhrase(phrase);
@@ -66,7 +65,7 @@ function VerifyYourSeedPhrase() {
 
                 <Grid.Column width={16} className="p-0 self-center">
 
-                    <Header content="Verify Your Seed Phrase" as="h3" className="m-0"/>
+                    <Header content="Verify Your Seed Phrase" as="h3" className="m-0" />
 
                 </Grid.Column>
 
@@ -106,8 +105,12 @@ function VerifyYourSeedPhrase() {
 
                             <Label attached='top'>Seed Phrase</Label>
 
-                            <TextArea rows={3} disabled value={chosenPhrase.join(' ')}
-                                      className="border-0 hover:border-gray-500 focus:border-gray-500 focus:outline-none w-full p-3 resize-none"/>
+                            <TextArea
+                                rows={3}
+                                disabled
+                                value={chosenPhrase.join(' ')}
+                                className="border-0 hover:border-gray-500 focus:border-gray-500 focus:outline-none w-full p-3 resize-none"
+                            />
 
                         </Segment>
 
@@ -119,13 +122,20 @@ function VerifyYourSeedPhrase() {
 
                     <Container className="flex justify-between">
 
-                        <Button color="purple" basic content="Get New Seed Phrase"
-                                onClick={() => history.push('/newVault/getNewSeedPhrase')}/>
+                        <Button
+                            color="purple"
+                            basic
+                            content="Get New Seed Phrase"
+                            onClick={() => history.push('/newVault/getNewSeedPhrase')}
+                        />
 
-                        <Button color={seedPhraseIsCorrect ? 'teal' : 'red'} disabled={!seedPhraseIsCorrect}
-                                basic className="m-0"
-                                content={verifyPhraseButtonText}
-                                onClick={() => history.push('/newVault/chooseEllipticCurve')}/>
+                        <Button
+                            color={seedPhraseIsCorrect ? 'teal' : 'red'}
+                            disabled={!seedPhraseIsCorrect}
+                            basic className="m-0"
+                            content={verifyPhraseButtonText}
+                            onClick={() => history.push('/newVault/chooseEllipticCurve')}
+                        />
 
                     </Container>
 

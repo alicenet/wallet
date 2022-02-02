@@ -28,8 +28,6 @@ export default function NetworkStatusIndicator() {
         registryContractAddress: s.config.registry_contract_address,
     }));
 
-    const anyError = madError || web3Error;
-
     const [formState, formSetter, onSubmit] = useFormState([
         { name: 'MadNetProvider', display: 'MadNet Provider', type: 'url', isRequired: true, value: madNetProvider },
         { name: 'EthereumProvider', display: 'Ethereum Provider', type: 'url', isRequired: true, value: ethereumProvider },
@@ -42,7 +40,7 @@ export default function NetworkStatusIndicator() {
 
     // Catch possible registry contract errors
     let registryContractError = "";
-    if (web3Error && web3Error.indexOf("Returned values aren't valid, did it run Out of Gas? You might also see this error if you are not using the correct ABI ") !== -1 ) {
+    if (web3Error && web3Error.indexOf("Returned values aren't valid, did it run Out of Gas? You might also see this error if you are not using the correct ABI ") !== -1) {
         registryContractError = "Ethereum errors can related to the Registry Address, please verify it."
     }
     if (web3Error && web3Error.indexOf("is invalid, the capitalization checksum test failed") !== -1) {
@@ -83,21 +81,18 @@ export default function NetworkStatusIndicator() {
         dispatch(INTERFACE_ACTIONS.toggleGlobalLoadingBool(false));
     };
 
-{/* <div className="flex flex-col absolute bottom-0 left-0 text-xs cursor-pointer bg-red-300 animate-pulse p-1" */}
-
     return (
         <Modal
             open={openModal}
             onClose={handleClose}
             size="small"
             trigger={
-                <div className={classNames(
-                    "group transition-all transition-slow ease hover:w-14 w-12 flex flex-col absolute bottom-0 left-0 text-xs cursor-pointer p-1 rounded-tr", 
-                    {"" : anyError} )} 
+                <div
+                    className="group transition-all transition-slow ease hover:w-14 w-12 flex flex-col absolute bottom-0 left-0 text-xs cursor-pointer p-1 rounded-tr"
                     onClick={() => setOpenModal(true)}
                 >
 
-                    <div className={classNames("flex items-center text-gray-600", {"animate-pulse text-red-600": madError})}>
+                    <div className={classNames("flex items-center text-gray-600", { "animate-pulse text-red-600": madError })}>
                         <div className="font-bold font-mono">
                             MAD
                         </div>
@@ -106,7 +101,7 @@ export default function NetworkStatusIndicator() {
                         </div>
                     </div>
 
-                    <div className={classNames("flex items-center text-gray-600", {"animate-pulse text-red-600": web3Error})}>
+                    <div className={classNames("flex items-center text-gray-600", { "animate-pulse text-red-600": web3Error })}>
                         <div className="font-bold font-mono">
                             ETH
                         </div>
@@ -187,7 +182,7 @@ export default function NetworkStatusIndicator() {
                                 required
                                 value={formState.RegistryContractAddress.value}
                                 onChange={e => formSetter.setRegistryContractAddress(e.target.value)}
-                                error={(!!formState.RegistryContractAddress.error && { content: formState.RegistryContractAddress.error }) || (!!registryContractError && {content: registryContractError})}
+                                error={(!!formState.RegistryContractAddress.error && { content: formState.RegistryContractAddress.error }) || (!!registryContractError && { content: registryContractError })}
                             />
 
                         </Form>
