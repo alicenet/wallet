@@ -3,7 +3,7 @@ import React from 'react';
 import { Container, Header, Icon, Image, Menu, Popup } from 'semantic-ui-react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { Notifications } from './Notifications';
+import { Notifications } from './Notifications';
 
 import MadIcon from 'Assets/icon.png';
 import { VAULT_ACTIONS } from 'redux/actions/_actions';
@@ -98,7 +98,10 @@ function HeaderMenu({ showMenu }) {
                 </div>
 
                 <div className="flex">
-
+                    {
+                        showMenu && existingAccount && !vaultLocked && !!unsyncedWallets &&
+                        <Notifications notifications={unsyncedWallets} onClick={() => dispatch(VAULT_ACTIONS.syncUnsavedWallets())} />
+                    }
                     {
                         showMenu && !vaultLocked && !pathIsLockExempt() &&
                         <Popup size="mini" disabled={hideGenericTooltips}
@@ -119,7 +122,6 @@ function HeaderMenu({ showMenu }) {
                             }
                         />
                     }
-
                     {
                         showMenu && existingAccount && !vaultLocked &&
                         <Popup size="mini" disabled={hideGenericTooltips}
@@ -133,12 +135,6 @@ function HeaderMenu({ showMenu }) {
                             }
                         />
                     }
-
-                    {
-                        showMenu && existingAccount && !vaultLocked && !!unsyncedWallets && 
-                        <Notifications notifications={unsyncedWallets} onClick={() => dispatch(VAULT_ACTIONS.syncUnsavedWallets())} />
-                    }
-
                 </div>
 
             </div>
