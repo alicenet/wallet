@@ -38,7 +38,7 @@ export default function RemoveWalletModal() {
     const removeWallet = async () => {
         setLoading(true);
         setError('');
-        if (!await electronStoreCommonActions.checkPasswordAgainstPreflightHash(formState.password.value)) {
+        if (exists && !await electronStoreCommonActions.checkPasswordAgainstPreflightHash(formState.password.value)) {
             setLoading(false);
             return setError("Incorrect password");
         }
