@@ -90,7 +90,7 @@ export function streamlineHDChainFromMnemonic(mnemonic) {
 /**
  * Quickly get a derivative wallet from a Mnemonic using wallet utilities from utils/wallet.js
  * @param { String } mnemonic - mnemonic phrase separated by ' '
- * @param { Integer } nodeNum - The node to derivefrom the derivation path: m'/44'/60'/0'/<node>
+ * @param { Integer } nodeNum - The node to derive from the derivation path: m'/44'/60'/0'/<node>
  * @returns {Promise<HDKey>} - Promise that resolves to the requested HD wallet node
  */
 export function streamLineHDWalletNodeFromMnemonic(mnemonic, nodeNum) {
