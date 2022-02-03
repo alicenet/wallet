@@ -2,6 +2,7 @@ import Web3 from 'web3';
 import { v4 as uuidv4 } from 'uuid';
 import { utilsWallet_logger as log } from 'log/logHelper';
 import store from 'redux/store/store'
+
 const bip39 = require('bip39');
 const MadNetWalletJS = require('madwalletjs')
 var HDKey = require('hdkey');
@@ -10,7 +11,7 @@ var HDKey = require('hdkey');
  * Internal keyring wallets are validated for existence and stored inside the vault
  * @param { String } walletName - The name of the wallet - extracted from the vault
  * @param { String } privK - The private key of this wallet - extracted from the vault
- * @param { Int } curve - Curve type  
+ * @param { Int } curve - Curve type
  */
 export async function generateBasicWalletObject(walletName, privK, curve) {
     // Derive public key and public address to state for ease of use
@@ -25,7 +26,7 @@ export async function generateBasicWalletObject(walletName, privK, curve) {
 
 /**
  * Generate and return a bip39 pnemonic as a string
- * @returns { String } A Bip39 Mnemonic as a string 
+ * @returns { String } A Bip39 Mnemonic as a string
  */
 export function generateBip39Mnemonic() {
     const mnemonic = bip39.generateMnemonic();
@@ -35,7 +36,7 @@ export function generateBip39Mnemonic() {
 
 /**
  * Gets Uint8Array ofr SeedBytes from mnemonic
- * @param {String} mnemonic 
+ * @param {String} mnemonic
  * @returns { Promise<Uint8Array> } - Promise with Uint8Array of representing SeedBytes
  */
 export function getSeedBytesFromMnemonic(mnemonic) {
@@ -47,7 +48,7 @@ export function getSeedBytesFromMnemonic(mnemonic) {
 }
 
 /**
- * Returns respective HDKeyChain of a mnemonic phrase 
+ * Returns respective HDKeyChain of a mnemonic phrase
  * @param { String } mnemonic - mnemonic phrase separated by ' '
  * @returns { HDKey } - HDKeyChain
  */
@@ -125,7 +126,7 @@ export function streamLineHDWalletNodesFromMnemonic(mnemonic, nodeNums) {
 }
 
 /**
-* Unlock a keystore using web3.utils
+ * Unlock a keystore using web3.utils
  * @param {*} keystore - Keystore JSON to unlock
  * @param {*} password - Password to use to unlock the json
  */
@@ -145,8 +146,8 @@ export function unlockKeystore(keystore, password) {
 
 /**
  * Generate and return a new JSON blob representing the data for a keystore.
- * @param { Boolean } asBlob - Return keystore as a blob? 
- * @param { String } password - Password to secure the keystore with 
+ * @param { Boolean } asBlob - Return keystore as a blob?
+ * @param { String } password - Password to secure the keystore with
  * @param { CurveType } curve - Curve if desired, default to type 1
  * @returns { Blob || JSON String } - JSON Blob || Json String
  */
@@ -158,7 +159,8 @@ export async function generateKeystore(asBlob, password, curve = curveTypes.SECP
     let keystore = ks[0];
     // Note the curve && address if BN -- Curve gets removed on reads
     if (curve === curveTypes.BARRETO_NAEHRIG) {
-        keystore["address"] = await getBNfromPrivKey(strip0x(wallet[0].privateKey));;
+        keystore["address"] = await getBNfromPrivKey(strip0x(wallet[0].privateKey));
+        ;
         keystore["curve"] = curveTypes.BARRETO_NAEHRIG
     }
     let ksJSONBlob = new Blob([JSON.stringify(keystore, null, 2)]);
@@ -167,9 +169,9 @@ export async function generateKeystore(asBlob, password, curve = curveTypes.SECP
 
 /**
  * Generated a keystore object from a privateKey
- * @param {*} privK 
- * @param {*} password 
- * @param {*} curve 
+ * @param {*} privK
+ * @param {*} password
+ * @param {*} curve
  * @param {*} asBlob
  */
 export async function generateKeystoreFromPrivK(privK, password, curve = curveTypes.SECP256K1, asBlob) {
@@ -178,9 +180,9 @@ export async function generateKeystoreFromPrivK(privK, password, curve = curveTy
     let ks = web3.eth.accounts.wallet.encrypt(password);
     let keystore = ks[0];
     // Note the curve && address if BN -- Curve gets removed on reads
-    if (curve === curveTypes.BARRETO_NAEHRIG) { 
+    if (curve === curveTypes.BARRETO_NAEHRIG) {
         keystore["address"] = await getBNfromPrivKey(privK);
-        keystore["curve"] = curveTypes.BARRETO_NAEHRIG 
+        keystore["curve"] = curveTypes.BARRETO_NAEHRIG
     }
     let ksJSONBlob = new Blob([JSON.stringify(keystore, null, 2)]);
     return asBlob ? ksJSONBlob : keystore;
@@ -191,8 +193,8 @@ export async function generateKeystoreFromPrivK(privK, password, curve = curveTy
  * @param { String } walletDetails.name - Name of the wallet ( For UI )
  * @param { String } walletDetails.privK - Private Key for the wallet
  * @param { String } walletDetails.address - Address for this wallet ( For UI )
- * @param { String } walletDetauls.curve - Curve used to derive public key from privK
- * @param { Boolean } walletDetauls.isInternal - Is this wallet derives from the Mnemonic HD Chain?
+ * @param { String } walletDetails.curve - Curve used to derive public key from privK
+ * @param { Boolean } walletDetails.isInternal - Is this wallet derives from the Mnemonic HD Chain?
  * @returns  { Object } - Wallet Object
  */
 export const constructWalletObject = (name, privK, address, curve, isInternal) => {
@@ -204,7 +206,7 @@ export const constructWalletObject = (name, privK, address, curve, isInternal) =
 
 /**
  * Strip 0x prefix from eth bases addresses and keys
- * @param { String } pKeyOrAddress 
+ * @param { String } pKeyOrAddress
  */
 export const strip0x = (pKeyOrAddress) => {
     if (typeof pKeyOrAddress !== "string") { throw new Error("Only strings should be passed to strip0x(), handle this externally.") }
@@ -220,7 +222,10 @@ export const strip0x = (pKeyOrAddress) => {
  * Returns true if both strings match
  */
 export function compareAddresses(address1, address2) {
-    if (typeof address1 !== "string" || typeof address2 !== "string") { log.warn("Only strings should be passed to compareAddresses()."); return false; }
+    if (typeof address1 !== "string" || typeof address2 !== "string") {
+        log.warn("Only strings should be passed to compareAddresses().");
+        return false;
+    }
     let stripped1 = strip0x(address1).toLowerCase();
     let stripped2 = strip0x(address2).toLowerCase();
     return stripped1 === stripped2;
@@ -251,9 +256,11 @@ export function userOwnsAddress(address) {
 
 // Returns true if the sent address is the first address in the user's collections
 export function isPrimaryWalletAddress(address) {
-    let walletState = store.getState().vault.wallets
-    let wallets = [...walletState.internal, ...walletState.external]
-    if (wallets.length === 0) { return false };
+    let walletState = store.getState().vault.wallets;
+    let wallets = [...walletState.internal, ...walletState.external];
+    if (wallets.length === 0) {
+        return false;
+    }
     return wallets[0].address === address;
 }
 
@@ -262,7 +269,7 @@ export function isPrimaryWalletAddress(address) {
  * @param { String } address - Address of the wallet to fetch in the vault
  * */
 export function getVaultWalletByAddress(address) {
-    let walletState = store.getState().vault.wallets
+    let walletState = store.getState().vault.wallets;
     let wallets = [...walletState.internal, ...walletState.external];
     let foundWallet = wallets.filter(wallet => wallet.address === address)?.[0];
     return !foundWallet ? false : foundWallet;
@@ -290,7 +297,7 @@ export async function getBNfromPrivKey(privK) {
 
 /**
  * Returns both the secp256k1 and barreto-naehrig derived public keys for a given private key
- * @param { String } privK 
+ * @param { String } privK
  * @returns {Array[{String}, {String}]} - An array of strings: [secp256k1PublicAddress, bnPublicAddress]
  */
 export async function getPubKeysFromPrivKey(privK) {
