@@ -9,12 +9,12 @@ import copy from 'copy-to-clipboard';
 
 export default function ExportPrivateKeyModal() {
 
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
 
     const { isOpen, targetWallet } = useSelector(s => ({
         isOpen: s.modal.export_privK_modal,
         targetWallet: s.modal.wallet_action_target,
-    }))
+    }));
 
     const [showPass, setShowPass] = useState(false);
     const [keyVisible, setKeyVisible] = useState(false);
@@ -33,7 +33,7 @@ export default function ExportPrivateKeyModal() {
                 setVisibleTime(s => s - 1)
             }, 1000)
         }
-    }, [visibleTime])
+    }, [visibleTime]);
 
     // Clear on open changes
     useEffect(() => {
@@ -41,7 +41,7 @@ export default function ExportPrivateKeyModal() {
         setVisibleTime(0);
         formSetter.setVaultPassword("");
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isOpen])
+    }, [isOpen]);
 
     const showKey = async () => {
         if (!await electronStoreCommonActions.checkPasswordAgainstPreflightHash(formState.vaultPassword.value)) {
@@ -53,11 +53,11 @@ export default function ExportPrivateKeyModal() {
         formSetter.setVaultPassword(state => ({ ...state, value: "" }));
         setTimeout(() => {
             setKeyVisible(false);
-        }, 14000)
-    }
+        }, 14000);
+    };
 
     const closeModal = () => {
-        dispatch(MODAL_ACTIONS.closeExportPrivateKeyModal())
+        dispatch(MODAL_ACTIONS.closeExportPrivateKeyModal());
     };
 
     const copyPkey = () => {
@@ -65,7 +65,7 @@ export default function ExportPrivateKeyModal() {
         copy(targetWallet.privK);
         setTimeout(() => {
             setCopyClick(false);
-        }, 2150)
+        }, 2150);
     }
 
     const submit = e => {
