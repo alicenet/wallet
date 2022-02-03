@@ -295,6 +295,8 @@ export function removeWalletByAddress(targetWallet, password, optout, exists) {
             // Submit it to the electron helper for writing the vault --
             if(exists){
                 await electronStoreCommonActions.updateVaultWallets(password, newWalletsState);
+            } else {
+                dispatch({ type: ACTION_ELECTRON_SYNC , payload: {reason: "Keystore removed", optOutWalletRemoved: targetWallet }})
             }
             
         } catch (ex) {

@@ -296,8 +296,6 @@ export function removeWallet({ wallets, targetWallet, optout, exists }){
             }
         }
 
-        console.log(targetWallet);
-
         let madWalletInstance = getMadWalletInstance();
         madWalletInstance.Account.removeAccount(targetWallet.address);
 

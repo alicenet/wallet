@@ -108,8 +108,8 @@ function readEncryptedValueFromStore(key, password) {
  * Requests a direct copy of the user file be made by the electron store messenger
  */
 async function backupStore() {
-    return new Promise( res => {
-        electronStoreMessenger.backupStore( (channel, response) => {
+    return new Promise(res => {
+        electronStoreMessenger.backupStore((channel, response) => {
             res(!!response.success);
         });
     })
@@ -238,6 +238,25 @@ async function addOptOutKeystore(ksString, walletName) {
 }
 
 /**
+ * Remove an optOutKeystore from the electron store state
+ * @param { String } addressToRemove - The address to remove
+ */
+async function removeOptoutKeystore(addressToRemove) {
+    let currentKeystores = await readPlainValueFromStore("optOutStores");
+    // Find the keystore index by parsing the currentKeystores until address is part of the keystoreString
+    let targetKeystoreIndex = (() => {
+        for (let i = 0; i < currentKeystores.length; i++) {
+            let store = currentKeystores[i];
+            if (store.keystore.indexOf(addressToRemove) !== -1) {
+                return i;
+            }
+        }
+    })()
+    currentKeystores.splice(targetKeystoreIndex, 1);
+    writePlainValueToStore("optOutStores", currentKeystores);
+}
+
+/**
  * Returns an array of all optout keystores 
  */
 function checkForOptoutStores() {
@@ -327,6 +346,7 @@ export const electronStoreCommonActions = {
     createNewSecureHDVault: createNewSecureHDVault,
     getPreflightHash: getPreflightHash,
     readConfigurationValues: readConfigurationValues,
+    removeOptoutKeystore: removeOptoutKeystore,
     storeConfigurationValues: storeConfigurationValues,
     storePreflightHash: storePreflightHash,
     unlockAndGetSecuredHDVault: unlockAndGetSecuredHDVault,
