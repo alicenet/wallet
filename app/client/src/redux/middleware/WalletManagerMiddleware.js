@@ -218,7 +218,7 @@ function buildBalancedWalletState(internalAdds, externalAdds) {
             let privK = account.signer.privK; // Note the privK
             let address = account.address; // Note the address from madWalletJS
 
-            // Additionally check the expected derrived address relative to the curve from signerKey for the filtering process
+            // Additionally check the expected derived address relative to the curve from signerKey for the filtering process
             privK = util.wallet.strip0x(privK); // Use 0x-stripped pkey
             let matches = allToAdd.filter(addition => {
                 if (addition[0] === privK && addition[3] === address) {
