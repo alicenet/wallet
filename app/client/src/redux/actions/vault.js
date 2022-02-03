@@ -268,3 +268,40 @@ export function renameWalletByAddress(targetWallet, newName, password) {
 
     }
 }
+
+/**
+ * Remove a wallet from the vault referenced by address and push the update to the store
+ * -- Requires password
+ * @param { Object } targetWallet -- Wallet object from redux state
+ * @param { String } password -- Vault or administrative password -- For writing updates to store 
+ * @param { Boolean } optout -- Index 0 of external wallets must not be allowed removal
+ * @param { Boolean } exists -- A Vault exists. Index 0 of internal wallets must not be allowed removal. All Externals can be removed if a user has a vault
+ */
+export function removeWalletByAddress(targetWallet, password, optout, exists) {
+    return async function (dispatch, getState) {
+        // Get latest wallet state and create mutable instances of internal/external state
+        let wallets = getState().vault.wallets;
+        try { 
+            const newWalletsState = await dispatch({ type: MIDDLEWARE_ACTION_TYPES.REMOVE_WALLET, payload: { wallets, targetWallet, optout, exists } })
+            
+            if(newWalletsState.error) {
+                return { error: newWalletsState.error }
+            }  
+
+            // Submit the update to the redux store --
+            await dispatch({ type: VAULT_ACTION_TYPES.SET_WALLETS_STATE, payload: newWalletsState })
+            
+            // Password and updateVaultWallets required for vault users only
+            // Submit it to the electron helper for writing the vault --
+            if(exists){
+                await electronStoreCommonActions.updateVaultWallets(password, newWalletsState);
+            }
+            
+        } catch (ex) {
+            return { error: ex }
+        }
+
+        return true;
+
+    }
+}

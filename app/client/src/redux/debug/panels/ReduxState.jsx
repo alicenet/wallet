@@ -1,3 +1,4 @@
+import React from 'react';
 import { useSelector } from "react-redux";
 import { Table, Grid, Header, Segment } from 'semantic-ui-react';
 import { classNames } from "util/generic";

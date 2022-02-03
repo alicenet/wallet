@@ -1,3 +1,4 @@
+import React from 'react';
 import store from 'redux/store/store';
 import Web3 from 'web3';
 import ABI from './abi.js';
