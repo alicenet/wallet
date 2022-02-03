@@ -3,6 +3,7 @@ import { electronStoreHelper_logger as log } from 'log/logHelper';
 import utils from 'util/_util';
 import { utils as web3Utils } from 'web3'
 import { v4 } from 'uuid';
+import has from "lodash/has";
 
 /** A utility module to assist in reading and writing from the secure-electron-store using the elctronStoreMessenger
  * without directly utilizing the pub/sub interface provided by it, but rather it's sync-mimicking abstractions
@@ -283,7 +284,28 @@ function checkForOptoutStores() {
         else {
             res(keystores);
         }
-    })
+    });
+}
+
+/**
+ * Returns the optout keystore that corresponds to a specific address
+ * @param { String } address - The address to used for the search
+ */
+function findOptoutStoresByAddress(address) {
+    return new Promise(async res => {
+        const keystores = await checkForOptoutStores();
+        const keystore = keystores.find(store => {
+            const parsedStore = JSON.parse(store.keystore);
+            return parsedStore.address === address;
+        })
+
+        if (!keystore) {
+            res(false);
+        }
+        else {
+            res(keystore);
+        }
+    });
 }
 
 /**
@@ -324,6 +346,20 @@ function checkPasswordAgainstPreflightHash(password) {
     })
 }
 
+/**
+ * Check input password against keystore address
+ */
+function checkPasswordAgainstKeystoreAddress(password, address) {
+    return new Promise(async res => {
+        const store = await findOptoutStoresByAddress(address);
+        if (!store) {
+            log.warn("Error finding keystore with given address.");
+        }
+        const unlocked = utils.wallet.unlockKeystore(JSON.parse(store.keystore), password);
+        res(!has(unlocked, 'error'));
+    })
+}
+
 /** -- Write configuration values to electron store
  * @param { Object } configValues
  * @property { String } configValues.mad_net_chainID - Mad net chain id to save
@@ -355,8 +391,10 @@ export const electronStoreCommonActions = {
     addOptOutKeystore: addOptOutKeystore,
     checkForOptoutStores: checkForOptoutStores,
     checkIfUserHasVault: checkIfUserHasVault,
+    checkPasswordAgainstKeystoreAddress: checkPasswordAgainstKeystoreAddress,
     checkPasswordAgainstPreflightHash: checkPasswordAgainstPreflightHash,
     createNewSecureHDVault: createNewSecureHDVault,
+    findOptoutStoresByAddress: findOptoutStoresByAddress,
     getPreflightHash: getPreflightHash,
     readConfigurationValues: readConfigurationValues,
     removeOptoutKeystore: removeOptoutKeystore,
