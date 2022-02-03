@@ -25,7 +25,7 @@ export async function generateBasicWalletObject(walletName, privK, curve) {
 }
 
 /**
- * Generate and return a bip39 pnemonic as a string
+ * Generate and return a bip39 mnemonic as a string
  * @returns { String } A Bip39 Mnemonic as a string
  */
 export function generateBip39Mnemonic() {
@@ -59,7 +59,7 @@ export function getHDChainFromSeedBytes(seedBytes) {
 }
 
 /**
- * @param { Object } hdChain - The HD Keychain -- Should be derrived from mnemonic via util.wallet.getHDChainFromMnemonic()
+ * @param { Object } hdChain - The HD Keychain -- Should be derived from mnemonic via util.wallet.getHDChainFromMnemonic()
  * @returns { HDKey } - HD Keychain's requested Node
  */
 export function getHDWalletNodeFromHDChain(hdChain, nodeNum) {
@@ -133,7 +133,7 @@ export function streamLineHDWalletNodesFromMnemonic(mnemonic, nodeNums) {
 export function unlockKeystore(keystore, password) {
     try {
         let web3 = new Web3();
-        let storedCurve = keystore.curve ? keystore.curve : curveTypes.SECP256K1; // Falback to SECP256K1 if no stored curve
+        let storedCurve = keystore.curve ? keystore.curve : curveTypes.SECP256K1; // Fallback to SECP256K1 if no stored curve
         let unlocked = web3.eth.accounts.wallet.decrypt([keystore], password);
         let firstWallet = unlocked["0"]; // We only care about the 0 entry for the keystore
         firstWallet.curve = storedCurve; // Reinject the noted curve to the wallet
