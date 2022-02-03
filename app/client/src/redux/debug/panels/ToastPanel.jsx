@@ -1,3 +1,4 @@
+import React from 'react';
 import { Button, Header, Segment } from 'semantic-ui-react';
 import { toast } from 'react-toastify';
 import { SyncToastMessageSuccess } from "components/customToasts/CustomToasts";

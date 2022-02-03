@@ -213,9 +213,9 @@ function buildBalancedWalletState(internalAdds, externalAdds) {
         let internalWallets = []; // Final Internal State Array
         let externalWallets = []; // Final External State Array
         for (let account of madWallet.Account.accounts) {
-            let signerKeyToUse = parseInt(account.MultiSigner.curve) === 1 ? "secpSigner" : "bnSigner";  // Key to use under MultiSigner for this account to get privK
+            let signerKeyToUse = parseInt(account.curve) === 1 ? "secpSigner" : "bnSigner";  // Key to use under MultiSigner for this account to get privK
 
-            let privK = account.MultiSigner[signerKeyToUse].privK; // Note the privK
+            let privK = account.signer.privK; // Note the privK
             let address = account.address; // Note the address from madWalletJS
 
             // Additionally check the expected derrived address relative to the curve from signerKey for the filtering process
@@ -239,7 +239,7 @@ function buildBalancedWalletState(internalAdds, externalAdds) {
             }
             let walletObj = util.wallet.constructWalletObject(
                 match[2], // 2nd index in initial parsing gives us the name,
-                account.MultiSigner[signerKeyToUse].privK,
+                account.signer.privK,
                 account.address,
                 signerKeyToUse === "bnSigner" ? util.wallet.curveTypes.BARRETO_NAEHRIG : util.wallet.curveTypes.SECP256K1,
                 internalAdds.filter(addition => addition[0] === privK).length === 1 // is this an internal wallet?
@@ -295,6 +295,11 @@ export function removeWallet({ wallets, targetWallet, optout, exists }){
                 externalWallets = externalWallets.filter(w => (targetWallet.address !== w.address));
             }
         }
+
+        console.log(targetWallet);
+
+        let madWalletInstance = getMadWalletInstance();
+        madWalletInstance.Account.removeAccount(targetWallet.address);
 
         // Recompile newly mutated wallet states, this should be balancedState
         let newWalletsState = { internal: internalWallets, external: externalWallets };
