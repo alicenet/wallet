@@ -1,6 +1,9 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
 import { Button, Header, Modal } from 'semantic-ui-react';
-import { classNames } from "../../../util/_util";
+import { MODAL_ACTIONS } from 'redux/actions/_actions';
+import { classNames } from "util/_util";
+
 
 /**
  * Shows a prompt to open a modal regarding forgotten vault password
@@ -8,10 +11,14 @@ import { classNames } from "../../../util/_util";
  * @returns
  */
 export default function ForgottenKeystorePasswordModal({ incorrectPwEntered }) {
-
+    const dispatch = useDispatch();
     const [isOpen, setOpen] = React.useState(false);
 
     const toggleOpen = () => setOpen(s => !s);
+
+    const openResetWallet = () => {
+        dispatch(MODAL_ACTIONS.openResetWalletModal());
+    }
 
     return (
         <Modal
@@ -47,10 +54,10 @@ export default function ForgottenKeystorePasswordModal({ incorrectPwEntered }) {
 
             </Modal.Content>
 
-            <Modal.Actions className="">
+            <Modal.Actions className="flex justify-between">
+                <Button content="Close" color="orange" onClick={() => toggleOpen(false)} basic/>
 
-                <Button content="Close" color="orange" onClick={() => toggleOpen(false)} />
-
+                <Button icon="delete" color="red" basic content="Wallet Reset" className="m-0" onClick={openResetWallet}/>
             </Modal.Actions>
 
         </Modal>
