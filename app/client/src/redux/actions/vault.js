@@ -1,12 +1,12 @@
 import React from 'react';
-import { VAULT_ACTION_TYPES, MIDDLEWARE_ACTION_TYPES } from 'redux/constants/_constants';
+import { MIDDLEWARE_ACTION_TYPES, VAULT_ACTION_TYPES } from 'redux/constants/_constants';
 import { getMadWalletInstance } from 'redux/middleware/WalletManagerMiddleware'
 import { electronStoreCommonActions, electronStoreUtilityActions } from '../../store/electronStoreHelper';
 import { reduxState_logger as log } from 'log/logHelper';
 import util from 'util/_util';
+import utils from 'util/_util';
 import { ACTION_ELECTRON_SYNC } from 'redux/middleware/VaultUpdateManagerMiddleware';
 import { curveTypes } from 'util/wallet';
-import utils from 'util/_util';
 import { ADAPTER_ACTIONS, CONFIG_ACTIONS } from './_actions';
 import web3Adapter from 'adapters/web3Adapter';
 import { toast } from 'react-toastify';
@@ -32,7 +32,7 @@ the mutable Wallet objects themselves are handled within MadNetWalletJS's instan
  */
 export function setBalancesLoading(bool) {
     return async function (dispatch) {
-        dispatch({type: VAULT_ACTION_TYPES.SET_BALANCES_LOADING, payload: bool});
+        dispatch({ type: VAULT_ACTION_TYPES.SET_BALANCES_LOADING, payload: bool });
     }
 }
 
@@ -46,10 +46,10 @@ export function generateNewSecureHDVault(mnemonic, password, curveType = util.wa
     return async function (dispatch) {
         // Anytime we generate a vault make sure to note the curve in the vault store as well 
         // -- This prevents immediately generated vault from not having the correct curve for new wallet generations
-        dispatch({ type: VAULT_ACTION_TYPES.SET_CURVE, payload: curveType })
+        dispatch({ type: VAULT_ACTION_TYPES.SET_CURVE, payload: curveType });
         let [preflightHash, firstWalletNode] = await electronStoreCommonActions.createNewSecureHDVault(mnemonic, password, curveType);
         electronStoreCommonActions.storePreflightHash(preflightHash); // Store preflight hash for pre-action auth checking
-        let firstWallet = await utils.wallet.generateBasicWalletObject("Main Wallet", firstWalletNode.privateKey.toString('hex'), curveType)
+        let firstWallet = await utils.wallet.generateBasicWalletObject("Main Wallet", firstWalletNode.privateKey.toString('hex'), curveType);
         const preInitPayload = { wallets: { internal: [firstWallet], external: [] } }; // Payload needed by initMadWallet() in WalletManagerMiddleware
         await dispatch({ type: MIDDLEWARE_ACTION_TYPES.INIT_MAD_WALLET, payload: preInitPayload }); // Pass off to MadWalletMiddleware to finish state initiation
         dispatch({ type: VAULT_ACTION_TYPES.SET_MNEMONIC, payload: mnemonic });
@@ -60,7 +60,7 @@ export function generateNewSecureHDVault(mnemonic, password, curveType = util.wa
         log.debug("New Vault Backup Success:", newVaultBackedUp);
 
         // Once the vault is created attempt to connect web3, and then madNet
-        log.debug("Vault Created: Attempting to init MadNet && Web3 Adapters. . .")
+        log.debug("Vault Created: Attempting to init MadNet && Web3 Adapters. . .");
         let adaptersConnected = await dispatch(ADAPTER_ACTIONS.initAdapters());
 
         // Check and log any errors -- Allow unlock to happen even if network errors occur -- Appropriate toasts will be delivered to user via their respective adapaters
@@ -69,12 +69,12 @@ export function generateNewSecureHDVault(mnemonic, password, curveType = util.wa
             log.error("MadNetConnectionError: ", adaptersConnected.errors.madNet);
             log.error("Web3ConnectionError: ", adaptersConnected.errors.web3);
         }
-    }
+    };
 }
 
 /**
  * Used to load a secure HD vault from storage -- Passes to WalletMiddleware to sync MadWallet state.
- * @param { String } password - The password used to initially encrypt the vault 
+ * @param { String } password - The password used to initially encrypt the vault
  * @returns { Array } [done<Bool>, errorArray<Array>]
  */
 export function loadSecureHDVaultFromStorage(password) {
@@ -82,8 +82,11 @@ export function loadSecureHDVaultFromStorage(password) {
         let wu = util.wallet;
         // Unlock vault for parsing and note the mnemonic for HD wallets
         const unlockedVault = await electronStoreCommonActions.unlockAndGetSecuredHDVault(password);
-        if (unlockedVault.error) { return [false, [unlockedVault]] }; // Bubble the done/error upwards
-        // Anytime we unlock a vault on user load withou an error -- Assume it is in a healthy state and request a backup be made and wait for the response before moving on
+        if (unlockedVault.error) {
+            return [false, [unlockedVault]];
+        }
+        ; // Bubble the done/error upwards
+        // Anytime we unlock a vault on user load without an error -- Assume it is in a healthy state and request a backup be made and wait for the response before moving on
         let backupSuccess = await electronStoreUtilityActions.backupStore();
         log.debug("Vault Backup Success:", backupSuccess);
         // Continue loading the vault
@@ -126,11 +129,11 @@ export function loadSecureHDVaultFromStorage(password) {
 
         let res = await dispatch({ type: MIDDLEWARE_ACTION_TYPES.INIT_MAD_WALLET, payload: preInitPayload }); // Pass off to MadWalletMiddleware to finish state initiation
         dispatch({ type: VAULT_ACTION_TYPES.MARK_EXISTS_AND_UNLOCKED });
-        dispatch({ type: VAULT_ACTION_TYPES.SET_CURVE, payload: hdCurve })
+        dispatch({ type: VAULT_ACTION_TYPES.SET_CURVE, payload: hdCurve });
         dispatch({ type: VAULT_ACTION_TYPES.SET_MNEMONIC, payload: mnemonic });
 
         // Once the vault is unlocked attempt to connect web3, and then madNet
-        log.debug("Vault Unlock: Attempting to init MadNet && Web3 Adapters. . .")
+        log.debug("Vault Unlock: Attempting to init MadNet && Web3 Adapters. . .");
         let adaptersConnected = await dispatch(ADAPTER_ACTIONS.initAdapters());
 
         // Check and log any errors -- Allow unlock to happen even if network errors occur -- Appropriate toasts will be delivered to user via their respective adapaters
@@ -147,12 +150,14 @@ export function loadSecureHDVaultFromStorage(password) {
 /** After a vault has been decrypted call this actions for any wallets to be added to the internal keyring and to the MadWallet object within state
  * Internal keyring wallets are validated for existence and stored inside the vault
  * @param {String} walletName - The name of the wallet - extracted from the vault
-*/
+ */
 export function addInternalWalletToState(walletName) {
     return async function (dispatch, getState) {
         // Let the middleware handle wallet addition -- Await for any addition.errors
         let additions = await dispatch({ type: MIDDLEWARE_ACTION_TYPES.ADD_NEXT_HD_WALLET, payload: { name: walletName } });
-        if (additions.error) { return additions }
+        if (additions.error) {
+            return additions;
+        }
         // Add the internal wallet to redux state
         let added = await dispatch({ type: VAULT_ACTION_TYPES.ADD_INTERNAL_WALLET, payload: additions.internal[0] });
         // When a wallet is added, dispatch sync-store -- Provide keystoreString for optout keystore additions where necessary
@@ -174,12 +179,14 @@ export function addExternalWalletToState(keystore, password, walletName) {
         try {
             ksString = JSON.stringify(keystore);
         } catch (ex) {
-            throw new Error("Must only pass valid JSON Keystore Object to addExternalWalletToState", ex)
+            throw new Error("Must only pass valid JSON Keystore Object to addExternalWalletToState", ex);
         }
         let unlocked = { data: util.wallet.unlockKeystore(JSON.parse(ksString), password), name: walletName };
         let additions = await dispatch({ type: MIDDLEWARE_ACTION_TYPES.ADD_WALLET_FROM_KEYSTORE, payload: unlocked }); // Pass off to MadWalletMiddleware to finish state balancing
         // Waiting for the above to dispatch will prevent doubles from being added -- MadWalletJS will catch them
-        if (additions.error) { return additions }
+        if (additions.error) {
+            return additions;
+        }
         // If additions.external does not have at least one wallet, something is wrong
         if (additions.external.length < 1) {
             log.error("An attempt to add no additional wallets to redux state was almost made after a Middleware Action to ADD_WALLET_FROM_KEYSTORE")
@@ -211,27 +218,27 @@ export function getMadWallet() {
 
 /**
  * Dispatches actions to clear state and reinstance madWalletJs to prep it for garbage collection
- * @returns 
+ * @returns
  */
 export function lockVault() {
     return async function (dispatch) {
         return new Promise(async res => {
-            toast.success(<SyncToastMessageSuccess hideIcon basic message="Locked & Disconnected" />, { autoClose: 1750, className: "basic" })
+            toast.success(<SyncToastMessageSuccess hideIcon basic message="Locked & Disconnected" />, { autoClose: 1750, className: "basic" });
             await dispatch({ type: MIDDLEWARE_ACTION_TYPES.REINSTANCE_MAD_WALLET });
             await dispatch({ type: VAULT_ACTION_TYPES.LOCK_VAULT });
             // Additionally, mark web3 and madnet as not connected so they can be instanced on reconnect
             web3Adapter.setDefaultState(); // Mark default state on web3 adapter --
-            await dispatch(ADAPTER_ACTIONS.disconnectAdapters()) // Mark adapter state back to default and disconnected
+            await dispatch(ADAPTER_ACTIONS.disconnectAdapters()); // Mark adapter state back to default and disconnected
             res(true);
-        })
-    }
+        });
+    };
 }
 
 /**
  * Rename a wallet in the vault referenced by address and push the update to the store
  * -- Requires password
  * @param { Object } targetWallet -- Wallet object from redux state
- * @param { String } password -- Vault or administrative password -- For writing updates to store 
+ * @param { String } password -- Vault or administrative password -- For writing updates to store
  */
 export function renameWalletByAddress(targetWallet, newName, password) {
     return async function (dispatch, getState) {
@@ -243,13 +250,17 @@ export function renameWalletByAddress(targetWallet, newName, password) {
         // Is internal
         if (targetWallet.isInternal) {
             let internalTargetIndex = internalWallets.findIndex(e => (targetWallet.address === e.address));
-            if (internalTargetIndex === -1) { return { error: "Unable to find wallet in state." } }
+            if (internalTargetIndex === -1) {
+                return { error: "Unable to find wallet in state." };
+            }
             internalWallets[internalTargetIndex].name = newName;
         }
         // Else external...
         else {
             let externalTargetIndex = externalWallets.findIndex(e => (targetWallet.address === e.address));
-            if (externalTargetIndex === -1) { return { error: "Unable to find wallet in state." } }
+            if (externalTargetIndex === -1) {
+                return { error: "Unable to find wallet in state." };
+            }
             externalWallets[externalTargetIndex].name = newName;
         }
         // Recompile newly mutated wallet states
@@ -261,7 +272,7 @@ export function renameWalletByAddress(targetWallet, newName, password) {
             // Submit it to the electron helper for writing the vault --
             await electronStoreCommonActions.updateVaultWallets(password, newWalletsState);
         } catch (ex) {
-            return { error: ex }
+            return { error: ex };
         }
 
         return true;
@@ -273,7 +284,7 @@ export function renameWalletByAddress(targetWallet, newName, password) {
  * Remove a wallet from the vault referenced by address and push the update to the store
  * -- Requires password
  * @param { Object } targetWallet -- Wallet object from redux state
- * @param { String } password -- Vault or administrative password -- For writing updates to store 
+ * @param { String } password -- Vault or administrative password -- For writing updates to store
  * @param { Boolean } optout -- Index 0 of external wallets must not be allowed removal
  * @param { Boolean } exists -- A Vault exists. Index 0 of internal wallets must not be allowed removal. All Externals can be removed if a user has a vault
  */
@@ -281,24 +292,25 @@ export function removeWalletByAddress(targetWallet, password, optout, exists) {
     return async function (dispatch, getState) {
         // Get latest wallet state and create mutable instances of internal/external state
         let wallets = getState().vault.wallets;
-        try { 
-            const newWalletsState = await dispatch({ type: MIDDLEWARE_ACTION_TYPES.REMOVE_WALLET, payload: { wallets, targetWallet, optout, exists } })
-            
-            if(newWalletsState.error) {
-                return { error: newWalletsState.error }
-            }  
+        try {
+            const newWalletsState = await dispatch({ type: MIDDLEWARE_ACTION_TYPES.REMOVE_WALLET, payload: { wallets, targetWallet, optout, exists } });
+
+            if (newWalletsState.error) {
+                return { error: newWalletsState.error };
+            }
 
             // Submit the update to the redux store --
             await dispatch({ type: VAULT_ACTION_TYPES.SET_WALLETS_STATE, payload: newWalletsState })
-            
+
             // Password and updateVaultWallets required for vault users only
             // Submit it to the electron helper for writing the vault --
-            if(exists){
+            if (exists) {
                 await electronStoreCommonActions.updateVaultWallets(password, newWalletsState);
-            } else {
-                dispatch({ type: ACTION_ELECTRON_SYNC , payload: {reason: "Keystore removed", optOutWalletRemoved: targetWallet }})
             }
-            
+            else {
+                dispatch({ type: ACTION_ELECTRON_SYNC, payload: { reason: "Keystore removed", optOutWalletRemoved: targetWallet } });
+            }
+
         } catch (ex) {
             return { error: ex }
         }
