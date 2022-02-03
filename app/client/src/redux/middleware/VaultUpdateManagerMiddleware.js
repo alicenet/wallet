@@ -2,7 +2,7 @@ import React from 'react';
 import { toast } from 'react-toastify';
 
 import { electronStoreCommonActions } from 'store/electronStoreHelper';
-import { MODAL_ACTION_TYPES } from 'redux/constants/_constants';
+import { MODAL_ACTION_TYPES, VAULT_ACTION_TYPES } from 'redux/constants/_constants';
 import { reduxState_logger as log } from 'log/logHelper';
 import { SyncToastMessageSuccess, SyncToastMessageWarning } from 'components/customToasts/CustomToasts';
 
@@ -90,6 +90,10 @@ async function syncOptoutStore(storeAPI, reason, keystoreAdded) {
     let walletName = keystoreAdded.name;
     // Verify that the keystore to be added does not exist in the store
     let storeWallets = await electronStoreCommonActions.checkForOptoutStores();
+
+    // Clear unsynced wallets for optout
+    storeAPI.dispatch({ type: VAULT_ACTION_TYPES.CLEAR_UNSYNCED_WALLETS });
+                        
     // If none are found, let it be an empty array
     if (!storeWallets) { storeWallets = [] }
     // Check newest id against current ids added 
