@@ -1,6 +1,6 @@
 import React from 'react';
 import { Segment, Form, Header, Button, TextArea } from 'semantic-ui-react';
-import { electronStoreUtilityActons } from 'store/electronStoreHelper.js';
+import { electronStoreUtilityActions } from 'store/electronStoreHelper.js';
 
 export default function ElectronStorePanel() {
 
@@ -20,26 +20,26 @@ export default function ElectronStorePanel() {
     // Store Operations //
     //////////////////////
     const deleteStore = async () => {
-        await electronStoreUtilityActons.completelyDeleteElectronStore();
+        await electronStoreUtilityActions.completelyDeleteElectronStore();
         window.location.reload(true);
     }
 
     const readValue = async () => {
-        let read = await electronStoreUtilityActons.readPlainValueFromStore(customValueRead)
+        let read = await electronStoreUtilityActions.readPlainValueFromStore(customValueRead)
         if (read.error) { read = read.error }
         return setStoreReadOutput(read);
     }
 
     const readSecure = async () => {
         if (!vaultPassword) { return setVaultPassword("REQUIRED FOR READ!"); }
-        let read = await electronStoreUtilityActons.readEncryptedValueFromStore(customValueRead, vaultPassword);
+        let read = await electronStoreUtilityActions.readEncryptedValueFromStore(customValueRead, vaultPassword);
         if (read.error) { read = read.error }
         return setStoreReadOutput(read);
     }
 
     const writeValue = async () => {
         if (!valueToWrite || !customStorageKey) { return console.warn("Fill out key && value for write debugging!") }
-        electronStoreUtilityActons.writePlainValueToStore(customStorageKey, valueToWrite);
+        electronStoreUtilityActions.writePlainValueToStore(customStorageKey, valueToWrite);
     }
 
     return (
@@ -52,15 +52,15 @@ export default function ElectronStorePanel() {
 
                 <Form>
                     <Form.Group widths="equal">
-                        <DButton content='read("testKey")' onClick={() => electronStoreUtilityActons.readPlainValueFromStore("testKey")} />
-                        <DButton content='write("testKey", "testVal")' onClick={() => electronStoreUtilityActons.writePlainValueToStore("testKey", "testVal")} />
+                        <DButton content='read("testKey")' onClick={() => electronStoreUtilityActions.readPlainValueFromStore("testKey")} />
+                        <DButton content='write("testKey", "testVal")' onClick={() => electronStoreUtilityActions.writePlainValueToStore("testKey", "testVal")} />
                     </Form.Group>
                     <Form.Group widths="equal">
-                        <DButton content='secWrite("EtestKey", "EtestVal")' onClick={() => electronStoreUtilityActons.writeEncryptedToStore("EtestKey", "EtestVal", "test")} />
-                        <DButton content='read("EtestVal"' onClick={() => electronStoreUtilityActons.readPlainValueFromStore("EtestKey")} />
+                        <DButton content='secWrite("EtestKey", "EtestVal")' onClick={() => electronStoreUtilityActions.writeEncryptedToStore("EtestKey", "EtestVal", "test")} />
+                        <DButton content='read("EtestVal"' onClick={() => electronStoreUtilityActions.readPlainValueFromStore("EtestKey")} />
                     </Form.Group>
 
-                    <DButton content='decipher("EtestVal"' onClick={() => electronStoreUtilityActons.readEncryptedValueFromStore("EtestKey", "test")} />
+                    <DButton content='decipher("EtestVal"' onClick={() => electronStoreUtilityActions.readEncryptedValueFromStore("EtestKey", "test")} />
 
                 </Form>
 
@@ -101,7 +101,7 @@ export default function ElectronStorePanel() {
                 <Header>Backup Store (window.storeBak) </Header>
 
                 <Button content="Print window.api" onClick={ () => console.log(window.api) }/>
-                <Button content="Backup Store" onClick={ () => electronStoreUtilityActons.backupStore() } />
+                <Button content="Backup Store" onClick={ () => electronStoreUtilityActions.backupStore() } />
 
             </Segment>
 

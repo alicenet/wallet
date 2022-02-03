@@ -4,62 +4,69 @@ import utils from 'util/_util';
 import { utils as web3Utils } from 'web3'
 import { v4 } from 'uuid';
 
-/** A utility module to assist in reading and writing from the secure-electron-store using the elctronStoreMessenger 
+/** A utility module to assist in reading and writing from the secure-electron-store using the elctronStoreMessenger
  * without directly utilizing the pub/sub interface provided by it, but rather it's sync-mimicking abstractions
  */
 
 ///////////////////////
-// Function Requires //
+/* Function Requires */
 ///////////////////////
 const endPhrase = (paramName, funcName) => ("'" + paramName + "' is required when calling " + funcName + "() handle nulls outside of this helper!");
 
 const _requireKey = (key, funcName) => {
-    if (!key) { throw new Error(endPhrase("key", funcName)) }
-}
+    if (!key) {
+        throw new Error(endPhrase("key", funcName));
+    }
+};
 
 const _requireValue = (value, funcName) => {
-    if (!value) { throw new Error(endPhrase("value", funcName)) }
-}
+    if (!value) {
+        throw new Error(endPhrase("value", funcName));
+    }
+};
 
 const _requirePass = (pass, funcName) => {
-    if (!pass) { throw new Error(endPhrase("password", funcName)) }
-}
+    if (!pass) {
+        throw new Error(endPhrase("password", funcName));
+    }
+};
 
 const _requireKeyValue = (funcName, key, value) => {
     _requireKey(key, funcName);
     _requireValue(value, funcName);
-}
+};
 
 const _requireKeyPassword = (funcName, key, password) => {
     _requireKey(key, funcName);
     _requirePass(password, funcName);
-}
+};
 
 const _requireKeyValuePassword = (funcName, key, value, password) => {
     _requireKey(key, funcName);
     _requireValue(value, funcName);
     _requirePass(password, funcName);
-}
+};
 
 ////////////////////////////
 /* Electron Store Actions */
+
 ////////////////////////////
 
 /**
  * Write non-encrypted value to secure-electron-store
  * @param { String } key - Key to use for the respectively supplied value
- * @param { String } value - Value you wish to write to the secure-electron-store 
+ * @param { String } value - Value you wish to write to the secure-electron-store
  */
 function writePlainValueToStore(key, value) {
     _requireKeyValue("writePlainValueToStore", key, value);
     log.debug("Plain K:V write request sent to to electronStoreMessenger => " + key + " : " + value);
     electronStoreMessenger.writeToStore(key, value);
-}
+};
 
 /**
  * Write encrypted value to secure-electron-store -- Stringify JSON first
- * @param { String } key - Key to use for the respectively supplied value 
- * @param { String } value - Value you wish to write to the secure-electron-store -- JSON should be stringified 
+ * @param { String } key - Key to use for the respectively supplied value
+ * @param { String } value - Value you wish to write to the secure-electron-store -- JSON should be stringified
  */
 async function writeEncryptedValueToStore(key, value, password) {
     _requireKeyValuePassword("writeEncryptedValueToStore", key, value, password);
@@ -68,8 +75,8 @@ async function writeEncryptedValueToStore(key, value, password) {
 }
 
 /**
- * Read a plaintext value from the secure-electron-store -- 
- * @param { String } key - Key for the value you wish to fetch 
+ * Read a plaintext value from the secure-electron-store --
+ * @param { String } key - Key for the value you wish to fetch
  * @returns {Promise<*>} Returns Promise<the value for the corresponding key>
  */
 function readPlainValueFromStore(key) {
@@ -79,29 +86,34 @@ function readPlainValueFromStore(key) {
             if (!value) { res({ error: "Key is not in secure-electron-storage!" }) }
             if (typeof value === "object" && utils.generic.stringHasJsonStructure(JSON.stringify(value))) {
                 log.debug("Plain K:V read from electron store => " + key + " : ", value);
-            } else {
+            }
+            else {
                 log.debug("Plain K:V read from electron store => " + key + " : " + value);
             }
-            res(value)
+            res(value);
         });
-    })
+    });
 }
 
 /**
  * Read an encrypted value from the secure-electron-store
- * @param { String } key - Key for the value you wish to fetch 
+ * @param { String } key - Key for the value you wish to fetch
  * @param { String } password - Password that was initially used to encrypt the value
  * @returns Returns decrypted value or object with object.error on an error.
-*/
+ */
 function readEncryptedValueFromStore(key, password) {
     _requireKeyPassword("readEncryptedValueFromStore", key, password);
     return new Promise(res => {
         electronStoreMessenger.readEncryptedFromStore(key, password, async (err, keyOfValue, value) => {
-            if (err) { log.error(err); res({ error: err }) };
+            if (err) {
+                log.error(err);
+                res({ error: err });
+            }
+
             log.debug("Plain K:V decrypted from electron store => " + keyOfValue + " : " + value);
             res(value);
         })
-    })
+    });
 }
 
 /**
@@ -112,14 +124,14 @@ async function backupStore() {
         electronStoreMessenger.backupStore((channel, response) => {
             res(!!response.success);
         });
-    })
+    });
 }
 
 function completelyDeleteElectronStore() {
     electronStoreMessenger.deleteStore();
 }
 
-export const electronStoreUtilityActons = {
+export const electronStoreUtilityActions = {
     completelyDeleteElectronStore: completelyDeleteElectronStore,
     writePlainValueToStore: writePlainValueToStore,
     writeEncryptedToStore: writeEncryptedValueToStore,
@@ -129,14 +141,14 @@ export const electronStoreUtilityActons = {
 }
 
 //////////////////////////////////////
-/* Abstracted Common Store Actions  */ // Functions thats remove the need to know the keys for common stored items
+/* Abstracted Common Store Actions  */ // Functions that remove the need to know the keys for common stored items
 /////////////////////////////////////
 
 /**
- * 
+ *
  * @param { Object } walletsAsObject
  * @property { Array } walletsAsObject.internal - Array of internal wallets with {name:} only
- * @property { Array } walletsAsObject.external - Array of externak wallets with {name: , privK:, curve:  }   
+ * @property { Array } walletsAsObject.external - Array of externak wallets with {name: , privK:, curve:  }
  */
 function _genVaultObjectString(mnemonic, hdCurveType, hdWalletCount = 1, walletsAsObject) {
     return JSON.stringify({
@@ -149,9 +161,9 @@ function _genVaultObjectString(mnemonic, hdCurveType, hdWalletCount = 1, wallets
 
 /** Full abstraction of vault generation -- Returns mnemonic
  * @param { String } mnemonic - Mnemonic to generate the vault based off of :: Should be a mnemonic that has been verified by the vault owner,
- * @param { String } password - Passphrase to cipher the vault with :: A hash will also be stored for pre-flights and admin actions as "preflightHash",    
+ * @param { String } password - Passphrase to cipher the vault with :: A hash will also be stored for pre-flights and admin actions as "preflightHash",
  * @param { String } curve - One of: "secp256k1", "secp" or "barreto-naehrig", "bn"
- * @returns { Array[passwordHash, firstWalletNode] } - Returns a hash of the password used to encrypt the vault and the firstWalletNode if the vault has been created successfully 
+ * @returns { Array[passwordHash, firstWalletNode] } - Returns a hash of the password used to encrypt the vault and the firstWalletNode if the vault has been created successfully
  */
 function createNewSecureHDVault(mnemonic, password, curveType = "secp256k1") {
     return new Promise(async res => {
@@ -166,15 +178,15 @@ function createNewSecureHDVault(mnemonic, password, curveType = "secp256k1") {
         let wallets = {
             internal: [{ name: "Main Wallet" }], // When storing internal wallets the only key we need to store in their name
             external: [],
-        }
+        };
 
         // Create the vault object string
         const vaultObjectString = _genVaultObjectString(mnemonic, curveType, 1, wallets);
 
         await writeEncryptedValueToStore("vault", vaultObjectString, password);
-        log.debug('A new secure vault as key "vault" has been saved to the store.')
+        log.debug('A new secure vault as key "vault" has been saved to the store.');
         res([passwordHash, firstWalletNode]);
-    })
+    });
 }
 
 /**
@@ -191,13 +203,13 @@ function unlockAndGetSecuredHDVault(password) {
         } catch (ex) {
             res({ error: ex });
         }
-    })
+    });
 }
 
 /**
  * Updates the current vault store wallets with a sent wallet state
- * @param { Object } vaultState 
- * @returns 
+ * @param { Object } vaultState
+ * @returns
  */
 function updateVaultWallets(password, newWalletState) {
     return new Promise(async res => {
@@ -205,7 +217,7 @@ function updateVaultWallets(password, newWalletState) {
         let vaultObjectString = _genVaultObjectString(vault.mnemonic, vault.hd_wallet_curve, newWalletState.internal.length, newWalletState); // Inject new wallets
         let written = await writeEncryptedValueToStore("vault", vaultObjectString, password); // Write it
         res(written);
-    })
+    });
 }
 
 /**
@@ -222,17 +234,17 @@ function storePreflightHash(hashAsString) {
  * Opt out users store keystores under the key "optOutStores" as an array of  Objects with name and keystore, and optionally curve as values
  * This adds an optout keystore to the list of keystores in the electron state
  * Opt out keystores are given a UUID so that they can be acted on within the UI, eg for removal.
- * @param {Object} walletsToSync - Collection of wallet objects to write to "optOutStores" 
+ * @param {Object} walletsToSync - Collection of wallet objects to write to "optOutStores"
  */
 async function addOptOutKeystore(ksString, walletName) {
     // First see if optOuts exist, if not make them
     let currentKeystores = await readPlainValueFromStore("optOutStores");
-    // If not existant, set as empty array and add to it
+    // If not existent, set as empty array and add to it
     if (currentKeystores.error && currentKeystores.error === "Key is not in secure-electron-storage!") {
         currentKeystores = [];
     }
     // Add new keystore with a uid
-    currentKeystores.push({ name: walletName, keystore: ksString, id: v4() })
+    currentKeystores.push({ name: walletName, keystore: ksString, id: v4() });
     // Write the updated keystores
     writePlainValueToStore("optOutStores", currentKeystores);
 }
@@ -251,13 +263,13 @@ async function removeOptoutKeystore(addressToRemove) {
                 return i;
             }
         }
-    })()
+    })();
     currentKeystores.splice(targetKeystoreIndex, 1);
     writePlainValueToStore("optOutStores", currentKeystores);
 }
 
 /**
- * Returns an array of all optout keystores 
+ * Returns an array of all optout keystores
  */
 function checkForOptoutStores() {
     return new Promise(async res => {
@@ -281,7 +293,7 @@ function checkForOptoutStores() {
 function getPreflightHash() {
     return new Promise(async res => {
         res(await readPlainValueFromStore("preflightHash"));
-    })
+    });
 }
 
 /**
@@ -291,14 +303,15 @@ function checkIfUserHasVault() {
     return new Promise(async res => {
         let hasVault = await readPlainValueFromStore("vault");
         if (!!hasVault.error) {
-            log.warn("A potential error ocurred when checking for user vault :: Unfound key is normal. err => ", hasVault.error)
+            log.warn("A potential error occurred when checking for user vault :: Unfound key is normal. err => ", hasVault.error);
             res(false);
-        } else { res(true) }
-    })
+        }
+        else { res(true) }
+    });
 }
 
 /**
- * Check input password against stored preflight hash 
+ * Check input password against stored preflight hash
  */
 function checkPasswordAgainstPreflightHash(password) {
     return new Promise(async res => {
@@ -312,11 +325,11 @@ function checkPasswordAgainstPreflightHash(password) {
 }
 
 /** -- Write configuration values to electron store
- * @param { Object } configValues 
+ * @param { Object } configValues
  * @property { String } configValues.mad_net_chainID - Mad net chain id to save
- * @property { String } configValues.mad_net_provider - Mad net chain id to save 
- * @property { String } ethereum_provider - Mad net chain id to save 
- * @property { String } registry_contract_address - Mad net chain id to save  
+ * @property { String } configValues.mad_net_provider - Mad net chain id to save
+ * @property { String } ethereum_provider - Mad net chain id to save
+ * @property { String } registry_contract_address - Mad net chain id to save
  */
 function storeConfigurationValues(configValues) {
     let updateObject = {
@@ -332,7 +345,7 @@ function storeConfigurationValues(configValues) {
 
 /**
  * Read the configuration values from the electron store
- * @returns { Object } - The read configuration object 
+ * @returns { Object } - The read configuration object
  */
 async function readConfigurationValues() {
     return await readPlainValueFromStore('configuration');

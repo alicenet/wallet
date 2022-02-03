@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Checkbox, Header, Modal } from 'semantic-ui-react';
-import { electronStoreUtilityActons } from 'store/electronStoreHelper';
+import { electronStoreUtilityActions } from 'store/electronStoreHelper';
 import { useSelector } from 'react-redux';
 import { MODAL_ACTIONS } from 'redux/actions/_actions';
 import { useDispatch } from 'react-redux';
@@ -29,7 +29,7 @@ export default function ResetWalletModal() {
 
     const deleteTheVault = async () => {
         setResetting(true);
-        await electronStoreUtilityActons.completelyDeleteElectronStore();
+        await electronStoreUtilityActions.completelyDeleteElectronStore();
         window.location.reload(true);
     }
 

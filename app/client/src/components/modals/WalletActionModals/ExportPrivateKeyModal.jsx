@@ -40,7 +40,7 @@ export default function ExportPrivateKeyModal() {
         setKeyVisible(false);
         setVisibleTime(0);
         formSetter.setVaultPassword("");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isOpen])
 
     const showKey = async () => {
@@ -72,7 +72,7 @@ export default function ExportPrivateKeyModal() {
     }
 
     const submit = e => {
-        onSubmit( async () => {
+        onSubmit(async () => {
             e.preventDefault();
             showKey();
         });
@@ -86,7 +86,7 @@ export default function ExportPrivateKeyModal() {
                 <Header as="h4">
                     Show Private Key For Wallet: <span className="text-blue-500">{targetWallet.name}</span>
                     <Header.Subheader>
-                        Showing PrivK For Address: <span className="text-purple-500">{stringUtils.splitStringWithEllipsis(targetWallet.address, 4)}</span>
+                        Showing Private Key For Address: <span className="text-purple-500">{stringUtils.splitStringWithEllipsis(targetWallet.address, 4)}</span>
                     </Header.Subheader>
                 </Header>
             </Modal.Header>
@@ -110,7 +110,7 @@ export default function ExportPrivateKeyModal() {
 
                 {keyVisible ? (<div className="h-10 flex items-center cursor-pointer hover:text-gray-600" onClick={copyPkey}>
                         {targetWallet.privK}
-                        <Icon name="copy outline" className="ml-1 mb-2 cursor-pointer"/>
+                        <Icon name="copy outline" className="ml-1 mb-2 cursor-pointer" />
                         {!!copyClick && (
                             <div className="relative inline text-xs mb-2 text-gray-500">
                                 Copied to clipboard!
@@ -118,7 +118,7 @@ export default function ExportPrivateKeyModal() {
                         )}
                     </div>) :
                     <Placeholder className="h-10">
-                        <Placeholder.Line/>
+                        <Placeholder.Line />
                     </Placeholder>
                 }
 
@@ -159,7 +159,7 @@ export default function ExportPrivateKeyModal() {
             <Modal.Actions>
 
                 <div className="flex justify-between">
-                    <Button size="small" color="orange" content="Close" onClick={closeModal} basic/>
+                    <Button size="small" color="orange" content="Close" onClick={closeModal} basic />
                     <Button
                         size="small"
                         content={formState.vaultPassword.error ? "Try Again" : "Show Key"}

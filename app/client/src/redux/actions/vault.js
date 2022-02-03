@@ -1,7 +1,7 @@
 import React from 'react';
 import { VAULT_ACTION_TYPES, MIDDLEWARE_ACTION_TYPES } from 'redux/constants/_constants';
 import { getMadWalletInstance } from 'redux/middleware/WalletManagerMiddleware'
-import { electronStoreCommonActions, electronStoreUtilityActons } from '../../store/electronStoreHelper';
+import { electronStoreCommonActions, electronStoreUtilityActions } from '../../store/electronStoreHelper';
 import { reduxState_logger as log } from 'log/logHelper';
 import util from 'util/_util';
 import { ACTION_ELECTRON_SYNC } from 'redux/middleware/VaultUpdateManagerMiddleware';
@@ -56,7 +56,7 @@ export function generateNewSecureHDVault(mnemonic, password, curveType = util.wa
         dispatch({ type: VAULT_ACTION_TYPES.MARK_EXISTS_AND_UNLOCKED });
 
         // Once a vault has been created -- Go ahead and make a backup of it
-        let newVaultBackedUp = await electronStoreUtilityActons.backupStore();
+        let newVaultBackedUp = await electronStoreUtilityActions.backupStore();
         log.debug("New Vault Backup Success:", newVaultBackedUp);
 
         // Once the vault is created attempt to connect web3, and then madNet
@@ -84,7 +84,7 @@ export function loadSecureHDVaultFromStorage(password) {
         const unlockedVault = await electronStoreCommonActions.unlockAndGetSecuredHDVault(password);
         if (unlockedVault.error) { return [false, [unlockedVault]] }; // Bubble the done/error upwards
         // Anytime we unlock a vault on user load withou an error -- Assume it is in a healthy state and request a backup be made and wait for the response before moving on
-        let backupSuccess = await electronStoreUtilityActons.backupStore();
+        let backupSuccess = await electronStoreUtilityActions.backupStore();
         log.debug("Vault Backup Success:", backupSuccess);
         // Continue loading the vault
         const mnemonic = unlockedVault.mnemonic;

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Checkbox, Header, Modal } from 'semantic-ui-react';
 import { classNames } from 'util/_util';
-import { electronStoreUtilityActons } from 'store/electronStoreHelper';
+import { electronStoreUtilityActions } from 'store/electronStoreHelper';
 
 /**
  * Shows a prompt to open a modal regarding forgotten vault password
@@ -19,7 +19,7 @@ export default function ForgottenVaultPasswordModal({ incorrectPwEntered }) {
     const toggleOpen = () => setOpen(s => !s);
 
     const deleteTheVault = async () => {
-        await electronStoreUtilityActons.completelyDeleteElectronStore();
+        await electronStoreUtilityActions.completelyDeleteElectronStore();
         window.location.reload(true);
     }
 
