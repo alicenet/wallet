@@ -21,7 +21,7 @@ export async function generateBasicWalletObject(walletName, privK, curve) {
         curve: curve,
         privK: privK,
         stateId: uuidv4(), // Initialized State ID for quick client side identification -- Not stored elsewhere, can be used as key in map() if needed
-    }
+    };
 }
 
 /**
@@ -103,10 +103,6 @@ export function streamLineHDWalletNodeFromMnemonic(mnemonic, nodeNum) {
     })
 }
 
-// let seedBytes = wu.getSeedBytesFromMnemonic(mnemonic);
-// let hdChain = wu.getHDChainFromSeedBytes(seedBytes);
-// let firstWalletNode = wu.getHDWalletNodeFromHDChain(hdChain, 0);
-
 /**
  * Quickly get a set of derivative wallets from a Mnemonic using wallet utilities from utils/wallet.js
  * @param { String } mnemonic - mnemonic phrase separated by ' '
@@ -153,15 +149,14 @@ export function unlockKeystore(keystore, password) {
  */
 export async function generateKeystore(asBlob, password, curve = curveTypes.SECP256K1) {
     let web3 = new Web3();
-    let wallet = web3.eth.accounts.wallet.create(1)
-    web3.eth.accounts.wallet.add(wallet[0])
-    let ks = web3.eth.accounts.wallet.encrypt(password)
+    let wallet = web3.eth.accounts.wallet.create(1);
+    web3.eth.accounts.wallet.add(wallet[0]);
+    let ks = web3.eth.accounts.wallet.encrypt(password);
     let keystore = ks[0];
     // Note the curve && address if BN -- Curve gets removed on reads
     if (curve === curveTypes.BARRETO_NAEHRIG) {
         keystore["address"] = await getBNfromPrivKey(strip0x(wallet[0].privateKey));
-        ;
-        keystore["curve"] = curveTypes.BARRETO_NAEHRIG
+        keystore["curve"] = curveTypes.BARRETO_NAEHRIG;
     }
     let ksJSONBlob = new Blob([JSON.stringify(keystore, null, 2)]);
     return asBlob ? ksJSONBlob : keystore;
@@ -182,7 +177,7 @@ export async function generateKeystoreFromPrivK(privK, password, curve = curveTy
     // Note the curve && address if BN -- Curve gets removed on reads
     if (curve === curveTypes.BARRETO_NAEHRIG) {
         keystore["address"] = await getBNfromPrivKey(privK);
-        keystore["curve"] = curveTypes.BARRETO_NAEHRIG
+        keystore["curve"] = curveTypes.BARRETO_NAEHRIG;
     }
     let ksJSONBlob = new Blob([JSON.stringify(keystore, null, 2)]);
     return asBlob ? ksJSONBlob : keystore;
@@ -199,9 +194,9 @@ export async function generateKeystoreFromPrivK(privK, password, curve = curveTy
  */
 export const constructWalletObject = (name, privK, address, curve, isInternal) => {
     if (!name || !privK || !address || !curve || typeof isInternal === "undefined") {
-        throw new Error("Attempting to generate standardized wallet object without correct parameters. Verify all function inputs.")
+        throw new Error("Attempting to generate standardized wallet object without correct parameters. Verify all function inputs.");
     }
-    return { name: name, privK: privK, address: address, curve: curve, isInternal: isInternal }
+    return { name: name, privK: privK, address: address, curve: curve, isInternal: isInternal };
 };
 
 /**
@@ -209,7 +204,9 @@ export const constructWalletObject = (name, privK, address, curve, isInternal) =
  * @param { String } pKeyOrAddress
  */
 export const strip0x = (pKeyOrAddress) => {
-    if (typeof pKeyOrAddress !== "string") { throw new Error("Only strings should be passed to strip0x(), handle this externally.") }
+    if (typeof pKeyOrAddress !== "string") {
+        throw new Error("Only strings should be passed to strip0x(), handle this externally.");
+    }
     // Only proceed if has prefix
     if (pKeyOrAddress[0] === "0" && pKeyOrAddress[1] === "x") {
         return pKeyOrAddress.slice(2, pKeyOrAddress.length);

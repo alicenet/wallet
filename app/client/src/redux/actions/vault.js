@@ -180,7 +180,7 @@ export function addExternalWalletToState(keystore, password, walletName) {
         let additions = await dispatch({ type: MIDDLEWARE_ACTION_TYPES.ADD_WALLET_FROM_KEYSTORE, payload: unlocked }); // Pass off to MadWalletMiddleware to finish state balancing
         // Waiting for the above to dispatch will prevent doubles from being added -- MadWalletJS will catch them
         if (additions.error) { return additions }
-        // If additions.external does not have atleast one wallet, something is wrong
+        // If additions.external does not have at least one wallet, something is wrong
         if (additions.external.length < 1) {
             log.error("An attempt to add no additional wallets to redux state was almost made after a Middleware Action to ADD_WALLET_FROM_KEYSTORE")
             return additions;
