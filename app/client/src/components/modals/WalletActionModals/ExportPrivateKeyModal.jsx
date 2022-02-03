@@ -44,9 +44,6 @@ export default function ExportPrivateKeyModal() {
     }, [isOpen])
 
     const showKey = async () => {
-        if (!formState.vaultPassword) {
-            return formSetter.setVaultPassword(state => ({ ...state, error: "Password required." }))
-        }
         if (!await electronStoreCommonActions.checkPasswordAgainstPreflightHash(formState.vaultPassword.value)) {
             formSetter.setVaultPassword(state => ({ ...state, error: "Incorrect password" }))
             return setKeyVisible(false);
@@ -166,7 +163,7 @@ export default function ExportPrivateKeyModal() {
                         disabled={visibleTime !== 0}
                         color={formState.vaultPassword.error ? "red" : "purple"}
                         basic
-                        onClick={showKey}
+                        onClick={submit}
                     />
                 </div>
 
