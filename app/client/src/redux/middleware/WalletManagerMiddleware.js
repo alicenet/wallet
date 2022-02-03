@@ -173,14 +173,14 @@ function addWalletFromKeystore(keystore, walletName, dispatch, getState) {
 function addNextHDWallet(storeAPI, walletName) {
     return new Promise(async res => {
         let vaultState = storeAPI.getState().vault;
-        // Get the next HD Wallet in order of derrivation
+        // Get the next HD Wallet in order of derivation
         let internalWallets = vaultState.wallets.internal;
         // Note the mnemonic and curve
         let mnemonic = vaultState.mnemonic;
         let desiredCurve = vaultState.hd_curve;
-        // Determine the next HD Wallet path, Main is at /0 for refernece :: We can use length of internal wallets for the next path
+        // Determine the next HD Wallet path, Main is at /0 for reference :: We can use length of internal wallets for the next path
         let nextDerrivationPath = internalWallets.length;
-        // Derrive the next path from the HD Chain retrieved from the mnemonic
+        // Derive the next path from the HD Chain retrieved from the mnemonic
         let nextHdWallet = await utils.wallet.streamLineHDWalletNodeFromMnemonic(mnemonic, nextDerrivationPath);
         // Generate internal wallet object
         let walletObj = await utils.wallet.generateBasicWalletObject(walletName, nextHdWallet.privateKey.toString('hex'), desiredCurve);

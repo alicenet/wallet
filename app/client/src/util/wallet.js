@@ -90,7 +90,7 @@ export function streamlineHDChainFromMnemonic(mnemonic) {
 /**
  * Quickly get a derivative wallet from a Mnemonic using wallet utilities from utils/wallet.js
  * @param { String } mnemonic - mnemonic phrase separated by ' '
- * @param { Integer } nodeNum - The node to derrive from the derivation path: m'/44'/60'/0'/<node>
+ * @param { Integer } nodeNum - The node to derivefrom the derivation path: m'/44'/60'/0'/<node>
  * @returns {Promise<HDKey>} - Promise that resolves to the requested HD wallet node
  */
 export function streamLineHDWalletNodeFromMnemonic(mnemonic, nodeNum) {
@@ -109,7 +109,7 @@ export function streamLineHDWalletNodeFromMnemonic(mnemonic, nodeNum) {
 /**
  * Quickly get a set of derivative wallets from a Mnemonic using wallet utilities from utils/wallet.js
  * @param { String } mnemonic - mnemonic phrase separated by ' '
- * @param { Array.<Number> } nodeNums - The nodes to derrive from the derivation path: m'/44'/60'/0'/<node>
+ * @param { Array.<Number> } nodeNums - The nodes to derive from the derivation path: m'/44'/60'/0'/<node>
  * @returns { Array.<HDKey> } - Promise that resolves to the requested HD wallet nodes
  */
 export function streamLineHDWalletNodesFromMnemonic(mnemonic, nodeNums) {
@@ -191,8 +191,8 @@ export async function generateKeystoreFromPrivK(privK, password, curve = curveTy
  * @param { String } walletDetails.name - Name of the wallet ( For UI )
  * @param { String } walletDetails.privK - Private Key for the wallet
  * @param { String } walletDetails.address - Address for this wallet ( For UI )
- * @param { String } walletDetauls.curve - Curve used to derrive public key from privK
- * @param { Boolean } walletDetauls.isInternal - Is this wallet derrives from the Mnemonic HD Chain?
+ * @param { String } walletDetauls.curve - Curve used to derive public key from privK
+ * @param { Boolean } walletDetauls.isInternal - Is this wallet derives from the Mnemonic HD Chain?
  * @returns  { Object } - Wallet Object
  */
 export const constructWalletObject = (name, privK, address, curve, isInternal) => {
