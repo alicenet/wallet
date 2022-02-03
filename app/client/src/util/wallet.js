@@ -1,7 +1,7 @@
 import Web3 from 'web3';
-import { v4 as uuidv4 } from 'uuid';
 import { utilsWallet_logger as log } from 'log/logHelper';
 import store from 'redux/store/store'
+import utils from './_util';
 const bip39 = require('bip39');
 const MadNetWalletJS = require('madwalletjs')
 var HDKey = require('hdkey');
@@ -19,7 +19,7 @@ export async function generateBasicWalletObject(walletName, privK, curve) {
         address: curve === curveTypes.SECP256K1 ? await getSecp256k1FromPrivKey(privK) : await getBNfromPrivKey(privK),
         curve: curve,
         privK: privK,
-        stateId: uuidv4(), // Initialized State ID for quick client side identification -- Not stored elsewhere, can be used as key in map() if needed
+        stateId: utils.generic.genUuidv4(), // Initialized State ID for quick client side identification -- Not stored elsewhere, can be used as key in map() if needed
     }
 }
 
