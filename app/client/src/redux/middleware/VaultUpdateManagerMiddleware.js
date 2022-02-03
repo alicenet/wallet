@@ -5,6 +5,7 @@ import { electronStoreCommonActions } from 'store/electronStoreHelper';
 import { MODAL_ACTION_TYPES, VAULT_ACTION_TYPES } from 'redux/constants/_constants';
 import { reduxState_logger as log } from 'log/logHelper';
 import { SyncToastMessageSuccess, SyncToastMessageWarning } from 'components/customToasts/CustomToasts';
+import { removeWalletByAddress } from 'redux/actions/vault';
 
 export const ACTION_ELECTRON_SYNC = "ELECTRON_SYNC"
 
@@ -26,8 +27,11 @@ export default function VaultUpdateManagerMiddleware(storeAPI) {
                         syncStateToStore(storeAPI, action.payload.reason);
                     }
                     // Optout Syncing
-                    else if (state.vault.optout) { // Only update electron store of an existing, unlocked vault
-                        syncOptoutStore(storeAPI, action.payload.reason, action.payload.keystoreAdded);
+                    else if (state.vault.optout && action.payload.keystoreAdded) { // Only update electron store of an existing, unlocked vault
+                        syncOptoutStoreAdd(storeAPI, action.payload.reason, action.payload.keystoreAdded);
+                    }
+                    else if (state.vault.optout && action.payload.optOutWalletRemoved) {
+                        syncOptoutStoreRemove(storeAPI, action.payload.reason, action.payload.optOutWalletRemoved)
                     }
                 }
             }
@@ -84,7 +88,7 @@ function syncStateToStore(storeAPI, reason) {
 
 }
 
-async function syncOptoutStore(storeAPI, reason, keystoreAdded) {
+async function syncOptoutStoreAdd(storeAPI, reason, keystoreAdded) {
     let addedKsString = keystoreAdded.string;
     let addedKsJson = JSON.parse(keystoreAdded.string); // Create Json instance to easily check address
     let walletName = keystoreAdded.name;
@@ -114,4 +118,10 @@ async function syncOptoutStore(storeAPI, reason, keystoreAdded) {
         await electronStoreCommonActions.addOptOutKeystore(addedKsString, walletName);
         return true;
     }
+}
+
+async function syncOptoutStoreRemove(storeAPI, reason, removedWallet) {
+    storeAPI.dispatch({ type: VAULT_ACTION_TYPES.CLEAR_UNSYNCED_WALLETS });
+    await electronStoreCommonActions.removeOptoutKeystore(removedWallet.address);
+    return true;
 }
