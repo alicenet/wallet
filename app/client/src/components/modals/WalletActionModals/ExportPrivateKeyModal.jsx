@@ -45,7 +45,7 @@ export default function ExportPrivateKeyModal() {
 
     const showKey = async () => {
         if (!await electronStoreCommonActions.checkPasswordAgainstPreflightHash(formState.vaultPassword.value)) {
-            formSetter.setVaultPassword(state => ({ ...state, error: "Incorrect password" }))
+            formSetter.setVaultPasswordError("Incorrect password");
             return setKeyVisible(false);
         }
         setKeyVisible(true);
