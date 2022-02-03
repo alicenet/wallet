@@ -35,7 +35,7 @@ export const classNames = (...classNames) => {
  * @param callerId - Supply to assist in debugging, if you so desire
  */
 export const waitFor = (msLength, callerId) => {
-    let timeoutID = splitStringWithEllipsis( utils.generic.genUuidv4(), false, 3);
+    let timeoutID = splitStringWithEllipsis(utils.generic.genUuidv4(), false, 3);
     log.debug(`Waiting for ${msLength}ms via util.generic.waitFor(${msLength}) with ID: ${timeoutID}` + (callerId ? `Caller: ${callerId}` : ""));
     return new Promise(res => {
         setTimeout(() => {
@@ -144,6 +144,31 @@ export function genUuidv4() {
     let v4uuid = [block1, block2, block3, block4, block5].join("-").toLowerCase();
 
     return v4uuid;
+}
+
+/**
+ * Copy text to the clipboard
+ * @param { String } text - Text to copy to clipboard 
+ */
+export function copyToClipboard(text) {
+    // Try easy way
+    try {
+        navigator.clipboard.writeText(text);
+    } catch (ex) {
+        console.warn("Unable to copy with navigator, attempting DOM copy")
+        // Try new navigator way
+        try {
+            let dummyElement = document.createElement();
+            document.body.appendChild(dummyElement);
+            dummyElement.value = text;
+            dummyElement.select();
+            document.execCommand("copy");
+            document.body.removeChild(dummyElement);
+        } catch (ex) {
+            console.error("Unable to copy string to clipboard")
+            return { error: "Failed to copy text to clipboard" }
+        }
+    }
 }
 
 export const isDebug = process.env.REACT_APP_DEBUG === "TRUE";

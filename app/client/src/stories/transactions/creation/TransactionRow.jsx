@@ -6,7 +6,6 @@ import { toast } from 'react-toastify';
 import utils, { transactionTypes } from 'util/_util';
 import { SyncToastMessageSuccess } from 'components/customToasts/CustomToasts';
 import { TRANSACTION_ACTIONS } from 'redux/actions/_actions';
-import copy from 'copy-to-clipboard';
 
 export default function TransactionRow({ transaction, index, onUpdate }) {
 
@@ -71,7 +70,7 @@ export default function TransactionRow({ transaction, index, onUpdate }) {
                 }
             />
 
-            <Table.Cell className="py-0 px-2 cursor-pointer" onClick={() => copy(transaction.to)}>
+            <Table.Cell className="py-0 px-2 cursor-pointer" onClick={() => utils.generic.copyToClipboard(transaction.to)}>
                 <Popup
                     size="mini"
                     offset={"0,1"}

@@ -5,7 +5,7 @@ import { useFormState } from 'hooks/_hooks';
 import { stringUtils } from 'util/_util';
 import { MODAL_ACTIONS } from 'redux/actions/_actions';
 import { electronStoreCommonActions } from 'store/electronStoreHelper';
-import copy from 'copy-to-clipboard';
+import utils from 'util/_util';
 
 export default function ExportPrivateKeyModal() {
 
@@ -65,7 +65,7 @@ export default function ExportPrivateKeyModal() {
 
     const copyPkey = () => {
         setCopyClick(true);
-        copy(targetWallet.privK);
+        utils.generic.copyToClipboard(targetWallet.privK);
         setTimeout(() => {
             setCopyClick(false);
         }, 2150)

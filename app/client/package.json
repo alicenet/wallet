@@ -4,9 +4,8 @@
   "private": true,
   "homepage": "./",
   "dependencies": {
-    "big-integer": "^1.6.48",
-    "bip39": "^3.0.4",
-    "copy-to-clipboard": "^3.3.1",
+    "big-integer": "1.6.48",
+    "bip39": "3.0.4",
     "cross-env": "^7.0.3",
     "electron-settings": "^4.0.2",
     "ethereumjs-util": "^7.1.0",
