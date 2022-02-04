@@ -346,7 +346,9 @@ function checkPasswordAgainstPreflightHash(password) {
 }
 
 /**
- * Check input password against keystore address
+ * Checks input password against keystore address by unlocking the keystore
+ * @param { String } password - The address to used for the search
+ * @param { String } address - The address to used for the search
  */
 function checkPasswordAgainstKeystoreAddress(password, address) {
     return new Promise(async res => {
