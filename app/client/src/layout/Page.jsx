@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { Container } from 'semantic-ui-react';
 
 import HeaderMenu from './HeaderMenu';
@@ -22,10 +21,6 @@ const Page = ({ children, showMenu, showNetworkStatus }) => {
 
         </Container>
     );
-};
-
-Page.propTypes = {
-    children: PropTypes.node.isRequired,
 };
 
 export default Page;
