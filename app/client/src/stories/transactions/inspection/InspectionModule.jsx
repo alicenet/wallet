@@ -10,7 +10,7 @@ import { getMadWalletInstance } from 'redux/middleware/WalletManagerMiddleware';
 import { classNames } from 'util/generic';
 import Web3 from 'web3';
 
-const madWalletJS = getMadWalletInstance();
+const madNetJs = getMadWalletInstance();
 
 function InspectionModule() {
 
@@ -55,7 +55,7 @@ function InspectionModule() {
         const getOwners = async () => {
             let newVoutOwners = [];
             for (let i = 0; i < txObj.voutCount; i++) {
-                let idxOwner = await madWalletJS.Transaction.Utils.extractOwner(txObj.vouts[i].owner);
+                let idxOwner = await madNetJs.Transaction.Utils.extractOwner(txObj.vouts[i].owner);
                 newVoutOwners.push(idxOwner);
             }
             setVoutOwners(newVoutOwners);

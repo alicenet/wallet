@@ -4,7 +4,7 @@ import store from 'redux/store/store'
 import utils from './_util';
 
 const bip39 = require('bip39');
-const MadNetWalletJS = require('madwalletjs')
+const MadNetWalletJS = require('madnetjs')
 var HDKey = require('hdkey');
 
 /** Creates a raw state wallet object from a wallet_name and private key

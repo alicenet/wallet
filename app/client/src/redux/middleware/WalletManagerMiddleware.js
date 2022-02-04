@@ -1,4 +1,4 @@
-import MadWallet from 'madwalletjs';
+import MadWallet from 'madnetjs';
 import { MIDDLEWARE_ACTION_TYPES, VAULT_ACTION_TYPES } from '../constants/_constants';
 import util from 'util/_util';
 import { walletManMiddleware_logger as log } from '../../log/logHelper.js'
@@ -36,7 +36,7 @@ export default function WalletManagerMiddleware(storeAPI) {
     }
 }
 
-/** Used to reinstance madWalletJS -- Used to locked wallet :: Old instance should be picked up by garbage collection */
+/** Used to reinstance madNetJS -- Used to locked wallet :: Old instance should be picked up by garbage collection */
 function reinstanceMadWallet() {
     // Remove accounts from current instance
     madWallet.Account.accounts = [];
@@ -95,7 +95,7 @@ function initMadWallet(initPayload, dispatch) {
                                 res(true);
                             } catch (ex) {
                                 if (ex.message === "Account.addAccount: Account already added") {
-                                    log.warn("Wallet " + addition[2] + " already exists in the MadWalletJS Instance.")
+                                    log.warn("Wallet " + addition[2] + " already exists in the MadNetJS Instance.")
                                     res({ error: "Wallet " + addition[2] + " already exists." })
                                 }
                                 res({ error: ex })
@@ -117,14 +117,14 @@ function initMadWallet(initPayload, dispatch) {
                 res([true, errors]);
             });
         } catch (ex) {
-            res({ error: "Error initiating madWalletJs: ", ex });
+            res({ error: "Error initiating madNetJs: ", ex });
         }
 
     });
 }
 
 /**
- * Add a keystore to madwalletJS wallet state prior to sending to redux state
+ * Add a keystore to madNetJS wallet state prior to sending to redux state
  * @param { Object } keystore - JSON Keystore containing the key to add
  * @param { Function } dispatch - Redux Dispatch 
  * @returns { Object } - List of added wallets
@@ -133,7 +133,7 @@ function addWalletFromKeystore(keystore, walletName, dispatch, getState) {
     return new Promise(async res => {
         // Extract pkey from keystore
         let pKey = keystore.privateKey;
-        // Extract the curve if viable -- Will only be present on MadWalletJS Generated Stores :: Fallback to SECP256k1
+        // Extract the curve if viable -- Will only be present on MadNetJs Generated Stores :: Fallback to SECP256k1
         let curve = keystore.curve ? keystore.curve : 1;
         // Verify curve
         if (curve !== curveTypes.SECP256K1 && curve !== curveTypes.BARRETO_NAEHRIG) {
@@ -147,7 +147,7 @@ function addWalletFromKeystore(keystore, walletName, dispatch, getState) {
         if (pKeyMatches.length > 0) {
             res({ error: "This private key is already loaded as wallet: " + pKeyMatches[0].name });
         }
-        // Add the private key to the MadWalletJS instance
+        // Add the private key to the MadNetJs instance
         try {
             await madWallet.Account.addAccount(pKey, curve);
             // Balance the wallet state to redux with the wallet name
@@ -157,7 +157,7 @@ function addWalletFromKeystore(keystore, walletName, dispatch, getState) {
             res(balancedState)
         } catch (ex) {
             if (ex.message === "Account.addAccount: Account already added") {
-                log.warn("Wallet " + walletName + " already exists in the MadWalletJS Instance.")
+                log.warn("Wallet " + walletName + " already exists in the MadNetJs Instance.")
                 res({ error: "Wallet " + walletName + " already exists." })
             }
             res({ error: ex });
@@ -166,7 +166,7 @@ function addWalletFromKeystore(keystore, walletName, dispatch, getState) {
 }
 
 /**
- * Determine next HD Wallet to add, and subsequently add it to MadWalletJS and return any additions that have been made
+ * Determine next HD Wallet to add, and subsequently add it to MadNetJs and return any additions that have been made
  * @param { Object } storeAPI  - Redux store api -- Notabley has dispatch and getState as needed
  * @param { String } walletName - Name for the new HD Wallet
  */
@@ -184,7 +184,7 @@ function addNextHDWallet(storeAPI, walletName) {
         let nextHdWallet = await utils.wallet.streamLineHDWalletNodeFromMnemonic(mnemonic, nextDerrivationPath);
         // Generate internal wallet object
         let walletObj = await utils.wallet.generateBasicWalletObject(walletName, nextHdWallet.privateKey.toString('hex'), desiredCurve);
-        // Add the private key to the MadWalletJS instance
+        // Add the private key to the MadNetJs instance
         try {
             await madWallet.Account.addAccount(walletObj.privK, walletObj.curve);
             // Balance the wallet state to redux with the wallet name
@@ -193,7 +193,7 @@ function addNextHDWallet(storeAPI, walletName) {
             res(balancedState)
         } catch (ex) {
             if (ex.message === "Account.addAccount: Account already added") {
-                log.warn("Wallet " + walletName + " already exists in the MadWalletJS Instance.")
+                log.warn("Wallet " + walletName + " already exists in the MadNetJs Instance.")
                 res({ error: "Wallet " + walletName + " already exists." })
             }
             res({ error: ex });
@@ -202,7 +202,7 @@ function addNextHDWallet(storeAPI, walletName) {
 }
 
 /**
- * Build wallet state object against current madWalletJS instance accounts and passed wallets -- The return can be used to dispatch updated wallets accordingly
+ * Build wallet state object against current MadNetJs instance accounts and passed wallets -- The return can be used to dispatch updated wallets accordingly
  * @param { Array } internalAdds - List of recently added internal _walletArrayStructs that need to be balanced
  * @param { Array } externalAdds - List of recently added external _walletArrayStructs that need to be balanced 
  * @returns { Object } - Object with internal and external wallet arrays 
@@ -216,7 +216,7 @@ function buildBalancedWalletState(internalAdds, externalAdds) {
             let signerKeyToUse = parseInt(account.curve) === 1 ? "secpSigner" : "bnSigner";  // Key to use under MultiSigner for this account to get privK
 
             let privK = account.signer.privK; // Note the privK
-            let address = account.address; // Note the address from madWalletJS
+            let address = account.address; // Note the address from MadNetJs
 
             // Additionally check the expected derived address relative to the curve from signerKey for the filtering process
             privK = util.wallet.strip0x(privK); // Use 0x-stripped pkey
@@ -234,7 +234,7 @@ function buildBalancedWalletState(internalAdds, externalAdds) {
             }
             // Construct the wallet based off of data creation from madwallet -- We let mad wallet build this data and then store it back to state 
             if (!match) {
-                log.warn("No match found for recently added wallet list against a MadWalletJS Account List -- This is normal during additions up to the current wallet count, only matches need balanced.")
+                log.warn("No match found for recently added wallet list against a MadNetJs Account List -- This is normal during additions up to the current wallet count, only matches need balanced.")
                 continue
             }
             let walletObj = util.wallet.constructWalletObject(

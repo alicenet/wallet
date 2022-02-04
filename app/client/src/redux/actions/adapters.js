@@ -282,7 +282,7 @@ const _prepTxObjectsToMadNetAdapter = async (state) => {
         madNetAdapter.addTxOut(tx);
     });
 
-    log.debug("Prepped TX Objects To MadNetAdapter ( Not in MadWalletJS Instance yet) => ", {
+    log.debug("Prepped TX Objects To MadNetAdapter ( Not in MadNetJS Instance yet) => ", {
         txReducerTxs: txReducerTxs,
         preppedTxObjs: preppedTxObjs,
     });

@@ -183,7 +183,7 @@ export function addExternalWalletToState(keystore, password, walletName) {
         }
         let unlocked = { data: util.wallet.unlockKeystore(JSON.parse(ksString), password), name: walletName };
         let additions = await dispatch({ type: MIDDLEWARE_ACTION_TYPES.ADD_WALLET_FROM_KEYSTORE, payload: unlocked }); // Pass off to MadWalletMiddleware to finish state balancing
-        // Waiting for the above to dispatch will prevent doubles from being added -- MadWalletJS will catch them
+        // Waiting for the above to dispatch will prevent doubles from being added -- MadNetJS will catch them
         if (additions.error) {
             return additions;
         }
@@ -217,7 +217,7 @@ export function getMadWallet() {
 }
 
 /**
- * Dispatches actions to clear state and reinstance madWalletJs to prep it for garbage collection
+ * Dispatches actions to clear state and reinstance madNetJs to prep it for garbage collection
  * @returns
  */
 export function lockVault() {

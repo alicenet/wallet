@@ -2,7 +2,7 @@
  * Derives public keys from a private key using the internal utilities and MadNetWalletJS
  */
 
-const madwalletjs = require('madwalletjs');
+const madnetjs = require('madnetjs');
 
 const rl = require('readline').createInterface({
     input: process.stdin,
@@ -11,7 +11,7 @@ const rl = require('readline').createInterface({
 
 main();
 
-const madWallet = new madwalletjs();
+const madWallet = new madnetjs();
 
 async function main() {
     console.log('\n\x1b[33mEnter privK to derive secp256k1 and Barreto-Naehrig curves from:');

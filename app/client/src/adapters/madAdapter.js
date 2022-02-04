@@ -219,7 +219,7 @@ class MadNetAdapter {
             return { error: "Unable to filter out address from current madJSWallet instance. State imbalance? See error: ", ex }
         }
         if (!madJSWallet) {
-            return [{ error: "MadWalletJS wallet instance not found" }, null];
+            return [{ error: "MadNetJS wallet instance not found" }, null];
         }
         let [balance, utxos] = await this._getMadNetWalletBalanceAndUTXOs(madJSWallet.address, madJSWallet.curve);
         if (balance.error) {

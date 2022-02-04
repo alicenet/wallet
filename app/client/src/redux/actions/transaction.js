@@ -245,7 +245,7 @@ export function parseAndUpdateFees(rpcFees) {
             }
         }
 
-        log.debug("parseAndUpdateFees :: MadWalletJS.Transaction.Tx.estimateFees():", estimateFees);
+        log.debug("parseAndUpdateFees :: MadNetJS.Transaction.Tx.estimateFees():", estimateFees);
 
         // If the txList > 0, we need to calculate any special/specific fees such as datastore deposit cost
         // Per store/vout fee will be called at the end
