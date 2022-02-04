@@ -2,7 +2,6 @@ import React from 'react';
 import { Button, Input, Segment, Table, Icon, Message } from 'semantic-ui-react';
 import madNetAdapter from 'adapters/madAdapter';
 import Web3 from 'web3';
-import copy from 'copy-to-clipboard';
 import utils, { stringUtils } from 'util/_util';
 import { useHistory } from 'react-router';
 import { useSelector } from 'react-redux';
@@ -64,7 +63,7 @@ export default function FetchTxs() {
             })
 
             return (<Table.Row className="">
-                <Table.Cell className="cursor-pointer hover:bg-gray-100" onClick={() => copy(tx["Tx"]["Vin"][0]["TXInLinker"].TxHash)}>
+                <Table.Cell className="cursor-pointer hover:bg-gray-100" onClick={() => utils.generic.copyToClipboard(tx["Tx"]["Vin"][0]["TXInLinker"].TxHash)}>
                     {stringUtils.splitStringWithEllipsis(tx["Tx"]["Vin"][0]["TXInLinker"].TxHash, "10")}
                 </Table.Cell>
                 <Table.Cell>{tx["Tx"]["Vin"].length}</Table.Cell>

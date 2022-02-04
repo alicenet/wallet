@@ -5,7 +5,6 @@ import { electronStoreCommonActions } from 'store/electronStoreHelper';
 import { MODAL_ACTION_TYPES, VAULT_ACTION_TYPES } from 'redux/constants/_constants';
 import { reduxState_logger as log } from 'log/logHelper';
 import { SyncToastMessageSuccess, SyncToastMessageWarning } from 'components/customToasts/CustomToasts';
-import { removeWalletByAddress } from 'redux/actions/vault';
 
 export const ACTION_ELECTRON_SYNC = "ELECTRON_SYNC"
 

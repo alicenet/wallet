@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
@@ -20,10 +19,6 @@ const RedirectIfLocked = ({ children }) => {
             {children}
         </>
     );
-};
-
-RedirectIfLocked.propTypes = {
-    children: PropTypes.node.isRequired,
 };
 
 export default RedirectIfLocked;

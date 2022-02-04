@@ -2,7 +2,6 @@
 import { readConfigRequest, readConfigResponse, writeConfigRequest, deleteConfigRequest, deleteConfigResponse } from "secure-electron-store";
 
 import { electronStoreMessenger_logger as log, ADDITIONAL_LOG_OPTS } from 'log/logHelper';
-import { v4 as uuidv4 } from 'uuid';
 import util from 'util/_util';
 
 import { scrypt } from 'scrypt-js'; // External -- scrypt-js -- scrypt is not in current version of node -- Change to supplied crypto module if node16+ used
@@ -115,7 +114,7 @@ class StoreMessenger {
      * @returns {String} v4uuid to use for unsubscription of this key
      */
     subscribeToKey(key, callback, forceUnsub) {
-        let id = uuidv4(); // Create the uid for the subscription
+        let id = util.generic.genUuidv4(); // Create the uid for the subscription
         if (ADDITIONAL_LOG_OPTS.LOG_ELECTRON_MESSENGER_SUBSCRIBER_EVENTS) { log.debug(`${this._shortId(id)} has subscribed to ${key}`); }
         // Wrap the callback to immediately unsub after the value is fetched
         let theCb = forceUnsub ? (
@@ -136,7 +135,7 @@ class StoreMessenger {
      * @returns { String } - v4uuid to use for unsubscription of this channel
      */
     subscribeToBackupEvent(channel, callback, forceUnsub) {
-        let id = uuidv4(); // Create the uid for the subscription
+        let id = util.generic.genUuidv4(); // Create the uid for the subscription
         if (ADDITIONAL_LOG_OPTS.LOG_ELECTRON_MESSENGER_SUBSCRIBER_EVENTS) { log.debug(`${this._shortId(id)} has subscribed to backup channel ${channel}`); }
         // Wrap the callback to immediately unsub after the value is fetched
         let theCb = forceUnsub ? (

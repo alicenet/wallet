@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Container, Grid, Icon } from 'semantic-ui-react'
-import copy from 'copy-to-clipboard';
+import utils from 'util/_util';
 
 import { ADAPTER_ACTIONS, MODAL_ACTIONS } from 'redux/actions/_actions';
 import { curveTypes } from 'util/wallet';
@@ -57,7 +57,7 @@ export default function Overview({ wallet }) {
 
     const copyAddress = () => {
         setCopyClick(true);
-        copy(wallet.address);
+        utils.generic.copyToClipboard(wallet.address);
         setTimeout(() => {
             setCopyClick(false);
         }, 2150)

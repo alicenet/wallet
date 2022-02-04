@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
 import { Button, Container, Grid, Header, Label, Segment, TextArea } from 'semantic-ui-react';
 import { useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -149,11 +148,3 @@ function VerifyYourSeedPhrase() {
 }
 
 export default VerifyYourSeedPhrase;
-
-VerifyYourSeedPhrase.defaultProps = {
-    seedPhrase: '',
-};
-
-VerifyYourSeedPhrase.propTypes = {
-    seedPhrase: PropTypes.string.isRequired,
-};
