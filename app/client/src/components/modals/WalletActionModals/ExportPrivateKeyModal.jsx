@@ -44,9 +44,17 @@ export default function ExportPrivateKeyModal() {
     }, [isOpen]);
 
     const showKey = async () => {
-        if (!await electronStoreCommonActions.checkPasswordAgainstPreflightHash(formState.vaultPassword.value)) {
-            formSetter.setVaultPasswordError("Incorrect password");
-            return setKeyVisible(false);
+        if (targetWallet.isInternal) {
+            if (!await electronStoreCommonActions.checkPasswordAgainstPreflightHash(formState.vaultPassword.value)) {
+                formSetter.setVaultPasswordError("Incorrect password");
+                return setKeyVisible(false);
+            }
+        }
+        else {
+            if (!await electronStoreCommonActions.checkPasswordAgainstKeystoreAddress(formState.vaultPassword.value, targetWallet.address)) {
+                formSetter.setVaultPasswordError("Incorrect password");
+                return setKeyVisible(false);
+            }
         }
         setKeyVisible(true);
         setVisibleTime(14);
