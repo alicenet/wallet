@@ -6,7 +6,6 @@ import Web3 from 'web3'
 import { ADAPTER_ACTIONS } from 'redux/actions/_actions';
 import { Button, Icon, Loader, Popup, Segment, Table } from 'semantic-ui-react';
 import utils, { stringUtils } from 'util/_util';
-import copy from 'copy-to-clipboard';
 import { toast } from 'react-toastify';
 import { SyncToastMessageSuccess } from 'components/customToasts/CustomToasts'
 
@@ -43,7 +42,7 @@ export default function RecentTxs({ wallet }) {
     }
 
     const handleCopy = (tx) => {
-        copy(tx["Tx"]["Vin"][0]["TXInLinker"].TxHash)
+        utils.generic.copyToClipboard(tx["Tx"]["Vin"][0]["TXInLinker"].TxHash)
         toast.success(<SyncToastMessageSuccess basic title="Success" message="TX Hash copied"/>, { className: "basic", "autoClose": 2400 })
     }
 

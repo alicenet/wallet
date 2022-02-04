@@ -2,7 +2,6 @@ import electronStoreMessenger from './electronStoreMessenger';
 import { electronStoreHelper_logger as log } from 'log/logHelper';
 import utils from 'util/_util';
 import { utils as web3Utils } from 'web3'
-import { v4 } from 'uuid';
 
 /** A utility module to assist in reading and writing from the secure-electron-store using the elctronStoreMessenger
  * without directly utilizing the pub/sub interface provided by it, but rather it's sync-mimicking abstractions
@@ -244,7 +243,7 @@ async function addOptOutKeystore(ksString, walletName) {
         currentKeystores = [];
     }
     // Add new keystore with a uid
-    currentKeystores.push({ name: walletName, keystore: ksString, id: v4() });
+    currentKeystores.push({ name: walletName, keystore: ksString, id: utils.generic.genUuidv4() })
     // Write the updated keystores
     writePlainValueToStore("optOutStores", currentKeystores);
 }

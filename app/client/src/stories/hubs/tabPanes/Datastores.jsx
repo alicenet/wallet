@@ -5,7 +5,6 @@ import { getMadWalletInstance } from 'redux/middleware/WalletManagerMiddleware';
 import utils from 'util/_util';
 import usePrevious from 'hooks/usePrevious';
 import { useHistory } from 'react-router';
-import copy from 'copy-to-clipboard';
 
 export default function Datastores({ wallet }) {
 
@@ -116,7 +115,7 @@ export default function Datastores({ wallet }) {
                         trigger={
                             <Table.Cell className="cursor-pointer hover:bg-gray-100"
                                 content={utils.string.splitStringWithEllipsis(dstore.txHash, 5)}
-                                onClick={() => copy(dstore.txHash)}
+                                onClick={() => utils.generic.copyToClipboard(dstore.txHash)}
                             />
                         }
                         size="mini"
