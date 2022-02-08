@@ -49,7 +49,7 @@ export default function ExportKeystoreModal() {
 
     const downloadKeystore = async () => {
         if (!await electronStoreCommonActions.checkPasswordAgainstPreflightHash(formState.vaultPassword.value)) {
-            formSetter.setVaultPasswordError("Incorrect password" );
+            formSetter.setVaultPasswordError("Incorrect password");
             return setKeyVisible(false);
         }
 
