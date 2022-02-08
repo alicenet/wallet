@@ -48,15 +48,9 @@ export default function ExportKeystoreModal() {
     }, [isOpen]);
 
     const downloadKeystore = async () => {
-        if (!formState.vaultPassword.value) {
-            return formSetter.setVaultPassword(state => ({ ...state, error: "Password required." }))
-        }
         if (!await electronStoreCommonActions.checkPasswordAgainstPreflightHash(formState.vaultPassword.value)) {
             formSetter.setVaultPassword(state => ({ ...state, error: "Incorrect password" }))
             return setKeyVisible(false);
-        }
-        if (!formState.keystorePassword.value) {
-            return formSetter.setKeystorePassword({ error: "Must have a password" })
         }
 
         // Download KS Logic
@@ -148,7 +142,7 @@ export default function ExportKeystoreModal() {
                         href={keystoreDL ? URL.createObjectURL(keystoreDL.data) : ""} download={keystoreDL.filename}
                         content={formState.vaultPassword.error || formState.keystorePassword.error ? "Try Again" : keystoreDL ? "Download Keystore" : "Create Keystore"}
                         color={formState.vaultPassword.error || formState.keystorePassword.error ? "red" : keystoreDL ? "green" : "purple"}
-                        basic onClick={keystoreDL ? closeModal : downloadKeystore}
+                        basic onClick={keystoreDL ? closeModal : submit}
                     />
                 </div>
 
