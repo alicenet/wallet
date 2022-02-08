@@ -10,9 +10,10 @@ export default function ExportKeystoreModal() {
 
     const dispatch = useDispatch();
 
-    const { isOpen, targetWallet } = useSelector(s => ({
+    const { isOpen, targetWallet, optout } = useSelector(s => ({
         isOpen: s.modal.export_ks_modal,
         targetWallet: s.modal.wallet_action_target,
+        optout: s.vault.optout,
     }));
 
     const [showPass, setShowPass] = useState(false);
@@ -29,13 +30,19 @@ export default function ExportKeystoreModal() {
     const downloadRef = useRef();
 
     const generateWallet = async () => {
-        let newStoreBlob = await utils.wallet.generateKeystoreFromPrivK(targetWallet.privK, formState.keystorePassword.value, targetWallet.curve, true);
+        const newStoreBlob = await utils.wallet.generateKeystoreFromPrivK(targetWallet.privK, formState.keystorePassword.value, targetWallet.curve, true);
         setKeystoreDL({
             filename: "MadWallet_" + targetWallet.name + ".json",
             data: newStoreBlob
         });
         downloadRef.current.href = URL.createObjectURL(newStoreBlob);
     };
+
+    useEffect(() => {
+        if (formState.vaultPassword.isRequired !== !optout) {
+            formSetter.setVaultPasswordIsRequired(!optout);
+        }
+    }, [formSetter, optout]);
 
     // Clear on open changes
     useEffect(() => {
@@ -48,7 +55,7 @@ export default function ExportKeystoreModal() {
     }, [isOpen]);
 
     const downloadKeystore = async () => {
-        if (!await electronStoreCommonActions.checkPasswordAgainstPreflightHash(formState.vaultPassword.value)) {
+        if (!optout && !await electronStoreCommonActions.checkPasswordAgainstPreflightHash(formState.vaultPassword.value)) {
             formSetter.setVaultPasswordError("Incorrect password");
             return setKeyVisible(false);
         }
@@ -99,7 +106,7 @@ export default function ExportKeystoreModal() {
 
                     <Form.Group>
 
-                        <Form.Input
+                        {!optout && <Form.Input
                             width={6}
                             type={showPass ? "text" : "password"}
                             size="small"
@@ -110,8 +117,8 @@ export default function ExportKeystoreModal() {
                             error={!!formState.vaultPassword.error && { content: formState.vaultPassword.error }}
                             icon={
                                 <Icon color={keyVisible ? "green" : "black"} name={showPass ? "eye" : "eye slash"} link onClick={() => setShowPass(s => !s)} />
-                            }
-                        />
+                            } />
+                        }
 
                         <Form.Input
                             width={6}
@@ -142,8 +149,8 @@ export default function ExportKeystoreModal() {
                         size="small"
                         ref={downloadRef}
                         href={keystoreDL ? URL.createObjectURL(keystoreDL.data) : ""} download={keystoreDL.filename}
-                        content={formState.vaultPassword.error || formState.keystorePassword.error ? "Try Again" : keystoreDL ? "Download Keystore" : "Create Keystore"}
-                        color={formState.vaultPassword.error || formState.keystorePassword.error ? "red" : keystoreDL ? "green" : "purple"}
+                        content={(!optout && formState.vaultPassword.error) || formState.keystorePassword.error ? "Try Again" : keystoreDL ? "Download Keystore" : "Create Keystore"}
+                        color={(!optout && formState.vaultPassword.error) || formState.keystorePassword.error ? "red" : keystoreDL ? "green" : "purple"}
                         basic onClick={keystoreDL ? closeModal : submit}
                     />
 

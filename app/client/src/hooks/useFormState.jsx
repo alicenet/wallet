@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState } from 'react';
 import upperFirst from 'lodash/upperFirst';
 import isEmpty from 'lodash/isEmpty';
 import Web3 from 'web3';
@@ -30,7 +30,9 @@ export default function useFormState(initialStateKeysArray) {
     let warnTypesNotSupplied = false;
     // Extrapolate keys from initial state array and populate with value && error sub-keys
     initialStateKeysArray.forEach(key => {
-        if (!key.type) { warnTypesNotSupplied = true }
+        if (!key.type) {
+            warnTypesNotSupplied = true;
+        }
         initialState[key.name] = {
             name: key.name,
             display: key.display || false,
@@ -40,10 +42,9 @@ export default function useFormState(initialStateKeysArray) {
                 : false,
             value: !!key.value ? key.value : "",
             type: key.type,
-            isRequired: key.required || key.isRequired,
-            required: key.required || key.isRequired,
+            isRequired: key.isRequired ?? false,
         };
-    })
+    });
 
     // Note types not supplied in console as warning
     if (warnTypesNotSupplied) {
@@ -51,7 +52,7 @@ export default function useFormState(initialStateKeysArray) {
     }
 
     // Setup state blob
-    const [formState, setFormState] = React.useState(
+    const [formState, setFormState] = useState(
         Object.assign({}, initialState, {
             allValidated: _validateAllInSuppliedState(initialState)
         })
@@ -70,7 +71,7 @@ export default function useFormState(initialStateKeysArray) {
                 let validationErr = _getValidationError(prevState[key.name].type, validated);
                 let reqErr = _getRequirementError(
                     keyName,
-                    prevState[key.name].required
+                    prevState[key.name].isRequired
                 );
 
                 return {
@@ -95,6 +96,7 @@ export default function useFormState(initialStateKeysArray) {
         // Provide external error setters for any complex situations
         setters["set" + keyName + "Error"] = (value) => setFormState(prevState => ({ ...prevState, [key.name]: { ...prevState[key.name], error: value } }));
         setters["clear" + keyName + "Error"] = () => setFormState(prevState => ({ ...prevState, [key.name]: { ...prevState[key.name], error: '' } }));
+        setters["set" + keyName + "IsRequired"] = (value) => setFormState(prevState => ({ ...prevState, [key.name]: { ...prevState[key.name], isRequired: value } }));
     });
 
     const onSubmit = async (callback) => {
@@ -138,8 +140,8 @@ export default function useFormState(initialStateKeysArray) {
                             }
                             break;
                         case fieldType.PASSWORD:
-                            if (!_validateValueByType(formState[key.name].value, fieldType.PASSWORD)) {
-                                error = (upperFirst(formState[key.name].display || formState[key.name].name)) + " must be atleast 8 characters long.";
+                            if (formState[key.name].isRequired && !_validateValueByType(formState[key.name].value, fieldType.PASSWORD)) {
+                                error = (upperFirst(formState[key.name].display || formState[key.name].name)) + " must be at least 8 characters long.";
                             }
                             break;
                         case fieldType.VERIFIED_PASSWORD:
