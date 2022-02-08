@@ -40,8 +40,8 @@ export default function ExportKeystoreModal() {
     // Clear on open changes
     useEffect(() => {
         formSetter.setVaultPassword("");
-        setKeystoreDL("");
         formSetter.setKeystorePassword("");
+        setKeystoreDL("");
         setStorePassVisible(false);
         setKeyVisible(false);
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -49,7 +49,7 @@ export default function ExportKeystoreModal() {
 
     const downloadKeystore = async () => {
         if (!await electronStoreCommonActions.checkPasswordAgainstPreflightHash(formState.vaultPassword.value)) {
-            formSetter.setVaultPassword(state => ({ ...state, error: "Incorrect password" }))
+            formSetter.setVaultPasswordError("Incorrect password" );
             return setKeyVisible(false);
         }
 
@@ -135,7 +135,9 @@ export default function ExportKeystoreModal() {
             <Modal.Actions>
 
                 <div className="flex justify-between">
+
                     <Button size="small" color="orange" content="Close" onClick={closeModal} basic />
+
                     <Button
                         size="small"
                         ref={downloadRef}
@@ -144,6 +146,7 @@ export default function ExportKeystoreModal() {
                         color={formState.vaultPassword.error || formState.keystorePassword.error ? "red" : keystoreDL ? "green" : "purple"}
                         basic onClick={keystoreDL ? closeModal : submit}
                     />
+
                 </div>
 
             </Modal.Actions>
