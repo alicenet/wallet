@@ -58,7 +58,7 @@ export default function ExportPrivateKeyModal() {
         }
         setKeyVisible(true);
         setVisibleTime(14);
-        formSetter.setVaultPassword(state => ({ ...state, value: "" }));
+        formSetter.setVaultPassword("");
         setTimeout(() => {
             setKeyVisible(false);
         }, 14000);
