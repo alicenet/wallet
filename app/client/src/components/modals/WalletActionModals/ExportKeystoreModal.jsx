@@ -8,12 +8,12 @@ import utils from 'util/_util';
 
 export default function ExportKeystoreModal() {
 
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
 
     const { isOpen, targetWallet } = useSelector(s => ({
         isOpen: s.modal.export_ks_modal,
         targetWallet: s.modal.wallet_action_target,
-    }))
+    }));
 
     const [showPass, setShowPass] = useState(false);
     const [keyVisible, setKeyVisible] = useState(false);
@@ -35,7 +35,7 @@ export default function ExportKeystoreModal() {
             data: newStoreBlob
         });
         downloadRef.current.href = URL.createObjectURL(newStoreBlob);
-    }
+    };
 
     // Clear on open changes
     useEffect(() => {
@@ -44,8 +44,8 @@ export default function ExportKeystoreModal() {
         formSetter.setKeystorePassword("");
         setStorePassVisible(false);
         setKeyVisible(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isOpen])
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isOpen]);
 
     const downloadKeystore = async () => {
         if (!formState.vaultPassword.value) {
@@ -61,18 +61,18 @@ export default function ExportKeystoreModal() {
 
         // Download KS Logic
         await generateWallet();
-    }
+    };
 
     const closeModal = () => {
         dispatch(MODAL_ACTIONS.closeExportKeyStoreModal())
     };
 
     const submit = e => {
-        onSubmit( async () => {
+        onSubmit(async () => {
             e.preventDefault();
             downloadKeystore();
         });
-    }
+    };
 
     return (
 
@@ -115,7 +115,7 @@ export default function ExportKeystoreModal() {
                             onChange={e => formSetter.setVaultPassword(e.target.value)}
                             error={!!formState.vaultPassword.error && { content: formState.vaultPassword.error }}
                             icon={
-                                <Icon color={keyVisible ? "green" : "black"} name={showPass ? "eye" : "eye slash"} link onClick={() => setShowPass(s => !s)}/>
+                                <Icon color={keyVisible ? "green" : "black"} name={showPass ? "eye" : "eye slash"} link onClick={() => setShowPass(s => !s)} />
                             }
                         />
 
@@ -128,7 +128,7 @@ export default function ExportKeystoreModal() {
                             placeholder="Keystore Password"
                             onChange={e => formSetter.setKeystorePassword(e.target.value)}
                             icon={
-                                <Icon color={"black"} name={storePassVisible ? "eye" : "eye slash"} link onClick={() => setStorePassVisible(s => !s)}/>
+                                <Icon color={"black"} name={storePassVisible ? "eye" : "eye slash"} link onClick={() => setStorePassVisible(s => !s)} />
                             }
                         />
 
@@ -141,7 +141,7 @@ export default function ExportKeystoreModal() {
             <Modal.Actions>
 
                 <div className="flex justify-between">
-                    <Button size="small" color="orange" content="Close" onClick={closeModal} basic/>
+                    <Button size="small" color="orange" content="Close" onClick={closeModal} basic />
                     <Button
                         size="small"
                         ref={downloadRef}
