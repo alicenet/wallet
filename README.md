@@ -20,6 +20,8 @@ Linux: `npm run build-linux`
 Windows: `npm run build-windows`    
 All: `npm run build-all`
 
+Optionally, for a debug build, create a file `/app/client/.env` containing `REACT_APP_DEBUG=TRUE`. This allows for opening and closing the debug panel with ctrl+shift+Z.
+
 ##
 ### Development Mode
 > This allows you to run the application stack without building the app.
