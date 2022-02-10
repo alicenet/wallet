@@ -4,7 +4,7 @@ class Logger {
         this.LOG_LEVELS = { "trace": 1, "debug": 2, "log": 3, "info": 3, "warn": 4, "error": 5 }
         this.level = level;
         this.log = this._getLogger('log');
-        this.indo = this._getLogger('info');
+        this.info = this._getLogger('info');
         this.warn = this._getLogger('warn');
         this.debug = this._getLogger('debug');
         this.trace = this._getLogger('trace');

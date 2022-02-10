@@ -13,7 +13,7 @@ const writeBakFileRequest = "WriteBakFile-Request";
 const writeBakFileResponse = "WriteBakFile-Response";
 
 /**
- * Middleware to mimic syncronous-non-event based access to secure-electron-store 
+ * Middleware to mimic synchronous-non-event based access to secure-electron-store
  * Additionally provides services to sub/unsub from electron store events to assist preventing state malfunction if event-notices are needed
  * Components that digest this module must unsubscribe from any subscribed keys to prevent state issues across re-renders
  */

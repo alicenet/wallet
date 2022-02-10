@@ -8,12 +8,13 @@ import utils from 'util/_util';
 
 export default function ExportKeystoreModal() {
 
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
 
-    const { isOpen, targetWallet } = useSelector(s => ({
+    const { isOpen, targetWallet, optout } = useSelector(s => ({
         isOpen: s.modal.export_ks_modal,
         targetWallet: s.modal.wallet_action_target,
-    }))
+        optout: s.vault.optout,
+    }));
 
     const [showPass, setShowPass] = useState(false);
     const [keyVisible, setKeyVisible] = useState(false);
@@ -29,50 +30,50 @@ export default function ExportKeystoreModal() {
     const downloadRef = useRef();
 
     const generateWallet = async () => {
-        let newStoreBlob = await utils.wallet.generateKeystoreFromPrivK(targetWallet.privK, formState.keystorePassword.value, targetWallet.curve, true);
+        const newStoreBlob = await utils.wallet.generateKeystoreFromPrivK(targetWallet.privK, formState.keystorePassword.value, targetWallet.curve, true);
         setKeystoreDL({
             filename: "MadWallet_" + targetWallet.name + ".json",
             data: newStoreBlob
         });
         downloadRef.current.href = URL.createObjectURL(newStoreBlob);
-    }
+    };
+
+    useEffect(() => {
+        if (formState.vaultPassword.isRequired !== !optout) {
+            formSetter.setVaultPasswordIsRequired(!optout);
+        }
+    }, [formSetter, optout]);
 
     // Clear on open changes
     useEffect(() => {
         formSetter.setVaultPassword("");
-        setKeystoreDL("");
         formSetter.setKeystorePassword("");
+        setKeystoreDL("");
         setStorePassVisible(false);
         setKeyVisible(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isOpen])
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isOpen]);
 
     const downloadKeystore = async () => {
-        if (!formState.vaultPassword.value) {
-            return formSetter.setVaultPassword(state => ({ ...state, error: "Password required." }))
-        }
-        if (!await electronStoreCommonActions.checkPasswordAgainstPreflightHash(formState.vaultPassword.value)) {
-            formSetter.setVaultPassword(state => ({ ...state, error: "Incorrect password" }))
+        if (!optout && !await electronStoreCommonActions.checkPasswordAgainstPreflightHash(formState.vaultPassword.value)) {
+            formSetter.setVaultPasswordError("Incorrect password");
             return setKeyVisible(false);
-        }
-        if (!formState.keystorePassword.value) {
-            return formSetter.setKeystorePassword({ error: "Must have a password" })
         }
 
         // Download KS Logic
         await generateWallet();
-    }
+    };
 
     const closeModal = () => {
         dispatch(MODAL_ACTIONS.closeExportKeyStoreModal())
     };
 
     const submit = e => {
-        onSubmit( async () => {
+        onSubmit(async () => {
             e.preventDefault();
             downloadKeystore();
         });
-    }
+    };
 
     return (
 
@@ -105,7 +106,7 @@ export default function ExportKeystoreModal() {
 
                     <Form.Group>
 
-                        <Form.Input
+                        {!optout && <Form.Input
                             width={6}
                             type={showPass ? "text" : "password"}
                             size="small"
@@ -115,9 +116,9 @@ export default function ExportKeystoreModal() {
                             onChange={e => formSetter.setVaultPassword(e.target.value)}
                             error={!!formState.vaultPassword.error && { content: formState.vaultPassword.error }}
                             icon={
-                                <Icon color={keyVisible ? "green" : "black"} name={showPass ? "eye" : "eye slash"} link onClick={() => setShowPass(s => !s)}/>
-                            }
-                        />
+                                <Icon color={keyVisible ? "green" : "black"} name={showPass ? "eye" : "eye slash"} link onClick={() => setShowPass(s => !s)} />
+                            } />
+                        }
 
                         <Form.Input
                             width={6}
@@ -128,7 +129,7 @@ export default function ExportKeystoreModal() {
                             placeholder="Keystore Password"
                             onChange={e => formSetter.setKeystorePassword(e.target.value)}
                             icon={
-                                <Icon color={"black"} name={storePassVisible ? "eye" : "eye slash"} link onClick={() => setStorePassVisible(s => !s)}/>
+                                <Icon color={"black"} name={storePassVisible ? "eye" : "eye slash"} link onClick={() => setStorePassVisible(s => !s)} />
                             }
                         />
 
@@ -141,15 +142,18 @@ export default function ExportKeystoreModal() {
             <Modal.Actions>
 
                 <div className="flex justify-between">
-                    <Button size="small" color="orange" content="Close" onClick={closeModal} basic/>
+
+                    <Button size="small" color="orange" content="Close" onClick={closeModal} basic />
+
                     <Button
                         size="small"
                         ref={downloadRef}
                         href={keystoreDL ? URL.createObjectURL(keystoreDL.data) : ""} download={keystoreDL.filename}
-                        content={formState.vaultPassword.error || formState.keystorePassword.error ? "Try Again" : keystoreDL ? "Download Keystore" : "Create Keystore"}
-                        color={formState.vaultPassword.error || formState.keystorePassword.error ? "red" : keystoreDL ? "green" : "purple"}
-                        basic onClick={keystoreDL ? closeModal : downloadKeystore}
+                        content={(!optout && formState.vaultPassword.error) || formState.keystorePassword.error ? "Try Again" : keystoreDL ? "Download Keystore" : "Create Keystore"}
+                        color={(!optout && formState.vaultPassword.error) || formState.keystorePassword.error ? "red" : keystoreDL ? "green" : "purple"}
+                        basic onClick={keystoreDL ? closeModal : submit}
                     />
+
                 </div>
 
             </Modal.Actions>
