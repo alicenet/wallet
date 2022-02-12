@@ -42,7 +42,7 @@ export default function ExportKeystoreModal() {
         if (formState.vaultPassword.isRequired !== !optout) {
             formSetter.setVaultPasswordIsRequired(!optout);
         }
-    }, [formSetter, optout, formState.vaultPassword.isRequired]);
+    }, [formSetter, optout]);
 
     // Clear on open changes
     useEffect(() => {
