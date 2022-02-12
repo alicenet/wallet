@@ -238,7 +238,6 @@ class MadNetAdapter {
         try {
             let [utxoids, balance] = await madWallet.Rpc.getValueStoreUTXOIDs(address, curve)
             balance = String(parseInt(balance, 16));
-            console.log(balance);
             return [balance, utxoids];
         } catch (ex) {
             return [{ error: ex }, null]
