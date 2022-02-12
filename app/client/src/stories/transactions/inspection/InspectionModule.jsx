@@ -55,7 +55,6 @@ function InspectionModule() {
         const getOwners = async () => {
             let newVoutOwners = [];
             for (let i = 0; i < txObj.voutCount; i++) {
-                console.log(madNetJs);
                 let idxOwner = await madNetJs.Utils.extractOwner(txObj.vouts[i].owner);
                 newVoutOwners.push(idxOwner);
             }
