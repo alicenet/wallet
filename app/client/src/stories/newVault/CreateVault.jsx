@@ -49,10 +49,10 @@ function CreateVault() {
 
                         <Button color="purple" basic content="Get Seed Phrase" className="m-0"
                                 onClick={() => history.push('/newVault/getNewSeedPhrase')}/>
-
+/*
                         <Button color="teal" basic content="Use A Keystore" className="m-0"
                                 onClick={() => history.push('/optOut/disclaimer')}/> 
-
+*/
                         <Button color="orange" basic content="Go Back" className="m-0"
                                 onClick={() => history.push('/')}/>
 
