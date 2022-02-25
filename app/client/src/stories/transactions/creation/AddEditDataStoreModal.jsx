@@ -12,7 +12,7 @@ import { getMadWalletInstance } from "redux/middleware/WalletManagerMiddleware";
 export default function AddEditDataStoreModal({ dataStore, onClose }) {
 
     const [calculatedFee, setCalculatedFee] = useState(0);
-    const [error, setError] = useState('')
+    const [error, setError] = useState('');
 
     const dispatch = useDispatch();
 
@@ -62,9 +62,9 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
 
     useEffect(() => {
         const calculateFee = async () => {
-            try{
+            try {
                 setError('');
-                if(formState.Duration.value && formState.Value.value){
+                if (formState.Duration.value && formState.Value.value) {
                     let madWallet = getMadWalletInstance();
                     const dataStoreFee = await madWallet.Utils.calculateFee(fees.dataStoreFee, formState.Duration.value);
                     let rawValue = Buffer(formState.Value.value).toString('hex');
@@ -72,17 +72,17 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
                     const totalStoreCost = BigInt(dataStoreFee) + BigInt(depositFee);
                     setCalculatedFee(totalStoreCost);
                 }
-            }catch(error){
-                console.log(error)
-                setError('Could not calculate cost, please check your inputs')
+            } catch (error) {
+                console.log(error);
+                setError('Could not calculate cost, please check your inputs');
                 setCalculatedFee(0);
             }
         }
         calculateFee();
 
-    },[fees, formState.Duration.value, formState.Value.value]);
+    }, [fees, formState.Duration.value, formState.Value.value]);
 
-    const totalStoreCostLabel = calculatedFee ? `${calculatedFee}` : '0'
+    const totalStoreCostLabel = calculatedFee ? `${calculatedFee}` : '0';
 
     return (
         <Modal
@@ -94,7 +94,8 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
             <Modal.Header className="text-center">
 
                 <Header as="h4" className="uppercase" color="purple">{`${isEditing ? 'Edit' : 'Add'} Data Store`}
-                    <Header.Subheader className="text-xs">Fee Per Data Store: {fees.dataStoreFee} {utils.string.pluralStringCheck("MadByte", fees.dataStoreFee > 1)}</Header.Subheader>
+                    <Header.Subheader className="text-xs">Fee Per Data
+                        Store: {fees.dataStoreFee} {utils.string.pluralStringCheck("MadByte", fees.dataStoreFee > 1)}</Header.Subheader>
                 </Header>
 
             </Modal.Header>
