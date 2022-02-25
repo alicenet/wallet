@@ -157,7 +157,7 @@ export const parseDsLinkers = async (dsLinkers) => {
             // Remove leading zeroes and mark as hex
             let deposit = "0x" + dsL["DSLinker"]["DSPreImage"].Deposit.replace(/^0+/, '');
 
-            let epochNums = await madWallet.Transaction.Utils.calculateNumEpochs(
+            let epochNums = await madWallet.Utils.calculateNumEpochs(
                 dsL["DSLinker"]["DSPreImage"].RawData.length % 2,
                 deposit
             );

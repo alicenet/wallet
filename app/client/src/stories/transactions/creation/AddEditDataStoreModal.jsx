@@ -66,9 +66,9 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
                 setError('');
                 if(formState.Duration.value && formState.Value.value){
                     let madWallet = getMadWalletInstance();
-                    const dataStoreFee = await madWallet.Transaction.Utils.calculateFee(fees.dataStoreFee, formState.Duration.value);
+                    const dataStoreFee = await madWallet.Utils.calculateFee(fees.dataStoreFee, formState.Duration.value);
                     let rawValue = Buffer(formState.Value.value).toString('hex');
-                    const depositFee = await madWallet.Transaction.Utils.calculateDeposit(rawValue, formState.Duration.value);
+                    const depositFee = await madWallet.Utils.calculateDeposit(rawValue, formState.Duration.value);
                     const totalStoreCost = BigInt(dataStoreFee) + BigInt(depositFee);
                     setCalculatedFee(totalStoreCost);
                 }
