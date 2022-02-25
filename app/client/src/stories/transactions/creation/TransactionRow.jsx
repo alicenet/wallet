@@ -44,9 +44,11 @@ export default function TransactionRow({ transaction, index, onUpdate }) {
         const cells = Array.from(Array(7).keys());
         return (
             <Table.Row>
-                {cells.map(a => (<Table.Cell content="" style={{height: "38px" }} />))}
+                {cells.map((cell, index) =>
+                    <Table.Cell key={`empty-row-${index}`} content="" style={{ height: "38px" }} />
+                )}
             </Table.Row>
-        )
+        );
     }
 
     return (
@@ -65,7 +67,7 @@ export default function TransactionRow({ transaction, index, onUpdate }) {
                 }
                 content={
                     <>
-                        <span className="font-bold">From</span><br/>{transaction.from}
+                        <span className="font-bold">From</span><br />{transaction.from}
                     </>
                 }
             />
@@ -79,14 +81,14 @@ export default function TransactionRow({ transaction, index, onUpdate }) {
                         <div>
                             {transaction.to && <>
                                 {utils.string.splitStringWithEllipsis(transaction.to, 5)}
-                                <Icon name="copy outline" className="ml-1 mb-2 cursor-pointer"/>
+                                <Icon name="copy outline" className="ml-1 mb-2 cursor-pointer" />
                             </>}
                         </div>
 
                     }
                     content={
                         <>
-                            <span className="font-bold">To</span><br/>{transaction.to}
+                            <span className="font-bold">To</span><br />{transaction.to}
                         </>
                     }
                 />
@@ -105,7 +107,7 @@ export default function TransactionRow({ transaction, index, onUpdate }) {
                     <Popup
                         trigger={
                             <Menu.Item name='edit' fitted onClick={() => handleEdit(transaction, index)}>
-                                <Icon name='edit'/>
+                                <Icon name='edit' />
                             </Menu.Item>
                         }
                         content={`Edit ${storeType}`}
@@ -116,7 +118,7 @@ export default function TransactionRow({ transaction, index, onUpdate }) {
                     <Popup
                         trigger={
                             <Menu.Item name='clone' fitted onClick={() => handleClone(transaction)}>
-                                <Icon name='clone'/>
+                                <Icon name='clone' />
                             </Menu.Item>
                         }
                         content={`Clone ${storeType}`}
@@ -127,7 +129,7 @@ export default function TransactionRow({ transaction, index, onUpdate }) {
                     <Popup
                         trigger={
                             <Menu.Item name='delete' fitted onClick={() => handleDelete(index)}>
-                                <Icon name='delete'/>
+                                <Icon name='delete' />
                             </Menu.Item>
                         }
                         content={`Delete ${storeType}`}

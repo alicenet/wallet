@@ -82,7 +82,7 @@ function ConstructionModule() {
                     position="top right"
                     offset="10,0"
                     trigger={
-                        <Icon name="question circle" className="cursor-pointer"/>
+                        <Icon name="question circle" className="cursor-pointer" />
                     }
                 />
             </div>
@@ -127,7 +127,7 @@ function ConstructionModule() {
                                     <div className="cursor-pointer text-blue-400 hover:text-blue-500 flex items-center text-xl gap-2">
 
                                         <div className="m-0 font-bold">How to construct a transaction</div>
-                                        <Icon size="small" name="question circle" className="m-0 cursor-pointer"/>
+                                        <Icon size="small" name="question circle" className="m-0 cursor-pointer" />
 
                                     </div>
 
@@ -142,14 +142,14 @@ function ConstructionModule() {
                             <Menu compact icon='labeled' size="small">
 
                                 <Menu.Item name="add-data-store" onClick={() => setDataStore(emptyDataStore)} disabled={!web3Connected || !madConnected}>
-                                    <Icon name="chart bar" className="text-gray-600"/>Add Data Store
+                                    <Icon name="chart bar" className="text-gray-600" />Add Data Store
                                 </Menu.Item>
 
                                 <Menu.Item name='add-value-store' onClick={() => setValueStore(emptyValueStore)} disabled={!web3Connected || !madConnected}>
-                                    <Icon name="currency" className="text-gray-600"/>Add Value Store
+                                    <Icon name="currency" className="text-gray-600" />Add Value Store
                                 </Menu.Item>
 
-                                <AddEditPrioritizationFeeModal/>
+                                <AddEditPrioritizationFeeModal />
 
                             </Menu>
 
@@ -216,11 +216,11 @@ function ConstructionModule() {
                                         <Table.HeaderCell colSpan={7} width={16} textAlign="right" className="p-2">
 
                                             <div className="flex w-full justify-between items-center">
-                                                <Button disabled={!prevAvailable} icon="chevron left" size="mini" onClick={() => handlePaginationChange("back")}/>
+                                                <Button disabled={!prevAvailable} icon="chevron left" size="mini" onClick={() => handlePaginationChange("back")} />
                                                 <div className="text-gray-500">
                                                     Page {activePage} of {totalPages}
                                                 </div>
-                                                <Button disabled={!nextAvailable} icon="chevron right" size="mini" onClick={() => handlePaginationChange("forward")}/>
+                                                <Button disabled={!nextAvailable} icon="chevron right" size="mini" onClick={() => handlePaginationChange("forward")} />
                                             </div>
 
                                         </Table.HeaderCell>
@@ -235,30 +235,31 @@ function ConstructionModule() {
 
                     </Grid.Row>
 
-                    {dataStore && <AddEditDataStoreModal dataStore={dataStore} onClose={() => setDataStore(null)}/>}
+                    {dataStore && <AddEditDataStoreModal dataStore={dataStore} onClose={() => setDataStore(null)} />}
 
-                    {valueStore && <AddEditValueStoreModal valueStore={valueStore} onClose={() => setValueStore(null)}/>}
+                    {valueStore && <AddEditValueStoreModal valueStore={valueStore} onClose={() => setValueStore(null)} />}
 
                     <Grid.Row columns={3}>
 
                         <Grid.Column className="p-0 flex flex-col justify-between">
 
-                            <ChangeReturnAddress/>
+                            <ChangeReturnAddress />
 
                         </Grid.Column>
 
                         <Grid.Column className="p-0 flex flex-col justify-end items-start">
-                            {fees.errors.map((err) => <Message size="mini" error content={err}/>)}
+                            {fees.errors.map((err, index) => <Message key={`error-msg-${index}`} size="mini" error content={err} />)}
                         </Grid.Column>
 
                         <Grid.Column className="p-0 flex flex-col justify-between gap-2">
 
                             <Container className="flex flex-col gap-1">
 
-                                <TxFeesDisplay tooltipText="The minimum + prioritization + changeout(+1)" feesLabel="Tx Fee" feesAmount={fees.txFee}/>
-                                <TxFeesDisplay tooltipText="The sum of the cost of each store and deposits" feesLabel="Store Fees" feesAmount={fees.dataStoreFees + fees.valueStoreFees}/>
-                                <TxFeesDisplay tooltipText="The sum of any value moved" feesLabel="Value" feesAmount={valueStoreTotal}/>
-                                <TxFeesDisplay tooltipText="The total TX Cost" feesLabel="Total Cost" feesAmount={fees.totalFee + valueStoreTotal}/>
+                                <TxFeesDisplay tooltipText="The minimum + prioritization + changeout(+1)" feesLabel="Tx Fee" feesAmount={fees.txFee} />
+                                <TxFeesDisplay tooltipText="The sum of the cost of each store and deposits" feesLabel="Store Fees"
+                                               feesAmount={fees.dataStoreFees + fees.valueStoreFees} />
+                                <TxFeesDisplay tooltipText="The sum of any value moved" feesLabel="Value" feesAmount={valueStoreTotal} />
+                                <TxFeesDisplay tooltipText="The total TX Cost" feesLabel="Total Cost" feesAmount={fees.totalFee + valueStoreTotal} />
 
                             </Container>
 

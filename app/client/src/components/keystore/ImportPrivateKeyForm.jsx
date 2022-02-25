@@ -31,8 +31,8 @@ export default function ImportPrivateKeyForm({ submitText, submitFunction, cance
         onSubmit( async () => {
             setLoading(true);
             await utils.generic.waitFor(0); // Frees thread long enough for loader ui render to propagate. 
-            // The next function eventually calls a low nested syncronously blocking loop that prevents the render, this await will alow it to catch.
-            // It is known this is wonky, and we all hate it, but many calls in the depedency chain have yet to be promisified
+            // The next function eventually calls a low nested synchronously blocking loop that prevents the render, this await will allow it to catch.
+            // It is known this is wonky, and we all hate it, but many calls in the dependency chain have yet to be promisified
             verifyPrivKey();
         });
     }
