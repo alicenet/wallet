@@ -55,7 +55,7 @@ export const createDataStoreObject = (fromAddress, index, rawData, duration) => 
 
 /**
  * Parse an RPV Returned TX Object to a simpler state relevant object -- Object passed hould have Vin: Arr[] and Vout: Arr[]
- * @param {*} rpcTxObject 
+ * @param {*} rpcTxObject
  */
 export const parseRpcTxObject = (rpcTxObject) => {
 
@@ -87,7 +87,8 @@ export const parseRpcTxObject = (rpcTxObject) => {
                 tx_out_idx: vout["ValueStore"]["VSPreImage"].TXOutIdx || "0",
                 value: vout["ValueStore"]["VSPreImage"].Value,
             })
-        } else {
+        }
+        else {
             dataStoreCount++;
             vouts.push({
                 type: "DataStore",
@@ -122,7 +123,7 @@ export const parseRpcTxObject = (rpcTxObject) => {
 
 /**
  * Compose a data collections using rpcTxObjects that will return a key value array of hash=>data respectively for each passed rpcTxObj
- * @param {Array[]} arrayofRpcTxObjs 
+ * @param {Array[]} arrayofRpcTxObjs
  */
 export const parseArrayOfTxObjs = (arrayofRpcTxObjs) => {
     let parsedData = {};
@@ -159,7 +160,7 @@ export const parseDsLinkers = async (dsLinkers) => {
             let epochNums = await madWallet.Transaction.Utils.calculateNumEpochs(
                 dsL["DSLinker"]["DSPreImage"].RawData.length % 2,
                 deposit
-            )
+            );
 
             let expiry = dsL["DSLinker"]["DSPreImage"].IssuedAt + parseInt(epochNums.toString());
 
@@ -189,10 +190,18 @@ export const parseDsLinkers = async (dsLinkers) => {
 export const txTypeToName = (typeInt) => {
     let type;
     switch (typeInt) {
-        case 1: type = "DataStore"; break;
-        case 2: type = "ValueStore"; break;
-        case 3: type = "AtomicSwapStore"; break;
-        default: type = "Assumed ValueStore(undefined)"; break;
+        case 1:
+            type = "DataStore";
+            break;
+        case 2:
+            type = "ValueStore";
+            break;
+        case 3:
+            type = "AtomicSwapStore";
+            break;
+        default:
+            type = "Assumed ValueStore(undefined)";
+            break;
     }
     return type;
 }
