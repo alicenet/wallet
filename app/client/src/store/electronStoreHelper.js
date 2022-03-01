@@ -163,7 +163,7 @@ function _genVaultObjectString(mnemonic, hdCurveType, hdWalletCount = 1, wallets
  * @param { String } mnemonic - Mnemonic to generate the vault based off of :: Should be a mnemonic that has been verified by the vault owner,
  * @param { String } password - Passphrase to cipher the vault with :: A hash will also be stored for pre-flights and admin actions as "preflightHash",
  * @param { String } curve - One of: "secp256k1", "secp" or "barreto-naehrig", "bn"
- * @returns { Array[passwordHash, firstWalletNode] } - Returns a hash of the password used to encrypt the vault and the firstWalletNode if the vault has been created successfully
+ * @returns { Array } - Returns a hash of the password used to encrypt the vault and the firstWalletNode if the vault has been created successfully
  */
 function createNewSecureHDVault(mnemonic, password, curveType = "secp256k1") {
     return new Promise(async res => {
@@ -209,7 +209,7 @@ function unlockAndGetSecuredHDVault(password) {
 /**
  * Updates the current vault store wallets with a sent wallet state
  * @param { Object } vaultState
- * @returns
+ * @returns { Promise<Boolean> }
  */
 function updateVaultWallets(password, newWalletState) {
     return new Promise(async res => {
@@ -309,7 +309,7 @@ function findOptoutStoresByAddress(address) {
 
 /**
  * Fetch the currently stored preflight hash from the electron store
- * @returns { Promise <String>} - Return preflight hash as a string
+ * @returns { Promise<String> } - Return preflight hash as a string
  */
 function getPreflightHash() {
     return new Promise(async res => {

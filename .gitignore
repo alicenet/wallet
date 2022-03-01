@@ -9,6 +9,8 @@ app-build/*
 teststore.json
 teststore_bn.json
 
+docs/
+
 # React App
 app/client/build
 app/client/node_modules

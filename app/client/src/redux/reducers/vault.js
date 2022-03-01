@@ -11,7 +11,7 @@ import { curveTypes } from 'util/_util';
  * Used to build complex updates to the vault state as a whole or the initial vault state
  * @param { Object  } options
  * @param { Boolean } options.exists - Does the vault exist -- Default: true
- * @param { Boolean || String==="unknown" } options.isLocked - Is the vault locked -- Default: null == "unknown"
+ * @param { Boolean | String } options.isLocked - Is the vault locked -- Default: null == "unknown"
  * @param { Array } options.internalWallets - Array of <InternalWallets> -- Default []
  * @param { Array } options.externalWallets - Array of <ExternalWallets> -- Default []
  * @returns { Object } -- JSON Object for vault state

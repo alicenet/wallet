@@ -218,7 +218,7 @@ export function getMadWallet() {
 
 /**
  * Dispatches actions to clear state and reinstance madNetJs to prep it for garbage collection
- * @returns
+ * @returns { Function }
  */
 export function lockVault() {
     return async function (dispatch) {

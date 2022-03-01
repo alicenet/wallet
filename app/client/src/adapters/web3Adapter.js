@@ -29,6 +29,14 @@ const Web3ErrToastOpts = { className: "basic", "autoClose": 5000, "onClick": () 
  */
 class Web3Adapter {
 
+    /**
+     * @typedef Web3ContractAccount
+     * @property { String } address - Ethereum Address
+     * @property { Object } balances - Balances object 
+     * @property { Object } balances.token - Balances by token
+     * @property { Object } validatorInfo - Validator Information
+     */
+
     constructor() {
         this.__initialStateSet();
     }
@@ -47,6 +55,8 @@ class Web3Adapter {
         this.info = {};
         // Set initial instance state
         this.selectedAddress = false; // Currently selected address
+
+        /** @type { Web3ContractAccount } */
         this.account = { // Account information from the contracts
             "address": "",
             "balances": {
@@ -54,6 +64,7 @@ class Web3Adapter {
             },
             "validatorInfo": {}
         };
+
         this.lastNotedConfig = {
             ethereum_provider: false,
             registry_contract_address: false,
@@ -197,7 +208,7 @@ class Web3Adapter {
 
     /**
      * Sets current contract list on instance, and returns the latest contracts
-     * @returns { Array[Web3.Contract] } - Array of contract objects
+     * @returns { Array.<Web3.Contract> } - Array of contract objects
      */
     async _setAndGetUptoDateContracts() {
         try {
@@ -236,7 +247,7 @@ class Web3Adapter {
      * Add an account to the adapter/web3 instance and retrieve latest info for it.
      * Upon getting the latest information, return that as well.
      * @param { String } privK - Private key for the account to add.
-     * @returns
+     * @returns { Web3ContractAccount | Object } - Return Web3ContractAccount or object.error
      */
     async useAccount(privK) {
         try {
@@ -252,7 +263,7 @@ class Web3Adapter {
     /**
      * Retrieve account information from contracts
      * Additionally update redux balance state anytime account information is pulled
-     * @returns { Object } - Returns object with balances and validatorInfo
+     * @returns { Web3ContractAccount } - Returns object with balances and validatorInfo
      */
     async updateAccount() {
         try {
@@ -519,7 +530,7 @@ class Web3Adapter {
     /**
      * Fetch STAKE and UTIL token balances
      * @param { String } address - Address to fetch the balances for
-     * @returns
+     * @returns { Any } - DOC TODO: Tuple NEEDS DOCUMENTED -- Placed to fix JS doc building
      */
     async getTokenBalances(address) {
         try {

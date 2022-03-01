@@ -11,7 +11,7 @@ import { electronStoreCommonActions } from 'store/electronStoreHelper';
 
 /**
  * Sets a new mnemonic to potential_seed_phrase for HD Wallet / Vault generation 
- * @returns null
+ * @returns { Function }
  */
 export function setNewPotentialMnemonic() {
     return async function (dispatch) {
@@ -23,7 +23,7 @@ export function setNewPotentialMnemonic() {
 /**
  * Sets an existing mnemonic for HD Wallet / Vault generation
  * @param { String } phrase - a mnemonic to potential_seed_phrase
- * @returns null
+ * @returns { Function }
  */
 export function setExistingMnemonic(phrase) {
     if (typeof phrase !== "string") {
@@ -40,7 +40,7 @@ export function setExistingMnemonic(phrase) {
 
 /**
  * Clears mnemonic / Vault generation
- * @returns null
+ * @returns { Function }
  */
 export function clearMnemonic() {
     return async function (dispatch) {
@@ -50,7 +50,7 @@ export function clearMnemonic() {
 
 /**
  * @param { String } curveType - One of utils.curveTypes 
- * @returns 
+ * @returns { Function }
  */
 export function setDesiredCurveType(curveType) {
     return async function (dispatch) {
@@ -64,7 +64,7 @@ export function setDesiredCurveType(curveType) {
 /**
  * This is the initial user account check for setting initial state.
  * After the first run, we prevent it from dispatching again via checking for state first
- * @returns 
+ * @returns { Function }
  */
 export function initialUserAccountCheck() {
     return async function (dispatch, getState) {

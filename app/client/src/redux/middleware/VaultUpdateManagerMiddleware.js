@@ -12,7 +12,7 @@ export const ACTION_ELECTRON_SYNC = "ELECTRON_SYNC"
  * Synchronizes state between redux and the stored electron state
  * Catches all wallet updates and reflects them onto the electron store if the user has a vault
  * @param {*} storeAPI
- * @returns
+ * @returns { Function }
  */
 export default function VaultUpdateManagerMiddleware(storeAPI) {
     return function wrapDispatch(next) {

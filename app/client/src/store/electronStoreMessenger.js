@@ -19,6 +19,14 @@ const writeBakFileResponse = "WriteBakFile-Response";
  */
 class StoreMessenger {
 
+    /**
+     * @typedef { Object } VaultStorageObject - An encrypted ValueStore JSON Object
+     * @property { String } algorithm - Algorithm
+     * @property { Uint8Array } iv - Initialization vector for the encrypted value
+     * @property { String } cipherText - 
+     * @property { String } salt -
+     */
+
     constructor() {
         this.subscribers = {}; // Subscribers for secure-electron-store
         this.bakSubsribers = {}; // Subscribers for BackupStore
@@ -49,7 +57,7 @@ class StoreMessenger {
      * @param { Uint8Array } iv 
      * @param { String } cipherText 
      * @param { String } salt
-     * @returns 
+     * @returns { VaultStorageObject }
      */
     _createEncryptedValueStoreJSONString(algorithm, iv, cipherText, salt) {
         return JSON.stringify({

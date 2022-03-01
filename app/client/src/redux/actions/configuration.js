@@ -23,7 +23,7 @@ export function loadDefaultValues() {
  * @prop { String } madNetProvider - MadNetProvider URL to update settings to
  * @prop { String } ethProvider - EthProvider URL to update settings to
  * @prop { String } registryContractAddress - Registry Contract Address to update settings to
- * @returns { Bool || Object.error }
+ * @returns { Bool | Object.error }
  */
 export function saveConfigurationValues({ chainId, madNetProvider, ethProvider, registryContractAddress, enableAdvancedSettings, hideGenericTooltips }) {
     return async function (dispatch, getState) {
@@ -49,7 +49,7 @@ export function saveConfigurationValues({ chainId, madNetProvider, ethProvider, 
 
 /**
  * Load configuration values from the store to current redux state
- * @returns
+ * @returns { Bool | Object }
  */
 export function loadConfigurationValuesFromStore() {
     return async function (dispatch) {

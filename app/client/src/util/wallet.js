@@ -92,7 +92,7 @@ export function streamlineHDChainFromMnemonic(mnemonic) {
  * Quickly get a derivative wallet from a Mnemonic using wallet utilities from utils/wallet.js
  * @param { String } mnemonic - mnemonic phrase separated by ' '
  * @param { Integer } nodeNum - The node to derive from the derivation path: m'/44'/60'/0'/<node>
- * @returns {Promise<HDKey>} - Promise that resolves to the requested HD wallet node
+ * @returns { Promise<HDKey> } - Promise that resolves to the requested HD wallet node
  */
 export function streamLineHDWalletNodeFromMnemonic(mnemonic, nodeNum) {
     return new Promise(async res => {
@@ -145,7 +145,7 @@ export function unlockKeystore(keystore, password) {
  * @param { Boolean } asBlob - Return keystore as a blob?
  * @param { String } password - Password to secure the keystore with
  * @param { CurveType } curve - Curve if desired, default to type 1
- * @returns { Blob || JSON String } - JSON Blob || Json String
+ * @returns { Blob | String } - JSON Blob || Json String
  */
 export async function generateKeystore(asBlob, password, curve = curveTypes.SECP256K1) {
     let web3 = new Web3();
@@ -295,7 +295,7 @@ export async function getBNfromPrivKey(privK) {
 /**
  * Returns both the secp256k1 and barreto-naehrig derived public keys for a given private key
  * @param { String } privK
- * @returns {Array[{String}, {String}]} - An array of strings: [secp256k1PublicAddress, bnPublicAddress]
+ * @returns {Array<String>} - An array of strings: [secp256k1PublicAddress, bnPublicAddress]
  */
 export async function getPubKeysFromPrivKey(privK) {
     return await Promise.all([getSecp256k1FromPrivKey(privK), getBNfromPrivKey(privK)]);

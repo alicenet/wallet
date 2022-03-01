@@ -11,7 +11,7 @@ import utils from 'util/_util';
 /**
  * Toggle loading status
  * @param { number } fee - The selected fee
- * @returns null
+ * @returns { Function }
  */
 export function setPrioritizationFee(fee) {
     return async function (dispatch) {
@@ -33,7 +33,7 @@ export function setFeePayer(wallet, over_ride = false) {
 
 /**
  * Clears the Fee Payer -- Generally called post tx send
- * @returns 
+ * @returns { Function }
  */
 export function clearFeePayer() {
     return async function (dispatch) {
@@ -71,7 +71,7 @@ export function parseDefaultFeePayer() {
 
 /**
  * Toggle loading status
- * @returns null
+ * @returns { Function }
  */
 export function toggleStatus() {
     return async function (dispatch) {
@@ -82,7 +82,7 @@ export function toggleStatus() {
 /**
  * Saves the address chosen for the change to be returned to
  * @param { string } address - A valid Web3 address
- * @returns null
+ * @returns { Function }
  */
 export function saveChangeReturnAddress(address) {
     return async function (dispatch) {
@@ -92,7 +92,7 @@ export function saveChangeReturnAddress(address) {
 
 /**
  * Goes back to initialization details
- * @returns null
+ * @returns { Function }
  */
 export function clearList() {
     return async function (dispatch) {
@@ -104,7 +104,7 @@ export function clearList() {
 /**
  * Adds a data/value store -- Additionally dispatches parse for default fee payer request
  * @param { Object } transaction - A data/value store
- * @returns null
+ * @returns { Function }
  */
 export function addStore(transaction) {
     return async function (dispatch) {
@@ -117,7 +117,7 @@ export function addStore(transaction) {
 /**
  * Edits a data/value store -- Additionally dispatches parse for default fee payer request
  * @param { Object } transaction - A data/value store
- * @returns null
+ * @returns { Function }
  */
 export function editStore(transaction) {
     return async function (dispatch) {
@@ -129,7 +129,7 @@ export function editStore(transaction) {
 /**
  * Removes an item from the list
  * @param { int } index - Index of the element
- * @returns null
+ * @returns { Function }
  */
 export function removeItem(index) {
     return async function (dispatch) {
