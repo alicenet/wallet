@@ -46,7 +46,7 @@ export const setMadNetBusy = busyState => {
 /**
  * If web3Adapter is not in a connected state attempt to connect
  * @param { Object } initConfig - Init config pass through for the web3Adapter __init function
- * @returns
+ * @returns { Any } - DOC TODO:  NEEDS DOCUMENTED -- Placed to fix JS doc building
  */export const initWeb3 = (initConfig) => {
     return async (dispatch, getState) => {
         let connected = await web3Adapter.__init(initConfig);
@@ -78,7 +78,7 @@ export const setMadNetKeyChainValue = (keyChain, value) => {
 /**
  * If madNetAdapter is not in a connected state attempt to connect
  * @param { Object } initConfig - Init config passthrough for the madNetAdapter __init function
- * @returns
+ * @returns { Any } - DOC TODO: NEEDS DOCUMENTED -- Placed to fix JS doc building
  */
 export const initMadNet = (initConfig) => {
     return async (dispatch, getState) => {
@@ -292,7 +292,7 @@ const _prepTxObjectsToMadNetAdapter = async (state) => {
 
 /**
  * Creates a fake TX using madWallet instance, estimates fees, and immediately clears it for the next estimate or real transaction
- * @returns { Object || Boolean } - Successful fee estimate will return an object with fees or false for any failure in estimation
+ * @returns { Object | Boolean } - Successful fee estimate will return an object with fees or false for any failure in estimation
  */
 export const createAndClearFakeTxForFeeEstimates = () => {
     return async (dispatch, getState) => {

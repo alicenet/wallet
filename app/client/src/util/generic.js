@@ -48,7 +48,7 @@ export const waitFor = (msLength, callerId) => {
 /**
  * Check if a string has json-like structures
  * @param {String} str - String to check 
- * @returns 
+ * @returns { Boolean }
  */
 export const stringHasJsonStructure = (str) => {
     if (typeof str !== 'string') return false;
@@ -78,7 +78,7 @@ export const safeJsonParse = (str) => {
 /**
  * Take a hex string and try to parse to utf8
  * @param {*} hexString 
- * @returns 
+ * @returns { String }
  */
 export function hexToUtf8Str(hexString) {
     let parsed = false;
@@ -105,7 +105,7 @@ export function useFallbackValueForUndefinedInput(input, fallback) {
 
 /**
  * Generate an RFC 4122 compliant v4uuid using window.crypto.getRandomValues
- * @returns {String} - A newly generated v4uuid
+ * @returns { String } - A newly generated v4uuid
  */
 export function genUuidv4() {
     let hex = window.crypto.getRandomValues(new Uint8Array(128 / 8)); // Or your crypto lib of choice -- Slice off the 0x if lib provides it.

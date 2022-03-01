@@ -19,7 +19,7 @@ function CreateVault() {
 
                 <Grid.Column width={16} className="p-0 self-center">
 
-                    <Header content="Lets setup your vault" as="h3" className="m-0"/>
+                    <Header content="Lets setup your vault" as="h3" className="m-0" />
 
                 </Grid.Column>
 
@@ -48,13 +48,13 @@ function CreateVault() {
                     <Container className="flex flex-col justify-between gap-2">
 
                         <Button color="purple" basic content="Get Seed Phrase" className="m-0"
-                                onClick={() => history.push('/newVault/getNewSeedPhrase')}/>
-
+                            onClick={() => history.push('/newVault/getNewSeedPhrase')} />
+                        {/*}
                         <Button color="teal" basic content="Use A Keystore" className="m-0"
                                 onClick={() => history.push('/optOut/disclaimer')}/> 
-
+                        {*/}
                         <Button color="orange" basic content="Go Back" className="m-0"
-                                onClick={() => history.push('/')}/>
+                            onClick={() => history.push('/')} />
 
                         <DeterministicWalletGenerationModal>
 

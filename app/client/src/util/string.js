@@ -29,7 +29,7 @@ export function removeHexPrefix(address) {
 /**
  * Return true of passed string resembles an expected TxHash
  * @param { String } hash
- * @returns
+ * @returns { Boolean }
  */
 export function isTxHash(hash) {
     return /^([A-Fa-f0-9]{64})$/.test(hash);

@@ -1,6 +1,6 @@
 {
   "name": "madwallet",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "",
   "homepage": "./",
   "main": "./app-build/electron/index.js",
@@ -14,7 +14,8 @@
     "lint": "eslint .",
     "lint-fix": "eslint --fix .",
     "postinstall": "cd app/client && npm install",
-    "clean-build": "rm -rf node_modules package-lock.json app/client/node_modules app/client/package-lock.json; npm i"
+    "clean-build": "rm -rf node_modules package-lock.json app/client/node_modules app/client/package-lock.json; npm i",
+    "build-docs": "jsdoc -c jsdoc.json"
   },
   "author": "",
   "license": "ISC",
@@ -29,7 +30,9 @@
     "electron": "17.0.0",
     "electron-builder": "22.8.0",
     "electron-notarize": "1.0.1",
-    "electron-rebuild": "3.1.1"
+    "electron-rebuild": "3.1.1",
+    "jsdoc": "3.6.10",
+    "mad-doc-template": "git+https://github.com/MadBase/mad-doc-template.git"
   },
   "build": {
     "afterSign": "notarize.js",

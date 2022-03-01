@@ -93,7 +93,7 @@ class MadNetAdapter {
             this.connected.set(true);
             this.failed.set(false);
             if (!config.preventToast) {
-                toast.success(<SyncToastMessageSuccess basic title="Success" message="MadNet Connected"/>, { className: "basic", "autoClose": 2400 })
+                toast.success(<SyncToastMessageSuccess basic title="Success" message="MadNet Connected" />, { className: "basic", "autoClose": 2400 })
             }
             store.dispatch(ADAPTER_ACTIONS.setMadNetBusy(false));
             // Attempt to get fees -- RPC will throw if unfetchable
@@ -114,7 +114,7 @@ class MadNetAdapter {
             return { success: true }
         } catch (ex) {
             this.failed.set(ex.message);
-            toast.error(<SyncToastMessageWarning title="Madnet Error!" message="Check network settings"/>,
+            toast.error(<SyncToastMessageWarning title="Madnet Error!" message="Check network settings" />,
                 { className: "basic", "autoClose": 5000, "onClick": () => { history.push("/wallet/advancedSettings") } })
             store.dispatch(ADAPTER_ACTIONS.setMadNetBusy(false));
             store.dispatch(ADAPTER_ACTIONS.setMadNetConnected(false));
@@ -251,7 +251,7 @@ class MadNetAdapter {
     /**
      * Fetch previous transactions for a given account
      * @param { Array<String> } addresses - Array of addresses to get previous transactions for
-     * @returns { Array[ [Array<Object>], currentBlock<Int> ] } - Array of previous transactions as well as the current block
+     * @return { Array } - TODO JSDOC (figure out tuple doccing) Array of previous transactions as well as the current block
      */
     async getPrevTransactions(addresses) {
         try {
@@ -265,41 +265,41 @@ class MadNetAdapter {
                     continue;
                 }
                 transactionLoop:
-                    for (let l = 0; l < block["TxHshLst"].length; l++) {
-                        let tx = await madWallet.Rpc.getMinedTransaction(block["TxHshLst"][l]);
-                        for (let j = 0; j < tx["Tx"]["Vout"].length; j++) {
-                            for (let k = 0; k < addresses.length; k++) {
-                                let address = addresses[k]["address"].toLowerCase();
-                                let curve = addresses[k]["curve"]
-                                if (curve == 2) { // eslint-disable-line
-                                    curve = "02"
-                                }
-                                else {
-                                    curve = "01";
-                                }
-                                // TODO: REFACTOR: Abstract these checks to an internal function
-                                if ((
-                                        tx["Tx"]["Vout"][j]["AtomicSwap"] &&
-                                        address == tx["Tx"]["Vout"][j]["AtomicSwap"]["ASPreImage"]["Owner"].slice(4) && // eslint-disable-line
-                                        curve == tx["Tx"]["Vout"][j]["AtomicSwap"]["ASPreImage"]["Owner"].slice(2, 4) // eslint-disable-line
-                                    ) ||
-                                    (
-                                        tx["Tx"]["Vout"][j]["ValueStore"] &&
-                                        address == tx["Tx"]["Vout"][j]["ValueStore"]["VSPreImage"]["Owner"].slice(4) && // eslint-disable-line
-                                        curve == tx["Tx"]["Vout"][j]["ValueStore"]["VSPreImage"]["Owner"].slice(2, 4) // eslint-disable-line
-                                    ) ||
-                                    (
-                                        tx["Tx"]["Vout"][j]["DataStore"] &&
-                                        address == tx["Tx"]["Vout"][j]["DataStore"]["DSLinker"]["DSPreImage"]["Owner"].slice(4) && // eslint-disable-line
-                                        curve == tx["Tx"]["Vout"][j]["DataStore"]["DSLinker"]["DSPreImage"]["Owner"].slice(2, 4) // eslint-disable-line
-                                    )
-                                ) {
-                                    pTx = pTx.concat(tx)
-                                    continue transactionLoop;
-                                }
+                for (let l = 0; l < block["TxHshLst"].length; l++) {
+                    let tx = await madWallet.Rpc.getMinedTransaction(block["TxHshLst"][l]);
+                    for (let j = 0; j < tx["Tx"]["Vout"].length; j++) {
+                        for (let k = 0; k < addresses.length; k++) {
+                            let address = addresses[k]["address"].toLowerCase();
+                            let curve = addresses[k]["curve"]
+                            if (curve == 2) { // eslint-disable-line
+                                curve = "02"
+                            }
+                            else {
+                                curve = "01";
+                            }
+                            // TODO: REFACTOR: Abstract these checks to an internal function
+                            if ((
+                                tx["Tx"]["Vout"][j]["AtomicSwap"] &&
+                                address == tx["Tx"]["Vout"][j]["AtomicSwap"]["ASPreImage"]["Owner"].slice(4) && // eslint-disable-line
+                                curve == tx["Tx"]["Vout"][j]["AtomicSwap"]["ASPreImage"]["Owner"].slice(2, 4) // eslint-disable-line
+                            ) ||
+                                (
+                                    tx["Tx"]["Vout"][j]["ValueStore"] &&
+                                    address == tx["Tx"]["Vout"][j]["ValueStore"]["VSPreImage"]["Owner"].slice(4) && // eslint-disable-line
+                                    curve == tx["Tx"]["Vout"][j]["ValueStore"]["VSPreImage"]["Owner"].slice(2, 4) // eslint-disable-line
+                                ) ||
+                                (
+                                    tx["Tx"]["Vout"][j]["DataStore"] &&
+                                    address == tx["Tx"]["Vout"][j]["DataStore"]["DSLinker"]["DSPreImage"]["Owner"].slice(4) && // eslint-disable-line
+                                    curve == tx["Tx"]["Vout"][j]["DataStore"]["DSLinker"]["DSPreImage"]["Owner"].slice(2, 4) // eslint-disable-line
+                                )
+                            ) {
+                                pTx = pTx.concat(tx)
+                                continue transactionLoop;
                             }
                         }
                     }
+                }
             }
             return [pTx, currentBlock];
         } catch (ex) {
@@ -346,7 +346,7 @@ class MadNetAdapter {
     /**
      * Create Tx from sent txOuts
      * @param { Boolean } send - Should the tx also be sent?
-     * @returns
+     * @returns { Boolean | Object } - True if success, else object.error is returned
      */
     async createTx() {
         if (this.pendingTx.get()) {
@@ -385,7 +385,7 @@ class MadNetAdapter {
             store.dispatch({ type: TRANSACTION_ACTION_TYPES.SET_LAST_SENT_TX_HASH, payload: tx });
             await this.pendingTxStatus.set("Pending TxHash: " + this.trimTxHash(tx));
             await this.wallet().Transaction._reset();
-            toast.success(<SyncToastMessageWarning basic title="TX Pending" message={utils.string.splitStringWithEllipsis(tx, 6)} hideIcon/>)
+            toast.success(<SyncToastMessageWarning basic title="TX Pending" message={utils.string.splitStringWithEllipsis(tx, 6)} hideIcon />)
             // Clear any TXOuts on a successful mine
             this.txOuts.set([]);
             return await this.monitorPending();
@@ -416,7 +416,7 @@ class MadNetAdapter {
             await this.backOffRetry('pending-' + JSON.stringify(tx), true);
             this.pendingTx.set(false);
             // Success TX Mine
-            toast.success(<SyncToastMessageSuccess title="TX Mined" message={utils.string.splitStringWithEllipsis(tx, 6)} hideIcon basic/>)
+            toast.success(<SyncToastMessageSuccess title="TX Mined" message={utils.string.splitStringWithEllipsis(tx, 6)} hideIcon basic />)
             return { "txDetails": txDetails.Tx, "txHash": tx, "msg": "Mined: " + this.trimTxHash(tx) };
         } catch (ex) {
             await this.backOffRetry('pending-' + JSON.stringify(tx));

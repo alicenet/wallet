@@ -10,7 +10,7 @@ let madWallet = new MadWallet();
 /**
  * Syncronoizes state between the mutable madWallet instance above and the redux store that saves immutable data about the wallets
  * @param {*} storeAPI
- * @returns
+ * @returns { Function }
  */
 export default function WalletManagerMiddleware(storeAPI) {
     return function wrapDispatch(next) {
@@ -257,7 +257,7 @@ function buildBalancedWalletState(internalAdds, externalAdds) {
 
 /**
  * Return reference to active madWallet instance
- * @returns
+ * @returns { Function }
  */
 export function getMadWalletInstance() {
     return madWallet;
