@@ -1,10 +1,11 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Container, Grid, Icon } from 'semantic-ui-react'
-import utils from 'util/_util';
+import utils, { walletUtils } from 'util/_util';
 
 import { ADAPTER_ACTIONS, MODAL_ACTIONS } from 'redux/actions/_actions';
 import { curveTypes } from 'util/wallet';
+import { classNames } from 'util/generic';
 
 export default function Overview({ wallet }) {
 
@@ -50,10 +51,10 @@ export default function Overview({ wallet }) {
     const openRenameWalletModal = () => { dispatch(MODAL_ACTIONS.openRenameWalletModal(wallet)) }
 
     const openXportPrivKModal = () => { dispatch(MODAL_ACTIONS.openXportPrivKModal(wallet)) }
-    
-    const openXportKeystoreModal = () => {dispatch(MODAL_ACTIONS.openXportKeyStoreModal(wallet))}
 
-    const openRemoveWalletModal = () => {dispatch(MODAL_ACTIONS.openRemoveWalletModal(wallet))}
+    const openXportKeystoreModal = () => { dispatch(MODAL_ACTIONS.openXportKeyStoreModal(wallet)) }
+
+    const openRemoveWalletModal = () => { dispatch(MODAL_ACTIONS.openRemoveWalletModal(wallet)) }
 
     const copyAddress = () => {
         setCopyClick(true);
@@ -76,7 +77,7 @@ export default function Overview({ wallet }) {
                     </label>
                     <div className="h-10 py-1 flex items-center cursor-pointer hover:text-gray-500" onClick={copyAddress}>
                         {`0x${wallet.address}`}
-                        <Icon name="copy outline" className="ml-1 mb-2 cursor-pointer"/>
+                        <Icon name="copy outline" className="ml-1 mb-2 cursor-pointer" />
                         {!!copyClick && (
                             <div className="relative inline text-xs mb-2 text-gray-500">
                                 Copied to clipboard!
@@ -94,11 +95,17 @@ export default function Overview({ wallet }) {
 
                     <Container>
 
-                        <label className="font-semibold text-gray-800 underline">Ethereum Balances</label>
+                        <label className={classNames("font-semibold text-gray-800 underline", {"line-through": wallet.curve === walletUtils.curveTypes.BARRETO_NAEHRIG })}>Ethereum Balances</label>
                         <div className="py-1 flex flex-col">
-                            <MicroBalanceLoader balanceType="ETH" balanceKey={"eth"}/>
-                            <MicroBalanceLoader balanceType="STAKE" balanceKey={"stake"} balanceAllowance={"stakeAllowance"}/>
-                            <MicroBalanceLoader balanceType="UTIL" balanceKey={"util"} balanceAllowance={"utilAllowance"}/>
+                            {wallet.curve === walletUtils.curveTypes.BARRETO_NAEHRIG ? (
+                                <div>
+                                    Not available to BN Wallets
+                                </div>
+                            ) : (<>
+                                <MicroBalanceLoader balanceType="ETH" balanceKey={"eth"} />
+                                <MicroBalanceLoader balanceType="STAKE" balanceKey={"stake"} balanceAllowance={"stakeAllowance"} />
+                                <MicroBalanceLoader balanceType="UTIL" balanceKey={"util"} balanceAllowance={"utilAllowance"} />
+                            </>)}
                         </div>
 
                     </Container>
@@ -111,7 +118,7 @@ export default function Overview({ wallet }) {
 
                         <label className="font-semibold text-gray-800 underline">MadNet Balances</label>
                         <div className="py-1">
-                            <MicroBalanceLoader balanceType="MadBytes" balanceKey={"madBytes"}/>
+                            <MicroBalanceLoader balanceType="MadBytes" balanceKey={"madBytes"} />
                         </div>
 
                     </Container>
