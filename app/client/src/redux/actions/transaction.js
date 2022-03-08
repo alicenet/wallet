@@ -123,6 +123,7 @@ export function editStore(transaction) {
     return async function (dispatch) {
         dispatch({ type: TRANSACTION_ACTION_TYPES.UPDATE_FROM_LIST, payload: transaction });
         dispatch(parseDefaultFeePayer());
+        dispatch(parseAndUpdateFees());
     }
 }
 
