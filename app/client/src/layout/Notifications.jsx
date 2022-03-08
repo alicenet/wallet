@@ -24,7 +24,7 @@ function Notification({ notification, onClose }) {
                 () => {
                     dispatch({
                         type: MODAL_ACTION_TYPES.OPEN_PW_REQUEST, payload: {
-                            reason: "Vault Synchronization | " + notification,
+                            reason: "Vault Synchronization", // We don't know the exaxt reason here, we just know a sync is needed
                             cb: async (password) => {
                                 await electronStoreCommonActions.updateVaultWallets(password, wallets)
                                 toast.success(<SyncToastMessageSuccess title="Success" message="Vault updated!" />, {
