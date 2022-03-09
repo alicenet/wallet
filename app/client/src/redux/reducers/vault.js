@@ -1,6 +1,7 @@
 import { VAULT_ACTION_TYPES } from '../constants/_constants';
 import { reduxState_logger as log } from 'log/logHelper'
 import { curveTypes } from 'util/_util';
+import { toast } from 'react-toastify';
 
 /** 
  * This vault reducer contains all state regarding user wallets
@@ -93,6 +94,8 @@ export default function vaultReducer(state = initialVaultState, action) {
 
         case VAULT_ACTION_TYPES.CLEAR_UNSYNCED_WALLETS:
             log.debug("Reset unsynced wallets");
+            // When unsycned are cleared, we can assume we don't need toasts showing for it
+            toast.dismiss();
             return Object.assign({}, state, {
                 unsyncedWallets: []
             })
