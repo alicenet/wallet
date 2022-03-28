@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import head from 'lodash/head';
-import { Button, Container, Divider, Grid, Header, Loader, Tab } from 'semantic-ui-react'
+import { Button, Container, Divider, Grid, Header, Loader, Menu } from 'semantic-ui-react'
 
 import Page from 'layout/Page';
 import { classNames } from 'util/generic';
@@ -25,8 +25,8 @@ export default function Hub() {
         history.push('/addWallet/menu');
     }
 
-    const handleTabChange = (e, { activeIndex }) => {
-        setActiveTabPane(activeIndex);
+    const handleTabChange = (e, { index }) => {
+        setActiveTabPane(index);
     };
 
     useEffect(() => {
@@ -37,20 +37,20 @@ export default function Hub() {
 
     const panes = [
         {
-            menuItem: 'Overview',
-            render: () => <Overview wallet={selectedWallet}/>,
+            name: 'Overview',
+            render: () => <Overview wallet={selectedWallet} />,
         },
         {
-            menuItem: 'Recent TXs',
-            render: () => <RecentTxs wallet={selectedWallet}/>,
+            name: 'Recent Txs',
+            render: () => <RecentTxs wallet={selectedWallet} />,
         },
         {
-            menuItem: 'Datastores',
-            render: () => <Datastores wallet={selectedWallet}/>,
+            name: 'Datastores',
+            render: () => <Datastores wallet={selectedWallet} />,
         },
         {
-            menuItem: 'Lookup Tx',
-            render: () => <FetchTxs wallet={selectedWallet}/>,
+            name: 'Lookup Tx',
+            render: () => <FetchTxs wallet={selectedWallet} />,
         },
     ];
 
@@ -121,13 +121,28 @@ export default function Hub() {
 
                         <Container className="flex flex-col">
                             {selectedWallet ?
-                                <Tab
-                                    panes={panes}
-                                    className="tab-panes-force-child-div-h"
-                                    activeIndex={activeTabPane}
-                                    onTabChange={handleTabChange}
-                                /> :
-                                <Loader active/>
+                                <div>
+                                    <Menu tabular attached={"top"} className="tab-panes">
+                                        {panes.map((pane, index) =>
+                                            <Menu.Item
+                                                key={`menu-item-${index}-${pane.name}`}
+                                                name={pane.name}
+                                                index={index}
+                                                active={activeTabPane === index}
+                                                onClick={handleTabChange}
+                                            />
+                                        )}
+                                        <Menu.Menu position='right'>
+                                            <Menu.Item
+                                                name='Block Explorer'
+                                                onClick={() => {window.open("https://testnet.mnexplore.com/", "_blank")}}
+                                            />
+                                        </Menu.Menu>
+                                    </Menu>
+                                    {panes[activeTabPane].render()}
+                                </div>
+                                :
+                                <Loader active />
                             }
                         </Container>
 

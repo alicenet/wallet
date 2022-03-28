@@ -15,6 +15,9 @@ module.exports = {
             maxHeight: {
                 '104': '31rem',
             },
+            height: {
+                '81': '81vh',
+            },
             transitionProperty: {
                 'left': 'left',
                 'width': 'width',
