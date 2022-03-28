@@ -115,7 +115,8 @@ export default function TransactionRow({ transaction, index, onUpdate }) {
                         basic
                     />
 
-                    <Popup
+                    {/*Hide clone tx as requested in MP-396*/}
+                    {/*<Popup
                         trigger={
                             <Menu.Item name='clone' fitted onClick={() => handleClone(transaction)}>
                                 <Icon name='clone' />
@@ -124,7 +125,7 @@ export default function TransactionRow({ transaction, index, onUpdate }) {
                         content={`Clone ${storeType}`}
                         inverted
                         basic
-                    />
+                    />*/}
 
                     <Popup
                         trigger={
