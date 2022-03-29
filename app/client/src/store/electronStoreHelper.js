@@ -273,7 +273,7 @@ async function removeOptoutKeystore(addressToRemove) {
  */
 function checkForOptoutStores() {
     return new Promise(async res => {
-        let keystores = await readPlainValueFromStore("optOutStores")
+        let keystores = await readPlainValueFromStore("optOutStores");
         if (keystores.error && keystores.error === "Key is not in secure-electron-storage!") {
             res(false);
         }
@@ -296,7 +296,7 @@ function findOptoutStoresByAddress(address) {
         const keystore = keystores.find(store => {
             const parsedStore = JSON.parse(store.keystore);
             return parsedStore.address === address;
-        })
+        });
 
         if (!keystore) {
             res(false);
