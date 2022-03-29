@@ -116,7 +116,7 @@ export default function NetworkStatusIndicator() {
 
             <Modal.Header className="text-center">
 
-                <Header as="h4" className="uppercase" color="purple">Network Connection Status</Header>
+                <Header as="h4" color="purple">Network Connection Status</Header>
 
             </Modal.Header>
 
