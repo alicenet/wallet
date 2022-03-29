@@ -17,12 +17,13 @@
 @pink             : #E03997; /* def */
 @purple           : #A333C8; /* def */
 @red              : #FF6464; /* mad */
-@teal             : #95D8DE; /* mad */ 
+@teal             : #099AAD; /* mad */
 @violet           : #FF6FFD; /* mad */
 @yellow           : #FEF974; /* mad */
 
-@primaryColor: @blue;
-@secondaryColor: @teal;
+@primaryColor: @teal;
+@secondaryColor: @grey;
+
 @pageBackground: #eff0f1;
 
 /*-------------------

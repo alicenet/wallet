@@ -1,3 +1,18 @@
 /*******************************
          Site Overrides
 *******************************/
+
+.ui.button {
+    border-radius: 0;
+    padding-top: 1em;
+    padding-bottom: 1em;
+}
+
+.ui.transparent.button {
+    background-color: transparent;
+}
+
+.ui.basic.button {
+    border-radius: 0;
+    font-weight: 700;
+}

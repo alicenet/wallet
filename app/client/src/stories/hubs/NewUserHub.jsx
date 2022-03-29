@@ -66,7 +66,7 @@ function NewUserHub() {
                         onOpen={() => setOpenModal(true)}
                         open={openModal}
                         dimmer="inverted"
-                        trigger={<Button className="text-purple-700 text-sm bg-transparent">What is a vault?</Button>}
+                        trigger={<Button color="transparent" className="text-sm text-black underline">What is a vault?</Button>}
                     >
 
                         <Modal.Content>
@@ -94,7 +94,7 @@ function NewUserHub() {
 
                                 </Container>
 
-                                <Button color="purple" onClick={() => setOpenModal(false)} content="Got it!" />
+                                <Button color="teal" onClick={() => setOpenModal(false)} content="Got it!" />
 
                             </Modal.Description>
 
@@ -108,9 +108,9 @@ function NewUserHub() {
 
                     <Container fluid className="flex flex-auto flex-col items-center gap-3 w-72">
 
-                        <Button color="purple" basic content="Create a Vault*" className="m-0" fluid onClick={() => history.push('/newVault/createVault')} />
+                        <Button color="teal" content="Create a Vault*" fluid onClick={() => history.push('/newVault/createVault')} />
 
-                        <Button color="orange" basic content="I have a vault seed" className="m-0" fluid onClick={useRecoveryPhrase} />
+                        <Button color="black" basic content="I have a vault seed" fluid onClick={useRecoveryPhrase} />
 
                     </Container>
 
