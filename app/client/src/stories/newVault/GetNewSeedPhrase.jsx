@@ -77,7 +77,7 @@ function GetNewSeedPhrase() {
 
                 <Grid.Column width={12} className="p-0 self-center">
                     
-                    <Message icon='warning' header='The vault password and recovery phrase are very important.' content='Keep the recovery seed in a safe place so you can recover you wallets if necessary.' warning />
+                    <Message size="mini" icon='warning' header='The vault password and recovery phrase are very important.' content='Keep the recovery seed in a safe place so you can recover you wallets if necessary.' warning />
     
                 </Grid.Column>
 
