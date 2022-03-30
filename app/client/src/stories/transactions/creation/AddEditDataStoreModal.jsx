@@ -32,7 +32,7 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
     const [formState, formSetter, onSubmit] = useFormState([
         { name: 'From', display: 'From address', type: 'address', isRequired: true, value: dataStore.from },
         { name: 'Duration', type: 'integer', isRequired: true, value: dataStore.duration },
-        { name: 'Key', type: 'string', isRequired: true, value: dataStore.key },
+        { name: 'Index', type: 'string', isRequired: true, value: dataStore.key },
         { name: 'Value', type: 'string', isRequired: true, value: dataStore.value },
     ]);
 
@@ -43,7 +43,7 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
             dispatch(TRANSACTION_ACTIONS.editStore({
                 ...dataStore,
                 from: formState.From.value,
-                key: formState.Key.value,
+                key: formState.Index.value,
                 value: formState.Value.value,
                 duration: formState.Duration.value,
             }));
@@ -51,7 +51,7 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
         else {
             dispatch(TRANSACTION_ACTIONS.addStore({
                 from: formState.From.value,
-                key: formState.Key.value,
+                key: formState.Index.value,
                 value: formState.Value.value,
                 duration: formState.Duration.value,
                 type: transactionTypes.DATA_STORE,
@@ -93,7 +93,7 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
 
             <Modal.Header className="text-center">
 
-                <Header as="h4" className="uppercase" color="purple">{`${isEditing ? 'Edit' : 'Add'} Data Store`}
+                <Header as="h4" color="purple">{`${isEditing ? 'Edit' : 'Add'} Data Store`}
                     <Header.Subheader className="text-xs">Fee Per Data
                         Store: {fees.dataStoreFee} {utils.string.pluralStringCheck("MadByte", fees.dataStoreFee > 1)}</Header.Subheader>
                 </Header>
@@ -128,7 +128,7 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
 
                                 <Form.Input
                                     id='Duration'
-                                    label='Duration'
+                                    label='Duration (EPOCHs)'
                                     required
                                     value={formState.Duration.value}
                                     onChange={e => formSetter.setDuration(e.target.value)}
@@ -144,12 +144,12 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
                             <Grid.Column>
 
                                 <Form.Input
-                                    id='Key'
-                                    label='Key'
+                                    id='Index'
+                                    label='Index'
                                     required
-                                    value={formState.Key.value}
-                                    onChange={e => formSetter.setKey(e.target.value)}
-                                    error={!!formState.Key.error && { content: formState.Key.error }}
+                                    value={formState.Index.value}
+                                    onChange={e => formSetter.setIndex(e.target.value)}
+                                    error={!!formState.Index.error && { content: formState.Index.error }}
                                 />
 
                             </Grid.Column>
