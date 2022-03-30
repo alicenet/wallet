@@ -60,7 +60,7 @@ export default function ChangeReturnAddressModal({ open, onClose }) {
 
             <Modal.Header className="text-center">
 
-                <Header as="h4" className="uppercase" color="purple">Change Return Address</Header>
+                <Header as="h4" color="purple">Change Return Address</Header>
 
             </Modal.Header>
 
