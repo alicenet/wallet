@@ -29,7 +29,8 @@ function Settings() {
         }));
     }
 
-    const toggleHideGenericTooltips = () => {
+    //Commented hide generic tooltips and dark theme as requested in MP-396
+    /*const toggleHideGenericTooltips = () => {
         dispatch(CONFIG_ACTIONS.saveConfigurationValues({
             hideGenericTooltips: !hideGenericTooltips,
         }));
@@ -37,12 +38,12 @@ function Settings() {
 
     const toggleTheme = () => {
         dispatch(INTERFACE_ACTIONS.toggleTheme());
-    }
+    }*/
 
     const settingsToggles = [
         { label: "Show Advanced Features", onChange: toggleAdvancedFeatures, checked: showAdvancedFeatures },
-        { label: "Hide Generic Tooltips", onChange: toggleHideGenericTooltips, checked: hideGenericTooltips },
-        { label: "Use Dark Theme", onChange: toggleTheme, checked: useDarkTheme },
+        //{ label: "Hide Generic Tooltips", onChange: toggleHideGenericTooltips, checked: hideGenericTooltips },
+        //{ label: "Use Dark Theme", onChange: toggleTheme, checked: useDarkTheme },
     ]
 
     return (
