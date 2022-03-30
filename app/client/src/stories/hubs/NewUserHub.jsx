@@ -23,23 +23,23 @@ function NewUserHub() {
 
     useEffect(() => {
         dispatch(USER_ACTIONS.initialUserAccountCheck());
-    },[dispatch])
-    
+    }, [dispatch]);
+
     useEffect(() => {
         /* Check if user has a vault behind the scenes */
-        if(vaultLocked && exists) { history.push('/returningUserLoad/hasExistingVault'); }
-        if(optout) { history.push('/returningUserLoad/hasKeystores'); }
-    },[vaultLocked, optout, exists, history, location])
+        if (vaultLocked && exists) { history.push('/returningUserLoad/hasExistingVault'); }
+        if (optout) { history.push('/returningUserLoad/hasKeystores'); }
+    }, [vaultLocked, optout, exists, history, location]);
 
     const useRecoveryPhrase = () => {
         dispatch(USER_ACTIONS.clearMnemonic());
         history.push('/newVault/useRecoveryPhrase')
-    }
+    };
 
     return (
         <Container fluid className="h-full flex items-center justify-center">
 
-            <Grid textAlign="center">
+            <Grid textAlign="center" className="mx-0">
 
                 <Grid.Column width={16}>
 
@@ -106,7 +106,7 @@ function NewUserHub() {
 
                 <Grid.Column width={16} className="flex flex-auto flex-col items-center gap-5">
 
-                    <Container fluid className="flex flex-auto flex-col items-center gap-3 w-72">
+                    <Container className="flex flex-auto flex-col gap-3 w-72">
 
                         <Button color="teal" content="Create a Vault*" fluid onClick={() => history.push('/newVault/createVault')} />
 
@@ -114,7 +114,11 @@ function NewUserHub() {
 
                     </Container>
 
-                    <p className="text-green-500 text-sm">*Don&apos;t worry you&apos;ll be able to import additional wallets later</p>
+                    <Container>
+
+                        <p className="text-teal text-sm">*Don&apos;t worry you&apos;ll be able to import additional wallets later</p>
+
+                    </Container>
 
                 </Grid.Column>
 
