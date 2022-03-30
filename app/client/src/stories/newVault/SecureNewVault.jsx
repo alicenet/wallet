@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Button, Container, Form, Grid, Header } from 'semantic-ui-react';
+import { Button, Container, Form, Grid, Header, Message } from 'semantic-ui-react';
 
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -91,6 +91,12 @@ function SecureNewVault() {
 
                     </Form>
 
+                </Grid.Column>
+
+                <Grid.Column width={12} className="p-0 self-center">
+                    
+                    <Message icon='warning' header='The vault password and recovery phrase are very important.' content='Keep the recovery seed in a safe place so you can recover you wallets if necessary.' warning />
+    
                 </Grid.Column>
 
                 <Grid.Column width={12} className="p-0 self-center">
