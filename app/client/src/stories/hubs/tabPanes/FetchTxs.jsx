@@ -109,7 +109,7 @@ export default function FetchTxs() {
     const activeSlice = polledTxs.slice(activePage * txPerPage, (activePage * txPerPage) + txPerPage)
 
     return (
-        <Segment className="m-0 ml-0 rounded-t-none border-t-0 bg-white">
+        <Segment className="m-0 ml-0 rounded-t-none border-t-0 bg-white h-81">
 
             <div className="flex flex-col justify-between h-full">
 
