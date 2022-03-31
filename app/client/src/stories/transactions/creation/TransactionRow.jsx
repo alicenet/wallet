@@ -15,7 +15,8 @@ export default function TransactionRow({ transaction, index, onUpdate }) {
 
     const handleEdit = (transaction, index) => onUpdate({ ...transaction, index });
 
-    const handleClone = (transaction) => {
+    //*Hide clone tx as requested in MP-396
+    /*const handleClone = (transaction) => {
         dispatch(TRANSACTION_ACTIONS.addStore(transaction));
         toast.success(
             <SyncToastMessageSuccess
@@ -25,7 +26,7 @@ export default function TransactionRow({ transaction, index, onUpdate }) {
             />,
             { className: "basic", "autoClose": 1000 }
         );
-    };
+    };*/
 
     const handleDelete = (index) => {
         dispatch(TRANSACTION_ACTIONS.removeItem(index));

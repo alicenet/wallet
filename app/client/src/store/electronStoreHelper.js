@@ -376,6 +376,7 @@ function storeConfigurationValues(configValues) {
         registry_contract_address: configValues.registry_contract_address,
         advanced_settings: configValues.advanced_settings,
         hide_generic_tooltips: configValues.hide_generic_tooltips,
+        has_seen_tx_help_modal: configValues.has_seen_tx_help_modal
     }
     writePlainValueToStore('configuration', updateObject);
 }

@@ -1,9 +1,30 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button, Container, Header, Modal } from 'semantic-ui-react';
+import { useDispatch } from 'react-redux';
+import { CONFIG_ACTIONS } from 'redux/actions/_actions';
+import { useSelector } from 'react-redux';
 
 function ConstructingATransactionModal({ children }) {
 
+    const dispatch = useDispatch();
     const [openModal, setOpenModal] = React.useState(false)
+
+    const { hasSeenTxHelpModal } = useSelector(state => ({
+        hasSeenTxHelpModal: state.config.has_seen_tx_help_modal
+    }));
+
+    const handleCloseModal = () => {
+        dispatch(CONFIG_ACTIONS.saveConfigurationValues({
+            hasSeenTxHelpModal: true,
+        }));
+        setOpenModal(false)
+    }
+
+    useEffect(() => {
+        console.log('modal is here', hasSeenTxHelpModal)
+        hasSeenTxHelpModal ? setOpenModal(false) : setOpenModal(true)
+    }, [hasSeenTxHelpModal])
+
 
     return (
         <Modal
@@ -20,7 +41,7 @@ function ConstructingATransactionModal({ children }) {
 
                     <Header content="Constructing a Transaction" as="h3" className="my-0" />
 
-                    <Container className="flex flex-auto flex-col gap-3 p-5 text-center">
+                    <Container className="flex flex-auto flex-col gap-3 p-5 text-left">
 
                         <p>You can construct a transaction by choosing between <strong>data stores</strong> and <strong>value stores</strong>.</p>
 
@@ -35,7 +56,7 @@ function ConstructingATransactionModal({ children }) {
 
                     </Container>
 
-                    <Button color="purple" onClick={() => setOpenModal(false)} content="Got it!" />
+                    <Button color="purple" onClick={handleCloseModal} content="Got it!" />
 
                 </Modal.Description>
 

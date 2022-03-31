@@ -24,6 +24,7 @@ export default function configurationReducer(state = initialConfigurationState, 
                 registry_contract_address: initialConfigurationState.registry_contract_address,
                 advanced_settings: initialConfigurationState.advanced_settings,
                 hide_generic_tooltips: initialConfigurationState.hide_generic_tooltips,
+                has_seen_tx_help_modal: initialConfigurationState.has_seen_tx_help_modal
             });
 
         case CONFIG_ACTION_TYPES.SAVE_CONFIGURATION:
@@ -35,6 +36,7 @@ export default function configurationReducer(state = initialConfigurationState, 
                 registry_contract_address: action.payload.registry_contract_address,
                 advanced_settings: action.payload.advanced_settings,
                 hide_generic_tooltips: action.payload.hide_generic_tooltips,
+                has_seen_tx_help_modal: action.payload.has_seen_tx_help_modal
             });
 
         default:
