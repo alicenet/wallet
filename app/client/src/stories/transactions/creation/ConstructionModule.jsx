@@ -20,7 +20,7 @@ function ConstructionModule() {
 
     const dispatch = useDispatch();
 
-    const columns = ['Type', 'From', 'To', 'Key', 'Value', 'Duration', ''];
+    const columns = ['Type', 'From', 'To', 'Index', 'Value', 'Duration', ''];
 
     const emptyDataStore = { from: null, to: null, duration: null, key: null, value: null };
     const emptyValueStore = { from: null, to: null, value: null, bnCurve: false };
@@ -142,11 +142,11 @@ function ConstructionModule() {
                             <Menu compact icon='labeled' size="small">
 
                                 <Menu.Item name="add-data-store" onClick={() => setDataStore(emptyDataStore)} disabled={!web3Connected || !madConnected}>
-                                    <Icon name="chart bar" className="text-gray-600" />Add Data Store
+                                    <Icon name="chart bar" className="text-gray-600" />Create Data Store
                                 </Menu.Item>
 
                                 <Menu.Item name='add-value-store' onClick={() => setValueStore(emptyValueStore)} disabled={!web3Connected || !madConnected}>
-                                    <Icon name="currency" className="text-gray-600" />Add Value Store
+                                    <Icon name="currency" className="text-gray-600" />Create Value Store
                                 </Menu.Item>
 
                                 <AddEditPrioritizationFeeModal />
@@ -266,7 +266,7 @@ function ConstructionModule() {
                             <Button
                                 color={fees.errors?.length > 0 ? "red" : "teal"}
                                 content="Send Transaction"
-                                disabled={isEmpty(list) || fees.errors?.length > 0}
+                                disabled={isEmpty(list) || fees.errors?.length > 0 || ( fees.totalFee + valueStoreTotal <= fees.txFee ) }
                                 onClick={handleSendTransaction}
                                 className="m-0"
                             />
