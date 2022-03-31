@@ -21,7 +21,6 @@ function ConstructingATransactionModal({ children }) {
     }
 
     useEffect(() => {
-        console.log('modal is here', hasSeenTxHelpModal)
         hasSeenTxHelpModal ? setOpenModal(false) : setOpenModal(true)
     }, [hasSeenTxHelpModal])
 
