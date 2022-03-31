@@ -7,7 +7,7 @@ import Page from '../../layout/Page';
 
 import chunk from 'lodash/chunk';
 
-import {Button, Checkbox, Container, Grid, GridRow, Header} from 'semantic-ui-react';
+import {Button, Checkbox, Container, Grid, GridRow, Header, Message} from 'semantic-ui-react';
 
 import {USER_ACTIONS} from 'redux/actions/_actions';
 
@@ -73,6 +73,12 @@ function GetNewSeedPhrase() {
 
                     <Button circular size="tiny" icon="redo" content="Reroll Phrase" onClick={rollPotentialSeedPhrase}/>
 
+                </Grid.Column>
+
+                <Grid.Column width={12} className="p-0 self-center">
+                    
+                    <Message size="mini" icon='warning' header='The vault password and recovery phrase are very important.' content='Keep the recovery seed in a safe place so you can recover you wallets if necessary.' warning />
+    
                 </Grid.Column>
 
                 <Grid.Column width={12} className="p-0 self-center">
