@@ -12,7 +12,6 @@ export default function Overview({ wallet }) {
     const dispatch = useDispatch();
     const [copyClick, setCopyClick] = React.useState(0);
 
-
     const { madNetConnected, web3Connected, vaultExists, balances, balancesLoading } = useSelector(state => (
         {
             web3Connected: state.adapter.web3Adapter.connected,
@@ -65,7 +64,7 @@ export default function Overview({ wallet }) {
     }
 
     return (
-        <Grid className="segment flex flex-col justify-start bg-white break-all text-sm m-0 p-4 text-gray-700 border-solid border border-gray-300 border-t-0 rounded-tl-none rounded-tr-none ">
+        <Grid className="segment flex flex-col justify-start bg-white break-all text-sm m-0 p-4 text-gray-700 border-solid border border-gray-300 border-t-0 rounded-tl-none rounded-tr-none h-81">
 
             <Grid.Row>
 

@@ -165,7 +165,7 @@ export default function Datastores({ wallet }) {
     }
 
     return (
-        <Segment className="bg-white m-0 border-solid border border-gray-300 rounded-b border-t-0 rounded-tr-none rounded-tl-none">
+        <Segment className="bg-white m-0 border-solid border border-gray-300 rounded-b border-t-0 rounded-tr-none rounded-tl-none h-81">
 
             {fetchLoader && <Loader size="large" active content="Searching for Datastores" className="text-sm text-gray-500" />}
 
