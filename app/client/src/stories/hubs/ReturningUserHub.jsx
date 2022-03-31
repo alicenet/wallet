@@ -67,7 +67,7 @@ export default function Hub() {
 
                             <Container className="gap-3 flex flex-row justify-center items-center text-justify add-wallets">
 
-                                <Button circular size={openDrawer ? 'mini' : 'mini'} className="m-0" icon="add" onClick={gotoAddWallet}/>
+                                <Button circular size={openDrawer ? 'mini' : 'mini'} className="m-0" icon="add" onClick={gotoAddWallet} />
 
                                 {openDrawer && <Header as='h4' className="m-0 text-gray-700">Wallets</Header>}
 
@@ -132,11 +132,8 @@ export default function Hub() {
                                                 onClick={handleTabChange}
                                             />
                                         )}
-                                        <Menu.Menu position='right'>
-                                            <Menu.Item
-                                                name='Block Explorer'
-                                                onClick={() => {window.open("https://testnet.mnexplore.com/", "_blank")}}
-                                            />
+                                        <Menu.Menu position="right">
+                                            <Menu.Item disabled name="Block Explorer" />
                                         </Menu.Menu>
                                     </Menu>
                                     {panes[activeTabPane].render()}
