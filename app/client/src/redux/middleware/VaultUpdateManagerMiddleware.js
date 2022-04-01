@@ -55,7 +55,7 @@ function _getStateWallets(storeAPI) {
 }
 
 async function syncStateToStore(storeAPI, reason, keystoreAdded) {
-    // If added keystore exists add it to the collection
+    // Add keystore to the collection for external Wallets
     if (keystoreAdded) {
         await electronStoreCommonActions.addOptOutKeystore(keystoreAdded.string, keystoreAdded.name);
     }    
