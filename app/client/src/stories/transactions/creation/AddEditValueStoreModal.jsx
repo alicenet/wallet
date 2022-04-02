@@ -68,7 +68,7 @@ export default function AddEditValueStoreModal({ valueStore, onClose }) {
 
                 <Header as="h4" color="purple">{`${isEditing ? 'Edit' : 'Add'} Value Store`}
                     <Header.Subheader className="text-xs">Base Fee Per Value Store: {fees.valueStoreFee} MadByte{fees.valueStoreFee > 1 ? "s" : ""}</Header.Subheader>
-                 </Header>
+                </Header>
 
             </Modal.Header>
 
@@ -124,7 +124,7 @@ export default function AddEditValueStoreModal({ valueStore, onClose }) {
                                             <Popup
                                                 size="mini"
                                                 position="right center"
-                                                trigger={<Icon name="question circle" className="ml-1 mb-1.5"/>}
+                                                trigger={<Icon name="question circle" className="ml-1 mb-1.5" />}
                                                 content="Is this a BN Curve address?"
                                             />
                                         </>
@@ -159,13 +159,11 @@ export default function AddEditValueStoreModal({ valueStore, onClose }) {
 
             <Modal.Actions className="flex justify-between">
 
-                <Button color="orange" className="m-0" basic onClick={onClose} content="Close"/>
+                <Button color="black" basic onClick={onClose} content="Close" />
 
                 <Button
-                    icon={<Icon name="currency"/>}
-                    className="m-0"
+                    icon={<Icon name="currency" />}
                     content={`${isEditing ? 'Edit' : 'Add'} Value Store`}
-                    basic
                     color="teal"
                     onClick={() => onSubmit(handleSubmit)}
                 />

@@ -176,7 +176,7 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
 
             <Modal.Actions className="flex justify-between">
 
-                <Button color="orange" className="m-0" basic onClick={onClose} content="Close" />
+                <Button color="black" basic onClick={onClose} content="Close" />
 
                 <div className="flex flex-column justify-center items-center text-sm">
                     {error}
@@ -184,9 +184,7 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
 
                 <Button
                     icon={<Icon name='chart bar' />}
-                    className="m-0"
                     content={"Add Datastore for " + totalStoreCostLabel + " MadBytes"}
-                    basic
                     color="teal"
                     onClick={() => onSubmit(handleSubmit)}
                 />

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -19,12 +19,12 @@ function ChooseRecoveryEllipticCurve() {
         desiredCurve: state.user.desired_hd_curve,
     }));
 
-    const [curveType, setCurveType] = React.useState(desiredCurve || curveTypes.SECP256K1)
+    const [curveType, setCurveType] = useState(desiredCurve || curveTypes.SECP256K1);
 
     const secureMyVault = () => {
         dispatch(USER_ACTIONS.setDesiredCurveType(curveType));
         history.push('/newVault/secureNewVault');
-    }
+    };
 
     return (
         <Page>
@@ -33,7 +33,7 @@ function ChooseRecoveryEllipticCurve() {
 
                 <Grid.Column width={16} className="p-0 self-center">
 
-                    <Header content="Phrase Entered" as="h3" className="m-0"/>
+                    <Header content="Phrase Entered" as="h3" className="m-0" />
 
                 </Grid.Column>
 
@@ -76,8 +76,7 @@ function ChooseRecoveryEllipticCurve() {
 
                                 <strong>
                                     Public Address Key Operation Curve
-                                    <Icon name="question circle" className="px-2 cursor-pointer"/>
-
+                                    <Icon name="question circle" className="px-2 cursor-pointer" />
                                 </strong>
                             </p>
 
@@ -111,9 +110,9 @@ function ChooseRecoveryEllipticCurve() {
 
                     <Container className="flex justify-between">
 
-                        <Button color="orange" basic content="Go Back" className="m-0" onClick={history.goBack}/>
+                        <Button color="black" basic content="Go Back" onClick={history.goBack} />
 
-                        <Button color="teal" basic content="Secure My Vault" className="m-0" onClick={secureMyVault}/>
+                        <Button color="teal" content="Secure My Vault" onClick={secureMyVault} />
 
                     </Container>
 
@@ -122,6 +121,7 @@ function ChooseRecoveryEllipticCurve() {
             </Grid>
 
         </Page>
+
     )
 
 }

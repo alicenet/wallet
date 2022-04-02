@@ -122,7 +122,7 @@ export default function GenerateKeystoreForm(
                                     content="Download"
                                     icon="download"
                                     size="mini"
-                                    color="purple"
+                                    color="teal"
                                     basic ref={downloadRef}
                                     href={keystoreDL ? URL.createObjectURL(keystoreDL.data) : ""} download={keystoreDL.filename}
                                 />
@@ -131,7 +131,7 @@ export default function GenerateKeystoreForm(
                                     content="Load"
                                     icon="arrow alternate circle right"
                                     labelPosition="right"
-                                    color="green"
+                                    color="teal"
                                     basic
                                     onClick={loadKeystore}
                                 />
@@ -229,7 +229,7 @@ export default function GenerateKeystoreForm(
             />
 
             <Form.Button fluid size="small" disabled={!keystoreDL} color="green" basic content={submitText} onClick={loadKeystore} icon="thumbs up"/>
-            <Form.Button fluid size="small" basic content={cancelText} color="orange" onClick={cancelFunction} icon="x"/>
+            <Form.Button fluid size="small" basic content={cancelText} color="black" onClick={cancelFunction} icon="x"/>
 
         </Form>
 

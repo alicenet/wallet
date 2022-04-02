@@ -32,7 +32,7 @@ export default function AddEditPrioritizationFeeModal() {
         setOpenModal(false);
         formSetter.setFee(prioritizationFee);
         formSetter.clearFeeError();
-    }
+    };
 
     return (
         <Modal
@@ -101,13 +101,11 @@ export default function AddEditPrioritizationFeeModal() {
 
             <Modal.Actions className="flex justify-between">
 
-                <Button color="orange" className="m-0" basic onClick={handleClose} content="Close" />
+                <Button color="black" basic onClick={handleClose} content="Close" />
 
                 <Button
                     icon={<Icon name='chain' />}
-                    className="m-0"
                     content="Set Prioritization Fee"
-                    basic
                     color="teal"
                     onClick={() => onSubmit(handleSubmit)}
                 />

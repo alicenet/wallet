@@ -1,6 +1,6 @@
 import React from 'react';
 import { Header, Icon, Menu } from 'semantic-ui-react';
-import { views, GetMockContextSetterByKey, DebugContext } from './DebugContext.jsx';
+import { DebugContext, GetMockContextSetterByKey, views } from './DebugContext.jsx';
 import { useDispatch } from 'react-redux';
 import { INTERFACE_ACTIONS } from 'redux/actions/_actions';
 
@@ -10,11 +10,20 @@ export default function DebugMenu() {
     const [currentView, setCurrentView] = GetMockContextSetterByKey(debugContext, "currentView");
     const dispatch = useDispatch();
 
-    const toggleDebugMenu = () => { dispatch(INTERFACE_ACTIONS.DEBUG_toggleShowDebug()); }
+    const toggleDebugMenu = () => {
+        dispatch(INTERFACE_ACTIONS.DEBUG_toggleShowDebug());
+    };
 
     const getMenuItems = () => {
-        return Object.keys(views).map(viewName => <Menu.Item key={views[viewName]} content={views[viewName]} onClick={() => setCurrentView(views[viewName])} active={currentView === views[viewName]} />);
-    }
+        return Object.keys(views).map(viewName =>
+            <Menu.Item
+                key={views[viewName]}
+                content={views[viewName]}
+                onClick={() => setCurrentView(views[viewName])}
+                active={currentView === views[viewName]}
+            />
+        );
+    };
 
     return (
 

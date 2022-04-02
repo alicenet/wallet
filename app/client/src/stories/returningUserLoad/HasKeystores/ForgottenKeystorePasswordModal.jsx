@@ -4,7 +4,6 @@ import { Button, Header, Modal } from 'semantic-ui-react';
 import { MODAL_ACTIONS } from 'redux/actions/_actions';
 import { classNames } from "util/_util";
 
-
 /**
  * Shows a prompt to open a modal regarding forgotten vault password
  * @prop { Boolean } incorrectPwEntered - Has the incorrect password been entered?
@@ -18,7 +17,7 @@ export default function ForgottenKeystorePasswordModal({ incorrectPwEntered }) {
 
     const openResetWallet = () => {
         dispatch(MODAL_ACTIONS.openResetWalletModal());
-    }
+    };
 
     return (
         <Modal
@@ -55,9 +54,11 @@ export default function ForgottenKeystorePasswordModal({ incorrectPwEntered }) {
             </Modal.Content>
 
             <Modal.Actions className="flex justify-between">
-                <Button content="Close" color="orange" onClick={() => toggleOpen(false)} basic/>
 
-                <Button icon="delete" color="red" basic content="Wallet Reset" className="m-0" onClick={openResetWallet}/>
+                <Button content="Close" color="orange" onClick={() => toggleOpen(false)} basic />
+
+                <Button icon="delete" color="red" basic content="Wallet Reset" className="m-0" onClick={openResetWallet} />
+
             </Modal.Actions>
 
         </Modal>

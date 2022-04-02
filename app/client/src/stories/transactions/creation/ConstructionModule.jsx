@@ -49,7 +49,7 @@ function ConstructionModule() {
             }
         })
         return total;
-    }, [list])
+    }, [list]);
 
     const handlePaginationChange = (direction) => {
         if (direction === "back") {
@@ -62,7 +62,7 @@ function ConstructionModule() {
                 setActivePage(state => state + 1);
             }
         }
-    }
+    };
 
     const handleSendTransaction = async () => {
         // Send the TX via the main tx action -- Just fire it off, latest TX will appear in transaction reducer as lastSentAndMinedTx
@@ -264,11 +264,10 @@ function ConstructionModule() {
                             </Container>
 
                             <Button
-                                color={fees.errors?.length > 0 ? "red" : "teal"}
+                                color="teal"
                                 content="Send Transaction"
                                 disabled={isEmpty(list) || fees.errors?.length > 0 || ( fees.totalFee + valueStoreTotal <= fees.txFee ) }
                                 onClick={handleSendTransaction}
-                                className="m-0"
                             />
 
                         </Grid.Column>

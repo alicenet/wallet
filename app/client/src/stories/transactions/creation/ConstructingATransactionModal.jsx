@@ -35,7 +35,7 @@ function ConstructingATransactionModal({ children }) {
 
                     </Container>
 
-                    <Button color="purple" onClick={() => setOpenModal(false)} content="Got it!" />
+                    <Button color="teal" onClick={() => setOpenModal(false)} content="Got it!" />
 
                 </Modal.Description>
 

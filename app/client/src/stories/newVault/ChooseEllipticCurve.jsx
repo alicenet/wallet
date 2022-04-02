@@ -21,12 +21,12 @@ function ChooseEllipticCurve() {
         // Set desired curve to active curve state and advance screen
         dispatch(USER_ACTIONS.setDesiredCurveType(curveType));
         history.push('/newVault/secureNewVault');
-    }
+    };
 
     const toggleAdvancedOptions = () => {
         setEnableAdvancedOptions(prevState => !prevState);
         setCurveType(1);
-    }
+    };
 
     return (
         <Page>
@@ -35,7 +35,7 @@ function ChooseEllipticCurve() {
 
                 <Grid.Column width={16} className="p-0 self-center">
 
-                    <Header content="Seed Phrase Verified" as="h3" className="m-0"/>
+                    <Header content="Seed Phrase Verified" as="h3" className="m-0" />
 
                 </Grid.Column>
 
@@ -51,7 +51,7 @@ function ChooseEllipticCurve() {
 
                     <Checkbox onChange={toggleAdvancedOptions} className="py-5"
                               checked={enableAdvancedWalletOptions}
-                              label={<label className="text-sm">Enable Advanced Wallet Options</label>}/>
+                              label={<label className="text-sm">Enable Advanced Wallet Options</label>} />
 
                     <Container
                         className={classNames("p-3 text-left border-2 border-solid border-gray-300", { 'bg-gray-300': !enableAdvancedWalletOptions })}>
@@ -64,7 +64,7 @@ function ChooseEllipticCurve() {
 
                                 <strong>
                                     Public Address Key Operation Curve
-                                    <Icon name="question circle" className="px-2 cursor-pointer"/>
+                                    <Icon name="question circle" className="px-2 cursor-pointer" />
 
                                 </strong>
                             </p>
@@ -101,9 +101,9 @@ function ChooseEllipticCurve() {
 
                     <Container className="flex justify-between">
 
-                        <Button color="orange" basic className="m-0" content="Go Back" onClick={history.goBack}/>
+                        <Button color="black" basic content="Go Back" onClick={history.goBack} />
 
-                        <Button color="teal" basic className="m-0" content="Secure My Vault" onClick={generateWallet}/>
+                        <Button color="teal" content="Secure My Vault" onClick={generateWallet} />
 
                     </Container>
 
