@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button, Container, Header, Modal } from 'semantic-ui-react';
 
 function ConstructingATransactionModal({ children }) {
 
-    const [openModal, setOpenModal] = React.useState(false)
+    const [openModal, setOpenModal] = useState(false);
 
     return (
         <Modal
@@ -28,7 +28,7 @@ function ConstructingATransactionModal({ children }) {
 
                         <p><strong>Value stores</strong> will be used to transfer MadBytes from one address to another.</p>
 
-                        <p> <strong>Data stores</strong> are used to store a key
+                        <p><strong>Data stores</strong> are used to store a key
                             and value on MadNet for up until the purchased-to epoch.</p>
 
                         <p>You can also cancel a <strong>data store</strong> early and receive a refund for any unused duration.</p>

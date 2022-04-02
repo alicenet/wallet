@@ -3,7 +3,7 @@ import { Button, Container, Header, Modal } from 'semantic-ui-react';
 
 function WhatIsAVaultModal() {
 
-    const [openModal, setOpenModal] = useState(false)
+    const [openModal, setOpenModal] = useState(false);
 
     return (
         <Modal
