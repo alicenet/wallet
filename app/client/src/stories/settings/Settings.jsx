@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { Button, Container, Grid, Header, Radio } from 'semantic-ui-react';
 
-import { CONFIG_ACTIONS, INTERFACE_ACTIONS, MODAL_ACTIONS } from 'redux/actions/_actions';
+import { CONFIG_ACTIONS, /*INTERFACE_ACTIONS,*/ MODAL_ACTIONS } from 'redux/actions/_actions';
 import Page from 'layout/Page';
 
 function Settings() {
@@ -12,11 +12,11 @@ function Settings() {
     const history = useHistory();
     const dispatch = useDispatch();
 
-    const { vaultExists, showAdvancedFeatures, hideGenericTooltips, useDarkTheme } = useSelector(s => ({
+    const { vaultExists, showAdvancedFeatures, /*hideGenericTooltips, useDarkTheme*/ } = useSelector(s => ({
         vaultExists: s.vault.exists,
         showAdvancedFeatures: s.config.advanced_settings,
-        hideGenericTooltips: s.config.hide_generic_tooltips,
-        useDarkTheme: s.interface.useDarkTheme,
+        //hideGenericTooltips: s.config.hide_generic_tooltips,
+        //useDarkTheme: s.interface.useDarkTheme,
     }));
 
     const openResetWallet = () => {

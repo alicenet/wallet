@@ -25,7 +25,7 @@ export function loadDefaultValues() {
  * @prop { String } registryContractAddress - Registry Contract Address to update settings to
  * @returns { Bool | Object.error }
  */
-export function saveConfigurationValues({ chainId, madNetProvider, ethProvider, registryContractAddress, enableAdvancedSettings, hideGenericTooltips }) {
+export function saveConfigurationValues({ chainId, madNetProvider, ethProvider, registryContractAddress, enableAdvancedSettings, hideGenericTooltips, hasSeenTxHelpModal }) {
     return async function (dispatch, getState) {
         let currentConfig = getState().config;
         try {
@@ -36,6 +36,7 @@ export function saveConfigurationValues({ chainId, madNetProvider, ethProvider, 
                 registry_contract_address: useFallbackValueForUndefinedInput(registryContractAddress, currentConfig.registry_contract_address),
                 advanced_settings: useFallbackValueForUndefinedInput(enableAdvancedSettings, currentConfig.advanced_settings),
                 hide_generic_tooltips: useFallbackValueForUndefinedInput(hideGenericTooltips, currentConfig.hide_generic_tooltips),
+                has_seen_tx_help_modal: useFallbackValueForUndefinedInput(hasSeenTxHelpModal, currentConfig.has_seen_tx_help_modal),
             }
             // Write any config saves to the electron store and dispatch the config update
             electronStoreCommonActions.storeConfigurationValues(updateObject);

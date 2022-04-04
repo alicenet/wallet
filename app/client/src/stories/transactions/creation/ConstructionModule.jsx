@@ -124,12 +124,13 @@ function ConstructionModule() {
 
                                 <Container>
 
-                                    <div className="cursor-pointer text-blue-400 hover:text-blue-500 flex items-center text-xl gap-2">
-
-                                        <div className="m-0 font-bold">How to construct a transaction</div>
-                                        <Icon size="small" name="question circle" className="m-0 cursor-pointer" />
-
-                                    </div>
+                                    <Button
+                                        basic
+                                        color="blue"
+                                        content="How to construct a transaction"
+                                        className="m-0"
+                                    />
+                                    
 
                                 </Container>
 
