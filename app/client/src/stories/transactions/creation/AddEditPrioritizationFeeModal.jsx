@@ -48,7 +48,7 @@ export default function AddEditPrioritizationFeeModal() {
 
             <Modal.Header className="text-center">
 
-                <Header as="h4" color="purple">Prioritization Fee</Header>
+                <Header as="h4">Prioritization Fee</Header>
 
             </Modal.Header>
 
@@ -106,7 +106,7 @@ export default function AddEditPrioritizationFeeModal() {
                 <Button
                     icon={<Icon name='chain' />}
                     content="Set Prioritization Fee"
-                    color="teal"
+                    color="black"
                     onClick={() => onSubmit(handleSubmit)}
                 />
 

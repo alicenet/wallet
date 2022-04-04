@@ -93,7 +93,7 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
 
             <Modal.Header className="text-center">
 
-                <Header as="h4" color="purple">{`${isEditing ? 'Edit' : 'Add'} Data Store`}
+                <Header as="h4">{`${isEditing ? 'Edit' : 'Add'} Data Store`}
                     <Header.Subheader className="text-xs">Fee Per Data
                         Store: {fees.dataStoreFee} {utils.string.pluralStringCheck("MadByte", fees.dataStoreFee > 1)}</Header.Subheader>
                 </Header>
@@ -185,7 +185,7 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
                 <Button
                     icon={<Icon name='chart bar' />}
                     content={"Add Datastore for " + totalStoreCostLabel + " MadBytes"}
-                    color="teal"
+                    color="black"
                     onClick={() => onSubmit(handleSubmit)}
                 />
 

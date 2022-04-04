@@ -66,7 +66,7 @@ export default function AddEditValueStoreModal({ valueStore, onClose }) {
 
             <Modal.Header className="text-center">
 
-                <Header as="h4" color="purple">{`${isEditing ? 'Edit' : 'Add'} Value Store`}
+                <Header as="h4">{`${isEditing ? 'Edit' : 'Add'} Value Store`}
                     <Header.Subheader className="text-xs">Base Fee Per Value Store: {fees.valueStoreFee} MadByte{fees.valueStoreFee > 1 ? "s" : ""}</Header.Subheader>
                 </Header>
 
@@ -164,7 +164,7 @@ export default function AddEditValueStoreModal({ valueStore, onClose }) {
                 <Button
                     icon={<Icon name="currency" />}
                     content={`${isEditing ? 'Edit' : 'Add'} Value Store`}
-                    color="teal"
+                    color="black"
                     onClick={() => onSubmit(handleSubmit)}
                 />
 
