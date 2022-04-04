@@ -41,15 +41,10 @@ function ChooseRecoveryEllipticCurve() {
 
                     <p>You have successfully entered your seed phrase.</p>
 
-                    <Container fluid>
+                    <Container fluid className="flex gap-1 flex-wrap justify-center">
 
                         {seedPhrase.map((word, index) =>
-                            <Button
-                                key={`seed-phrase-btn-${index}`}
-                                className="mx-2 my-1"
-                                color="blue"
-                                content={word}
-                            />
+                            <Button key={`seed-phrase-btn-${index}`} color="blue" content={word} size="small" />
                         )}
 
                     </Container>
