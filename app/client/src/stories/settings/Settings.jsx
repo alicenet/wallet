@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { Button, Container, Grid, Header, Radio } from 'semantic-ui-react';
 
-import { CONFIG_ACTIONS, MODAL_ACTIONS } from 'redux/actions/_actions';
+import { CONFIG_ACTIONS, /*INTERFACE_ACTIONS,*/ MODAL_ACTIONS } from 'redux/actions/_actions';
 import Page from 'layout/Page';
 
 function Settings() {
@@ -12,22 +12,22 @@ function Settings() {
     const history = useHistory();
     const dispatch = useDispatch();
 
-    const { vaultExists, showAdvancedFeatures, hideGenericTooltips, useDarkTheme } = useSelector(s => ({
+    const { vaultExists, showAdvancedFeatures, /*hideGenericTooltips, useDarkTheme*/ } = useSelector(s => ({
         vaultExists: s.vault.exists,
         showAdvancedFeatures: s.config.advanced_settings,
-        hideGenericTooltips: s.config.hide_generic_tooltips,
-        useDarkTheme: s.interface.useDarkTheme,
+        //hideGenericTooltips: s.config.hide_generic_tooltips,
+        //useDarkTheme: s.interface.useDarkTheme,
     }));
 
     const openResetWallet = () => {
         dispatch(MODAL_ACTIONS.openResetWalletModal());
-    };
+    }
 
     const toggleAdvancedFeatures = () => {
         dispatch(CONFIG_ACTIONS.saveConfigurationValues({
             enableAdvancedSettings: !showAdvancedFeatures,
         }));
-    };
+    }
 
     //Commented hide generic tooltips and dark theme as requested in MP-396
     /*const toggleHideGenericTooltips = () => {
@@ -53,7 +53,7 @@ function Settings() {
 
                 <Grid.Column width={16} className="p-0 self-center">
 
-                    <Header content="Settings" as="h3" className="m-0" />
+                    <Header content="Settings" as="h3" className="m-0"/>
 
                 </Grid.Column>
 
@@ -62,14 +62,13 @@ function Settings() {
                     <Container className="flex flex-col justify-center text-justify w-72 gap-5">
 
                         {vaultExists && (
-                            <Button icon="add square" color="teal" content="Create Wallet" onClick={() => history.push('/addWallet/generate')} />
+                            <Button icon="add square" color="purple" basic content="Create Wallet" className="m-0" onClick={() => history.push('/addWallet/generate')}/>
                         )}
+                        <Button icon="key" color="purple" basic content="Import Private Key" className="m-0" onClick={() => history.push('/addWallet/importPrivateKey')}/>
+                        <Button icon="cog" disabled={!showAdvancedFeatures} color="purple" basic content="Advanced Settings" className="m-0"
+                                onClick={() => history.push('/wallet/advancedSettings')}/>
 
-                        <Button icon="key" color="teal" content="Import Private Key" onClick={() => history.push('/addWallet/importPrivateKey')} />
-
-                        <Button icon="cog" disabled={!showAdvancedFeatures} color="teal" content="Advanced Settings" onClick={() => history.push('/wallet/advancedSettings')} />
-
-                        <Button disabled={!showAdvancedFeatures} icon="delete" color="red" content="Wallet Reset" onClick={openResetWallet} />
+                        <Button disabled={!showAdvancedFeatures} icon="delete" color="red" basic content="Wallet Reset" className="m-0" onClick={openResetWallet}/>
 
                     </Container>
 
@@ -97,7 +96,7 @@ function Settings() {
 
                     <Container className="flex flex-col justify-center text-justify w-72">
 
-                        <Button color="black" basic content="Go Back" onClick={history.goBack} />
+                        <Button color="orange" basic content="Go Back" className="m-0 w-72" onClick={history.goBack}/>
 
                     </Container>
 
