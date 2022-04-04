@@ -23,7 +23,7 @@ export default function VaultUpdateManagerMiddleware(storeAPI) {
                 if (action.type === ACTION_ELECTRON_SYNC) {
                     // Vault Syncing
                     if (state.vault.exists && !state.vault.is_locked) { // Only update electron store of an existing, unlocked vault
-                        syncStateToStore(storeAPI, action.payload.reason, action.payload.keystoreAdded);
+                        syncStateToStore(storeAPI, action.payload.reason);
                     }
                     // Optout Syncing
                     else if (state.vault.optout && action.payload.keystoreAdded) { // Only update electron store of an existing, unlocked vault
@@ -54,36 +54,36 @@ function _getStateWallets(storeAPI) {
     return walletStorage;
 }
 
-async function syncStateToStore(storeAPI, reason, keystoreAdded) {
-    toast.warn(<SyncToastMessageWarning title="Vault Update Request" message="Password Needed -- Click Here" />, {
-        position: "bottom-right",
-        autoClose: false,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        toastId: "vault_update_request", // Prevent duplicated
-        onClick: () => {
-            storeAPI.dispatch({
-                type: MODAL_ACTION_TYPES.OPEN_PW_REQUEST, payload: {
-                    reason: "Vault Synchronization | " + reason,
-                    cb: async (password) => {
-                        await electronStoreCommonActions.updateVaultWallets(password, _getStateWallets(storeAPI));
-                        toast.success(<SyncToastMessageSuccess title="Success" message={reason} />, {
-                            position: "bottom-right",
-                            autoClose: 2400,
-                            delay: 500,
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            draggable: true,
-                        });
-                        storeAPI.dispatch({ type: VAULT_ACTION_TYPES.CLEAR_UNSYNCED_WALLETS }); // Clear unsycned afer syncing actions
+function syncStateToStore(storeAPI, reason) {
+        toast.warn(<SyncToastMessageWarning title="Vault Update Request" message="Password Needed -- Click Here" />, {
+            position: "bottom-right",
+            autoClose: false,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            toastId: "vault_update_request", // Prevent duplicated
+            onClick: () => {
+                storeAPI.dispatch({
+                    type: MODAL_ACTION_TYPES.OPEN_PW_REQUEST, payload: {
+                        reason: "Vault Synchronization | " + reason,
+                        cb: async (password) => {
+                            await electronStoreCommonActions.updateVaultWallets(password, _getStateWallets(storeAPI))
+                            toast.success(<SyncToastMessageSuccess title="Success" message={reason} />, {
+                                position: "bottom-right",
+                                autoClose: 2400,
+                                delay: 500,
+                                closeOnClick: true,
+                                pauseOnHover: true,
+                                draggable: true,
+                            });
+                            storeAPI.dispatch({ type: VAULT_ACTION_TYPES.CLEAR_UNSYNCED_WALLETS }) // Clear unsycned afer syncing actions
+                        }
                     }
-                }
-            })
-        }
-    });
+                })
+            }
+        });
 }
 
 async function syncOptoutStoreAdd(storeAPI, reason, keystoreAdded) {
