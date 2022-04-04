@@ -38,7 +38,7 @@ export default function PasswordRequestModal() {
         formSetter.setPassword('');
         callback(formState.password.value);
         dispatch({ type: MODAL_ACTION_TYPES.CLOSE_PW_REQUEST });
-    }
+    };
 
     return (
         <Modal open={isOpen}>
@@ -68,7 +68,7 @@ export default function PasswordRequestModal() {
                         error={!!formState.password.error && { content: formState.password.error }}
                         value={formState.password.value}
                         onChange={e => formSetter.setPassword(e.target.value)}
-                        icon={<Icon link name={showPassword ? "eye" : "eye slash"} onClick={() => setShowPassword(s => !s)}/>}
+                        icon={<Icon link name={showPassword ? "eye" : "eye slash"} onClick={() => setShowPassword(s => !s)} />}
                     />
 
                 </Form>
@@ -79,13 +79,11 @@ export default function PasswordRequestModal() {
 
                 <div className="flex justify-between">
 
-                    <Button size="small" color="orange" content="Close" onClick={closeModal} basic/>
+                    <Button color="transparent" content="Close" onClick={closeModal} basic />
 
                     <Button
-                        size="mini"
                         content={formState.password.error ? "Try Again" : "Submit"}
-                        basic
-                        color={formState.password.error ? "red" : "green"}
+                        color="teal"
                         onClick={() => onSubmit(tryPassword)}
                     />
 
