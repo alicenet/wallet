@@ -118,8 +118,8 @@ export default function RenameWalletModal() {
 
                     <Button
                         size="small"
-                        color="orange"
-                        content="Cancel"
+                        color="transparent"
+                        content="Close"
                         onClick={closeModal}
                         basic
                     />
@@ -127,8 +127,7 @@ export default function RenameWalletModal() {
                     <Button
                         size="small"
                         content={error ? "Try Again" : "Save Wallet Name"}
-                        color={error ? "red" : "purple"}
-                        basic
+                        color="teal"
                         onClick={() => onSubmit(updateName)}
                         loading={loading}
                     />
