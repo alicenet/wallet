@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Button, Form, Header, Icon, Modal, Placeholder } from 'semantic-ui-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFormState } from 'hooks/_hooks';
@@ -11,9 +11,10 @@ export default function ExportPrivateKeyModal() {
 
     const dispatch = useDispatch();
 
-    const { isOpen, targetWallet } = useSelector(s => ({
+    const { isOpen, targetWallet, vault } = useSelector(s => ({
         isOpen: s.modal.export_privK_modal,
         targetWallet: s.modal.wallet_action_target,
+        vault: s.vault
     }));
 
     const [showPass, setShowPass] = useState(false);
@@ -21,6 +22,8 @@ export default function ExportPrivateKeyModal() {
 
     const [visibleTime, setVisibleTime] = useState(0);
     const [copyClick, setCopyClick] = useState(0);
+
+    const keyVisilityTimer = useRef(null); 
 
     const [formState, formSetter, onSubmit] = useFormState([
         { name: 'vaultPassword', display: 'Vault Password', type: 'password', isRequired: true }
@@ -44,7 +47,7 @@ export default function ExportPrivateKeyModal() {
     }, [isOpen]);
 
     const showKey = async () => {
-        if (targetWallet.isInternal) {
+        if (vault.exists && !vault.optout) {
             if (!await electronStoreCommonActions.checkPasswordAgainstPreflightHash(formState.vaultPassword.value)) {
                 formSetter.setVaultPasswordError("Incorrect password");
                 return setKeyVisible(false);
@@ -59,12 +62,13 @@ export default function ExportPrivateKeyModal() {
         setKeyVisible(true);
         setVisibleTime(14);
         formSetter.setVaultPassword("");
-        setTimeout(() => {
+        keyVisilityTimer.current = setTimeout(() => {
             setKeyVisible(false);
         }, 14000);
     };
 
     const closeModal = () => {
+        clearTimeout(keyVisilityTimer.current);
         dispatch(MODAL_ACTIONS.closeExportPrivateKeyModal());
     };
 
