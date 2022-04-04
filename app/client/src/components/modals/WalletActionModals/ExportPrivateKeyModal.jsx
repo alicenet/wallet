@@ -23,7 +23,7 @@ export default function ExportPrivateKeyModal() {
     const [visibleTime, setVisibleTime] = useState(0);
     const [copyClick, setCopyClick] = useState(0);
 
-    const timer = useRef(null); 
+    const keyVisilityTimer = useRef(null); 
 
     const [formState, formSetter, onSubmit] = useFormState([
         { name: 'vaultPassword', display: 'Vault Password', type: 'password', isRequired: true }
@@ -62,13 +62,13 @@ export default function ExportPrivateKeyModal() {
         setKeyVisible(true);
         setVisibleTime(14);
         formSetter.setVaultPassword("");
-        timer.current = setTimeout(() => {
+        keyVisilityTimer.current = setTimeout(() => {
             setKeyVisible(false);
         }, 14000);
     };
 
     const closeModal = () => {
-        clearTimeout(timer.current);
+        clearTimeout(keyVisilityTimer.current);
         dispatch(MODAL_ACTIONS.closeExportPrivateKeyModal());
     };
 
