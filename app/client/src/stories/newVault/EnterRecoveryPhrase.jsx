@@ -102,16 +102,10 @@ function EnterRecoveryPhrase() {
 
                 <Grid.Column width={12} className="p-0 self-center">
 
-                    <Container fluid className="flex-wrap text-left max-h-24 overflow-y-auto overscroll-auto" style={{ minHeight: "72px" }}>
+                    <Container fluid className="flex flex-wrap gap-2 text-left max-h-24 overflow-y-auto overscroll-auto" style={{ minHeight: "72px" }}>
 
                         {parsedSeedPhrase.map((word, index) =>
-                            <Button
-                                key={`seed-phrase-btn-${index}`}
-                                className="mx-2 my-1"
-                                color="blue"
-                                content={word}
-                                size="mini"
-                            />
+                            <Button key={`seed-phrase-btn-${index}`} color="blue" content={word} size="mini" />
                         )}
 
                     </Container>

@@ -21,7 +21,7 @@ function DeterministicWalletGenerationModal({ children }) {
 
                     <Header content="Deterministic Wallet Generation" as="h3" className="my-0" />
 
-                    <Container className="flex flex-auto flex-col gap-3 p-5 text-center">
+                    <Container className="flex flex-auto flex-col gap-3 px-3 text-center">
 
                         <p>Mad wallet uses the BIP44 standard to implement Seed Phrases and
                             Deterministic Wallets.</p>

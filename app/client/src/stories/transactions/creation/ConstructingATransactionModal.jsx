@@ -20,7 +20,7 @@ function ConstructingATransactionModal({ children }) {
 
                     <Header content="Constructing a Transaction" as="h3" className="my-0" />
 
-                    <Container className="flex flex-auto flex-col gap-3 p-5 text-center">
+                    <Container className="flex flex-auto flex-col gap-3 px-3 text-center">
 
                         <p>You can construct a transaction by choosing between <strong>data stores</strong> and <strong>value stores</strong>.</p>
 

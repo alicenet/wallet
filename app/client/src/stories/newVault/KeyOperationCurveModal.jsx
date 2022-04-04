@@ -21,7 +21,7 @@ function KeyOperationCurveModal({ children }) {
 
                     <Header content="Key Operation Curve" as="h3" className="my-0" />
 
-                    <Container className="flex flex-auto flex-col gap-3 p-5 text-center">
+                    <Container className="flex flex-auto flex-col gap-3 px-3 text-center">
 
                         <p>Mad Wallet allows you to set the default ECC for generating the key pair.</p>
 
