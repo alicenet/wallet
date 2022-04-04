@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Button, Form, Header, Icon, Modal, Placeholder } from 'semantic-ui-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFormState } from 'hooks/_hooks';
@@ -22,6 +22,8 @@ export default function ExportPrivateKeyModal() {
 
     const [visibleTime, setVisibleTime] = useState(0);
     const [copyClick, setCopyClick] = useState(0);
+
+    const timer = useRef(null); 
 
     const [formState, formSetter, onSubmit] = useFormState([
         { name: 'vaultPassword', display: 'Vault Password', type: 'password', isRequired: true }
@@ -60,12 +62,13 @@ export default function ExportPrivateKeyModal() {
         setKeyVisible(true);
         setVisibleTime(14);
         formSetter.setVaultPassword("");
-        setTimeout(() => {
+        timer.current = setTimeout(() => {
             setKeyVisible(false);
         }, 14000);
     };
 
     const closeModal = () => {
+        clearTimeout(timer.current);
         dispatch(MODAL_ACTIONS.closeExportPrivateKeyModal());
     };
 
