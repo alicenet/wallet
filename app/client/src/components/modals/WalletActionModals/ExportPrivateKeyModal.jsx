@@ -11,9 +11,10 @@ export default function ExportPrivateKeyModal() {
 
     const dispatch = useDispatch();
 
-    const { isOpen, targetWallet } = useSelector(s => ({
+    const { isOpen, targetWallet, vault } = useSelector(s => ({
         isOpen: s.modal.export_privK_modal,
         targetWallet: s.modal.wallet_action_target,
+        vault: s.vault
     }));
 
     const [showPass, setShowPass] = useState(false);
@@ -44,7 +45,7 @@ export default function ExportPrivateKeyModal() {
     }, [isOpen]);
 
     const showKey = async () => {
-        if (targetWallet.isInternal) {
+        if (vault.exists && !vault.optout) {
             if (!await electronStoreCommonActions.checkPasswordAgainstPreflightHash(formState.vaultPassword.value)) {
                 formSetter.setVaultPasswordError("Incorrect password");
                 return setKeyVisible(false);

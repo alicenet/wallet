@@ -55,11 +55,6 @@ function _getStateWallets(storeAPI) {
 }
 
 async function syncStateToStore(storeAPI, reason, keystoreAdded) {
-    // Add keystore to the collection for external Wallets
-    if (keystoreAdded) {
-        await electronStoreCommonActions.addOptOutKeystore(keystoreAdded.string, keystoreAdded.name);
-    }    
-
     toast.warn(<SyncToastMessageWarning title="Vault Update Request" message="Password Needed -- Click Here" />, {
         position: "bottom-right",
         autoClose: false,
