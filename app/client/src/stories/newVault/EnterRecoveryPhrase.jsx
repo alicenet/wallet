@@ -105,7 +105,9 @@ function EnterRecoveryPhrase() {
                     <Container fluid className="flex flex-wrap gap-2 text-left max-h-24 overflow-y-auto overscroll-auto" style={{ minHeight: "72px" }}>
 
                         {parsedSeedPhrase.map((word, index) =>
-                            <Button key={`seed-phrase-btn-${index}`} color="blue" content={word} size="mini" />
+                            <span>
+                                <Button key={`seed-phrase-btn-${index}`} color="blue" content={word} size="mini" className="flex-grow-0" />
+                            </span>
                         )}
 
                     </Container>
