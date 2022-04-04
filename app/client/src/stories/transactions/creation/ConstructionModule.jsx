@@ -128,7 +128,7 @@ function ConstructionModule() {
                                         basic
                                         color="blue"
                                         content="How to construct a transaction"
-                                        className="m-0 w-52"
+                                        className="m-0"
                                     />
                                     
 
