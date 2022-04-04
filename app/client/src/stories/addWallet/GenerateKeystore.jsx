@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Container, Grid, Header, Message } from 'semantic-ui-react'
 import { useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
@@ -11,7 +11,7 @@ export default function GenerateKeystore() {
 
     const history = useHistory();
     const dispatch = useDispatch();
-    
+
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState(false);
     const [results, setResult] = useState(false);
@@ -27,10 +27,10 @@ export default function GenerateKeystore() {
             setResult(results);
             setSuccess(true);
         }
-    }
+    };
 
     useEffect(() => {
-        if(success){
+        if (success) {
             history.push("/hub", {
                 toLoad: results,
             })
@@ -64,13 +64,13 @@ export default function GenerateKeystore() {
 
                         {success && (
                             <div className="absolute -bottom-16 inset-center">
-                                <Message success content="Keystore loaded" size="mini"/>
+                                <Message success content="Keystore loaded" size="mini" />
                             </div>
                         )}
 
                         {error && (
                             <div className="absolute -bottom-16 inset-center">
-                                <Message error content={error} size="mini"/>
+                                <Message error content={error} size="mini" />
                             </div>
                         )}
 
