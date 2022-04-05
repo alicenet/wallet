@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Button, Container, Form, Grid, Header } from 'semantic-ui-react';
 import ForgottenVaultPasswordModal from './ForgottenVaultPasswordModal';
@@ -16,9 +16,9 @@ function UnlockExistingVault() {
 
     const history = useHistory();
     const dispatch = useDispatch();
-    const [loading, setLoading] = React.useState(false);
+    const [loading, setLoading] = useState(false);
 
-    const [showForgottenVaultPasswordModal, setShowForgottenVaultPasswordModal] = React.useState(false);
+    const [showForgottenVaultPasswordModal, setShowForgottenVaultPasswordModal] = useState(false);
 
     const [formState, formSetter, onSubmit] = useFormState([
         {
@@ -34,7 +34,7 @@ function UnlockExistingVault() {
     const { vaultLocked, vaultExists } = useSelector(state => ({ vaultLocked: state.vault.is_locked, vaultExists: state.vault.exists }));
 
     // Make sure vault is actually locked
-    React.useEffect(() => {
+    useEffect(() => {
         if (!vaultLocked && vaultExists) {
             history.push('/hub');
         }
@@ -45,11 +45,21 @@ function UnlockExistingVault() {
         dispatch(VAULT_ACTIONS.loadSecureHDVaultFromStorage(formState.password.value))
     }
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (formState.password.error) {
             setShowForgottenVaultPasswordModal(true);
         }
     }, [formState]);
+
+    const [passwordHint, setPasswordHint] = useState('');
+
+    useEffect(() => {
+        const checkForPasswordHint = async () => {
+            let passwordHint = await electronStoreCommonActions.readPasswordHint();
+            setPasswordHint(passwordHint);
+        }
+        checkForPasswordHint();
+    }, []);
 
     return (
         <Page>
@@ -90,6 +100,14 @@ function UnlockExistingVault() {
                             <ForgottenVaultPasswordModal incorrectPwEntered={showForgottenVaultPasswordModal}/>
 
                         </Form.Group>
+
+                        {passwordHint && 
+                            <div>
+                                <span className="font-bold text-gray-600">Password Hint:</span>
+                                <span className="text-gray-400 ml-2">
+                                    {passwordHint}
+                                </span>
+                            </div>}
 
                     </Form>
 
