@@ -93,7 +93,7 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
 
             <Modal.Header className="text-center">
 
-                <Header as="h4" color="purple">{`${isEditing ? 'Edit' : 'Add'} Data Store`}
+                <Header as="h4">{`${isEditing ? 'Edit' : 'Add'} Data Store`}
                     <Header.Subheader className="text-xs">Fee Per Data
                         Store: {fees.dataStoreFee} {utils.string.pluralStringCheck("MadByte", fees.dataStoreFee > 1)}</Header.Subheader>
                 </Header>
@@ -176,7 +176,7 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
 
             <Modal.Actions className="flex justify-between">
 
-                <Button color="orange" className="m-0" basic onClick={onClose} content="Close" />
+                <Button color="black" basic onClick={onClose} content="Close" />
 
                 <div className="flex flex-column justify-center items-center text-sm">
                     {error}
@@ -184,10 +184,8 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
 
                 <Button
                     icon={<Icon name='chart bar' />}
-                    className="m-0"
                     content={"Add Datastore for " + totalStoreCostLabel + " MadBytes"}
-                    basic
-                    color="teal"
+                    color="black"
                     onClick={() => onSubmit(handleSubmit)}
                 />
 

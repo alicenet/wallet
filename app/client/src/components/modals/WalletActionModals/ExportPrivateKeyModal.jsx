@@ -2,10 +2,9 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Button, Form, Header, Icon, Modal, Placeholder } from 'semantic-ui-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFormState } from 'hooks/_hooks';
-import { stringUtils } from 'util/_util';
+import utils, { stringUtils } from 'util/_util';
 import { MODAL_ACTIONS } from 'redux/actions/_actions';
 import { electronStoreCommonActions } from 'store/electronStoreHelper';
-import utils from 'util/_util';
 
 export default function ExportPrivateKeyModal() {
 
@@ -168,13 +167,12 @@ export default function ExportPrivateKeyModal() {
             <Modal.Actions>
 
                 <div className="flex justify-between">
-                    <Button size="small" color="orange" content="Close" onClick={closeModal} basic />
+                    <Button size="small" color="transparent" content="Close" onClick={closeModal} basic />
                     <Button
                         size="small"
                         content={formState.vaultPassword.error ? "Try Again" : "Show Key"}
                         disabled={visibleTime !== 0}
-                        color={formState.vaultPassword.error ? "red" : "purple"}
-                        basic
+                        color="teal"
                         onClick={submit}
                     />
                 </div>

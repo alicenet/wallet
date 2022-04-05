@@ -11,15 +11,15 @@ export default function AddWalletMenu() {
     const { vaultExists } = useSelector(state => ({ vaultExists: state.vault.exists }))
 
     let walletButtons = [
-        { content: "Generate Keystore", icon: "plus", onClick: () => history.push('/addWallet/generateKeystore') },
-        { content: "Import Keystore", icon: "download", onClick: () => history.push('/addWallet/importKeystore') },
-        { content: "Import Private Key", icon: "download", onClick: () => history.push('/addWallet/importPrivateKey') },
-        { content: "Go Back", icon: "arrow left", onClick: () => history.push('/hub'), color: "orange" },
+        { content: "Generate Keystore", icon: "plus", onClick: () => history.push('/addWallet/generateKeystore'), basic: false },
+        { content: "Import Keystore", icon: "download", onClick: () => history.push('/addWallet/importKeystore'), basic: false },
+        { content: "Import Private Key", icon: "download", onClick: () => history.push('/addWallet/importPrivateKey'), basic: false },
+        { content: "Go Back", icon: "arrow left", onClick: () => history.push('/hub'), color: "black", basic: true },
     ]
 
     if (vaultExists) {
         walletButtons.unshift(
-            { content: "Generate Wallet", icon: "plus", onClick: () => history.push('/addWallet/generate') }
+            { content: "Generate Wallet", icon: "plus", onClick: () => history.push('/addWallet/generate'), basic: false }
         )
     }
 
@@ -52,8 +52,8 @@ export default function AddWalletMenu() {
                                 walletButtons.map((walletButton, index) =>
                                     <Button
                                         labelPosition="left"
-                                        basic
-                                        color={walletButton.color || "purple"}
+                                        basic={walletButton.basic}
+                                        color={walletButton.color || "teal"}
                                         size="small"
                                         key={`wallet-button-${index}`}
                                         content={walletButton.content}

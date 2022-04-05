@@ -4,6 +4,9 @@ module.exports = {
     darkMode: false, // or 'media' or 'class'
     theme: {
         extend: {
+            colors: {
+                teal: '#099AAD'
+            },
             inset: {
                 '1/3': '33.333333%',
                 '1/8': '12.5%',

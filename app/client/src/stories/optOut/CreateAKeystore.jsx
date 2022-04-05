@@ -28,7 +28,7 @@ function CreateAKeystore() {
         // The load form will call this on success with keystore and used password
         // Set state for name check on this keystore.
         setKeystore([keystore, password]);
-    }
+    };
 
     const dispatchWalletUpdate = async () => {
 
@@ -44,7 +44,7 @@ function CreateAKeystore() {
             setLoadError(loaded.error);
         }
         history.push('/hub');
-    }
+    };
 
     return (
         <Page>

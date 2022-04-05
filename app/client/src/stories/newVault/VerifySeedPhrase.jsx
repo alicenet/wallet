@@ -122,16 +122,15 @@ function VerifyYourSeedPhrase() {
                     <Container className="flex justify-between">
 
                         <Button
-                            color="purple"
+                            color="black"
                             basic
                             content="Get New Seed Phrase"
                             onClick={() => history.push('/newVault/getNewSeedPhrase')}
                         />
 
                         <Button
-                            color={seedPhraseIsCorrect ? 'teal' : 'red'}
+                            color="teal"
                             disabled={!seedPhraseIsCorrect}
-                            basic className="m-0"
                             content={verifyPhraseButtonText}
                             onClick={() => history.push('/newVault/chooseEllipticCurve')}
                         />

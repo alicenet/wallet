@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useFormState } from 'hooks/_hooks';
 import { Checkbox, Form, Header, Icon, Message, Popup } from 'semantic-ui-react';
 
@@ -18,16 +18,16 @@ export default function LoadKeystoreForm({ submitText, submitFunction, cancelTex
         { name: 'walletName', display: "Wallet Name", type: 'string', isRequired: true, length: 4, value: "" }
     ]);
 
-    const [showPassword, setShowPassword] = React.useState(false);
-    const [keystore, setKeystore] = React.useState(false);
-    const [error, setError] = React.useState(false);
-    const [success, setSuccess] = React.useState(false);
-    const [loading, setLoading] = React.useState(false);
-    const [curveType, setCurveType] = React.useState(curveTypes.SECP256K1);
-    const toggleCurveType = () => setCurveType(s => s === curveTypes.SECP256K1 ? curveTypes.BARRETO_NAEHRIG : curveTypes.SECP256K1)
+    const [showPassword, setShowPassword] = useState(false);
+    const [keystore, setKeystore] = useState(false);
+    const [error, setError] = useState(false);
+    const [success, setSuccess] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [curveType, setCurveType] = useState(curveTypes.SECP256K1);
+    const toggleCurveType = () => setCurveType(s => s === curveTypes.SECP256K1 ? curveTypes.BARRETO_NAEHRIG : curveTypes.SECP256K1);
 
     // TODO CATCH KEYSTORE CURVE ON LOAD
-    React.useEffect(() => {
+    useEffect(() => {
 
         let parsed = JSON.parse(keystore);
 
@@ -38,7 +38,7 @@ export default function LoadKeystoreForm({ submitText, submitFunction, cancelTex
             setCurveType(curveTypes.SECP256K1); // Default to Secp256k1
         }
 
-    }, [keystore])
+    }, [keystore]);
 
     const fileChange = (e) => {
         let file = e.target.files[0];
@@ -49,7 +49,7 @@ export default function LoadKeystoreForm({ submitText, submitFunction, cancelTex
         reader.onload = () => {
             setKeystore(reader.result);
         };
-    }
+    };
 
     const loadKeystore = () => {
 
@@ -60,7 +60,7 @@ export default function LoadKeystoreForm({ submitText, submitFunction, cancelTex
 
         if (unlocked.error) {
             setSuccess(false);
-            setError(unlocked.error.message === "Key derivation failed - possibly wrong password" ? "Incorrect password" : unlocked.error.message)
+            setError(unlocked.error.message === "Key derivation failed - possibly wrong password" ? "Incorrect password" : unlocked.error.message);
             setLoading(false);
         }
         else {
@@ -70,7 +70,7 @@ export default function LoadKeystoreForm({ submitText, submitFunction, cancelTex
             return submitFunction({ locked: JSON.parse(ks), password: formState.password.value, walletName: formState.walletName.value, success: true, error: false, });
         }
 
-    }
+    };
 
     return (
 
@@ -100,7 +100,7 @@ export default function LoadKeystoreForm({ submitText, submitFunction, cancelTex
                                         size="mini"
                                         position="right center"
                                         offset={"0,2"}
-                                        trigger={<Icon name="question circle" className="ml-1 mb-1.5" style={{ marginRight: "-.035rem" }}/>}
+                                        trigger={<Icon name="question circle" className="ml-1 mb-1.5" style={{ marginRight: "-.035rem" }} />}
                                         content="Force the address generation by BN Curve. This will be detected if it is in the keystore"
                                     />
                                 </>
@@ -121,8 +121,9 @@ export default function LoadKeystoreForm({ submitText, submitFunction, cancelTex
                             position="right center"
                             offset={"4,2"}
                             className="transition-none"
-                            trigger={<Icon name="question circle" className="ml-1"/>}
-                            content="Password to unlock this keystore"/>
+                            trigger={<Icon name="question circle" className="ml-1" />}
+                            content="Password to unlock this keystore"
+                        />
                     </>
                 }
                 type={showPassword ? "string" : "password"} value={formState.password.value}
@@ -147,7 +148,7 @@ export default function LoadKeystoreForm({ submitText, submitFunction, cancelTex
                             size="mini"
                             position="right center"
                             offset={"4,2"}
-                            trigger={<Icon name="question circle" className="ml-1"/>}
+                            trigger={<Icon name="question circle" className="ml-1" />}
                             content="How this keystore will be referenced"
                         />
                     </>
@@ -161,11 +162,10 @@ export default function LoadKeystoreForm({ submitText, submitFunction, cancelTex
             <Form.Button
                 fluid
                 size="small"
-                basic
                 loading={loading}
                 className="mt-16"
                 onClick={() => onSubmit(loadKeystore)}
-                color={error ? "red" : "green"}
+                color="teal"
                 disabled={success}
                 content={error ? "Try Again" : success ? "Success" : submitText || "Add Wallet"}
                 icon={error ? "exclamation" : success ? "checkmark" : "plus"}
@@ -176,7 +176,7 @@ export default function LoadKeystoreForm({ submitText, submitFunction, cancelTex
                 size="small"
                 basic
                 icon={success ? "thumbs up" : "x"}
-                color={success ? "green" : "orange"}
+                color="transparent"
                 onClick={success ? e => e.preventDefault() : (e) => {
                     e.preventDefault();
                     cancelFunction()

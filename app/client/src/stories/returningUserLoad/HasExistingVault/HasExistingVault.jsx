@@ -7,8 +7,8 @@ import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFormState } from 'hooks/_hooks';
 
-import { VAULT_ACTIONS } from 'redux/actions/_actions'
-import { electronStoreCommonActions } from 'store/electronStoreHelper'
+import { VAULT_ACTIONS } from 'redux/actions/_actions';
+import { electronStoreCommonActions } from 'store/electronStoreHelper';
 
 import Page from 'layout/Page';
 
@@ -42,8 +42,8 @@ function UnlockExistingVault() {
 
     const handleFormSubmit = async () => {
         setLoading(true);
-        dispatch(VAULT_ACTIONS.loadSecureHDVaultFromStorage(formState.password.value))
-    }
+        dispatch(VAULT_ACTIONS.loadSecureHDVaultFromStorage(formState.password.value));
+    };
 
     React.useEffect(() => {
         if (formState.password.error) {
@@ -58,7 +58,7 @@ function UnlockExistingVault() {
 
                 <Grid.Column width={16} className="p-0 self-center">
 
-                    <Header content="Welcome Back" as="h3" className="m-0"/>
+                    <Header content="Welcome Back" as="h3" className="m-0" />
 
                 </Grid.Column>
 
@@ -87,7 +87,7 @@ function UnlockExistingVault() {
                                 }}
                             />
 
-                            <ForgottenVaultPasswordModal incorrectPwEntered={showForgottenVaultPasswordModal}/>
+                            <ForgottenVaultPasswordModal incorrectPwEntered={showForgottenVaultPasswordModal} />
 
                         </Form.Group>
 
@@ -99,7 +99,7 @@ function UnlockExistingVault() {
 
                     <Container className="flex justify-center">
 
-                        <Button loading={loading} color="teal" basic content='Unlock Vault' disabled={!formState.password.value} className="m-0" onClick={() => onSubmit(handleFormSubmit)}/>
+                        <Button loading={loading} color="teal" content="Unlock Vault" disabled={!formState.password.value} onClick={() => onSubmit(handleFormSubmit)} />
 
                     </Container>
 

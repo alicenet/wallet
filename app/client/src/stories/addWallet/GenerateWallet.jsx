@@ -103,24 +103,23 @@ export default function AddWalletMenu() {
 
                         <div className="flex flex-col gap-4 items-center">
                             <Button
-                                basic
-                                className="w-52"
                                 size="small"
+                                className="w-52"
                                 loading={loading}
                                 onClick={genWallet}
-                                color={walletAdded.error ? "red" : "green"}
+                                color="teal"
                                 disabled={!!walletAdded.value}
                                 content={walletAdded.error ? "Try Again" : !!walletAdded.value ? "Success" : "Add Wallet"}
                                 icon={walletAdded.error ? "exclamation" : !!walletAdded.value ? "checkmark" : "plus"}
                             />
                             <Button
                                 basic
+                                size="small"
                                 loading={!!walletAdded.value}
                                 content="Cancel"
                                 className="w-52"
-                                size="small"
                                 icon={!!walletAdded.value ? "thumbs up" : "x"}
-                                color={!!walletAdded.value ? "green" : "orange"}
+                                color="transparent"
                                 onClick={!!walletAdded.value ? null : history.goBack}
                             />
                         </div>

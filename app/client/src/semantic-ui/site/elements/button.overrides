@@ -1,3 +1,28 @@
 /*******************************
          Site Overrides
 *******************************/
+
+.ui.button {
+    border-radius: 0;
+    padding-top: 1em;
+    padding-bottom: 1em;
+    color: inherit;
+}
+
+.ui.transparent.button {
+    background-color: transparent;
+}
+
+.ui.basic.button {
+    border-radius: 0;
+    font-weight: 700;
+}
+
+.ui.buttons .disabled.button,
+.ui.disabled.button,
+.ui.button:disabled,
+.ui.disabled.button:hover,
+.ui.disabled.active.button {
+    background-color: #A8A8A8;
+    color: black;
+}

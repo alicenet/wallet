@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom';
 
 import { Button, Container, Grid, Header } from 'semantic-ui-react';
 
-import Page from '../../layout/Page';
+import Page from 'layout/Page';
 
 import DeterministicWalletGenerationModal from './DeterministicWalletGenerationModal';
 
@@ -47,18 +47,13 @@ function CreateVault() {
 
                     <Container className="flex flex-col justify-between gap-2">
 
-                        <Button color="purple" basic content="Get Seed Phrase" className="m-0"
-                            onClick={() => history.push('/newVault/getNewSeedPhrase')} />
-                        {/*}
-                        <Button color="teal" basic content="Use A Keystore" className="m-0"
-                                onClick={() => history.push('/optOut/disclaimer')}/> 
-                        {*/}
-                        <Button color="orange" basic content="Go Back" className="m-0"
-                            onClick={() => history.push('/')} />
+                        <Button color="teal" content="Get Seed Phrase" onClick={() => history.push('/newVault/getNewSeedPhrase')} />
+
+                        <Button color="black" basic content="Go Back" onClick={() => history.push('/')} />
 
                         <DeterministicWalletGenerationModal>
 
-                            <Button className="text-purple-500 text-sm bg-transparent">More Info On How Wallets Are Generated</Button>
+                            <Button color="transparent" className="text-sm text-black underline">More Info On How Wallets Are Generated</Button>
 
                         </DeterministicWalletGenerationModal>
 

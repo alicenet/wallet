@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef, useState } from 'react'
 import { useFormState } from 'hooks/_hooks';
 import { Button, Checkbox, Form, Header, Icon, Popup } from 'semantic-ui-react';
 import utils from 'util/_util.js';
@@ -29,12 +29,12 @@ export default function GenerateKeystoreForm(
         { name: 'verifiedPassword', display: 'Verify Password', type: 'verified-password', isRequired: true },
         { name: 'walletName', type: 'string', isRequired: true },
     ]);
-    const [showPassword, setShowPassword] = React.useState(false);
-    const [keystoreDL, setKeystoreDL] = React.useState(false);
-    const [curveType, setCurveType] = React.useState(curveTypes.SECP256K1);
+    const [showPassword, setShowPassword] = useState(false);
+    const [keystoreDL, setKeystoreDL] = useState(false);
+    const [curveType, setCurveType] = useState(curveTypes.SECP256K1);
     const toggleCurveType = () => setCurveType(s => (s === curveTypes.SECP256K1 ? curveTypes.BARRETO_NAEHRIG : curveTypes.SECP256K1));
 
-    const downloadRef = React.useRef();
+    const downloadRef = useRef();
 
     const loadKeystore = () => {
         let fr = new FileReader();
@@ -45,7 +45,7 @@ export default function GenerateKeystoreForm(
                 submitFunction(ksJSON, formState.password.value, formState.walletName.value);
             }
         }
-    }
+    };
 
     const generateWallet = async () => {
         let newStoreBlob = await utils.wallet.generateKeystore(true, formState.password.value, curveType);
@@ -54,14 +54,14 @@ export default function GenerateKeystoreForm(
             data: newStoreBlob
         });
         downloadRef.current.href = URL.createObjectURL(newStoreBlob);
-    }
+    };
 
     const setFilename = async () => {
         setKeystoreDL(s => ({
             filename: "a",
             ...s
         }));
-    }
+    };
 
     ////////////////////
     // Inline Version // -- Deprecated -- DEBUG Menu only
@@ -73,24 +73,24 @@ export default function GenerateKeystoreForm(
                 {!hideTitle && <Header as="h4">{customTitle}</Header>}
 
                 <Form.Input
-                        label={
-                            <>
-                                <label className="inline text-left">Wallet Name</label>
-                                <Popup
-                                    size="mini"
-                                    position="right center"
-                                    offset={"4,2"}
-                                    trigger={
-                                        <Icon name="question circle" className="ml-1" />
-                                    }
-                                    content="How this wallet will be referenced"
-                                />
-                            </>
-                        }
-                        type="text" value={formState.walletName.value}
-                        onChange={e => formSetter.setWalletName(e.target.value)}
-                        error={!!formState.walletName.error && { content: formState.walletName.error }}
-                    />
+                    label={
+                        <>
+                            <label className="inline text-left">Wallet Name</label>
+                            <Popup
+                                size="mini"
+                                position="right center"
+                                offset={"4,2"}
+                                trigger={
+                                    <Icon name="question circle" className="ml-1" />
+                                }
+                                content="How this wallet will be referenced"
+                            />
+                        </>
+                    }
+                    type="text" value={formState.walletName.value}
+                    onChange={e => formSetter.setWalletName(e.target.value)}
+                    error={!!formState.walletName.error && { content: formState.walletName.error }}
+                />
 
                 <Form.Group widths="equal">
 
@@ -122,17 +122,16 @@ export default function GenerateKeystoreForm(
                                     content="Download"
                                     icon="download"
                                     size="mini"
-                                    color="purple"
-                                    basic ref={downloadRef}
+                                    color="teal"
+                                    ref={downloadRef}
                                     href={keystoreDL ? URL.createObjectURL(keystoreDL.data) : ""} download={keystoreDL.filename}
                                 />
-                                <Button.Or text="or"/>
+                                <Button.Or text="or" />
                                 <Button
                                     content="Load"
                                     icon="arrow alternate circle right"
                                     labelPosition="right"
-                                    color="green"
-                                    basic
+                                    color="teal"
                                     onClick={loadKeystore}
                                 />
                             </Button.Group>
@@ -169,7 +168,8 @@ export default function GenerateKeystoreForm(
                         />
                     </>
                 }
-                type="text" value={formState.walletName.value}
+                type="text"
+                value={formState.walletName.value}
                 onChange={e => formSetter.setWalletName(e.target.value)}
                 error={!!formState.walletName.error && { content: formState.walletName.error }}
             />
@@ -177,8 +177,9 @@ export default function GenerateKeystoreForm(
             <Form.Input
                 size="small"
                 label="Keystore Password"
-                icon={<Icon name={showPassword ? "eye" : "eye slash"} onClick={() => setShowPassword(s => !s)} link/>}
-                type={showPassword ? "string" : "password"} value={formState.password.value}
+                icon={<Icon name={showPassword ? "eye" : "eye slash"} onClick={() => setShowPassword(s => !s)} link />}
+                type={showPassword ? "string" : "password"}
+                value={formState.password.value}
                 onChange={e => formSetter.setPassword(e.target.value)}
                 error={!!formState.password.error && { content: formState.password.error }}
             />
@@ -198,7 +199,7 @@ export default function GenerateKeystoreForm(
                                         size="mini"
                                         position="right center"
                                         offset={"0,2"}
-                                        trigger={<Icon name="question circle" className="ml-1 mb-1.5" style={{ marginRight: "-.035rem" }}/>}
+                                        trigger={<Icon name="question circle" className="ml-1 mb-1.5" style={{ marginRight: "-.035rem" }} />}
                                         content="Force the address generation by BN Curve. This will be detected if it is in the keystore"
                                     />
                                 </>
@@ -228,8 +229,8 @@ export default function GenerateKeystoreForm(
                 }}
             />
 
-            <Form.Button fluid size="small" disabled={!keystoreDL} color="green" basic content={submitText} onClick={loadKeystore} icon="thumbs up"/>
-            <Form.Button fluid size="small" basic content={cancelText} color="orange" onClick={cancelFunction} icon="x"/>
+            <Form.Button fluid size="small" disabled={!keystoreDL} color="teal" content={submitText} onClick={loadKeystore} icon="thumbs up" />
+            <Form.Button fluid size="small" basic content={cancelText} color="transparent" onClick={cancelFunction} icon="x" />
 
         </Form>
 

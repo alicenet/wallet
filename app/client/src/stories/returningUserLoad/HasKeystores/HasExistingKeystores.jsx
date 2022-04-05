@@ -197,13 +197,13 @@ function HasExistingKeystores() {
 
                         <Button.Group>
 
-                            <Button color="orange" basic content="Go Back" onClick={goBackStore} disabled={activeKeystore === 0} />
+                            <Button color="black" content="Go Back" onClick={goBackStore} disabled={activeKeystore === 0} />
                             <Button.Or className="w-0 self-center text-sm" />
-                            <Button color="orange" basic content="Skip Store" onClick={skipStore} />
+                            <Button color="black" content="Skip Store" onClick={skipStore} />
 
                         </Button.Group>
 
-                        <Button color="teal" basic content="Unlock Store" disabled={!formState.password.value} onClick={() => onSubmit(handleFormSubmit)} />
+                        <Button color="teal" content="Unlock Store" disabled={!formState.password.value} onClick={() => onSubmit(handleFormSubmit)} />
 
                     </Container>
 
