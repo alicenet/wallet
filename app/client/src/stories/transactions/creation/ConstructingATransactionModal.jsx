@@ -1,13 +1,12 @@
 import React, { useEffect } from 'react';
 import { Button, Container, Header, Modal } from 'semantic-ui-react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { CONFIG_ACTIONS } from 'redux/actions/_actions';
-import { useSelector } from 'react-redux';
 
 function ConstructingATransactionModal({ children }) {
 
     const dispatch = useDispatch();
-    const [openModal, setOpenModal] = React.useState(false)
+    const [openModal, setOpenModal] = React.useState(false);
 
     const { hasSeenTxHelpModal } = useSelector(state => ({
         hasSeenTxHelpModal: state.config.has_seen_tx_help_modal
@@ -17,13 +16,12 @@ function ConstructingATransactionModal({ children }) {
         dispatch(CONFIG_ACTIONS.saveConfigurationValues({
             hasSeenTxHelpModal: true,
         }));
-        setOpenModal(false)
-    }
+        setOpenModal(false);
+    };
 
     useEffect(() => {
-        hasSeenTxHelpModal ? setOpenModal(false) : setOpenModal(true)
-    }, [hasSeenTxHelpModal])
-
+        hasSeenTxHelpModal ? setOpenModal(false) : setOpenModal(true);
+    }, [hasSeenTxHelpModal]);
 
     return (
         <Modal
@@ -48,14 +46,14 @@ function ConstructingATransactionModal({ children }) {
 
                         <p><strong>Value stores</strong> will be used to transfer MadBytes from one address to another.</p>
 
-                        <p> <strong>Data stores</strong> are used to store a key
+                        <p><strong>Data stores</strong> are used to store a key
                             and value on MadNet for up until the purchased-to epoch.</p>
 
                         <p>You can also cancel a <strong>data store</strong> early and receive a refund for any unused duration.</p>
 
                     </Container>
 
-                    <Button color="purple" onClick={handleCloseModal} content="Got it!" />
+                    <Button color="teal" onClick={handleCloseModal} content="Got it!" />
 
                 </Modal.Description>
 

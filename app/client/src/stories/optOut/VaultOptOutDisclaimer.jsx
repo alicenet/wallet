@@ -19,7 +19,7 @@ function VaultOptOutDisclaimer() {
 
                 <Grid.Column width={16} className="p-0 self-center">
 
-                    <Header content="Vault Opt Out" as="h3" className="m-0"/>
+                    <Header content="Vault Opt Out" as="h3" className="m-0" />
 
                 </Grid.Column>
 
@@ -54,7 +54,7 @@ function VaultOptOutDisclaimer() {
 
                         <div>
 
-                            <Button color="orange" basic content="Go Back" className="m-0" onClick={history.goBack}/>
+                            <Button color="black" basic content="Go Back" onClick={history.goBack} />
 
                         </div>
 
@@ -62,16 +62,19 @@ function VaultOptOutDisclaimer() {
 
                             <Button.Group>
 
-                                <Button color="purple" basic disabled={!isChecked} content="New" className="m-0" onClick={() => history.push('/optOut/createKeystore')}/>
+                                <Button color="teal" disabled={!isChecked} content="New" onClick={() => history.push('/optOut/createKeystore')} />
 
-                                <Button.Or className="w-0 self-center text-sm"/>
+                                <Button.Or className="w-0 self-center text-sm" />
 
-                                <Button color="purple" basic disabled={!isChecked} content="Existing" className="m-0" onClick={() => history.push('/optOut/useExistingKeystore')}/>
+                                <Button color="teal" disabled={!isChecked} content="Existing" onClick={() => history.push('/optOut/useExistingKeystore')} />
 
                             </Button.Group>
 
-                            <Checkbox onChange={() => setIsChecked(prevState => !prevState)} checked={isChecked}
-                                      label={<label className="text-sm">I Understand and wish to opt out of vault storage</label>}/>
+                            <Checkbox
+                                onChange={() => setIsChecked(prevState => !prevState)}
+                                checked={isChecked}
+                                label={<label className="text-sm">I Understand and wish to opt out of vault storage</label>}
+                            />
 
                         </div>
 

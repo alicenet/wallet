@@ -49,7 +49,7 @@ function ConstructionModule() {
             }
         })
         return total;
-    }, [list])
+    }, [list]);
 
     const handlePaginationChange = (direction) => {
         if (direction === "back") {
@@ -62,7 +62,7 @@ function ConstructionModule() {
                 setActivePage(state => state + 1);
             }
         }
-    }
+    };
 
     const handleSendTransaction = async () => {
         // Send the TX via the main tx action -- Just fire it off, latest TX will appear in transaction reducer as lastSentAndMinedTx
@@ -124,13 +124,7 @@ function ConstructionModule() {
 
                                 <Container>
 
-                                    <Button
-                                        basic
-                                        color="blue"
-                                        content="How to construct a transaction"
-                                        className="m-0"
-                                    />
-                                    
+                                    <Button basic color="black" content="How to construct a transaction" />
 
                                 </Container>
 
@@ -240,39 +234,42 @@ function ConstructionModule() {
 
                     {valueStore && <AddEditValueStoreModal valueStore={valueStore} onClose={() => setValueStore(null)} />}
 
-                    <Grid.Row columns={3}>
+                    <Grid.Row>
 
-                        <Grid.Column className="p-0 flex flex-col justify-between">
+                        <Grid columns={3} padded className="p-0">
 
-                            <ChangeReturnAddress />
+                            <Grid.Column className="p-0 flex flex-col justify-between">
 
-                        </Grid.Column>
+                                <ChangeReturnAddress />
 
-                        <Grid.Column className="p-0 flex flex-col justify-end items-start">
-                            {fees.errors.map((err, index) => <Message key={`error-msg-${index}`} size="mini" error content={err} />)}
-                        </Grid.Column>
+                            </Grid.Column>
 
-                        <Grid.Column className="p-0 flex flex-col justify-between gap-2">
+                            <Grid.Column className="py-0 flex flex-col justify-start items-center">
+                                {fees.errors.map((err, index) => <Message key={`error-msg-${index}`} size="mini" error content={err} />)}
+                            </Grid.Column>
 
-                            <Container className="flex flex-col gap-1">
+                            <Grid.Column className="p-0 flex flex-col justify-between gap-2">
 
-                                <TxFeesDisplay tooltipText="The minimum + prioritization + changeout(+1)" feesLabel="Tx Fee" feesAmount={fees.txFee} />
-                                <TxFeesDisplay tooltipText="The sum of the cost of each store and deposits" feesLabel="Store Fees"
-                                               feesAmount={fees.dataStoreFees + fees.valueStoreFees} />
-                                <TxFeesDisplay tooltipText="The sum of any value moved" feesLabel="Value" feesAmount={valueStoreTotal} />
-                                <TxFeesDisplay tooltipText="The total TX Cost" feesLabel="Total Cost" feesAmount={fees.totalFee + valueStoreTotal} />
+                                <Container className="flex flex-col gap-1">
 
-                            </Container>
+                                    <TxFeesDisplay tooltipText="The minimum + prioritization + changeout(+1)" feesLabel="Tx Fee" feesAmount={fees.txFee} />
+                                    <TxFeesDisplay tooltipText="The sum of the cost of each store and deposits" feesLabel="Store Fees"
+                                                   feesAmount={fees.dataStoreFees + fees.valueStoreFees} />
+                                    <TxFeesDisplay tooltipText="The sum of any value moved" feesLabel="Value" feesAmount={valueStoreTotal} />
+                                    <TxFeesDisplay tooltipText="The total TX Cost" feesLabel="Total Cost" feesAmount={fees.totalFee + valueStoreTotal} />
 
-                            <Button
-                                color={fees.errors?.length > 0 ? "red" : "teal"}
-                                content="Send Transaction"
-                                disabled={isEmpty(list) || fees.errors?.length > 0 || ( fees.totalFee + valueStoreTotal <= fees.txFee ) }
-                                onClick={handleSendTransaction}
-                                className="m-0"
-                            />
+                                </Container>
 
-                        </Grid.Column>
+                                <Button
+                                    color="teal"
+                                    content="Send Transaction"
+                                    disabled={isEmpty(list) || fees.errors?.length > 0 || (fees.totalFee + valueStoreTotal <= fees.txFee)}
+                                    onClick={handleSendTransaction}
+                                />
+
+                            </Grid.Column>
+
+                        </Grid>
 
                     </Grid.Row>
 

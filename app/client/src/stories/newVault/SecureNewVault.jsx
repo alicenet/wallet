@@ -28,7 +28,7 @@ function SecureNewVault() {
     const handleFormSubmit = () => {
         dispatch(VAULT_ACTIONS.generateNewSecureHDVault(seedPhrase, formState.password.value, desiredCurve, formState.hint.value ))
         history.push("/hub");
-    }
+    };
 
     return (
         <Page>
@@ -37,7 +37,7 @@ function SecureNewVault() {
 
                 <Grid.Column width={16} className="p-0 self-center">
 
-                    <Header content="Vault and First Wallet Generated" as="h3" className="m-0"/>
+                    <Header content="Vault and First Wallet Generated" as="h3" className="m-0" />
 
                 </Grid.Column>
 
@@ -105,20 +105,26 @@ function SecureNewVault() {
                 </Grid.Column>
 
                 <Grid.Column width={12} className="p-0 self-center">
-                    
-                    <Message icon='warning' header='The vault password and recovery phrase are very important.' content='Keep the recovery seed in a safe place so you can recover you wallets if necessary.' warning />
-    
+
+                    <Message
+                        icon="warning"
+                        header="The vault password and recovery phrase are very important."
+                        content="Keep the recovery seed in a safe place so you can recover you wallets if necessary."
+                        warning
+                    />
+
                 </Grid.Column>
 
                 <Grid.Column width={12} className="p-0 self-center">
 
                     <Container className="flex justify-between">
 
-                        <Button color="red" basic content="Cancel Vault Creation" className="m-0" onClick={() => history.push('/')}/>
+                        <Button color="black" basic content="Cancel Vault Creation" onClick={() => history.push('/')} />
 
-                        <Button color="teal" basic content='Secure My Wallets' className="m-0" onClick={() => onSubmit(handleFormSubmit)}/>
+                        <Button color="teal" content="Secure My Wallets" onClick={() => onSubmit(handleFormSubmit)} />
 
                     </Container>
+
                 </Grid.Column>
 
             </Grid>

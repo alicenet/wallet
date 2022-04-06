@@ -45,12 +45,12 @@ function EnterRecoveryPhrase() {
 
     const handlePhraseChange = phrase => {
         setSeedPhrase((toLower(phrase).match(/[a-z ]/g) || []).join(''));
-    }
+    };
 
     const phraseEntered = () => {
         dispatch(USER_ACTIONS.setExistingMnemonic(parsedSeedPhrase));
         history.push('/newVault/chooseRecoveryEllipticCurve');
-    }
+    };
 
     return (
         <Page>
@@ -59,13 +59,13 @@ function EnterRecoveryPhrase() {
 
                 <Grid.Column width={16} className="p-0 self-center">
 
-                    <Header content="Use A Recovery Phrase" as="h3" className="m-0"/>
+                    <Header content="Use A Recovery Phrase" as="h3" className="m-0" />
 
                 </Grid.Column>
 
                 <Grid.Column width={16} className="p-0 self-center">
 
-                    <p>Enter a seed and select deterministic wallets to import from that seed.<br/>
+                    <p>Enter a seed and select deterministic wallets to import from that seed.<br />
                         These accounts will be added to your current wallet vault.</p>
 
                 </Grid.Column>
@@ -84,8 +84,13 @@ function EnterRecoveryPhrase() {
 
                             <Label attached='top'>Seed Phrase</Label>
 
-                            <TextArea ref={input => input && input.focus()} rows={3} value={seedPhrase} onChange={e => handlePhraseChange(e.target.value)}
-                                      className="border-0 hover:border-gray-500 focus:border-gray-500 focus:outline-none w-full p-3 resize-none"/>
+                            <TextArea
+                                ref={input => input && input.focus()}
+                                rows={3}
+                                value={seedPhrase}
+                                onChange={e => handlePhraseChange(e.target.value)}
+                                className="border-0 hover:border-gray-500 focus:border-gray-500 focus:outline-none w-full p-3 resize-none"
+                            />
 
                         </Segment>
 
@@ -97,16 +102,12 @@ function EnterRecoveryPhrase() {
 
                 <Grid.Column width={12} className="p-0 self-center">
 
-                    <Container fluid className="flex-wrap text-left max-h-24 overflow-y-auto overscroll-auto" style={{ minHeight: "72px" }}>
+                    <Container fluid className="flex flex-wrap gap-2 text-left max-h-24 overflow-y-auto overscroll-auto" style={{ minHeight: "72px" }}>
 
                         {parsedSeedPhrase.map((word, index) =>
-                            <Button
-                                key={`seed-phrase-btn-${index}`}
-                                className="mx-2 my-1"
-                                color="blue"
-                                content={word}
-                                size="mini"
-                            />
+                            <span>
+                                <Button key={`seed-phrase-btn-${index}`} color="blue" content={word} size="mini" className="flex-grow-0" />
+                            </span>
                         )}
 
                     </Container>
@@ -117,12 +118,9 @@ function EnterRecoveryPhrase() {
 
                     <Container className="flex justify-between">
 
-                        <Button color="orange" basic className="m-0" content="Go Back" onClick={history.goBack}/>
+                        <Button color="black" basic content="Go Back" onClick={history.goBack} />
 
-                        <Button color={seedPhraseIsCorrect ? 'teal' : 'red'} disabled={!seedPhraseIsCorrect}
-                                basic className="m-0"
-                                content={verifyPhraseButtonText}
-                                onClick={phraseEntered}/>
+                        <Button color="teal" disabled={!seedPhraseIsCorrect} content={verifyPhraseButtonText} onClick={phraseEntered} />
 
                     </Container>
 

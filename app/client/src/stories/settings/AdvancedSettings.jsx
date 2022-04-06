@@ -128,13 +128,7 @@ function AdvancedSettings() {
 
                         <div>
 
-                            <Button
-                                color="orange"
-                                basic
-                                content="Go Back"
-                                className="m-0"
-                                onClick={history.goBack}
-                            />
+                            <Button color="black" basic content="Go Back" onClick={history.goBack} />
 
                         </div>
 
@@ -144,11 +138,9 @@ function AdvancedSettings() {
 
                                 <Button
                                     disabled={loading}
-                                    color="purple"
+                                    color="teal"
                                     icon="save"
-                                    basic
                                     content="Save"
-                                    className="m-0"
                                     onClick={() => onSubmit(handleSubmit)}
                                 />
 
@@ -156,11 +148,9 @@ function AdvancedSettings() {
 
                                 <Button
                                     disabled={loading}
-                                    color="purple"
+                                    color="teal"
                                     icon="undo alternate"
-                                    basic
                                     content="Load Defaults"
-                                    className="m-0"
                                     onClick={handleLoadDefaultValues}
                                 />
 

@@ -25,17 +25,17 @@ export default function ImportPrivateKeyForm({ submitText, submitFunction, cance
     const [success] = useState(false);
     const [loading, setLoading] = useState(false);
     const [curveType, setCurveType] = useState(curveTypes.SECP256K1);
-    const toggleCurveType = () => setCurveType(s => s === curveTypes.SECP256K1 ? curveTypes.BARRETO_NAEHRIG : curveTypes.SECP256K1)
+    const toggleCurveType = () => setCurveType(s => s === curveTypes.SECP256K1 ? curveTypes.BARRETO_NAEHRIG : curveTypes.SECP256K1);
 
     const submit = () => {
-        onSubmit( async () => {
+        onSubmit(async () => {
             setLoading(true);
             await utils.generic.waitFor(0); // Frees thread long enough for loader ui render to propagate. 
             // The next function eventually calls a low nested synchronously blocking loop that prevents the render, this await will allow it to catch.
             // It is known this is wonky, and we all hate it, but many calls in the dependency chain have yet to be promisified
             verifyPrivKey();
         });
-    }
+    };
 
     const verifyPrivKey = async () => {
         try {
@@ -47,7 +47,7 @@ export default function ImportPrivateKeyForm({ submitText, submitFunction, cance
             setLoading(false);
             setError(ex.message);
         }
-    }
+    };
 
     useEffect(() => {
         if (ks) {
@@ -59,7 +59,8 @@ export default function ImportPrivateKeyForm({ submitText, submitFunction, cance
                     success: true,
                     error: false,
                 });
-            } else {
+            }
+            else {
                 setLoading(false);
             }
         }
@@ -125,11 +126,10 @@ export default function ImportPrivateKeyForm({ submitText, submitFunction, cance
             <Form.Button
                 fluid
                 size="small"
-                basic
                 loading={loading}
                 className="mt-16"
                 onClick={submit}
-                color={error ? "red" : "green"}
+                color="teal"
                 disabled={success}
                 content={error ? "Try Again" : success ? "Success" : submitText || "Add Wallet"}
                 icon={error ? "exclamation" : success ? "checkmark" : "plus"}
@@ -141,7 +141,7 @@ export default function ImportPrivateKeyForm({ submitText, submitFunction, cance
                 basic
                 loading={loading}
                 icon={success ? "thumbs up" : "x"}
-                color={success ? "green" : "orange"}
+                color="transparent"
                 onClick={success ? e => e.preventDefault() : (e) => {
                     e.preventDefault();
                     cancelFunction();

@@ -161,15 +161,15 @@ export default function ExportKeystoreModal() {
 
                 <div className="flex justify-between">
 
-                    <Button size="small" color="orange" content="Close" onClick={closeModal} basic />
+                    <Button size="small" color="transparent" content="Close" onClick={closeModal} basic />
 
                     <Button
                         size="small"
                         ref={downloadRef}
                         href={keystoreDL ? URL.createObjectURL(keystoreDL.data) : ""} download={keystoreDL.filename}
                         content={(!optout && formState.vaultPassword.error) || formState.keystorePassword.error ? "Try Again" : keystoreDL ? "Download Keystore" : "Create Keystore"}
-                        color={(!optout && formState.vaultPassword.error) || formState.keystorePassword.error ? "red" : keystoreDL ? "green" : "purple"}
-                        basic onClick={keystoreDL ? closeModal : submit}
+                        color="teal"
+                        onClick={keystoreDL ? closeModal : submit}
                     />
 
                 </div>

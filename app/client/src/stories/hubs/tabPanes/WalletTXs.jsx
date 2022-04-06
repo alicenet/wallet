@@ -9,7 +9,7 @@ import utils, { stringUtils } from 'util/_util';
 import { toast } from 'react-toastify';
 import { SyncToastMessageSuccess } from 'components/customToasts/CustomToasts'
 
-export default function RecentTxs({ wallet }) {
+export default function WalletTXs({ wallet }) {
 
     const history = useHistory();
     const dispatch = useDispatch();

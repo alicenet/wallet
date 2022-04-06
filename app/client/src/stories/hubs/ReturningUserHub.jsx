@@ -6,7 +6,7 @@ import { Button, Container, Divider, Grid, Header, Loader, Menu } from 'semantic
 
 import Page from 'layout/Page';
 import { classNames } from 'util/generic';
-import { Datastores, FetchTxs, Overview, RecentTxs } from './tabPanes/_tabPanes';
+import { Datastores, SearchTXs, Overview, WalletTXs } from './tabPanes/_tabPanes';
 import { WalletHubContext } from 'context/WalletHubContext';
 
 export default function Hub() {
@@ -41,16 +41,16 @@ export default function Hub() {
             render: () => <Overview wallet={selectedWallet} />,
         },
         {
-            name: 'Recent Txs',
-            render: () => <RecentTxs wallet={selectedWallet} />,
-        },
-        {
             name: 'Datastores',
             render: () => <Datastores wallet={selectedWallet} />,
         },
         {
-            name: 'Lookup Tx',
-            render: () => <FetchTxs wallet={selectedWallet} />,
+            name: `Wallet txs`,
+            render: () => <WalletTXs wallet={selectedWallet} />,
+        },
+        {
+            name: 'Search txs',
+            render: () => <SearchTXs wallet={selectedWallet} />,
         },
     ];
 
@@ -78,12 +78,11 @@ export default function Hub() {
                                 {wallets.map((wallet, index) =>
                                     <Button
                                         key={wallet.address}
-                                        color="purple"
-                                        content={openDrawer ? wallet.name : index + 1}
-                                        className={classNames("flex-shrink-0 m-0 p-2 bg-purple-900 hover:bg-blue-800 rounded-sm",
-                                            { "text-xs": !openDrawer }, { "text-sm": openDrawer })}
+                                        color="teal"
+                                        content={openDrawer ? wallet.name : wallet.name.substring(0, 2)}
+                                        className={classNames("flex-shrink-0 m-0 p-2 rounded-sm",
+                                            { "text-xs uppercase": !openDrawer }, { "text-sm": openDrawer })}
                                         style={{ minWidth: "28px" }}
-                                        disabled={selectedWallet && wallet.address === selectedWallet.address}
                                         basic={selectedWallet && wallet.address !== selectedWallet.address}
                                         onClick={() => setSelectedWallet(wallet)}
                                         size="mini"

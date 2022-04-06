@@ -1,14 +1,13 @@
 import React from 'react';
-import { Button, Input, Segment, Table, Icon, Message } from 'semantic-ui-react';
+import { Button, Icon, Input, Message, Segment, Table } from 'semantic-ui-react';
 import madNetAdapter from 'adapters/madAdapter';
 import Web3 from 'web3';
 import utils, { stringUtils } from 'util/_util';
 import { useHistory } from 'react-router';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { TRANSACTION_ACTIONS } from 'redux/actions/_actions';
-import { useDispatch } from 'react-redux';
 
-export default function FetchTxs() {
+export default function SearchTXs() {
 
     const history = useHistory();
     const dispatch = useDispatch();
@@ -16,32 +15,32 @@ export default function FetchTxs() {
     const [hashFetchLoading, setHashFetchFetchLoading] = React.useState(false);
 
     const [txHashVal, setTxHashVal] = React.useState({ value: "", error: "" });
-    const updateTxHashVal = (val) => setTxHashVal(s => ({ ...s, value: val }))
-    const updateTxHashErr = (err) => setTxHashVal(s => ({ ...s, error: err }))
+    const updateTxHashVal = (val) => setTxHashVal(s => ({ ...s, value: val }));
+    const updateTxHashErr = (err) => setTxHashVal(s => ({ ...s, error: err }));
 
-    const { polledTxs } = useSelector(s => ({ polledTxs: s.transaction.polledTxs }))
+    const { polledTxs } = useSelector(s => ({ polledTxs: s.transaction.polledTxs }));
     const polledTxData = utils.transaction.parseArrayOfTxObjs(polledTxs);
 
     const inspectTx = (tx) => {
         history.push('/inspectTx', {
             tx: tx,
         })
-    }
+    };
 
     const viewTxHash = async () => {
         if (!txHashVal.value) {
-            return updateTxHashErr("Tx Hash Required!")
+            return updateTxHashErr("Tx Hash Required!");
         }
         if (!stringUtils.isTxHash(txHashVal.value)) {
-            return updateTxHashErr("Not a valid hash!")
+            return updateTxHashErr("Not a valid hash!");
         }
         updateTxHashErr("");
-        setHashFetchFetchLoading(true)
+        setHashFetchFetchLoading(true);
         let res;
-        res = await madNetAdapter.viewTransaction(txHashVal.value)
+        res = await madNetAdapter.viewTransaction(txHashVal.value);
         setHashFetchFetchLoading(false);
         if (res.error) {
-            return updateTxHashErr(res.error.message)
+            return updateTxHashErr(res.error.message);
         }
         dispatch(TRANSACTION_ACTIONS.addPolledTx(res.tx));
         updateTxHashVal("");
@@ -49,7 +48,7 @@ export default function FetchTxs() {
 
     const getTxTable = () => {
 
-        let rows = activeSlice.map((tx, i) => {
+        let rows = activeSlice.map((tx) => {
 
             let txData = polledTxData[tx["Tx"]["Vin"][0]["TXInLinker"].TxHash];
             let tVal = Web3.utils.toBN("0x00"); // Total value of any value stores in the tx
@@ -60,23 +59,25 @@ export default function FetchTxs() {
                     let vStore = vout["ValueStore"];
                     tVal = tVal.add(Web3.utils.toBN("0x" + vStore["VSPreImage"].Value))
                 }
-            })
+            });
 
-            return (<Table.Row className="">
-                <Table.Cell className="cursor-pointer hover:bg-gray-100" onClick={() => utils.generic.copyToClipboard(tx["Tx"]["Vin"][0]["TXInLinker"].TxHash)}>
-                    {stringUtils.splitStringWithEllipsis(tx["Tx"]["Vin"][0]["TXInLinker"].TxHash, "10")}
-                </Table.Cell>
-                <Table.Cell>{tx["Tx"]["Vin"].length}</Table.Cell>
-                <Table.Cell>{tx["Tx"]["Vout"].length}</Table.Cell>
-                <Table.Cell>{tVal.toString()}</Table.Cell>
-                <Table.Cell>{txData.valueStoreCount}</Table.Cell>
-                <Table.Cell>{txData.dataStoreCount}</Table.Cell>
-                <Table.Cell textAlign="center" className="cursor-pointer hover:bg-gray-100" disabled={hashFetchLoading}
-                    onClick={() => inspectTx(tx.Tx)}>
-                    <Icon name="search" />
-                </Table.Cell>
-            </Table.Row>)
-        })
+            return (
+                <Table.Row className="">
+                    <Table.Cell className="cursor-pointer hover:bg-gray-100" onClick={() => utils.generic.copyToClipboard(tx["Tx"]["Vin"][0]["TXInLinker"].TxHash)}>
+                        {stringUtils.splitStringWithEllipsis(tx["Tx"]["Vin"][0]["TXInLinker"].TxHash, "10")}
+                    </Table.Cell>
+                    <Table.Cell>{tx["Tx"]["Vin"].length}</Table.Cell>
+                    <Table.Cell>{tx["Tx"]["Vout"].length}</Table.Cell>
+                    <Table.Cell>{tVal.toString()}</Table.Cell>
+                    <Table.Cell>{txData.valueStoreCount}</Table.Cell>
+                    <Table.Cell>{txData.dataStoreCount}</Table.Cell>
+                    <Table.Cell textAlign="center" className="cursor-pointer hover:bg-gray-100" disabled={hashFetchLoading}
+                                onClick={() => inspectTx(tx.Tx)}>
+                        <Icon name="search" />
+                    </Table.Cell>
+                </Table.Row>
+            )
+        });
 
         return (
             <Table basic celled compact className="text-xs">
@@ -95,9 +96,8 @@ export default function FetchTxs() {
                     {rows}
                 </Table.Body>
             </Table>
-        )
-
-    }
+        );
+    };
 
     // Pagination Logic
     const txPerPage = 12;
@@ -106,7 +106,7 @@ export default function FetchTxs() {
     const pageForward = () => setPage(s => s + 1);
     const pageBackward = () => setPage(s => s - 1);
 
-    const activeSlice = polledTxs.slice(activePage * txPerPage, (activePage * txPerPage) + txPerPage)
+    const activeSlice = polledTxs.slice(activePage * txPerPage, (activePage * txPerPage) + txPerPage);
 
     return (
         <Segment className="m-0 ml-0 rounded-t-none border-t-0 bg-white h-81">
@@ -119,7 +119,7 @@ export default function FetchTxs() {
                         <Input
                             size="mini"
                             className="mb-2"
-                            placeholder="Lookup TX By Hash"
+                            placeholder="Search TXs By Hash"
                             onChange={(e) => updateTxHashVal(e.target.value)}
                             value={txHashVal.value}
                             fluid
@@ -129,7 +129,8 @@ export default function FetchTxs() {
                                 onClick: viewTxHash,
                                 basic: true,
                                 loading: hashFetchLoading
-                            }} />
+                            }}
+                        />
                     </div>
 
                     <div>
@@ -152,6 +153,5 @@ export default function FetchTxs() {
             </div>
 
         </Segment>
-    )
-
-}
+    );
+};

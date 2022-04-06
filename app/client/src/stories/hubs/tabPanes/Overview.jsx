@@ -144,19 +144,14 @@ export default function Overview({ wallet }) {
                     <Container>
 
                         <label className="font-semibold text-gray-800 underline">Wallet Actions</label>
-                        <Container className="flex flex-col items-baseline text-deco py-1 gap-1">
-                            <Button className="text-green-500 text-sm bg-transparent p-0.5 pl-0 hover:underline" onClick={fetchBalances}>Refresh Balances</Button>
+                        <Container className="flex flex-col items-baseline py-1 gap-1">
+                            <Button color="transparent" className="p-0 text-teal text-sm hover:underline" onClick={fetchBalances}>Refresh Balances</Button>
                             {vaultExists && (
-                                <Button className="text-purple-700 text-sm bg-transparent p-0.5 pl-0 hover:underline" onClick={openRenameWalletModal}>Rename Wallet</Button>
-                            )} {/* Currently Vault Only */}
-                            <Button className="text-purple-700 text-sm bg-transparent p-0.5 pl-0 hover:underline" onClick={openXportPrivKModal}>Show Private Key</Button>
-                            <Button className="text-purple-700 text-sm bg-transparent p-0.5 pl-0 hover:underline" onClick={openXportKeystoreModal}>Export Keystore</Button>
-                            <Button className="text-red-500 text-sm bg-transparent p-0.5 pl-0 hover:underline" onClick={openRemoveWalletModal}>Remove Wallet</Button>
-                            {/** -- Placeholder for feature addition
-                             {!wallet.isInternal && (
-                                <Button className="text-red-700 text-sm bg-transparent p-0.5" onClick={openRemoveWalletModal}>Remove Wallet</Button>
+                                <Button color="transparent" className="p-0 text-teal text-sm hover:underline" onClick={openRenameWalletModal}>Rename Wallet</Button>
                             )}
-                             */}
+                            <Button color="transparent" className="p-0 text-teal text-sm hover:underline" onClick={openXportPrivKModal}>Show Private Key</Button>
+                            <Button color="transparent" className="p-0 text-teal text-sm hover:underline" onClick={openXportKeystoreModal}>Export Keystore</Button>
+                            <Button color="transparent" className="p-0 text-red-600 text-sm hover:underline" onClick={openRemoveWalletModal}>Remove Wallet</Button>
                         </Container>
 
                     </Container>

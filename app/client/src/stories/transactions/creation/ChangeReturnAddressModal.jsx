@@ -86,7 +86,7 @@ export default function ChangeReturnAddressModal({ open, onClose }) {
 
             <Modal.Actions className="flex justify-between">
 
-                <Button color="orange" className="m-0" basic onClick={onClose} content="Close"/>
+                <Button color="black" basic onClick={onClose} content="Close"/>
 
             </Modal.Actions>
 

@@ -36,7 +36,7 @@ export default function NetworkStatusIndicator() {
 
     const handleClose = () => {
         setOpenModal(false);
-    }
+    };
 
     // Catch possible registry contract errors
     let registryContractError = "";
@@ -194,13 +194,11 @@ export default function NetworkStatusIndicator() {
 
             <Modal.Actions className="flex justify-between">
 
-                <Button color="orange" className="m-0" basic onClick={handleClose} content="Close" />
+                <Button color="black" basic onClick={handleClose} content="Close" />
 
                 <Button
                     icon={<Icon name='sync' />}
-                    className="m-0"
                     content="Retry"
-                    basic
                     color="teal"
                     onClick={() => onSubmit(handleSubmit)}
                 />

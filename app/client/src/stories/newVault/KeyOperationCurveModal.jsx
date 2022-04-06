@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { Button, Container, Header, Modal } from 'semantic-ui-react';
 
 function KeyOperationCurveModal({ children }) {
 
-    const [openModal, setOpenModal] = React.useState(false)
+    const [openModal, setOpenModal] = useState(false);
 
     return (
         <Modal
@@ -19,9 +19,9 @@ function KeyOperationCurveModal({ children }) {
 
                 <Modal.Description className="flex flex-col items-center gap-10">
 
-                    <Header content="Key Operation Curve" as="h3" className="my-0"/>
+                    <Header content="Key Operation Curve" as="h3" className="my-0" />
 
-                    <Container className="flex flex-auto flex-col gap-3 p-5 text-center">
+                    <Container className="flex flex-auto flex-col gap-3 px-3 text-center">
 
                         <p>Mad Wallet allows you to set the default ECC for generating the key pair.</p>
 
@@ -38,7 +38,7 @@ function KeyOperationCurveModal({ children }) {
 
                     </Container>
 
-                    <Button color="purple" onClick={() => setOpenModal(false)} content="Got it!"/>
+                    <Button color="teal" onClick={() => setOpenModal(false)} content="Got it!" />
 
                 </Modal.Description>
 
