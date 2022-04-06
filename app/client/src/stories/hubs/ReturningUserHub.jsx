@@ -6,7 +6,7 @@ import { Button, Container, Divider, Grid, Header, Loader, Menu } from 'semantic
 
 import Page from 'layout/Page';
 import { classNames } from 'util/generic';
-import { Datastores, FetchTxs, Overview, RecentTxs } from './tabPanes/_tabPanes';
+import { Datastores, SearchTXs, Overview, WalletTXs } from './tabPanes/_tabPanes';
 import { WalletHubContext } from 'context/WalletHubContext';
 
 export default function Hub() {
@@ -41,16 +41,16 @@ export default function Hub() {
             render: () => <Overview wallet={selectedWallet} />,
         },
         {
-            name: 'Recent Txs',
-            render: () => <RecentTxs wallet={selectedWallet} />,
-        },
-        {
             name: 'Datastores',
             render: () => <Datastores wallet={selectedWallet} />,
         },
         {
-            name: 'Lookup Tx',
-            render: () => <FetchTxs wallet={selectedWallet} />,
+            name: `Wallet txs`,
+            render: () => <WalletTXs wallet={selectedWallet} />,
+        },
+        {
+            name: 'Search txs',
+            render: () => <SearchTXs wallet={selectedWallet} />,
         },
     ];
 
