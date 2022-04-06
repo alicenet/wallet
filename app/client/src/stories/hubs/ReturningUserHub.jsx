@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import head from 'lodash/head';
-import { Button, Container, Divider, Grid, Header, Loader, Menu } from 'semantic-ui-react'
+import { Button, Container, Divider, Grid, Header, Loader, Menu, Popup } from 'semantic-ui-react'
 
 import Page from 'layout/Page';
 import { classNames } from 'util/generic';
@@ -76,17 +76,25 @@ export default function Hub() {
                             <Container className="flex flex-col gap-3 p-0 max-h-104 overflow-y-auto overscroll-contain no-scrollbar items-stretch">
 
                                 {wallets.map((wallet, index) =>
-                                    <Button
-                                        key={wallet.address}
-                                        color="teal"
-                                        content={openDrawer ? wallet.name : wallet.name.substring(0, 2)}
-                                        className={classNames("flex-shrink-0 m-0 p-2 rounded-sm",
-                                            { "text-xs uppercase": !openDrawer }, { "text-sm": openDrawer })}
-                                        style={{ minWidth: "28px" }}
-                                        basic={selectedWallet && wallet.address !== selectedWallet.address}
-                                        onClick={() => setSelectedWallet(wallet)}
-                                        size="mini"
-                                    />
+                                <Popup size="mini"
+                                    content={wallet.name}
+                                    position="right center"
+                                    offset="0 -4"
+                                    key={wallet.address}
+                                    trigger={
+                                        <Button
+                                            color="teal"
+                                            content={openDrawer ? <span style={{ textOverflow: "ellipsis", whiteSpace: "nowrap" }} className="block overflow-hidden">{wallet.name}</span> : wallet.name.substring(0, 2)}
+                                            className={classNames("flex-shrink-0 m-0 p-2 rounded-sm",
+                                                { "text-xs uppercase": !openDrawer }, { "text-sm": openDrawer })}
+                                            style={{ minWidth: "28px" }}
+                                            basic={selectedWallet && wallet.address !== selectedWallet.address}
+                                            onClick={() => setSelectedWallet(wallet)}
+                                            size="mini"
+                                        />
+                                    }
+                                />
+                                    
                                 )}
 
                             </Container>
