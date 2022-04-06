@@ -145,13 +145,12 @@ export default function ExportKeystoreModal() {
 
                     </Form.Group>
 
-                    {passwordHint && 
-                        <div>
-                            <span className="font-bold text-gray-600">Password Hint:</span>
-                            <span className="text-gray-400 ml-2">
-                                {passwordHint}
-                            </span>
-                        </div>}
+                    <div>
+                        <span className="font-bold text-gray-600">Password Hint:</span>
+                        <span className="text-gray-400 ml-2">
+                            {passwordHint}
+                        </span>
+                    </div>
 
                 </Form>
 

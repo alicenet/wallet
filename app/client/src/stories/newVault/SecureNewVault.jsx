@@ -22,7 +22,7 @@ function SecureNewVault() {
     const [formState, formSetter, onSubmit] = useFormState([
         { name: 'password', display: 'Password', type: 'password', isRequired: true },
         { name: 'verifiedPassword', display: 'Verify Password', type: 'verified-password', isRequired: true },
-        { name: 'hint', display: 'Password Hint', type: 'text', isRequired: false, value: "" }
+        { name: 'hint', display: 'Password Hint', type: 'text', isRequired: true, value: "" }
     ]);
 
     const handleFormSubmit = () => {
@@ -94,6 +94,7 @@ function SecureNewVault() {
                                 label='Password Hint'
                                 placeholder='Enter Password Hint'
                                 type='text'
+                                required
                                 onChange={e => formSetter.setHint(e.target.value)}
                                 error={!!formState.hint.error && { content: formState.hint.error }}
                             />
