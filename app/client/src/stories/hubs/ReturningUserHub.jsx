@@ -132,7 +132,14 @@ export default function Hub() {
                                             />
                                         )}
                                         <Menu.Menu position="right">
-                                            <Menu.Item disabled name="Block Explorer" />
+                                            {/* <Menu.Item disabled name="Block Explorer" /> */}
+                                            {/* TODO Remove after Block Explorer implementation */}
+                                            <Menu.Item 
+                                                name="Block Explorer"
+                                                onClick={() => {
+                                                    window.open('https://testnet.mnexplore.com/tx', '_blank');
+                                                }} 
+                                            />
                                         </Menu.Menu>
                                     </Menu>
                                     {panes[activeTabPane].render()}
