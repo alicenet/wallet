@@ -33,7 +33,6 @@ async function createWindow() {
       enableRemoteModule: false,
       additionalArguments: [`storePath:${app.getPath('userData')}`],
       preload: path.join(__dirname, './preload.js'),
-      
     },
   });
 
@@ -51,9 +50,6 @@ async function createWindow() {
 
   store.mainBindings(ipcMain, win, fs);
   storeBak.mainBindings(ipcMain, win, fs);
-
-  // TODO remove or move if necessary
-//   win.webContents
 
   if (isDev) {
     win.loadURL(selfHost);
