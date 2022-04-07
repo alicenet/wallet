@@ -131,16 +131,18 @@ export default function Hub() {
                                                 onClick={handleTabChange}
                                             />
                                         )}
-                                        <Menu.Menu position="right">
-                                            {/* TODO Remove after Block Explorer tab implementation */}
-                                            <Menu.Item
-                                                icon="external alternate"
-                                                name="Block Explorer"
-                                                onClick={() => {
-                                                    window.open('https://testnet.mnexplore.com/tx', '_blank');
-                                                }}
-                                            />
-                                        </Menu.Menu>
+                                        {process.env.REACT_APP_BLOCK_EXPLORER && 
+                                            <Menu.Menu position="right">
+                                                {/* TODO Remove after Block Explorer tab implementation */}
+                                                <Menu.Item
+                                                    icon="external alternate"
+                                                    name="Block Explorer"
+                                                    onClick={() => {
+                                                        window.open(process.env.REACT_APP_BLOCK_EXPLORER, '_blank');
+                                                    }}
+                                                />
+                                            </Menu.Menu>
+                                        }
                                     </Menu>
                                     {panes[activeTabPane].render()}
                                 </div>
