@@ -80,6 +80,7 @@ app.on('web-contents-created', (event, contents) => {
   contents.setWindowOpenHandler(({ url: navigationUrl }) => {
     // Will open URLs from window.open(), a link with target="_blank", shift+clicking on a link, 
     // or submitting a form with <form target="_blank"> 
+    // TODO Add host verification before opening external links
     shell.openExternal(navigationUrl);
     return { action: 'deny' };
   });
