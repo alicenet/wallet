@@ -91,7 +91,7 @@ export default function ExportPrivateKeyModal() {
     useEffect(() => {
         const checkForPasswordHint = async () => {
             let passwordHint = await electronStoreCommonActions.readPasswordHint();
-            setPasswordHint(passwordHint);
+            typeof passwordHint === 'string' ? setPasswordHint(passwordHint) : setPasswordHint('');
         }
         checkForPasswordHint();
     }, []);

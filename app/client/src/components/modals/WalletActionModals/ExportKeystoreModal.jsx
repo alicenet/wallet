@@ -80,7 +80,7 @@ export default function ExportKeystoreModal() {
     useEffect(() => {
         const checkForPasswordHint = async () => {
             let passwordHint = await electronStoreCommonActions.readPasswordHint();
-            setPasswordHint(passwordHint);
+            typeof passwordHint === 'string' ? setPasswordHint(passwordHint) : setPasswordHint('');
         }
         checkForPasswordHint();
     }, []);
