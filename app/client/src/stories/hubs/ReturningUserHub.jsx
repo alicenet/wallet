@@ -137,7 +137,7 @@ export default function Hub() {
                                             <Menu.Item 
                                                 name="Block Explorer"
                                                 onClick={() => {
-                                                    window.open('https://testnet.mnexplore.com/tx', '_blank');
+                                                    window.open(process.env.REACT_APP_BLOCK_EXPLORER, '_blank');
                                                 }} 
                                             />
                                         </Menu.Menu>
