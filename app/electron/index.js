@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, shell } = require('electron');
 
 const isDev = require('electron-is-dev');
 
@@ -76,6 +76,18 @@ app.on('activate', () => {
 
 // https://electronjs.org/docs/tutorial/security#12-disable-or-limit-navigation
 app.on('web-contents-created', (event, contents) => {
+  contents.setWindowOpenHandler(({ url: navigationUrl }) => {
+    // TODO Link should be in .env
+    const externalUrl = 'https://testnet.mnexplore.com/tx';
+
+    // Let whitelisted links be open externally
+    if (navigationUrl === externalUrl) {
+        shell.openExternal(navigationUrl);
+    }
+
+    return { action: 'deny' };
+  });
+
   contents.on('will-navigate', (event, navigationUrl) => {
     const parsedUrl = new URL(navigationUrl);
     const validOrigins = [selfHost];
