@@ -78,14 +78,8 @@ app.on('activate', () => {
 // https://electronjs.org/docs/tutorial/security#12-disable-or-limit-navigation
 app.on('web-contents-created', (event, contents) => {
   contents.setWindowOpenHandler(({ url: navigationUrl }) => {
-    // const externalUrl = process.env.BLOCK_EXPLORER;
-
-    // console.log(process.env.REACT_APP_BLOCK_EXPLORER);
-    // // Let whitelisted links be open externally
-    // if (navigationUrl === externalUrl) {
-    //     shell.openExternal(navigationUrl);
-    // }
-    
+    // Will open URLs from window.open(), a link with target="_blank", shift+clicking on a link, 
+    // or submitting a form with <form target="_blank"> 
     shell.openExternal(navigationUrl);
     return { action: 'deny' };
   });

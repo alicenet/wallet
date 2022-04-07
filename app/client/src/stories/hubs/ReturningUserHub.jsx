@@ -133,7 +133,7 @@ export default function Hub() {
                                         )}
                                         <Menu.Menu position="right">
                                             {/* <Menu.Item disabled name="Block Explorer" /> */}
-                                            {/* TODO Remove after Block Explorer implementation */}
+                                            {/* TODO Remove after Block Explorer tab implementation */}
                                             <Menu.Item 
                                                 name="Block Explorer"
                                                 onClick={() => {
