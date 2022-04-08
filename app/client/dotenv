@@ -2,5 +2,3 @@
 REACT_APP_RUN_TYPE=""
 # Run with debug functionality?
 REACT_APP_DEBUG=TRUE
-# Block Explorer 
-REACT_APP_BLOCK_EXPLORER="https://testnet.mnexplore.com/tx"
