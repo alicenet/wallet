@@ -12,7 +12,7 @@ const BackupStore = require('./BackupStore');
 
 const port = '3000';
 const selfHost = `http://localhost:${port}`;
-const allowedRoots = 'https://testnet.mnexplore.com';
+const allowedRoots = ['https://testnet.mnexplore.com'];
 const icon = path.join(__dirname, '/app-build/electron/icon.png');
 
 let win;
