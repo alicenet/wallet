@@ -42,42 +42,6 @@ class Web3Adapter {
 
     constructor() {
         this.__initialStateSet();
-
-        const test = async () => {
-
-            let provider = new ethers.providers.JsonRpcProvider("https://eth.catmad.duckdns.org")
-
-            // Attempt ethers
-            let factoryAddress = "0x9AC94eCFa6033bccDDc073e2Bd9F45d07Ccc9e4a"
-            let factoryContract = new ethers.Contract(factoryAddress, ABI.factory, provider);
-
-            console.log(factoryContract);
-            console.log(factoryContract.lookup)
-            try {
-                console.log(ethers.utils.formatBytes32String('ValidatorPool'))
-                let validatorpoolAddress = await factoryContract.lookup(ethers.utils.formatBytes32String('ValidatorPool'))
-
-                
-                let validatorPoolContract = new ethers.Contract(validatorpoolAddress, ABI.validatorpool, provider);
-                console.log({
-                    valPoolContract: validatorPoolContract,
-                    valPoolAddress: validatorpoolAddress,
-                    getMaxNumFunc: validatorPoolContract.getMaxNumValidators,
-                    deployedCodevalPool: await provider.getCode(validatorpoolAddress),
-                    deployedCodeFactory: await provider.getCode(factoryAddress)
-                })
-
-
-
-                let validatorCount = await validatorPoolContract.getMaxNumValidators();
-                console.log("valCount:", validatorCount);
-            
-            } catch (ex) {
-                console.log(ex);
-            }
-        }
-
-        test();
     }
 
     __initialStateSet() {
@@ -312,6 +276,7 @@ class Web3Adapter {
     async updateAccount() {
         try {
             let balances = await this.getAccountBalances(this.selectedAddress);
+            console.log("UPDATEACCOUNTBALS", balances)
             this.getEpoch(); // Fire off an epoch update
             // Get the latest validator information on account updates
             let validatorInfo = await this.getValidatorInfo();
@@ -335,7 +300,9 @@ class Web3Adapter {
     async getAccountBalances(address) {
         try {
             let ethBalance = await this.getEthBalance(address);
+            console.log("ETHBAL:", ethBalance)
             let [stakingBalance, stakingAllowance, utilityBalance, utilityAllowance] = await this.getTokenBalances(address);
+            console.log("FOUNDBALSWEB3", [stakingBalance, stakingAllowance, utilityBalance, utilityAllowance])
             this.getEpoch(); // Fire off an epoch update
             let balances = {
                 "eth": ethBalance,
@@ -408,9 +375,7 @@ class Web3Adapter {
                 }
             }
             if (args.length !== method.inputs.length) {
-                throw new Error({
-                    "arguments": "Method arguments do not match given arguments"
-                });
+                throw new Error("arguments: Method arguments do not match given arguments");
             }
             let ret;
             let [gasPrice, gasEst] = await this.getGas(contract, method, args);
@@ -534,22 +499,42 @@ class Web3Adapter {
     // Get Staking and Validator information for the selectedAddress
     async getValidatorInfo() {
         try {
-            let isValidator = await this.internalMethod("ValidatorPool", "isValidator", {
-                "validator": this.selectedAddress
-            });
-            let stakingBalance = await this.internalMethod("validatorstaking", "balanceStake");
+            console.log("GETVALINFO")
+            let isValidator = await this.internalMethod("ValidatorPool", "isValidator", { account_: this.selectedAddress });
+            console.log("ISVAL", isValidator);
+            let stakingBalance = await this.internalMethod("BToken", "balanceOf", { account: this.selectedAddress });
+            console.log("STAKEBAL", stakingBalance)
             let isStaking, rewardBalance, unlockedBalance = false;
             if (stakingBalance && stakingBalance !== "0") {
                 isStaking = true;
                 rewardBalance = await this.internalMethod("ValidatorStaking", "balanceReward");
+                console.log("REWARDBAL", rewardBalance);
                 unlockedBalance = await this.internalMethod("ValidatorStaking", "balanceUnlocked");
+                console.log("UNLOCKBAL", unlockedBalance);
             }
             else {
                 isStaking = false;
             }
-            let validatorCount = await this.internalMethod("ValidatorPool", "validatorCount");
-            let validatorMax = await this.internalMethod("ValidatorPool", "validatorMaxCount");
-            let minStake = await this.internalMethod("ValidatorPool", "minimumStake");
+            let validatorCount = await this.internalMethod("ValidatorPool", "getValidatorsCount");
+            console.log("VALCOUNT", validatorCount);
+            let validatorMax = await this.internalMethod("ValidatorPool", "getMaxNumValidators");
+            console.log("VALMAX", validatorMax)
+
+            // TODO: Ask Leonardo if minstake is still available -- appears internal in ValidatorPoolStorage.sol 
+            // let minStake = await this.internalMethod("ValidatorPool", "minimumStake");
+            // console.log("MINSTAKE", minStake)
+
+            console.log({
+                "isValidator": isValidator,
+                "isStaking": isStaking,
+                "rewardBalance": rewardBalance,
+                "stakingBalance": stakingBalance,
+                "unlockedBalance": unlockedBalance,
+                "validatorCount": validatorCount,
+                "validatorMax": validatorMax,
+                "minStake": 0 //minStake
+            })
+
             return {
                 "isValidator": isValidator,
                 "isStaking": isStaking,
@@ -558,9 +543,10 @@ class Web3Adapter {
                 "unlockedBalance": unlockedBalance,
                 "validatorCount": validatorCount,
                 "validatorMax": validatorMax,
-                "minStake": minStake
+                "minStake": 0 //minStake
             };
         } catch (ex) {
+            console.log(ex);
             throw ex;
         }
     }
@@ -595,6 +581,18 @@ class Web3Adapter {
             let utilityBalance = await utilityToken.methods.balanceOf(address ? address : this.selectedAddress).call();
             let utility = await this.getContract("BToken");
             let utilityAllowance = await utilityToken.methods.allowance(address ? address : this.selectedAddress, utility["_address"]).call();
+
+            console.log({
+                stakingTokenContract_BToken: stakingToken,
+                stakingTokenContract_ValidatorStaking: staking,
+                stakingTokenBalance: stakingBalance,
+                stakingTokenAllowance: stakingAllowance,
+                SPACER: null,
+                utilityTokenContract_AToken: utilityToken,
+                utilityTokenAllowanceContract_BToken: utility,
+                utilityTokenBalance: utilityBalance,
+                utilityTokenAllowance: utilityAllowance
+            })
 
             return [stakingBalance, stakingAllowance, utilityBalance, utilityAllowance];
         } catch (ex) {
