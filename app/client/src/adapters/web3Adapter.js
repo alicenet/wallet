@@ -9,12 +9,15 @@ import { history } from 'history/history';
 import { SyncToastMessageSuccess, SyncToastMessageWarning } from 'components/customToasts/CustomToasts';
 import { toast } from 'react-toastify';
 
-const reqContracts = ["staking", "validators", "deposit", "stakingToken", "utilityToken"]
+import { ethers } from 'ethers'
+
+// const reqContracts = ["staking", "validators", "deposit", "stakingToken", "utilityToken"] // Old reference
+const reqContracts = ["ValidatorStaking", "ValidatorPool", "BToken", "BToken", "AToken"];
 const REGISTRY_VERSION = "/v1"; // CHANGE OR PUT IN SETTINGS
 
 const Web3Error = ({ msg }) => {
     return (
-        <SyncToastMessageWarning title="Web3 Error" message={msg}/>
+        <SyncToastMessageWarning title="Web3 Error" message={msg} />
     );
 }
 
@@ -39,6 +42,42 @@ class Web3Adapter {
 
     constructor() {
         this.__initialStateSet();
+
+        const test = async () => {
+
+            let provider = new ethers.providers.JsonRpcProvider("https://eth.catmad.duckdns.org")
+
+            // Attempt ethers
+            let factoryAddress = "0x9AC94eCFa6033bccDDc073e2Bd9F45d07Ccc9e4a"
+            let factoryContract = new ethers.Contract(factoryAddress, ABI.factory, provider);
+
+            console.log(factoryContract);
+            console.log(factoryContract.lookup)
+            try {
+                console.log(ethers.utils.formatBytes32String('ValidatorPool'))
+                let validatorpoolAddress = await factoryContract.lookup(ethers.utils.formatBytes32String('ValidatorPool'))
+
+                
+                let validatorPoolContract = new ethers.Contract(validatorpoolAddress, ABI.validatorpool, provider);
+                console.log({
+                    valPoolContract: validatorPoolContract,
+                    valPoolAddress: validatorpoolAddress,
+                    getMaxNumFunc: validatorPoolContract.getMaxNumValidators,
+                    deployedCodevalPool: await provider.getCode(validatorpoolAddress),
+                    deployedCodeFactory: await provider.getCode(factoryAddress)
+                })
+
+
+
+                let validatorCount = await validatorPoolContract.getMaxNumValidators();
+                console.log("valCount:", validatorCount);
+            
+            } catch (ex) {
+                console.log(ex);
+            }
+        }
+
+        test();
     }
 
     __initialStateSet() {
@@ -90,7 +129,7 @@ class Web3Adapter {
             store.dispatch(ADAPTER_ACTIONS.setWeb3Connected(false)) // On any error dispatch not connected state
             store.dispatch(ADAPTER_ACTIONS.setWeb3Busy(false));
             store.dispatch(ADAPTER_ACTIONS.setWeb3Error(connected.error.message));
-            toast.error(<Web3Error msg="Verify Settings"/>, Web3ErrToastOpts);
+            toast.error(<Web3Error msg="Verify Settings" />, Web3ErrToastOpts);
             return { error: connected.error };
         }
         // Set and get the latest contract info
@@ -101,7 +140,7 @@ class Web3Adapter {
             store.dispatch(ADAPTER_ACTIONS.setWeb3Connected(false)); // On any error dispatch not connected state
             store.dispatch(ADAPTER_ACTIONS.setWeb3Busy(false));
             store.dispatch(ADAPTER_ACTIONS.setWeb3Error(error));
-            toast.error(<Web3Error msg="Verify Eth Provider"/>, Web3ErrToastOpts);
+            toast.error(<Web3Error msg="Verify Eth Provider" />, Web3ErrToastOpts);
             return { error };
         }
         if (!this._getRegistryContractFromStore()) {
@@ -109,7 +148,7 @@ class Web3Adapter {
             store.dispatch(ADAPTER_ACTIONS.setWeb3Connected(false)); // On any error dispatch not connected state
             store.dispatch(ADAPTER_ACTIONS.setWeb3Busy(false));
             store.dispatch(ADAPTER_ACTIONS.setWeb3Error(error));
-            toast.error(<Web3Error msg="Verify Registry Contract"/>, Web3ErrToastOpts);
+            toast.error(<Web3Error msg="Verify Registry Contract" />, Web3ErrToastOpts);
             return { error: "No registry contract found in state." };
         }
         // If all of these pass, note that the instance is connected and no error has occurred
@@ -117,7 +156,7 @@ class Web3Adapter {
         store.dispatch(ADAPTER_ACTIONS.setWeb3Busy(false));
         store.dispatch(ADAPTER_ACTIONS.setWeb3Error(false));
         if (!config.preventToast) {
-            toast.success(<SyncToastMessageSuccess basic title="Success" message="Web3 Connected"/>, { className: "basic", "autoClose": 2400, delay: 1000 });
+            toast.success(<SyncToastMessageSuccess basic title="Success" message="Web3 Connected" />, { className: "basic", "autoClose": 2400, delay: 1000 });
         }
         return { success: true };
     }
@@ -213,16 +252,19 @@ class Web3Adapter {
     async _setAndGetUptoDateContracts() {
         try {
             let web3 = this._setAndGetUptoDateWeb3Instance(); // Get an uptoDate web3 instance
-            let registryContract = new web3.eth.Contract(ABI["registry"], this._getRegistryContractFromStore()); // Note the current registry address from config
+            // Registry === New Factory Contract -- To update this name atm would be exceptionally painful, leaving as registry contract variable at the moment
+            // TODO: Update all registryContract references to "Factory Contract" references ( someday )
+            let registryContract = new web3.eth.Contract(ABI["factory"], this._getRegistryContractFromStore()); // Note the current registry address from config -- 
             let contractList = []; // Array to push contracts to and return
             for await (let contract of reqContracts) {
-                let contractAddr = await registryContract.methods.lookup(contract + REGISTRY_VERSION).call();
+                let contractAddr = await registryContract.methods.lookup(web3.utils.asciiToHex(contract)).call();
                 let newContract = new this.web3.eth.Contract(ABI[contract], contractAddr);
                 let info = {};
                 info["name"] = contract;
                 info["instance"] = newContract;
                 contractList.push(info);
             }
+            console.log(contractList)
             this.contracts = contractList;
             return this.contracts;
         } catch (ex) {
@@ -233,8 +275,10 @@ class Web3Adapter {
     /** Sets the current information to redux state regarding validators and epoch time */
     async _setAndGetInfo() {
         try {
-            let validatorCount = await this.internalMethod("validators", "validatorCount");
-            let validatorMax = await this.internalMethod("validators", "validatorMaxCount");
+            let validatorCount = await this.internalMethod("ValidatorPool", "getValidatorsCount");
+            console.log("HEY", validatorCount)
+            let validatorMax = await this.internalMethod("ValidatorPool", "getMaxNumValidators");
+            console.log("HEY", validatorMax)
             let epoch = await this.getEpoch();
             store.dispatch(ADAPTER_ACTIONS.setWeb3Info(epoch, validatorCount, validatorMax));
         } catch (ex) {
@@ -347,9 +391,16 @@ class Web3Adapter {
                 "arguments": "Invalid arguments"
             });
         }
+        console.log({
+            c: c,
+            m: m,
+            data: data,
+        })
         try {
             let contract = await this.getContract(c);
+            console.log(contract);
             let method = await this.getMethod(c, m);
+            console.log(method)
             let args = [];
             for (let i = 0; i < method.inputs.length; i++) {
                 if (data[method.inputs[i].name]) {
@@ -370,6 +421,7 @@ class Web3Adapter {
                     });
                 }
                 else {
+                    console.log(contract.methods[method.name]());
                     ret = await contract.methods[method.name]().call({
                         from: this.selectedAddress
                     });
@@ -482,22 +534,22 @@ class Web3Adapter {
     // Get Staking and Validator information for the selectedAddress
     async getValidatorInfo() {
         try {
-            let isValidator = await this.internalMethod("validators", "isValidator", {
+            let isValidator = await this.internalMethod("ValidatorPool", "isValidator", {
                 "validator": this.selectedAddress
             });
-            let stakingBalance = await this.internalMethod("staking", "balanceStake");
+            let stakingBalance = await this.internalMethod("validatorstaking", "balanceStake");
             let isStaking, rewardBalance, unlockedBalance = false;
             if (stakingBalance && stakingBalance !== "0") {
                 isStaking = true;
-                rewardBalance = await this.internalMethod("staking", "balanceReward");
-                unlockedBalance = await this.internalMethod("staking", "balanceUnlocked");
+                rewardBalance = await this.internalMethod("ValidatorStaking", "balanceReward");
+                unlockedBalance = await this.internalMethod("ValidatorStaking", "balanceUnlocked");
             }
             else {
                 isStaking = false;
             }
-            let validatorCount = await this.internalMethod("validators", "validatorCount");
-            let validatorMax = await this.internalMethod("validators", "validatorMaxCount");
-            let minStake = await this.internalMethod("validators", "minimumStake");
+            let validatorCount = await this.internalMethod("ValidatorPool", "validatorCount");
+            let validatorMax = await this.internalMethod("ValidatorPool", "validatorMaxCount");
+            let minStake = await this.internalMethod("ValidatorPool", "minimumStake");
             return {
                 "isValidator": isValidator,
                 "isStaking": isStaking,
@@ -534,14 +586,14 @@ class Web3Adapter {
      */
     async getTokenBalances(address) {
         try {
-            let stakingToken = await this.getContract("stakingToken");
+            let stakingToken = await this.getContract("BToken");
             let stakingBalance = await stakingToken.methods.balanceOf(address ? address : this.selectedAddress).call();
-            let staking = await this.getContract("staking");
+            let staking = await this.getContract("ValidatorStaking");
             let stakingAllowance = await stakingToken.methods.allowance(address ? address : this.selectedAddress, staking["_address"]).call();
 
-            let utilityToken = await this.getContract("utilityToken");
+            let utilityToken = await this.getContract("AToken");
             let utilityBalance = await utilityToken.methods.balanceOf(address ? address : this.selectedAddress).call();
-            let utility = await this.getContract("deposit");
+            let utility = await this.getContract("BToken");
             let utilityAllowance = await utilityToken.methods.allowance(address ? address : this.selectedAddress, utility["_address"]).call();
 
             return [stakingBalance, stakingAllowance, utilityBalance, utilityAllowance];
@@ -574,7 +626,7 @@ class Web3Adapter {
     // Deposit utility tokens to MadNet
     async deposit(amount) {
         try {
-            await this.method("deposit", "deposit", {
+            await this.method("BToken", "deposit", {
                 "amount": amount
             });
         } catch (ex) {
@@ -586,10 +638,10 @@ class Web3Adapter {
     async approveStakingAllowance(amount) {
         try {
             let data = {}
-            let staking = await this.getContract("staking")
+            let staking = await this.getContract("ValidatorStaking")
             data["guy"] = staking["_address"];
             data["wad"] = amount;
-            await this.method("stakingToken", "approve", data);
+            await this.method("btoken", "approve", data);
         } catch (ex) {
             return { error: ex.message };
         }
@@ -599,10 +651,10 @@ class Web3Adapter {
     async approveUtilityAllowance(amount) {
         try {
             let data = {};
-            let deposit = await this.getContract("deposit");
+            let deposit = await this.getContract("BToken");
             data["guy"] = deposit["_address"];
             data["wad"] = amount;
-            await this.method("utilityToken", "approve", data);
+            await this.method("AToken", "approve", data);
         } catch (ex) {
             return ({ error: ex.message });
         }
@@ -616,7 +668,7 @@ class Web3Adapter {
             data["_madID"] = [];
             data["_madID"].push(String("1"));
             data["_madID"].push(String("2"));
-            await this.method("validators", fn, data);
+            await this.method("ValidatorPool", fn, data);
         } catch (ex) {
             return ({ error: ex.message });
         }
@@ -627,7 +679,7 @@ class Web3Adapter {
         try {
             let data = {};
             data["amount"] = amount;
-            await this.method("staking", fn, data);
+            await this.method("ValidatorStaking", fn, data);
         } catch (ex) {
             return ({ error: ex.message });
         }
@@ -638,7 +690,7 @@ class Web3Adapter {
      */
     async getEpoch() {
         try {
-            let epoch = await this.internalMethod("staking", "currentEpoch");
+            let epoch = await this.internalMethod("ValidatorStaking", "currentEpoch");
             store.dispatch(ADAPTER_ACTIONS.setWeb3Epoch(epoch));
             return epoch;
         } catch (ex) {
