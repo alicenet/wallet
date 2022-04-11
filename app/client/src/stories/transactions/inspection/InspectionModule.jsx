@@ -101,7 +101,7 @@ function InspectionModule() {
                 return (
                     <Table.Row key={`row-detail-${key}`}>
 
-                        <Table.Cell>{stringUtils.prettyifyUnderscoreKey(key)}</Table.Cell>
+                        <Table.Cell>{stringUtils.prettifyUnderscoreKey(key)}</Table.Cell>
                         <Table.Cell className="flex items-center">
                             {typeof value !== "object" && value && value.length > 52 ? stringUtils.splitStringWithEllipsis(value, 52) : value}
                         </Table.Cell>
@@ -150,7 +150,7 @@ function InspectionModule() {
                 return (
                     <Table.Row key={`row-detail-${key}`}>
 
-                        <Table.Cell>{stringUtils.prettyifyUnderscoreKey(key)}</Table.Cell>
+                        <Table.Cell>{stringUtils.prettifyUnderscoreKey(key)}</Table.Cell>
                         <Table.Cell className="flex items-center">
                             {typeof value !== "object" && value && value.length > 70 ? stringUtils.splitStringWithEllipsis(value, 70) :
                                 // Owner key parsing

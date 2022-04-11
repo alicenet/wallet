@@ -176,7 +176,7 @@ export default function LoadKeystoreForm({ submitText, submitFunction, cancelTex
                 size="small"
                 basic
                 icon={success ? "thumbs up" : "x"}
-                color="transparent"
+                className="transparent"
                 onClick={success ? e => e.preventDefault() : (e) => {
                     e.preventDefault();
                     cancelFunction()

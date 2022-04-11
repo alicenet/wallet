@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Button, Form, Header, Icon, Modal, Placeholder } from 'semantic-ui-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFormState } from 'hooks/_hooks';
@@ -22,7 +22,7 @@ export default function ExportPrivateKeyModal() {
     const [visibleTime, setVisibleTime] = useState(0);
     const [copyClick, setCopyClick] = useState(0);
 
-    const keyVisilityTimer = useRef(null); 
+    const keyVisibilityTimer = useRef(null);
 
     const [formState, formSetter, onSubmit] = useFormState([
         { name: 'vaultPassword', display: 'Vault Password', type: 'password', isRequired: true }
@@ -33,7 +33,7 @@ export default function ExportPrivateKeyModal() {
         if (visibleTime !== 0 && visibleTime > 0 && visibleTime < 15) {
             setTimeout(() => {
                 setVisibleTime(s => s - 1)
-            }, 1000)
+            }, 1000);
         }
     }, [visibleTime]);
 
@@ -61,13 +61,13 @@ export default function ExportPrivateKeyModal() {
         setKeyVisible(true);
         setVisibleTime(14);
         formSetter.setVaultPassword("");
-        keyVisilityTimer.current = setTimeout(() => {
+        keyVisibilityTimer.current = setTimeout(() => {
             setKeyVisible(false);
         }, 14000);
     };
 
     const closeModal = () => {
-        clearTimeout(keyVisilityTimer.current);
+        clearTimeout(keyVisibilityTimer.current);
         dispatch(MODAL_ACTIONS.closeExportPrivateKeyModal());
     };
 
@@ -109,11 +109,7 @@ export default function ExportPrivateKeyModal() {
                 </p>
 
                 <div className="mt-2">
-                    <Header>Your Private Key
-                        <span className="text-xs ml-4 text-gray-400">
-                            {visibleTime !== 0 && "Vanishing in " + String(visibleTime)}
-                        </span>
-                    </Header>
+                    <Header>Your Private Key</Header>
                 </div>
 
                 {keyVisible ? (<div className="h-10 flex items-center cursor-pointer hover:text-gray-600" onClick={copyPkey}>
@@ -148,6 +144,7 @@ export default function ExportPrivateKeyModal() {
                             value={formState.vaultPassword.value}
                             onChange={e => formSetter.setVaultPassword(e.target.value)}
                             error={!!formState.vaultPassword.error && { content: formState.vaultPassword.error }}
+                            disabled={visibleTime !== 0}
                             icon={
                                 <Icon
                                     color={keyVisible ? "green" : "black"}
@@ -167,10 +164,10 @@ export default function ExportPrivateKeyModal() {
             <Modal.Actions>
 
                 <div className="flex justify-between">
-                    <Button size="small" color="transparent" content="Close" onClick={closeModal} basic />
+                    <Button size="small" className="transparent" content="Close" onClick={closeModal} basic />
                     <Button
                         size="small"
-                        content={formState.vaultPassword.error ? "Try Again" : "Show Key"}
+                        content={formState.vaultPassword.error ? "Try Again" : visibleTime === 0 ? "Show Key" : `Vanishing in ${String(visibleTime)}`}
                         disabled={visibleTime !== 0}
                         color="teal"
                         onClick={submit}

@@ -9,6 +9,9 @@ import { classNames } from 'util/generic';
 import { Datastores, Overview, SearchTXs, WalletTXs } from './tabPanes/_tabPanes';
 import { WalletHubContext } from 'context/WalletHubContext';
 
+// TODO Get link from ipcMain process in the future
+const BLOCK_EXPLORER_LINK = "https://testnet.mnexplore.com/tx";
+
 export default function Hub() {
 
     const { internal, external } = useSelector(state => (
@@ -132,12 +135,12 @@ export default function Hub() {
                                             />
                                         )}
                                         <Menu.Menu position="right">
-                                            {/* TODO Remove after Block Explorer implementation */}
+                                            {/* TODO Remove after Block Explorer tab implementation */}
                                             <Menu.Item
                                                 icon="external alternate"
                                                 name="Block Explorer"
                                                 onClick={() => {
-                                                    window.open('https://testnet.mnexplore.com/tx', '_blank');
+                                                    window.open(BLOCK_EXPLORER_LINK, '_blank');
                                                 }}
                                             />
                                         </Menu.Menu>

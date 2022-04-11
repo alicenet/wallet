@@ -79,7 +79,7 @@ export default function PasswordRequestModal() {
 
                 <div className="flex justify-between">
 
-                    <Button color="transparent" content="Close" onClick={closeModal} basic />
+                    <Button className="transparent" content="Close" onClick={closeModal} basic />
 
                     <Button
                         content={formState.password.error ? "Try Again" : "Submit"}

@@ -26,10 +26,10 @@ export default function AddWalletMenu() {
         let error = false;
 
         if (typeof walletName.value !== 'string') {
-            error = "Must be a string"
+            error = "Must be a string";
         }
         if (walletName.value.length <= 3) {
-            error = "Must be at least 4 characters"
+            error = "Must be at least 4 characters";
         }
 
         if (error) {
@@ -50,9 +50,9 @@ export default function AddWalletMenu() {
                 return setWalletAddedKeys({ "error": "Unable to generate new wallet. Please check logs." });
             }
             setWalletAddedKeys({ "value": true, "error": "" });
-        }, 1000)
+        }, 1000);
 
-    }
+    };
 
     useEffect(() => {
         if (walletAdded.value === true) {
@@ -60,7 +60,7 @@ export default function AddWalletMenu() {
                 history.push("/hub");
             }, 1450)
         }
-    }, [walletAdded, history])
+    }, [walletAdded, history]);
 
     return (
         <Page showNetworkStatus>
@@ -117,22 +117,21 @@ export default function AddWalletMenu() {
                                 size="small"
                                 loading={!!walletAdded.value}
                                 content="Cancel"
-                                className="w-52"
+                                className="transparent w-52"
                                 icon={!!walletAdded.value ? "thumbs up" : "x"}
-                                color="transparent"
                                 onClick={!!walletAdded.value ? null : history.goBack}
                             />
                         </div>
 
                         {!!walletAdded.value && (
                             <div className="absolute -bottom-16 inset-center">
-                                <Message success content="Wallet successfully added, please wait. . ." size="mini"/>
+                                <Message success content="Wallet successfully added, please wait. . ." size="mini" />
                             </div>
                         )}
 
                         {!!walletAdded.error && (
                             <div className="absolute -bottom-16 inset-center">
-                                <Message error content={walletAdded.error} size="mini"/>
+                                <Message error content={walletAdded.error} size="mini" />
                             </div>
                         )}
 
