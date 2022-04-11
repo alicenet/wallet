@@ -57,7 +57,7 @@ export default function Overview({ wallet }) {
 
     const copyAddress = () => {
         setCopyClick(true);
-        utils.generic.copyToClipboard(wallet.address);
+        utils.generic.copyToClipboard(utils.string.addCurvePrefix(wallet.address, wallet.curve));
         setTimeout(() => {
             setCopyClick(false);
         }, 2150)
