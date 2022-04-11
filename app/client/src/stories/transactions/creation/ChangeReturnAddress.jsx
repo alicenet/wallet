@@ -28,7 +28,7 @@ export default function ChangeReturnAddress() {
                         trigger={
                             <div className="flex items-center text-xl gap-2 cursor-pointer" onClick={() => setShowChangeReturnAddressModal(true)}>
                                 <div className="m-0 font-bold text-sm">Change Address</div>
-                                <Icon size="small" name="edit circle" className="m-0" />
+                                <Icon size="small" name="edit" className="m-0" />
                             </div>
                         }
                         content={
