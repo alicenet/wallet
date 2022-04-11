@@ -152,6 +152,7 @@ export default function ExportKeystoreModal() {
                         content={(!optout && formState.vaultPassword.error) || formState.keystorePassword.error ? "Try Again" : keystoreDL ? "Download Keystore" : "Create Keystore"}
                         color="teal"
                         onClick={keystoreDL ? closeModal : submit}
+                        icon={keystoreDL ? "download" : null}
                     />
 
                 </div>
