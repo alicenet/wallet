@@ -143,7 +143,7 @@ export default function ExportKeystoreModal() {
 
                 <div className="flex justify-between">
 
-                    <Button size="small" color="transparent" content="Close" onClick={closeModal} basic />
+                    <Button size="small" className="transparent" content="Close" onClick={closeModal} basic />
 
                     <Button
                         size="small"

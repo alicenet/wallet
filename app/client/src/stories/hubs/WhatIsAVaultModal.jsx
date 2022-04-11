@@ -11,7 +11,7 @@ function WhatIsAVaultModal() {
             onOpen={() => setOpenModal(true)}
             open={openModal}
             dimmer="inverted"
-            trigger={<Button color="transparent" className="text-sm text-black underline">What is a vault?</Button>}
+            trigger={<Button className="transparent text-sm text-black underline">What is a vault?</Button>}
         >
 
             <Modal.Content>

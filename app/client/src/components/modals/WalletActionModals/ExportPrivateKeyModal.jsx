@@ -167,7 +167,7 @@ export default function ExportPrivateKeyModal() {
             <Modal.Actions>
 
                 <div className="flex justify-between">
-                    <Button size="small" color="transparent" content="Close" onClick={closeModal} basic />
+                    <Button size="small" className="transparent" content="Close" onClick={closeModal} basic />
                     <Button
                         size="small"
                         content={formState.vaultPassword.error ? "Try Again" : "Show Key"}
