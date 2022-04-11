@@ -19,7 +19,7 @@ export default function AddEditValueStoreModal({ valueStore, onClose }) {
 
     const wallets = useMemo(() => (internal.concat(external)).map(wallet => {
         return {
-            text: `${wallet.name} (0x${utils.string.splitStringWithEllipsis(wallet.address, 5)})`,
+            text: `${wallet.name} (${utils.string.addCurvePrefix(utils.string.splitStringWithEllipsis(wallet.address, 5), wallet.curve)})`,
             value: wallet.address
         };
     }) || [], [internal, external]);
