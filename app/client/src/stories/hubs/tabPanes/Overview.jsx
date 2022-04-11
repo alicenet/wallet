@@ -76,7 +76,7 @@ export default function Overview({ wallet }) {
                         {` (${wallet.curve === curveTypes.SECP256K1 ? 'Secp256k1' : 'Barreto-Naehrig'} curve)`}
                     </label>
                     <div className="h-10 py-1 flex items-center cursor-pointer hover:text-gray-500" onClick={copyAddress}>
-                        {`0x${wallet.address}`}
+                        {utils.string.addCurvePrefix(wallet.address, wallet.curve)}
                         <Icon name="copy outline" className="ml-1 mb-2 cursor-pointer" />
                         {!!copyClick && (
                             <div className="relative inline text-xs mb-2 text-gray-500">
