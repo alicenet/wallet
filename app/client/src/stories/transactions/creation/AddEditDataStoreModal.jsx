@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Button, Form, Grid, Header, Icon, Modal } from 'semantic-ui-react';
 import { useFormState } from 'hooks/_hooks';
 import { useDispatch, useSelector } from 'react-redux';
@@ -22,7 +22,7 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
         fees: state.transaction.fees,
     }));
 
-    const wallets = React.useMemo(() => (internal.concat(external)).map(wallet => {
+    const wallets = useMemo(() => (internal.concat(external)).map(wallet => {
         return {
             text: `${wallet.name} (${utils.string.addCurvePrefix(utils.string.splitStringWithEllipsis(wallet.address, 5), wallet.curve)})`,
             value: wallet.address
@@ -39,10 +39,12 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
     const isEditing = has(dataStore, 'index');
 
     const handleSubmit = async () => {
+        const bnCurveFrom = internal.concat(external).find(wallet => wallet.address === formState.From.value).curve;
         if (isEditing) {
             dispatch(TRANSACTION_ACTIONS.editStore({
                 ...dataStore,
                 from: formState.From.value,
+                bnCurveFrom,
                 key: formState.Index.value,
                 value: formState.Value.value,
                 duration: formState.Duration.value,
@@ -51,6 +53,7 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
         else {
             dispatch(TRANSACTION_ACTIONS.addStore({
                 from: formState.From.value,
+                bnCurveFrom,
                 key: formState.Index.value,
                 value: formState.Value.value,
                 duration: formState.Duration.value,

@@ -12,8 +12,7 @@ export default function TransactionRow({ transaction, index, onUpdate }) {
     const dispatch = useDispatch();
 
     const storeType = useMemo(() => transaction.type === transactionTypes.DATA_STORE ? 'Data Store' : 'Value Store', [transaction]);
-
-    const bnCurve = useMemo(() => transaction.bnCurve ? utils.wallet.curveTypes.BARRETO_NAEHRIG : utils.wallet.curveTypes.SECP256K1, [transaction]);
+    const bnCurveTo = useMemo(() => transaction.bnCurve ? utils.wallet.curveTypes.BARRETO_NAEHRIG : utils.wallet.curveTypes.SECP256K1, [transaction]);
 
     const handleEdit = (transaction, index) => onUpdate({ ...transaction, index });
 
@@ -53,19 +52,19 @@ export default function TransactionRow({ transaction, index, onUpdate }) {
                     className="text-xs"
                     trigger={
                         <div>
-                            {utils.string.addCurvePrefix(utils.string.splitStringWithEllipsis(transaction.from, 5), bnCurve)}
+                            {utils.string.addCurvePrefix(utils.string.splitStringWithEllipsis(transaction.from, 5), transaction.bnCurveFrom)}
                         </div>
 
                     }
                     content={
                         <>
-                            <span className="font-bold">From</span><br />{utils.string.addCurvePrefix(transaction.from, bnCurve)}
+                            <span className="font-bold">From</span><br />{utils.string.addCurvePrefix(transaction.from, transaction.bnCurveFrom)}
                         </>
                     }
                 />
             </Table.Cell>
 
-            <Table.Cell className="py-0 px-2 cursor-pointer" onClick={() => utils.generic.copyToClipboard(utils.string.addCurvePrefix(transaction.to, bnCurve))}>
+            <Table.Cell className="py-0 px-2 cursor-pointer" onClick={() => utils.generic.copyToClipboard(utils.string.addCurvePrefix(transaction.to, bnCurveTo))}>
                 <Popup
                     size="mini"
                     offset={"0,1"}
@@ -73,7 +72,7 @@ export default function TransactionRow({ transaction, index, onUpdate }) {
                     trigger={
                         <div>
                             {transaction.to && <>
-                                {utils.string.addCurvePrefix(utils.string.splitStringWithEllipsis(transaction.to, 5), bnCurve)}
+                                {utils.string.addCurvePrefix(utils.string.splitStringWithEllipsis(transaction.to, 5), bnCurveTo)}
                                 <Icon name="copy outline" className="ml-1 mb-2 cursor-pointer" />
                             </>}
                         </div>
@@ -81,7 +80,7 @@ export default function TransactionRow({ transaction, index, onUpdate }) {
                     }
                     content={
                         <>
-                            <span className="font-bold">To</span><br />{utils.string.addCurvePrefix(transaction.to, bnCurve)}
+                            <span className="font-bold">To</span><br />{utils.string.addCurvePrefix(transaction.to, bnCurveTo)}
                         </>
                     }
                 />
