@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Button, Container, Grid, Icon } from 'semantic-ui-react'
+import { Button, Checkbox, Container, Grid, Icon } from 'semantic-ui-react'
 import utils, { walletUtils } from 'util/_util';
 
 import { ADAPTER_ACTIONS, MODAL_ACTIONS } from 'redux/actions/_actions';
@@ -10,7 +10,8 @@ import { classNames } from 'util/generic';
 export default function Overview({ wallet }) {
 
     const dispatch = useDispatch();
-    const [copyClick, setCopyClick] = React.useState(0);
+    const [copyClick, setCopyClick] = useState(0);
+    const [tellTheSender, setTellTheSender] = useState(false);
 
     const { madNetConnected, web3Connected, vaultExists, balances, balancesLoading } = useSelector(state => (
         {
@@ -56,11 +57,13 @@ export default function Overview({ wallet }) {
     const openRemoveWalletModal = () => { dispatch(MODAL_ACTIONS.openRemoveWalletModal(wallet)) };
 
     const copyAddress = () => {
-        setCopyClick(true);
-        utils.generic.copyToClipboard(utils.string.addCurvePrefix(wallet.address, wallet.curve));
-        setTimeout(() => {
-            setCopyClick(false);
-        }, 2150)
+        if ((tellTheSender || wallet.curve === curveTypes.SECP256K1)) {
+            setCopyClick(true);
+            utils.generic.copyToClipboard(utils.string.addCurvePrefix(wallet.address, wallet.curve));
+            setTimeout(() => {
+                setCopyClick(false);
+            }, 2150);
+        }
     };
 
     return (
@@ -77,14 +80,28 @@ export default function Overview({ wallet }) {
                     </label>
                     <div className="h-10 py-1 flex items-center cursor-pointer hover:text-gray-500" onClick={copyAddress}>
                         {utils.string.addCurvePrefix(wallet.address, wallet.curve)}
-                        <Icon name="copy outline" className="ml-1 mb-2 cursor-pointer" />
-                        {!!copyClick && (
-                            <div className="relative inline text-xs mb-2 text-gray-500">
-                                Copied to clipboard!
-                            </div>
-                        )}
+                        {
+                            (tellTheSender || wallet.curve === curveTypes.SECP256K1) &&
+                            <>
+                                <Icon name="copy outline" className="ml-1 mb-2 cursor-pointer" />
+                                {!!copyClick && (
+                                    <div className="relative inline text-xs mb-2 text-gray-500">
+                                        Copied to clipboard!
+                                    </div>
+                                )}</>
+                        }
                     </div>
-
+                    {
+                        wallet.curve !== curveTypes.SECP256K1 &&
+                        <div className="flex items-center cursor-pointer">
+                            <Checkbox
+                                checked={tellTheSender}
+                                onChange={() => setTellTheSender(prevState => !prevState)}
+                                label="I will tell the sender this is a BN address"
+                                className="text-xs"
+                            />
+                        </div>
+                    }
                 </Grid.Column>
 
             </Grid.Row>
