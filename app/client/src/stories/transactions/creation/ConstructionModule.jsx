@@ -66,7 +66,7 @@ function ConstructionModule() {
 
     const handleSendTransaction = async () => {
         // Send the TX via the main tx action -- Just fire it off, latest TX will appear in transaction reducer as lastSentAndMinedTx
-        dispatch(ADAPTER_ACTIONS.sendTransactionReducerTXs())
+        dispatch(ADAPTER_ACTIONS.sendTransactionReducerTXs());
         dispatch(TRANSACTION_ACTIONS.toggleStatus());
     };
 
@@ -97,7 +97,7 @@ function ConstructionModule() {
                 if (result.length < 5) {
                     // Pad in empty rows to prevent height jump -- parse false as empty rows below
                     while (result.length < 5) {
-                        result.push(false)
+                        result.push(false);
                     }
                 }
                 setPaginatedList(result);

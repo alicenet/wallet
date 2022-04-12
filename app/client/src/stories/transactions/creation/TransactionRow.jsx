@@ -13,20 +13,9 @@ export default function TransactionRow({ transaction, index, onUpdate }) {
 
     const storeType = useMemo(() => transaction.type === transactionTypes.DATA_STORE ? 'Data Store' : 'Value Store', [transaction]);
 
-    const handleEdit = (transaction, index) => onUpdate({ ...transaction, index });
+    const bnCurve = useMemo(() => transaction.bnCurve ? utils.wallet.curveTypes.BARRETO_NAEHRIG : utils.wallet.curveTypes.SECP256K1, [transaction]);
 
-    //*Hide clone tx as requested in MP-396
-    /*const handleClone = (transaction) => {
-        dispatch(TRANSACTION_ACTIONS.addStore(transaction));
-        toast.success(
-            <SyncToastMessageSuccess
-                basic
-                title="Success"
-                message={storeType + ' cloned'}
-            />,
-            { className: "basic", "autoClose": 1000 }
-        );
-    };*/
+    const handleEdit = (transaction, index) => onUpdate({ ...transaction, index });
 
     const handleDelete = (index) => {
         dispatch(TRANSACTION_ACTIONS.removeItem(index));
@@ -57,23 +46,26 @@ export default function TransactionRow({ transaction, index, onUpdate }) {
 
             <Table.Cell className="py-0 px-2">{storeType}</Table.Cell>
 
-            <Popup
-                size="mini"
-                offset={"0,1"}
-                className="text-xs"
-                trigger={
-                    <Table.Cell className="py-0 px-2">
-                        {utils.string.splitStringWithEllipsis(transaction.from, 5)}
-                    </Table.Cell>
-                }
-                content={
-                    <>
-                        <span className="font-bold">From</span><br />{transaction.from}
-                    </>
-                }
-            />
+            <Table.Cell className="py-0 px-2">
+                <Popup
+                    size="mini"
+                    offset={"0,1"}
+                    className="text-xs"
+                    trigger={
+                        <div>
+                            {utils.string.addCurvePrefix(utils.string.splitStringWithEllipsis(transaction.from, 5), bnCurve)}
+                        </div>
 
-            <Table.Cell className="py-0 px-2 cursor-pointer" onClick={() => utils.generic.copyToClipboard(transaction.to)}>
+                    }
+                    content={
+                        <>
+                            <span className="font-bold">From</span><br />{utils.string.addCurvePrefix(transaction.from, bnCurve)}
+                        </>
+                    }
+                />
+            </Table.Cell>
+
+            <Table.Cell className="py-0 px-2 cursor-pointer" onClick={() => utils.generic.copyToClipboard(utils.string.addCurvePrefix(transaction.to, bnCurve))}>
                 <Popup
                     size="mini"
                     offset={"0,1"}
@@ -81,7 +73,7 @@ export default function TransactionRow({ transaction, index, onUpdate }) {
                     trigger={
                         <div>
                             {transaction.to && <>
-                                {utils.string.splitStringWithEllipsis(transaction.to, 5)}
+                                {utils.string.addCurvePrefix(utils.string.splitStringWithEllipsis(transaction.to, 5), bnCurve)}
                                 <Icon name="copy outline" className="ml-1 mb-2 cursor-pointer" />
                             </>}
                         </div>
@@ -89,7 +81,7 @@ export default function TransactionRow({ transaction, index, onUpdate }) {
                     }
                     content={
                         <>
-                            <span className="font-bold">To</span><br />{transaction.to}
+                            <span className="font-bold">To</span><br />{utils.string.addCurvePrefix(transaction.to, bnCurve)}
                         </>
                     }
                 />
@@ -115,18 +107,6 @@ export default function TransactionRow({ transaction, index, onUpdate }) {
                         inverted
                         basic
                     />
-
-                    {/*Hide clone tx as requested in MP-396*/}
-                    {/*<Popup
-                        trigger={
-                            <Menu.Item name='clone' fitted onClick={() => handleClone(transaction)}>
-                                <Icon name='clone' />
-                            </Menu.Item>
-                        }
-                        content={`Clone ${storeType}`}
-                        inverted
-                        basic
-                    />*/}
 
                     <Popup
                         trigger={

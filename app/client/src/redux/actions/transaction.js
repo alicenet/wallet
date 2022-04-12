@@ -25,9 +25,9 @@ export function setPrioritizationFee(fee) {
  * @param { Object } wallet - Redux wallet state object
  * @param { Boolean } userOverride - Sets the override flag so that parseDefaultFeePayer() does not update the fee when called
  */
-export function setFeePayer(wallet, over_ride = false) {
+export function setFeePayer(wallet, userOverride = false) {
     return async function (dispatch) {
-        dispatch({ type: TRANSACTION_ACTION_TYPES.SET_FEE_PAYER, payload: { wallet: wallet, over_ride: over_ride } });
+        dispatch({ type: TRANSACTION_ACTION_TYPES.SET_FEE_PAYER, payload: { wallet: wallet, over_ride: userOverride } });
     }
 }
 
