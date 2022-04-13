@@ -152,7 +152,7 @@ function ConstructionModule() {
 
                     </Grid.Row>
 
-                    <Grid.Row className="p-0" style={{ height: "300px" }}>
+                    <Grid.Row className="p-0 flex content-center" style={{ height: "300px" }}>
 
                         <Table size="small" celled color="teal" className="break-all text-sm">
 
