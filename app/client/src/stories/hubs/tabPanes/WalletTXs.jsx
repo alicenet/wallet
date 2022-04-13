@@ -59,7 +59,7 @@ export default function WalletTXs({ wallet }) {
 
     const getTxTable = () => {
 
-        let rows = activeSlice.map((tx, i) => {
+        let rows = activeSlice.map((tx, index) => {
 
             let txData = recentTxData[tx["Tx"]["Vin"][0]["TXInLinker"].TxHash];
             let tVal = Web3.utils.toBN("0x00"); // Total value of any value stores in the tx
@@ -73,7 +73,7 @@ export default function WalletTXs({ wallet }) {
             });
 
             return (
-                <Table.Row>
+                <Table.Row key={`wallet-tx-row-${index}`}>
                     <Popup
                         trigger={
                             <Table.Cell className="cursor-pointer hover:bg-gray-100" onClick={() => handleCopy(tx)}>
@@ -146,7 +146,7 @@ export default function WalletTXs({ wallet }) {
                         <Button disabled={activePage === 0} icon="chevron left" size="mini" onClick={pageBackward} />
                         <div className="text-xs text-gray-600">Page {activePage + 1} of {totalPages}</div>
                         <Button.Group size="mini">
-                            <Button content icon="refresh" size="mini" onClick={fetchRecentTxs} />
+                            <Button icon="refresh" size="mini" onClick={fetchRecentTxs} />
                             <Button.Or />
                             <Button icon="chevron right" disabled={activePage >= totalPages - 1} onClick={pageForward} />
                         </Button.Group>
