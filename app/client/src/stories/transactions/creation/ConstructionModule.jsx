@@ -114,7 +114,7 @@ function ConstructionModule() {
 
             <Container>
 
-                <Grid textAlign="center" className="m-0">
+                <Grid className="m-0">
 
                     <Grid.Row className="py-3">
 
