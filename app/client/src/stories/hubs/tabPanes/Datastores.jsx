@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Header, Icon, Loader, Message, Popup, Segment, Table } from 'semantic-ui-react';
 import madNetAdapter from 'adapters/madAdapter';
 import { getMadWalletInstance } from 'redux/middleware/WalletManagerMiddleware';
@@ -11,22 +11,18 @@ export default function Datastores({ wallet }) {
     const history = useHistory();
     const lastWallet = usePrevious(wallet);
 
-    const [page, setPage] = React.useState(1);
+    const [page, setPage] = useState(1);
     const lastPage = usePrevious(page);
 
     const pageForward = () => setPage(s => s + 1);
     const pageBack = () => setPage(s => s - 1);
 
-    const [fetchLoader, setFetchLoader] = React.useState(false);
-    const [datastores, setDataStores] = React.useState([]);
-    const [prevIndex, setPrevIndex] = React.useState("") // Use for previous page when available
-    const [nextIndexToUse, setNextIndexToUse] = React.useState(""); // Use for next index in pagination -- Pulled from last of stack on data pull
-
-    const maxDataPerPage = 15; // Max Datastores per page -- TODO: Adjust after final testing
-
-    const [nextPageExists, setNextPageExists] = React.useState(false);
-
-    const [loadingTx, setLoadingTx] = React.useState(false);
+    const [fetchLoader, setFetchLoader] = useState(false);
+    const [datastores, setDataStores] = useState([]);
+    const [prevIndex, setPrevIndex] = useState(""); // Use for previous page when available
+    const [nextIndexToUse, setNextIndexToUse] = useState(""); // Use for next index in pagination -- Pulled from last of stack on data pull
+    const [nextPageExists, setNextPageExists] = useState(false);
+    const [loadingTx, setLoadingTx] = useState(false);
 
     const inspectTx = async (dStore) => {
         setLoadingTx(true);
@@ -34,18 +30,20 @@ export default function Datastores({ wallet }) {
         setLoadingTx(false);
         history.push('/inspectTx', {
             tx: res.tx.Tx,
-        })
-    }
+        });
+    };
+
+    const maxDataPerPage = 15; // Max Datastores per page -- TODO: Adjust after final testing
 
     // Fetch the data stores on mount and wallet/page changes
-    React.useEffect(() => {
+    useEffect(() => {
 
         const getData = async () => {
 
-            let dir = "backwards"
+            let dir = "backwards";
 
             if (page > lastPage) {
-                dir = "forwards"
+                dir = "forwards";
             }
 
             let indexToUse = dir === "forwards" ? nextIndexToUse : prevIndex;
@@ -54,21 +52,25 @@ export default function Datastores({ wallet }) {
             let dsSearchOpts = madNetAdapter.dsSearchOpts.get();
             let foundStores = [];
             for (let i = (maxDataPerPage + 1); i > 0; i--) {
-                let attempt = await madWalletInstance.Rpc.getDataStoreUTXOIDs(dsSearchOpts["address"], (dsSearchOpts["bnCurve"] ? 2 : 1), i, indexToUse)
+                let attempt = await madWalletInstance.Rpc.getDataStoreUTXOIDs(dsSearchOpts["address"], (dsSearchOpts["bnCurve"] ? 2 : 1), i, indexToUse);
                 if (attempt && attempt.length > 0) {
                     foundStores = attempt;
                     break;
                 }
             }
+
             /// If found stores has length of +1 of maxDataPerPage we know the next page exists
             // -- Additionally slice the +1 off for the UI so only the max per page is shown
             if (foundStores.length > maxDataPerPage) {
                 setNextPageExists(true);
                 foundStores = foundStores.slice(0, foundStores.length - 1);
-            } else {
+            }
+            else {
                 setNextPageExists(false);
             }
-            if (foundStores.length === 0) { return setDataStores([]); }
+            if (foundStores.length === 0) {
+                return setDataStores([]);
+            }
             let UTXOIDS = [];
             for (let i = 0; i < foundStores.length; i++) {
                 UTXOIDS.push(foundStores[i]["UTXOID"]);
@@ -82,13 +84,12 @@ export default function Datastores({ wallet }) {
             setNextIndexToUse(dStores[dStores.length - 1].index); // Set the next-index to the last element in the array
             // Set the data stores
             setDataStores(dStores);
-
         }
 
         const fetchDatastores = async () => {
             setFetchLoader(true);
             // Set active page in adapter to 1
-            madNetAdapter.setDsActivePage(1)
+            madNetAdapter.setDsActivePage(1);
             // Set dataStoreSearch address to the active wallet to the current wallet address
             madNetAdapter.setDsSearchAddress(wallet.address);
             await getData();
@@ -110,10 +111,11 @@ export default function Datastores({ wallet }) {
 
         const getRows = () => {
             return datastores.map(dstore => (
-                <Table.Row>
+                <Table.Row key={dstore.txHash}>
                     <Popup
                         trigger={
-                            <Table.Cell className="cursor-pointer hover:bg-gray-100"
+                            <Table.Cell
+                                className="cursor-pointer hover:bg-gray-100"
                                 content={utils.string.splitStringWithEllipsis(dstore.txHash, 5)}
                                 onClick={() => utils.generic.copyToClipboard(dstore.txHash)}
                             />
@@ -128,41 +130,59 @@ export default function Datastores({ wallet }) {
                     <Table.Cell content={parseInt(dstore.deposit, 16)} />
                     <Table.Cell content={utils.generic.hexToUtf8Str(dstore.index)} />
                     <Table.Cell content={utils.generic.hexToUtf8Str(dstore.value)} />
-                    <Table.Cell className="cursor-pointer hover:bg-gray-100 text-center" onClick={() => inspectTx(dstore)} content={<Icon name="search" loading={loadingTx} />} />
+                    <Table.Cell
+                        className="cursor-pointer hover:bg-gray-100 text-center"
+                        onClick={() => inspectTx(dstore)}
+                        content={<Icon name="search" loading={loadingTx} />}
+                    />
                 </Table.Row>
             ))
-        }
+        };
 
-        return (<div className="flex flex-col justify-between h-full">
+        return (
+            <div className="flex flex-col justify-between h-full">
 
-            <div className="">
-                <Table size="small" compact celled className="text-xs" color="blue">
+                <div>
 
-                    <Table.Header>
-                        <Table.HeaderCell>TxHash</Table.HeaderCell>
-                        <Table.HeaderCell>Issued</Table.HeaderCell>
-                        <Table.HeaderCell>Expires</Table.HeaderCell>
-                        <Table.HeaderCell>Fee</Table.HeaderCell>
-                        <Table.HeaderCell>Deposit</Table.HeaderCell>
-                        <Table.HeaderCell>Index</Table.HeaderCell>
-                        <Table.HeaderCell>Value</Table.HeaderCell>
-                        <Table.HeaderCell content="" />
-                    </Table.Header>
+                    <Table size="small" compact celled className="text-xs" color="blue">
 
-                    {getRows()}
+                        <Table.Header>
 
-                </Table>
+                            <Table.Row>
+
+                                <Table.HeaderCell>TxHash</Table.HeaderCell>
+                                <Table.HeaderCell>Issued</Table.HeaderCell>
+                                <Table.HeaderCell>Expires</Table.HeaderCell>
+                                <Table.HeaderCell>Fee</Table.HeaderCell>
+                                <Table.HeaderCell>Deposit</Table.HeaderCell>
+                                <Table.HeaderCell>Index</Table.HeaderCell>
+                                <Table.HeaderCell>Value</Table.HeaderCell>
+                                <Table.HeaderCell content="" />
+
+                            </Table.Row>
+
+                        </Table.Header>
+
+                        <Table.Body>
+
+                            {getRows()}
+
+                        </Table.Body>
+
+                    </Table>
+
+                </div>
+
+                <div className="flex justify-between items-center">
+                    <Button disabled={page === 1} icon="left chevron" size="mini" onClick={pageBack} />
+                    <div className="text-xs text-gray-600">Page {page} </div>
+                    <Button disabled={!nextPageExists} icon="right chevron" size="mini" onClick={pageForward} />
+                </div>
+
             </div>
+        );
 
-            <div className="flex justify-between items-center">
-                <Button disabled={page === 1} icon="left chevron" size="mini" onClick={pageBack} />
-                <div className="text-xs text-gray-600">Page {page} </div>
-                <Button disabled={!nextPageExists} icon="right chevron" size="mini" onClick={pageForward} />
-            </div>
-
-        </div>)
-
-    }
+    };
 
     return (
         <Segment className="bg-white m-0 border-solid border border-gray-300 rounded-b border-t-0 rounded-tr-none rounded-tl-none h-81">
