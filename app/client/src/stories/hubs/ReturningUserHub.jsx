@@ -137,10 +137,7 @@ export default function Hub() {
                                             <Menu.Item
                                                 icon="external alternate"
                                                 name="Block Explorer"
-                                                onClick={() => {
-                                                    debugger
-                                                    window.open(`${BLOCK_EXPLORER_LINK}/tx`, '_blank');
-                                                }}
+                                                onClick={() => window.open(`${BLOCK_EXPLORER_LINK}/tx`, '_blank')}
                                             />
                                         </Menu.Menu>
                                     </Menu>
