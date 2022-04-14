@@ -78,13 +78,13 @@ export default function Hub() {
                                 {wallets.map((wallet, index) =>
                                 <Popup size="mini"
                                     content={wallet.name}
-                                    position="right center"
-                                    offset="0 -4"
                                     key={wallet.address}
+                                    offset="0, 5"
+                                    position="bottom right"
                                     trigger={
                                         <Button
                                             color="teal"
-                                            content={openDrawer ? <span style={{ textOverflow: "ellipsis", whiteSpace: "nowrap" }} className="block overflow-hidden">{wallet.name}</span> : wallet.name.substring(0, 2)}
+                                            content={openDrawer ? <span style={{ textOverflow: "ellipsis", whiteSpace: "nowrap" }} className="block overflow-hidden">{wallet.name} AAA</span> : wallet.name.substring(0, 2)}
                                             className={classNames("flex-shrink-0 m-0 p-2 rounded-sm",
                                                 { "text-xs uppercase": !openDrawer }, { "text-sm": openDrawer })}
                                             style={{ minWidth: "28px" }}
