@@ -42,7 +42,7 @@ export function setBalancesLoading(bool) {
  * @param {String} password  - Password to encrypt vault with
  * @param {String} curveType - Curve type for public address derivation :: default: see util.wallet curve types -- Default secp256k1
  */
-export function generateNewSecureHDVault(mnemonic, password, curveType = util.wallet.curveTypes.SECP256K1, hint) {
+export function generateNewSecureHDVault(mnemonic, password, curveType = util.wallet.curveTypes.SECP256K1, hint = "No hint provided") {
     return async function (dispatch) {
         // Anytime we generate a vault make sure to note the curve in the vault store as well 
         // -- This prevents immediately generated vault from not having the correct curve for new wallet generations
