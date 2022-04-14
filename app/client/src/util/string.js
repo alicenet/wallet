@@ -10,7 +10,7 @@ export function addCurvePrefix(address, curve = curveTypes.SECP256K1) {
     if(!address) {
         return null;
     }
-    return `${curve === curveTypes.SECP256K1 ? '' : 'BN'}0x${removeHexPrefix(address)}`;
+    return `0x${curve === curveTypes.SECP256K1 ? '' : 'BN'}${removeHexPrefix(address)}`;
 }
 
 /**
