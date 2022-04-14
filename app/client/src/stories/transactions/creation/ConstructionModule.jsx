@@ -116,23 +116,9 @@ function ConstructionModule() {
 
                 <Grid className="m-0">
 
-                    <Grid.Row className="py-3">
+                    <Grid.Row className="py-3 justify-between">
 
-                        <Grid.Column verticalAlign="middle" width={7} className="p-0">
-
-                            <ConstructingATransactionModal>
-
-                                <Container>
-
-                                    <Button basic color="black" content="How to construct a transaction" />
-
-                                </Container>
-
-                            </ConstructingATransactionModal>
-
-                        </Grid.Column>
-
-                        <Grid.Column textAlign="right" className="p-0" width={9}>
+                        <Grid.Column className="p-0" width={9}>
 
                             <Menu compact icon='labeled' size="small">
 
@@ -145,6 +131,16 @@ function ConstructionModule() {
                                 </Menu.Item>
 
                                 <AddEditPrioritizationFeeModal />
+
+                            </Menu>
+
+                        </Grid.Column>
+
+                        <Grid.Column className="p-0" width={3}>
+
+                            <Menu compact icon='labeled' size="small">
+
+                                <ConstructingATransactionModal />
 
                             </Menu>
 
