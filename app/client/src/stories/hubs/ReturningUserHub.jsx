@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo } from 'react';
+import React, { useContext, useEffect, useMemo, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import head from 'lodash/head';
@@ -20,6 +20,14 @@ export default function Hub() {
 
     const [openDrawer, setOpenDrawer] = React.useState(true);
     const { selectedWallet, setSelectedWallet, activeTabPane, setActiveTabPane } = useContext(WalletHubContext);
+
+    const walletsRef = useRef([]);
+
+    useEffect(() => {
+        walletsRef.current = walletsRef.current.slice(0, wallets.length);
+    }, [wallets]);
+
+    const isOverflowing = (event) => event.offsetHeight < event.scrollHeight || event.offsetWidth < event.scrollWidth; 
 
     const gotoAddWallet = () => {
         history.push('/addWallet/menu');
@@ -76,25 +84,27 @@ export default function Hub() {
                             <Container className="flex flex-col gap-3 p-0 max-h-104 overflow-y-auto overscroll-contain no-scrollbar items-stretch">
 
                                 {wallets.map((wallet, index) =>
-                                <Popup size="mini"
-                                    content={wallet.name}
-                                    key={wallet.address}
-                                    offset="0, 5"
-                                    position="bottom right"
-                                    trigger={
-                                        <Button
-                                            color="teal"
-                                            content={openDrawer ? <span style={{ textOverflow: "ellipsis", whiteSpace: "nowrap" }} className="block overflow-hidden">{wallet.name} AAA</span> : wallet.name.substring(0, 2)}
-                                            className={classNames("flex-shrink-0 m-0 p-2 rounded-sm",
-                                                { "text-xs uppercase": !openDrawer }, { "text-sm": openDrawer })}
-                                            style={{ minWidth: "28px" }}
-                                            basic={selectedWallet && wallet.address !== selectedWallet.address}
-                                            onClick={() => setSelectedWallet(wallet)}
-                                            size="mini"
-                                        />
-                                    }
-                                />
-                                    
+                                    <Popup 
+                                        size="mini"
+                                        content={wallet.name}
+                                        key={wallet.address}
+                                        offset="0, 5"
+                                        position="bottom right"
+                                        disabled={!isOverflowing(walletsRef.current[index]?.ref.current.firstChild)}
+                                        trigger={
+                                            <Button
+                                                color="teal"
+                                                content={openDrawer ? <span style={{ textOverflow: "ellipsis", whiteSpace: "nowrap" }} className="block overflow-hidden">{wallet.name} AAA</span> : wallet.name.substring(0, 2)}
+                                                className={classNames("flex-shrink-0 m-0 p-2 rounded-sm",
+                                                    { "text-xs uppercase": !openDrawer }, { "text-sm": openDrawer })}
+                                                style={{ minWidth: "28px" }}
+                                                basic={selectedWallet && wallet.address !== selectedWallet.address}
+                                                onClick={() => setSelectedWallet(wallet)}
+                                                size="mini"
+                                                ref={el => walletsRef.current[index] = el} 
+                                            />
+                                        }
+                                    />
                                 )}
 
                             </Container>
