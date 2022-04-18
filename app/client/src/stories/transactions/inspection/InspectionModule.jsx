@@ -10,6 +10,8 @@ import { getMadWalletInstance } from 'redux/middleware/WalletManagerMiddleware';
 import { classNames } from 'util/generic';
 import Web3 from 'web3';
 
+const BLOCK_EXPLORER_LINK = process.env.REACT_APP_BLOCK_EXPLORER_LINK;
+
 const madNetJs = getMadWalletInstance();
 
 function InspectionModule() {
@@ -221,6 +223,7 @@ function InspectionModule() {
                         <Header textAlign="left" sub className="mb-2 text-lg"><span className="text-gray-700">
                             TxHash: </span> <span className="text-gray-500">{txObj["txHash"]}</span>
                         </Header>
+                        <div className="mb-2 text-left text-base cursor-pointer text-gray-400" onClick={() => window.open(`${BLOCK_EXPLORER_LINK}/tx?txHash=${txObj["txHash"]}`, '_blank')}>View TX on Block Explorer</div>
                         <div className="flex justify-start mb-3">
                             <Label className="text-xs">TxFee: {txFee} MadBytes</Label>
                         </div>
