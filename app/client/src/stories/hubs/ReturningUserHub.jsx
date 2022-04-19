@@ -77,6 +77,7 @@ export default function Hub() {
 
                                 {wallets.map((wallet, index) =>
                                     <Button
+                                        key={wallet.address}
                                         color="teal"
                                         content={openDrawer ? <span style={{ textOverflow: "ellipsis", whiteSpace: "nowrap" }} className="block overflow-hidden">{wallet.name}</span> : wallet.name.substring(0, 2)}
                                         className={classNames("flex-shrink-0 m-0 p-2 rounded-sm",
