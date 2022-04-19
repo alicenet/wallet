@@ -1,5 +1,6 @@
 import { upperFirst } from 'lodash';
 import { curveTypes } from "./wallet";
+import Web3 from "web3";
 
 /**
  * Displays an address with the right prefix based on the curve type
@@ -7,10 +8,25 @@ import { curveTypes } from "./wallet";
  * @param { Int } curve - Curve type
  */
 export function addCurvePrefix(address, curve = curveTypes.SECP256K1) {
-    if(!address) {
+    if (!address) {
         return null;
     }
     return `0x${curve === curveTypes.SECP256K1 ? '' : 'BN'}${removeHexPrefix(address)}`;
+}
+
+/**
+ * Returns true if the string is a BN address
+ * @param {string} address - String to split
+ * @returns Returns true if the address contains the BN prefix
+ */
+export function isBNAddress(address) {
+    if (typeof address !== "string") {
+        return false;
+    }
+    if (!Web3.utils.isAddress(removeBNPrefix(removeHexPrefix(address)))) {
+        return false;
+    }
+    return removeHexPrefix(address).indexOf('BN') === 0;
 }
 
 /**
@@ -34,6 +50,18 @@ export function splitStringWithEllipsis(str, lengthOnSides = 3) {
  */
 export function removeHexPrefix(address) {
     if (address.indexOf('0x') >= 0) {
+        return address.slice(2);
+    }
+    return address;
+}
+
+/**
+ * Removes the BN prefix
+ * @param { String } address
+ * @returns Returns the address
+ */
+export function removeBNPrefix(address) {
+    if (address.indexOf('BN') >= 0) {
         return address.slice(2);
     }
     return address;
