@@ -114,6 +114,7 @@ export default function AddEditValueStoreModal({ valueStore, onClose }) {
                             <Grid.Column width={curveType === curveTypes.BARRETO_NAEHRIG ? "12" : "16"}>
 
                                 <Form.Input
+                                    required
                                     id="To"
                                     label="To"
                                     value={formState.To.value}
