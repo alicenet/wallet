@@ -86,6 +86,16 @@ export default function ExportPrivateKeyModal() {
         });
     }
 
+    const [passwordHint, setPasswordHint] = useState('');
+
+    useEffect(() => {
+        const checkForPasswordHint = async () => {
+            let passwordHint = await electronStoreCommonActions.readPasswordHint();
+            typeof passwordHint === 'string' ? setPasswordHint(passwordHint) : setPasswordHint('');
+        }
+        checkForPasswordHint();
+    }, []);
+
     return (
 
         <Modal open={isOpen}>
@@ -156,6 +166,13 @@ export default function ExportPrivateKeyModal() {
                         />
 
                     </Form.Group>
+
+                    <div>
+                        <span className="font-bold text-gray-600">Password Hint:</span>
+                        <span className="text-gray-400 ml-2">
+                            {passwordHint}
+                        </span>
+                    </div>
 
                 </Form>
 

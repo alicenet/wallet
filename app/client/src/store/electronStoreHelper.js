@@ -361,6 +361,26 @@ function checkPasswordAgainstKeystoreAddress(password, address) {
     })
 }
 
+/**
+ * Store password hint as plain value to the electron-store
+ * @param { String } hint - Hint to be stored as a string
+ * @returns { Boolean }
+ */
+function setPasswordHint(hint) {
+    writePlainValueToStore("hint", hint);
+    return true;
+}
+
+/**
+ * Fetch the currently stored password hint from the electron store
+ * @returns { Promise<String> } - Return password hint as a string
+ */
+function readPasswordHint() {
+    return new Promise(async res => {
+        res(await readPlainValueFromStore("hint"));
+    });
+}
+
 /** -- Write configuration values to electron store
  * @param { Object } configValues
  * @property { String } configValues.mad_net_chainID - Mad net chain id to save
@@ -404,4 +424,6 @@ export const electronStoreCommonActions = {
     storePreflightHash: storePreflightHash,
     unlockAndGetSecuredHDVault: unlockAndGetSecuredHDVault,
     updateVaultWallets: updateVaultWallets,
+    setPasswordHint: setPasswordHint,
+    readPasswordHint: readPasswordHint
 }

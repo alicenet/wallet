@@ -21,11 +21,12 @@ function SecureNewVault() {
 
     const [formState, formSetter, onSubmit] = useFormState([
         { name: 'password', display: 'Password', type: 'password', isRequired: true },
-        { name: 'verifiedPassword', display: 'Verify Password', type: 'verified-password', isRequired: true }
+        { name: 'verifiedPassword', display: 'Verify Password', type: 'verified-password', isRequired: true },
+        { name: 'hint', display: 'Password Hint', type: 'text', isRequired: true, value: "" }
     ]);
 
     const handleFormSubmit = () => {
-        dispatch(VAULT_ACTIONS.generateNewSecureHDVault(seedPhrase, formState.password.value, desiredCurve))
+        dispatch(VAULT_ACTIONS.generateNewSecureHDVault(seedPhrase, formState.password.value, desiredCurve, formState.hint.value ))
         history.push("/hub");
     };
 
@@ -85,6 +86,17 @@ function SecureNewVault() {
                                 required
                                 onChange={e => formSetter.setVerifiedPassword(e.target.value)}
                                 error={!!formState.verifiedPassword.error && { content: formState.verifiedPassword.error }}
+                            />
+
+                            <Form.Input
+                                className='p-0'
+                                id='hint'
+                                label='Password Hint'
+                                placeholder='Enter Password Hint'
+                                type='text'
+                                required
+                                onChange={e => formSetter.setHint(e.target.value)}
+                                error={!!formState.hint.error && { content: formState.hint.error }}
                             />
 
                         </Form.Group>
