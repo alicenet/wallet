@@ -12,7 +12,6 @@ export default function TransactionRow({ transaction, index, onUpdate }) {
     const dispatch = useDispatch();
 
     const storeType = useMemo(() => transaction.type === transactionTypes.DATA_STORE ? 'Data Store' : 'Value Store', [transaction]);
-    const bnCurveTo = useMemo(() => transaction.bnCurve ? utils.wallet.curveTypes.BARRETO_NAEHRIG : utils.wallet.curveTypes.SECP256K1, [transaction]);
 
     const handleEdit = (transaction, index) => onUpdate({ ...transaction, index });
 
@@ -64,7 +63,7 @@ export default function TransactionRow({ transaction, index, onUpdate }) {
                 />
             </Table.Cell>
 
-            <Table.Cell className="py-0 px-2 cursor-pointer" onClick={() => utils.generic.copyToClipboard(utils.string.addCurvePrefix(transaction.to, bnCurveTo))}>
+            <Table.Cell className="py-0 px-2 cursor-pointer" onClick={() => utils.generic.copyToClipboard(utils.string.addCurvePrefix(transaction.to, transaction.bnCurve))}>
                 <Popup
                     size="mini"
                     offset={"0,1"}
@@ -72,7 +71,7 @@ export default function TransactionRow({ transaction, index, onUpdate }) {
                     trigger={
                         <div>
                             {transaction.to && <>
-                                {utils.string.addCurvePrefix(utils.string.splitStringWithEllipsis(transaction.to, 5), bnCurveTo)}
+                                {utils.string.addCurvePrefix(utils.string.splitStringWithEllipsis(transaction.to, 5), transaction.bnCurve)}
                                 <Icon name="copy outline" className="ml-1 mb-2 cursor-pointer" />
                             </>}
                         </div>
@@ -80,7 +79,7 @@ export default function TransactionRow({ transaction, index, onUpdate }) {
                     }
                     content={
                         <>
-                            <span className="font-bold">To</span><br />{utils.string.addCurvePrefix(transaction.to, bnCurveTo)}
+                            <span className="font-bold">To</span><br />{utils.string.addCurvePrefix(transaction.to, transaction.bnCurve)}
                         </>
                     }
                 />

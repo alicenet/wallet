@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Button, Checkbox, Form, Grid, Header, Icon, Modal, Popup } from 'semantic-ui-react';
 import { useFormState } from 'hooks/_hooks';
 import { useDispatch, useSelector } from 'react-redux';
@@ -6,6 +6,8 @@ import has from 'lodash/has';
 
 import { TRANSACTION_ACTIONS } from 'redux/actions/_actions';
 import utils, { transactionTypes } from 'util/_util';
+import { curveTypes } from "../../../util/wallet";
+import { isBNAddress, removeBNPrefix, removeHexPrefix } from "../../../util/string";
 
 export default function AddEditValueStoreModal({ valueStore, onClose }) {
 
@@ -24,16 +26,22 @@ export default function AddEditValueStoreModal({ valueStore, onClose }) {
         };
     }) || [], [internal, external]);
 
+    const [curveType, setCurveType] = useState(curveTypes.SECP256K1);
+    const [isBNCurveChecked, setIsBNCurveChecked] = useState(false);
+
     const [formState, formSetter, onSubmit] = useFormState([
         { name: 'From', display: 'From address', type: 'address', isRequired: true, value: valueStore.from },
-        { name: 'To', display: 'To address', type: 'address', isRequired: true, value: valueStore.to },
+        { name: 'To', display: 'To address', type: 'address', isRequired: true, value: utils.string.addCurvePrefix(valueStore.to, valueStore.bnCurve) },
         { name: 'Value', type: 'int', isRequired: true, value: valueStore.value },
     ]);
 
     const isEditing = has(valueStore, 'index');
 
-    const [useBNCurve, setUseBNCurve] = useState(valueStore.bnCurve);
-    const toggleCurveType = () => setUseBNCurve(s => !s);
+    useEffect(() => {
+        if (formState.To.value) {
+            setCurveType(isBNAddress(formState.To.value) ? curveTypes.BARRETO_NAEHRIG : curveTypes.SECP256K1);
+        }
+    }, [formState.To.value]);
 
     const handleSubmit = async () => {
         const bnCurveFrom = internal.concat(external).find(wallet => wallet.address === formState.From.value).curve;
@@ -42,18 +50,18 @@ export default function AddEditValueStoreModal({ valueStore, onClose }) {
                 ...valueStore,
                 from: formState.From.value,
                 bnCurveFrom,
-                to: formState.To.value,
+                to: removeBNPrefix(removeHexPrefix(formState.To.value)),
                 value: formState.Value.value,
-                bnCurve: useBNCurve,
+                bnCurve: curveType,
             }));
         }
         else {
             dispatch(TRANSACTION_ACTIONS.addStore({
                 from: formState.From.value,
                 bnCurveFrom,
-                to: formState.To.value,
+                to: removeBNPrefix(removeHexPrefix(formState.To.value)),
                 value: formState.Value.value,
-                bnCurve: useBNCurve,
+                bnCurve: curveType,
                 type: transactionTypes.VALUE_STORE,
             }));
         }
@@ -101,9 +109,9 @@ export default function AddEditValueStoreModal({ valueStore, onClose }) {
 
                         </Grid.Row>
 
-                        <Grid.Row columns={2} className="p-0 justify-around">
+                        <Grid.Row columns={curveType === curveTypes.BARRETO_NAEHRIG ? 2 : 1} className="p-0 justify-around">
 
-                            <Grid.Column width="12">
+                            <Grid.Column width={curveType === curveTypes.BARRETO_NAEHRIG ? "12" : "16"}>
 
                                 <Form.Input
                                     id="To"
@@ -114,27 +122,27 @@ export default function AddEditValueStoreModal({ valueStore, onClose }) {
                                 />
 
                             </Grid.Column>
-
-                            <Grid.Column width="4" className="flex justify-end pl-0">
-
-                                <Checkbox
-                                    className="flex justify-center items-end text-xs uppercase font-bold pb-2"
-                                    checked={useBNCurve}
-                                    onChange={toggleCurveType}
-                                    label={
-                                        <>
-                                            <label className={"labelCheckbox"}>Is BN Curve</label>
-                                            <Popup
-                                                size="mini"
-                                                position="right center"
-                                                trigger={<Icon name="question circle" className="ml-1 mb-1.5" />}
-                                                content="Is this a BN Curve address?"
-                                            />
-                                        </>
-                                    }
-                                />
-
-                            </Grid.Column>
+                            {
+                                curveType === curveTypes.BARRETO_NAEHRIG &&
+                                <Grid.Column width="4" className="flex justify-end pl-0">
+                                    <Checkbox
+                                        className="flex justify-center items-end text-xs uppercase font-bold pb-2"
+                                        checked={isBNCurveChecked}
+                                        onChange={() => {setIsBNCurveChecked(prevState => !prevState)}}
+                                        label={
+                                            <>
+                                                <label className={"labelCheckbox"}>This is a BN</label>
+                                                <Popup
+                                                    size="mini"
+                                                    position="right center"
+                                                    trigger={<Icon name="question circle" className="ml-1 mb-1.5" />}
+                                                    content="Is this a BN Curve address?"
+                                                />
+                                            </>
+                                        }
+                                    />
+                                </Grid.Column>
+                            }
 
                         </Grid.Row>
 
@@ -168,6 +176,7 @@ export default function AddEditValueStoreModal({ valueStore, onClose }) {
                     icon={<Icon name="currency" />}
                     content={`${isEditing ? 'Edit' : 'Add'} Value Store`}
                     color="black"
+                    disabled={curveType === curveTypes.BARRETO_NAEHRIG && !isBNCurveChecked}
                     onClick={() => onSubmit(handleSubmit)}
                 />
 

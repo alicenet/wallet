@@ -5,7 +5,7 @@ import Web3 from "web3";
 /**
  * Displays an address with the right prefix based on the curve type
  * @param {string} address - String to split
- * @param { Int } curve - Curve type
+ * @param {number} curve - Curve type
  */
 export function addCurvePrefix(address, curve = curveTypes.SECP256K1) {
     if (!address) {
