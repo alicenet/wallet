@@ -6,8 +6,10 @@ import { Button, Container, Divider, Grid, Header, Loader, Menu } from 'semantic
 
 import Page from 'layout/Page';
 import { classNames } from 'util/generic';
-import { Datastores, SearchTXs, Overview, WalletTXs } from './tabPanes/_tabPanes';
+import { Datastores, Overview, SearchTXs, WalletTXs } from './tabPanes/_tabPanes';
 import { WalletHubContext } from 'context/WalletHubContext';
+
+const BLOCK_EXPLORER_LINK = process.env.REACT_APP_BLOCK_EXPLORER_LINK;
 
 export default function Hub() {
 
@@ -23,7 +25,7 @@ export default function Hub() {
 
     const gotoAddWallet = () => {
         history.push('/addWallet/menu');
-    }
+    };
 
     const handleTabChange = (e, { index }) => {
         setActiveTabPane(index);
@@ -33,7 +35,7 @@ export default function Hub() {
         if (wallets.length > 0 && !selectedWallet) {
             setSelectedWallet(head(wallets));
         }
-    }, [wallets, selectedWallet, setSelectedWallet])
+    }, [wallets, selectedWallet, setSelectedWallet]);
 
     const panes = [
         {
@@ -132,7 +134,11 @@ export default function Hub() {
                                             />
                                         )}
                                         <Menu.Menu position="right">
-                                            <Menu.Item disabled name="Block Explorer" />
+                                            <Menu.Item
+                                                icon="external alternate"
+                                                name="Block Explorer"
+                                                onClick={() => window.open(`${BLOCK_EXPLORER_LINK}/tx`, '_blank')}
+                                            />
                                         </Menu.Menu>
                                     </Menu>
                                     {panes[activeTabPane].render()}

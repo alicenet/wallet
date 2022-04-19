@@ -23,7 +23,7 @@ export default function ChangeReturnAddressModal({ open, onClose }) {
 
     const wallets = React.useMemo(() => (internal.concat(external).concat(adHocWallets)).map(wallet => {
         return {
-            text: `${wallet.name} (0x${utils.string.splitStringWithEllipsis(wallet.address, 5)})`,
+            text: `${wallet.name} (${utils.string.addCurvePrefix(utils.string.splitStringWithEllipsis(wallet.address, 5), wallet.curve)})`,
             value: wallet.address
         };
     }) || [], [internal, external, adHocWallets]);
@@ -47,7 +47,7 @@ export default function ChangeReturnAddressModal({ open, onClose }) {
             setAdHocWallets(prevState => prevState.concat([{ name: value, address: value }]))
         }
         else {
-            toast.error(<SyncToastMessageWarning title="Error" message="Not a valid return address"/>, { className: "basic", "autoClose": 1500 })
+            toast.error(<SyncToastMessageWarning title="Error" message="Not a valid return address" />, { className: "basic", "autoClose": 1500 })
         }
     };
 
@@ -60,7 +60,7 @@ export default function ChangeReturnAddressModal({ open, onClose }) {
 
             <Modal.Header className="text-center">
 
-                <Header as="h4" color="purple">Change Return Address</Header>
+                <Header as="h4">Change Return Address</Header>
 
             </Modal.Header>
 
@@ -86,7 +86,7 @@ export default function ChangeReturnAddressModal({ open, onClose }) {
 
             <Modal.Actions className="flex justify-between">
 
-                <Button color="black" basic onClick={onClose} content="Close"/>
+                <Button color="black" basic onClick={onClose} content="Close" />
 
             </Modal.Actions>
 

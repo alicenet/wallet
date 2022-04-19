@@ -126,7 +126,7 @@ export default function RemoveWalletModal() {
             <Modal.Actions>
 
                 <div className="flex justify-between">
-                    <Button size="small" color="transparent" content="Close" onClick={closeModal} basic />
+                    <Button size="small" className="transparent" content="Close" onClick={closeModal} basic />
                     <Button size="small" content={error ? "Try Again" : "Delete Wallet"} color="teal" onClick={removeWallet} loading={loading && !error} />
                 </div>
 

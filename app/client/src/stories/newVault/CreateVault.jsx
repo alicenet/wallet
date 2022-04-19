@@ -53,7 +53,7 @@ function CreateVault() {
 
                         <DeterministicWalletGenerationModal>
 
-                            <Button color="transparent" className="text-sm text-black underline">More Info On How Wallets Are Generated</Button>
+                            <Button className="transparent text-sm text-black underline">More Info On How Wallets Are Generated</Button>
 
                         </DeterministicWalletGenerationModal>
 

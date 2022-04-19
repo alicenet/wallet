@@ -19,7 +19,7 @@ export default function AddEditValueStoreModal({ valueStore, onClose }) {
 
     const wallets = useMemo(() => (internal.concat(external)).map(wallet => {
         return {
-            text: `${wallet.name} (0x${utils.string.splitStringWithEllipsis(wallet.address, 5)})`,
+            text: `${wallet.name} (${utils.string.addCurvePrefix(utils.string.splitStringWithEllipsis(wallet.address, 5), wallet.curve)})`,
             value: wallet.address
         };
     }) || [], [internal, external]);
@@ -36,10 +36,12 @@ export default function AddEditValueStoreModal({ valueStore, onClose }) {
     const toggleCurveType = () => setUseBNCurve(s => !s);
 
     const handleSubmit = async () => {
+        const bnCurveFrom = internal.concat(external).find(wallet => wallet.address === formState.From.value).curve;
         if (isEditing) {
             dispatch(TRANSACTION_ACTIONS.editStore({
                 ...valueStore,
                 from: formState.From.value,
+                bnCurveFrom,
                 to: formState.To.value,
                 value: formState.Value.value,
                 bnCurve: useBNCurve,
@@ -48,6 +50,7 @@ export default function AddEditValueStoreModal({ valueStore, onClose }) {
         else {
             dispatch(TRANSACTION_ACTIONS.addStore({
                 from: formState.From.value,
+                bnCurveFrom,
                 to: formState.To.value,
                 value: formState.Value.value,
                 bnCurve: useBNCurve,

@@ -160,7 +160,7 @@ export default function ExportKeystoreModal() {
 
                 <div className="flex justify-between">
 
-                    <Button size="small" color="transparent" content="Close" onClick={closeModal} basic />
+                    <Button size="small" className="transparent" content="Close" onClick={closeModal} basic />
 
                     <Button
                         size="small"
@@ -169,6 +169,7 @@ export default function ExportKeystoreModal() {
                         content={(!optout && formState.vaultPassword.error) || formState.keystorePassword.error ? "Try Again" : keystoreDL ? "Download Keystore" : "Create Keystore"}
                         color="teal"
                         onClick={keystoreDL ? closeModal : submit}
+                        icon={keystoreDL ? "download" : null}
                     />
 
                 </div>

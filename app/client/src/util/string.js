@@ -1,4 +1,17 @@
 import { upperFirst } from 'lodash';
+import { curveTypes } from "./wallet";
+
+/**
+ * Displays an address with the right prefix based on the curve type
+ * @param {string} address - String to split
+ * @param { Int } curve - Curve type
+ */
+export function addCurvePrefix(address, curve = curveTypes.SECP256K1) {
+    if(!address) {
+        return null;
+    }
+    return `0x${curve === curveTypes.SECP256K1 ? '' : 'BN'}${removeHexPrefix(address)}`;
+}
 
 /**
  * Splits a string with an ellipses, leaving designated length on both sides
@@ -40,7 +53,7 @@ export function isTxHash(hash) {
  * @param input - String to prettify
  * @returns { String }
  */
-export function prettyifyUnderscoreKey(input) {
+export function prettifyUnderscoreKey(input) {
     let keyString = input.split("_");
     let keyWords = keyString.map(word => (upperFirst(word)));
     return keyWords.join(" ");

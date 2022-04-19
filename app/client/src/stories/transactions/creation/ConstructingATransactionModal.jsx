@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
-import { Button, Container, Header, Modal } from 'semantic-ui-react';
+import { Button, Container, Header, Icon, Menu, Modal } from 'semantic-ui-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { CONFIG_ACTIONS } from 'redux/actions/_actions';
 
-function ConstructingATransactionModal({ children }) {
+function ConstructingATransactionModal() {
 
     const dispatch = useDispatch();
     const [openModal, setOpenModal] = React.useState(false);
@@ -29,7 +29,11 @@ function ConstructingATransactionModal({ children }) {
             onOpen={() => setOpenModal(true)}
             open={openModal}
             dimmer="inverted"
-            trigger={children}
+            trigger={
+                <Menu.Item name="how-to-construct-a-transaction" onClick={() => setOpenModal(true)}>
+                    <Icon name="question" className="text-gray-600" />Build Transaction
+                </Menu.Item>
+            }
         >
 
             <Modal.Content>

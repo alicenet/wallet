@@ -244,7 +244,7 @@ class StoreMessenger {
      * @param {JSON} encryptedJsonObj - JSON Object returned from secure-electron-store
      * @param {String} encryptedJsonObj.algorithm - Algorithm to use for deciphering
      * @param { String } encryptedJsonObj.cipherText - The cipherText to decrypt
-     * @param { String } encryptedJsonObj.iv - iv to use for deceryption
+     * @param { String } encryptedJsonObj.iv - iv to use for decryption
      * @param {Func} callback - (decrypted) => {...} :: decrypted value from the encryptedJsonObj   
      */
     async decipherEncryptedValue(encryptedJsonObj, password, cb = (err, decrypted) => { }) {
@@ -294,7 +294,7 @@ class StoreMessenger {
     }
 
     /**
-     * Passthrough abstraction for secure-electron-store's .send(readConfigRequest) to simulate syncronous reading of an encrypted value store object
+     * Passthrough abstraction for secure-electron-store's .send(readConfigRequest) to simulate synchronous reading of an encrypted value store object
      * @param {String} key - Key to read from the secure store
      * @param {String} password - Password that was used for the cipher
      * @param {Func} callback - (error, key, value) => {...} :: key = key that was checked, value = respective value of the key   

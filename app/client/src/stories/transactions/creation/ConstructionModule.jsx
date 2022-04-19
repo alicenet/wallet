@@ -66,7 +66,7 @@ function ConstructionModule() {
 
     const handleSendTransaction = async () => {
         // Send the TX via the main tx action -- Just fire it off, latest TX will appear in transaction reducer as lastSentAndMinedTx
-        dispatch(ADAPTER_ACTIONS.sendTransactionReducerTXs())
+        dispatch(ADAPTER_ACTIONS.sendTransactionReducerTXs());
         dispatch(TRANSACTION_ACTIONS.toggleStatus());
     };
 
@@ -97,7 +97,7 @@ function ConstructionModule() {
                 if (result.length < 5) {
                     // Pad in empty rows to prevent height jump -- parse false as empty rows below
                     while (result.length < 5) {
-                        result.push(false)
+                        result.push(false);
                     }
                 }
                 setPaginatedList(result);
@@ -114,25 +114,11 @@ function ConstructionModule() {
 
             <Container>
 
-                <Grid textAlign="center" className="m-0">
+                <Grid className="m-0">
 
-                    <Grid.Row className="py-3">
+                    <Grid.Row className="py-3 justify-between">
 
-                        <Grid.Column verticalAlign="middle" width={7} className="p-0">
-
-                            <ConstructingATransactionModal>
-
-                                <Container>
-
-                                    <Button basic color="black" content="How to construct a transaction" />
-
-                                </Container>
-
-                            </ConstructingATransactionModal>
-
-                        </Grid.Column>
-
-                        <Grid.Column textAlign="right" className="p-0" width={9}>
+                        <Grid.Column className="p-0" width={9}>
 
                             <Menu compact icon='labeled' size="small">
 
@@ -150,9 +136,19 @@ function ConstructionModule() {
 
                         </Grid.Column>
 
+                        <Grid.Column className="p-0" width={3}>
+
+                            <Menu compact icon='labeled' size="small">
+
+                                <ConstructingATransactionModal />
+
+                            </Menu>
+
+                        </Grid.Column>
+
                     </Grid.Row>
 
-                    <Grid.Row className="p-0" style={{ height: "300px" }}>
+                    <Grid.Row className="p-0 flex content-center" style={{ height: "300px" }}>
 
                         <Table size="small" celled color="teal" className="break-all text-sm">
 
