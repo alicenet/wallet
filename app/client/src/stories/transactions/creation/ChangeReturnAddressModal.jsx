@@ -14,32 +14,34 @@ export default function ChangeReturnAddressModal({ open, onClose }) {
 
     const dispatch = useDispatch();
 
-    const { internal, external } = useSelector(state => ({
+    const { internal, external, changeReturn } = useSelector(state => ({
         internal: state.vault.wallets.internal,
         external: state.vault.wallets.external,
+        changeReturn: state.transaction.changeReturn,
     }));
 
-    const [selectedReturnWallet, setSelectedReturnWallet] = useState(null);
+    const [selectedReturnWallet, setSelectedReturnWallet] = useState(changeReturn?.address);
     const [adHocWallets, setAdHocWallets] = useState([]);
 
     const wallets = React.useMemo(() => (internal.concat(external).concat(adHocWallets)).map(wallet => {
         return {
-            text: `${wallet.name} (${utils.string.addCurvePrefix(utils.string.splitStringWithEllipsis(wallet.address, 5), wallet.curve)})`,
-            value: wallet.address
+            text: `${wallet.name} (${utils.string.addCurvePrefix(wallet.address, wallet.curve)})`,
+            value: wallet.address,
+            curve: wallet.curve
         };
     }) || [], [internal, external, adHocWallets]);
 
     useEffect(() => {
-        if (wallets.length > 0 && !selectedReturnWallet) {
+        if (wallets.length > 0 && !selectedReturnWallet && !changeReturn) {
             setSelectedReturnWallet(head(wallets).value);
         }
-    }, [wallets, selectedReturnWallet]);
+    }, [wallets, selectedReturnWallet, changeReturn]);
 
     useEffect(() => {
         if (Web3.utils.isAddress(selectedReturnWallet)) {
             dispatch(TRANSACTION_ACTIONS.saveChangeReturnAddress({
                 address: utils.string.removeHexPrefix(selectedReturnWallet),
-                curve: curveTypes.SECP256K1
+                curve: wallets.find(wallet => wallet.value === selectedReturnWallet)?.curve
             }));
         }
     }, [selectedReturnWallet, dispatch]);
@@ -48,10 +50,10 @@ export default function ChangeReturnAddressModal({ open, onClose }) {
 
     const handleAddressAdded = (e, { value }) => {
         if (Web3.utils.isAddress(value)) {
-            setAdHocWallets(prevState => prevState.concat([{ name: value, address: value }]))
+            setAdHocWallets(prevState => prevState.concat([{ name: "New Wallet", address: value, curve: curveTypes.SECP256K1 }]));
         }
         else {
-            toast.error(<SyncToastMessageWarning title="Error" message="Not a valid return address" />, { className: "basic", "autoClose": 1500 })
+            toast.error(<SyncToastMessageWarning title="Error" message="Not a valid return address" />, { className: "basic", "autoClose": 1500 });
         }
     };
 
