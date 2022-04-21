@@ -7,8 +7,8 @@ import ChangeReturnAddressModal from './ChangeReturnAddressModal';
 
 export default function ChangeReturnAddress() {
 
-    const { changeReturnAddress } = useSelector(state => ({
-        changeReturnAddress: state.transaction.changeReturnAddress,
+    const { changeReturn } = useSelector(state => ({
+        changeReturn: state.transaction.changeReturn,
     }));
 
     const [showChangeReturnAddressModal, setShowChangeReturnAddressModal] = useState(false);
@@ -41,7 +41,7 @@ export default function ChangeReturnAddress() {
                 </div>
 
                 <div>
-                    {`0x${utils.string.splitStringWithEllipsis(changeReturnAddress, 10)}`}
+                    {utils.string.addCurvePrefix(utils.string.splitStringWithEllipsis(changeReturn?.address, 10), changeReturn?.curve)}
                 </div>
 
             </div>

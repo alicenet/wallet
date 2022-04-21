@@ -23,7 +23,7 @@ export const initialTransactionState = {
         wallet: null, // Wallet object of the fee payer, and override notification -- Should exist in internal/external vault state wallets and set through Adjust TX Fee Modal
         over_ride: false, // Has the wallet been manually set, and should not be updated by parseDefaultFeePayer() in transaction.actions?
     },
-    changeReturnAddress: null, //The address to which the change might be returned if any
+    changeReturn: null, //The address (and its curve) which the change is returned to
     lastSentAndMinedTx: false, // Last mined tx data
     lastSentTxHash: "", // Last sent TX Hash -- Received from RPC - send-transaction on successful send -- Can be used to check pending TX
     polledTxs: [], // TXs that have been polled manually via FindTX tab
@@ -47,9 +47,9 @@ export default function transactionReducer(state = initialTransactionState, acti
             });
 
         case TRANSACTION_ACTION_TYPES.SAVE_CHANGE_RETURN_ADDRESS:
-            log.debug("Saving change return address", action.payload);
+            log.debug("Saving change return address and curve", action.payload);
             return Object.assign({}, state, {
-                changeReturnAddress: action.payload,
+                changeReturn: action.payload,
             });
 
         case TRANSACTION_ACTION_TYPES.SET_PRIORITIZATION_FEE:

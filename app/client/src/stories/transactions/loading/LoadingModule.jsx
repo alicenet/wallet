@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 
 function LoadingModule() {
 
-    // State toggle to advance loading module occurs in AdapaterActions.sendTransactionReducerTXs
+    // State toggle to advance loading module occurs in AdapterActions.sendTransactionReducerTXs
     const pendingTxHash = useSelector(state => (state.transaction.lastSentTxHash))
 
     return (

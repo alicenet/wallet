@@ -8,6 +8,7 @@ import { TRANSACTION_ACTIONS } from 'redux/actions/_actions';
 import utils from 'util/_util';
 import head from 'lodash/head';
 import { SyncToastMessageWarning } from 'components/customToasts/CustomToasts';
+import { curveTypes } from "../../../util/wallet";
 
 export default function ChangeReturnAddressModal({ open, onClose }) {
 
@@ -36,7 +37,10 @@ export default function ChangeReturnAddressModal({ open, onClose }) {
 
     useEffect(() => {
         if (Web3.utils.isAddress(selectedReturnWallet)) {
-            dispatch(TRANSACTION_ACTIONS.saveChangeReturnAddress(utils.string.removeHexPrefix(selectedReturnWallet)));
+            dispatch(TRANSACTION_ACTIONS.saveChangeReturnAddress({
+                address: utils.string.removeHexPrefix(selectedReturnWallet),
+                curve: curveTypes.SECP256K1
+            }));
         }
     }, [selectedReturnWallet, dispatch]);
 
