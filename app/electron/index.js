@@ -1,4 +1,5 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+require('dotenv').config();
+const { app, BrowserWindow, ipcMain, shell } = require('electron');
 
 const isDev = require('electron-is-dev');
 
@@ -11,6 +12,7 @@ const BackupStore = require('./BackupStore');
 
 const port = '3000';
 const selfHost = `http://localhost:${port}`;
+const allowedRoots = ['https://testnet.mnexplore.com'];
 const icon = path.join(__dirname, '/app-build/electron/icon.png');
 
 let win;
@@ -76,6 +78,18 @@ app.on('activate', () => {
 
 // https://electronjs.org/docs/tutorial/security#12-disable-or-limit-navigation
 app.on('web-contents-created', (event, contents) => {
+  // Will open URLs from window.open(), a link with target="_blank", shift+clicking on a link, 
+  // or submitting a form with <form target="_blank"> 
+  contents.setWindowOpenHandler(({ url: navigationUrl }) => {
+    const parsedUrl = new URL(navigationUrl);
+    
+    if(allowedRoots.includes(parsedUrl.origin)) {
+        shell.openExternal(navigationUrl);
+    }
+
+    return { action: 'deny' };
+  });
+
   contents.on('will-navigate', (event, navigationUrl) => {
     const parsedUrl = new URL(navigationUrl);
     const validOrigins = [selfHost];

@@ -17,7 +17,7 @@ function ChangeFeePayer({ disabled = false }) {
 
     const wallets = React.useMemo(() => (internal.concat(external)).map(wallet => {
         return {
-            text: `${wallet.name} (0x${utils.string.splitStringWithEllipsis(wallet.address, 5)})`,
+            text: `${wallet.name} (${utils.string.addCurvePrefix(utils.string.splitStringWithEllipsis(wallet.address, 5), wallet.curve)})`,
             value: wallet.address,
             wallet: wallet
         };
@@ -29,19 +29,18 @@ function ChangeFeePayer({ disabled = false }) {
     };
 
     return (
-        <Form size="small" className="small-checkbox">
-            <Form.Dropdown
-                label="Fee Payer"
-                disabled={disabled}
-                options={wallets}
-                placeholder='Choose Fee Payer Wallet'
-                search
-                selection
-                closeOnChange
-                defaultValue={feePayerWallet.address}
-                onChange={handleAddressChange}
-            />
-        </Form>
+        <Form.Select
+            fluid
+            label="Fee Payer"
+            disabled={disabled}
+            options={wallets}
+            placeholder='Choose Fee Payer Wallet'
+            search
+            selection
+            closeOnChange
+            defaultValue={feePayerWallet.address}
+            onChange={handleAddressChange}
+        />
     )
 
 }

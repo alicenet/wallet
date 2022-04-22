@@ -3,6 +3,7 @@ import upperFirst from 'lodash/upperFirst';
 import isEmpty from 'lodash/isEmpty';
 import Web3 from 'web3';
 import validator from 'validator';
+import { removeBNPrefix, removeHexPrefix } from "../util/string";
 
 export const fieldType = {
     ADDRESS: 'address',
@@ -186,7 +187,7 @@ function _validateValueByType(value, type) {
     }
     switch (type) {
         case fieldType.ADDRESS:
-            return Web3.utils.isAddress(value);
+            return Web3.utils.isAddress(removeBNPrefix(removeHexPrefix(value)));
         case fieldType.STRING:
             return typeof value === "string" && value !== "";
         case fieldType.INT:

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button, Form, Grid, Header, Icon, Menu, Modal } from 'semantic-ui-react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -10,9 +10,9 @@ export default function AddEditPrioritizationFeeModal() {
 
     const dispatch = useDispatch();
 
-    const [openModal, setOpenModal] = React.useState(false)
+    const [openModal, setOpenModal] = useState(false);
 
-    const { minFee } = useSelector(state => ({ minFee: state.transaction.fees.minTxFee }))
+    const { minFee } = useSelector(state => ({ minFee: state.transaction.fees.minTxFee }));
 
     const { prioritizationFee, txList } = useSelector(state => ({
         prioritizationFee: state.transaction.fees.prioritizationFee,
@@ -113,5 +113,5 @@ export default function AddEditPrioritizationFeeModal() {
             </Modal.Actions>
 
         </Modal>
-    )
+    );
 }

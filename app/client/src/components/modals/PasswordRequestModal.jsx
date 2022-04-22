@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import useFormState from 'hooks/useFormState';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Form, Header, Icon, Modal } from 'semantic-ui-react';
@@ -40,6 +40,16 @@ export default function PasswordRequestModal() {
         dispatch({ type: MODAL_ACTION_TYPES.CLOSE_PW_REQUEST });
     };
 
+    const [passwordHint, setPasswordHint] = useState('');
+
+    useEffect(() => {
+        const checkForPasswordHint = async () => {
+            let passwordHint = await electronStoreCommonActions.readPasswordHint();
+            typeof passwordHint === 'string' ? setPasswordHint(passwordHint) : setPasswordHint('');
+        }
+        checkForPasswordHint();
+    }, []);
+
     return (
         <Modal open={isOpen}>
 
@@ -53,6 +63,7 @@ export default function PasswordRequestModal() {
                                 {reason}
                             </span>
                         </Header.Subheader>
+                                                
                     </Header.Content>
                 </Header>
 
@@ -71,6 +82,13 @@ export default function PasswordRequestModal() {
                         icon={<Icon link name={showPassword ? "eye" : "eye slash"} onClick={() => setShowPassword(s => !s)} />}
                     />
 
+                    <div>
+                        <span className="font-bold text-gray-600">Password Hint:</span>
+                        <span className="text-gray-400 ml-2">
+                            {passwordHint}
+                        </span>
+                    </div>
+
                 </Form>
 
             </Modal.Content>
@@ -79,7 +97,7 @@ export default function PasswordRequestModal() {
 
                 <div className="flex justify-between">
 
-                    <Button color="transparent" content="Close" onClick={closeModal} basic />
+                    <Button className="transparent" content="Close" onClick={closeModal} basic />
 
                     <Button
                         content={formState.password.error ? "Try Again" : "Submit"}

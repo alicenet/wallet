@@ -230,7 +230,7 @@ export default function GenerateKeystoreForm(
             />
 
             <Form.Button fluid size="small" disabled={!keystoreDL} color="teal" content={submitText} onClick={loadKeystore} icon="thumbs up" />
-            <Form.Button fluid size="small" basic content={cancelText} color="transparent" onClick={cancelFunction} icon="x" />
+            <Form.Button fluid size="small" basic content={cancelText} className="transparent" onClick={cancelFunction} icon="x" />
 
         </Form>
 

@@ -118,7 +118,7 @@ export default function RenameWalletModal() {
 
                     <Button
                         size="small"
-                        color="transparent"
+                        className="transparent"
                         content="Close"
                         onClick={closeModal}
                         basic

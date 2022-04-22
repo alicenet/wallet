@@ -42,12 +42,13 @@ export function setBalancesLoading(bool) {
  * @param {String} password  - Password to encrypt vault with
  * @param {String} curveType - Curve type for public address derivation :: default: see util.wallet curve types -- Default secp256k1
  */
-export function generateNewSecureHDVault(mnemonic, password, curveType = util.wallet.curveTypes.SECP256K1) {
+export function generateNewSecureHDVault(mnemonic, password, curveType = util.wallet.curveTypes.SECP256K1, hint = "No hint provided") {
     return async function (dispatch) {
         // Anytime we generate a vault make sure to note the curve in the vault store as well 
         // -- This prevents immediately generated vault from not having the correct curve for new wallet generations
         dispatch({ type: VAULT_ACTION_TYPES.SET_CURVE, payload: curveType });
         let [preflightHash, firstWalletNode] = await electronStoreCommonActions.createNewSecureHDVault(mnemonic, password, curveType);
+        electronStoreCommonActions.setPasswordHint(hint); //Store password hint
         electronStoreCommonActions.storePreflightHash(preflightHash); // Store preflight hash for pre-action auth checking
         let firstWallet = await utils.wallet.generateBasicWalletObject("Main Wallet", firstWalletNode.privateKey.toString('hex'), curveType);
         const preInitPayload = { wallets: { internal: [firstWallet], external: [] } }; // Payload needed by initMadWallet() in WalletManagerMiddleware

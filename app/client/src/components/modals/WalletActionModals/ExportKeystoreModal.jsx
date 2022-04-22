@@ -75,6 +75,16 @@ export default function ExportKeystoreModal() {
         });
     };
 
+    const [passwordHint, setPasswordHint] = useState('');
+
+    useEffect(() => {
+        const checkForPasswordHint = async () => {
+            let passwordHint = await electronStoreCommonActions.readPasswordHint();
+            typeof passwordHint === 'string' ? setPasswordHint(passwordHint) : setPasswordHint('');
+        }
+        checkForPasswordHint();
+    }, []);
+
     return (
 
         <Modal open={isOpen}>
@@ -135,6 +145,13 @@ export default function ExportKeystoreModal() {
 
                     </Form.Group>
 
+                    <div>
+                        <span className="font-bold text-gray-600">Password Hint:</span>
+                        <span className="text-gray-400 ml-2">
+                            {passwordHint}
+                        </span>
+                    </div>
+
                 </Form>
 
             </Modal.Content>
@@ -143,7 +160,7 @@ export default function ExportKeystoreModal() {
 
                 <div className="flex justify-between">
 
-                    <Button size="small" color="transparent" content="Close" onClick={closeModal} basic />
+                    <Button size="small" className="transparent" content="Close" onClick={closeModal} basic />
 
                     <Button
                         size="small"
@@ -152,6 +169,7 @@ export default function ExportKeystoreModal() {
                         content={(!optout && formState.vaultPassword.error) || formState.keystorePassword.error ? "Try Again" : keystoreDL ? "Download Keystore" : "Create Keystore"}
                         color="teal"
                         onClick={keystoreDL ? closeModal : submit}
+                        icon={keystoreDL ? "download" : null}
                     />
 
                 </div>

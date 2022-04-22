@@ -141,7 +141,7 @@ export default function ImportPrivateKeyForm({ submitText, submitFunction, cance
                 basic
                 loading={loading}
                 icon={success ? "thumbs up" : "x"}
-                color="transparent"
+                className="transparent"
                 onClick={success ? e => e.preventDefault() : (e) => {
                     e.preventDefault();
                     cancelFunction();

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Icon, Popup } from 'semantic-ui-react';
+import { Icon, Popup } from 'semantic-ui-react';
 import { useSelector } from 'react-redux';
 
 import utils from 'util/_util';
@@ -28,11 +28,11 @@ export default function ChangeReturnAddress() {
                         trigger={
                             <div className="flex items-center text-xl gap-2 cursor-pointer" onClick={() => setShowChangeReturnAddressModal(true)}>
                                 <div className="m-0 font-bold text-sm">Change Address</div>
-                                <Icon size="small" name="edit circle" className="m-0"/>
+                                <Icon size="small" name="edit" className="m-0" />
                             </div>
                         }
                         content={
-                            <div className="text-sm">Your change address is where remaining UTXOs will go.<br/>
+                            <div className="text-sm">Your change address is where remaining UTXOs will go.<br />
                                 This defaults to the first sending wallet, though you may choose which wallet to use.
                             </div>
                         }

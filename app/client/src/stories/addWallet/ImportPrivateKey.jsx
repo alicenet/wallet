@@ -59,7 +59,7 @@ export default function ImportPrivateKey() {
 
                         {success && (
                             <div className="absolute -bottom-16 inset-center">
-                                <Message success content="Wallet successfully parsed, please wait. . ." size="mini"/>
+                                <Message success content="Wallet successfully parsed, please wait. . ." size="mini" />
                             </div>
                         )}
 

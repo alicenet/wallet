@@ -25,9 +25,9 @@ export function setPrioritizationFee(fee) {
  * @param { Object } wallet - Redux wallet state object
  * @param { Boolean } userOverride - Sets the override flag so that parseDefaultFeePayer() does not update the fee when called
  */
-export function setFeePayer(wallet, over_ride = false) {
+export function setFeePayer(wallet, userOverride = false) {
     return async function (dispatch) {
-        dispatch({ type: TRANSACTION_ACTION_TYPES.SET_FEE_PAYER, payload: { wallet: wallet, over_ride: over_ride } });
+        dispatch({ type: TRANSACTION_ACTION_TYPES.SET_FEE_PAYER, payload: { wallet: wallet, over_ride: userOverride } });
     }
 }
 
@@ -42,7 +42,7 @@ export function clearFeePayer() {
 }
 
 /**
- * Parses txList and sets the default fee payer to position 0 of the list if it exists unless over_ride is set 
+ * Parses txList and sets the default fee payer to position 0 of the list if it exists unless over_ride is set
  * -- Generally called after changes to the transaction list have been made.
  */
 export function parseDefaultFeePayer() {
@@ -167,6 +167,7 @@ export function resetFeeState() {
     return async function (dispatch, getState) {
         const state = getState();
         const madNetFees = state.adapter.madNetAdapter.fees;
+
         // Reset FEE state to existing fee state
         let fees = {
             atomicSwapFee: madNetFees.atomicSwapFee, // Hex Parsed Base Atomic Swap Fee from RPC.getFees()
@@ -177,19 +178,19 @@ export function resetFeeState() {
             valueStoreFee: madNetFees.valueStoreFee, // Hex Parsed Base ValueStore from RPC.getFees()
             valueStoreFees: 0, // Total Fees for all valueStore VOUTs in txList
             minTxFee: madNetFees.minTxFee, // Parsed minimum tx fee
-            prioritizationFee: 0, // Any additional priortization fee set by the user
+            prioritizationFee: 0, // Any additional prioritization fee set by the user
             txFee: 0, // Prioritization + Minimum Fee
             totalFee: 0, // Total TX Fee ( All Store Fees + Min Fee + Prioritization )
-        }
+        };
         fees.txFee = fees.minTxFee + fees.prioritizationFee;
-        dispatch({ type: TRANSACTION_ACTION_TYPES.UPDATE_FEES_BY_TYPE, payload: fees })
+        dispatch({ type: TRANSACTION_ACTION_TYPES.UPDATE_FEES_BY_TYPE, payload: fees });
     }
 }
 
 /**
  * Parse and update any passed fees to human readable state in the reducer -- Additionally calculates any fee changes when called
  * -- Should be called when making adjustments to transaction.list or priotization fee changes
- * @param { Object } rpcFees 
+ * @param { Object } rpcFees
  * @property { BigIntHexString } rpcFees.atomicSwapFee - Atomic Swap fee from RPC.getFees()
  * @property { BigIntHexString } rpcFees.dataStoreFee - Data Store Fee from RPC.getFees()
  * @property { BigIntHexString } rpcFees.valueStoreFee - Value Store Fee from RPC.getFees()
@@ -200,7 +201,6 @@ export function parseAndUpdateFees(rpcFees) {
     return async function (dispatch, getState) {
 
         const state = getState();
-
         const madNetFees = rpcFees ? rpcFees : state.adapter.madNetAdapter.fees;
         const txList = state.transaction.list;
 
@@ -219,11 +219,11 @@ export function parseAndUpdateFees(rpcFees) {
             valueStoreFee: madNetFees.valueStoreFee, // Hex Parsed Base ValueStore from RPC.getFees()
             valueStoreFees: 0, // Total Fees for all valueStore VOUTs in txList
             minTxFee: madNetFees.minTxFee, // Parsed minimum tx fee
-            prioritizationFee: state.transaction.fees.prioritizationFee, // Any additional priortization fee set by the user
+            prioritizationFee: state.transaction.fees.prioritizationFee, // Any additional prioritization fee set by the user
             txFee: 0, // Prioritization + Minimum Fee
             totalFee: 0, // Total TX Fee ( All Store Fees + Min Fee + Prioritization )
             errors: [] // Errors in fee estimation
-        }
+        };
 
         // Grab MadNetAdapter instance for the MadNetJS Wallet instance
         const madWallet = madNetAdapter.wallet();
@@ -238,7 +238,7 @@ export function parseAndUpdateFees(rpcFees) {
         // If estimation has errors, parse them and set to state for UI digestion
         if (estimateFees.errors) {
             let feeErrors = estimateFees.errors;
-            for (let i=0; i < feeErrors.length ; i++) {
+            for (let i = 0; i < feeErrors.length; i++) {
                 let error = feeErrors[i].error;
                 if (error.msg === "Insufficient Funds") {
                     fees.errors.push(`${utils.wallet.getWalletNameFromAddress(error.details.account.address)} has insufficient funds`);
@@ -262,7 +262,7 @@ export function parseAndUpdateFees(rpcFees) {
                     tx: tx,
                     currentEpoch: currentEpoch,
                     storeFee: parseInt(estimateFees.costByVoutIdx[i]), // This fee will include any rewards and deposit fee
-                })
+                });
             }
         }
         // Get base store fees if estimateFees was successful 
@@ -286,8 +286,7 @@ export function parseAndUpdateFees(rpcFees) {
         fees.txFee = fees.minTxFee + fees.prioritizationFee;
         fees.totalFee = fees.txFee + fees.valueStoreFees + fees.dataStoreFees + fees.atomicSwapFees;
 
-        dispatch({ type: TRANSACTION_ACTION_TYPES.UPDATE_FEES_BY_TYPE, payload: fees })
-
+        dispatch({ type: TRANSACTION_ACTION_TYPES.UPDATE_FEES_BY_TYPE, payload: fees });
     }
 
 }
