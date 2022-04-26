@@ -24,10 +24,12 @@ export default function ChangeReturnAddress() {
     useEffect(() => {
         if (!changeReturn) {
             const firstWallet = head(wallets);
-            dispatch(TRANSACTION_ACTIONS.saveChangeReturnAddress({
-                address: utils.string.removeHexPrefix(firstWallet.address),
-                curve: firstWallet.curve
-            }))
+            if (firstWallet) {
+                dispatch(TRANSACTION_ACTIONS.saveChangeReturnAddress({
+                    address: utils.string.removeHexPrefix(firstWallet.address),
+                    curve: firstWallet.curve
+                }));
+            }
         }
     }, [wallets, changeReturn, dispatch]);
 
