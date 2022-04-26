@@ -230,7 +230,7 @@ function ConstructionModule() {
 
                     {valueStore && <AddEditValueStoreModal valueStore={valueStore} onClose={() => setValueStore(null)} />}
 
-                    <Grid.Row>
+                    <Grid.Row className="pb-0">
 
                         <Grid columns={3} padded className="p-0">
 

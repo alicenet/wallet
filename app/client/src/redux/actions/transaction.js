@@ -81,7 +81,7 @@ export function toggleStatus() {
 
 /**
  * Saves the address chosen for the change to be returned to
- * @param { string } address - A valid Web3 address
+ * @param { object } address - A valid Web3 address with its curve
  * @returns { Function }
  */
 export function saveChangeReturnAddress(address) {
