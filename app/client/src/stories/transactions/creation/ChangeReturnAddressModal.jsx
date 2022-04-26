@@ -1,14 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { Button, Form, Header, Modal } from 'semantic-ui-react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Button, Checkbox, Form, Grid, Header, Icon, Modal, Popup } from 'semantic-ui-react';
 import { useDispatch, useSelector } from 'react-redux';
-import Web3 from 'web3';
-import { toast } from 'react-toastify';
 
 import { TRANSACTION_ACTIONS } from 'redux/actions/_actions';
 import utils from 'util/_util';
-import head from 'lodash/head';
-import { SyncToastMessageWarning } from 'components/customToasts/CustomToasts';
-import { curveTypes } from "../../../util/wallet";
+import { curveTypes } from "util/wallet";
+import { useFormState } from "hooks/_hooks";
 
 export default function ChangeReturnAddressModal({ open, onClose }) {
 
@@ -20,41 +17,37 @@ export default function ChangeReturnAddressModal({ open, onClose }) {
         changeReturn: state.transaction.changeReturn,
     }));
 
-    const [selectedReturnWallet, setSelectedReturnWallet] = useState(changeReturn?.address);
-    const [adHocWallets, setAdHocWallets] = useState([]);
+    const [formState, formSetter, onSubmit] = useFormState([
+        { name: 'ChangeReturn', display: 'Change Return Address', type: 'address', isRequired: true, value: changeReturn?.address },
+    ]);
 
-    const wallets = React.useMemo(() => (internal.concat(external).concat(adHocWallets)).map(wallet => {
+    const [curveType, setCurveType] = useState(changeReturn?.curve);
+    const [isBNCurveChecked, setIsBNCurveChecked] = useState(false);
+
+    const wallets = useMemo(() => (internal.concat(external)).map(wallet => {
         return {
             text: `${wallet.name} (${utils.string.addCurvePrefix(wallet.address, wallet.curve)})`,
             value: wallet.address,
             curve: wallet.curve
         };
-    }) || [], [internal, external, adHocWallets]);
+    }) || [], [internal, external]);
 
     useEffect(() => {
-        if (wallets.length > 0 && !selectedReturnWallet && !changeReturn) {
-            setSelectedReturnWallet(head(wallets).value);
-        }
-    }, [wallets, selectedReturnWallet, changeReturn]);
-
-    useEffect(() => {
-        if (Web3.utils.isAddress(selectedReturnWallet)) {
-            dispatch(TRANSACTION_ACTIONS.saveChangeReturnAddress({
-                address: utils.string.removeHexPrefix(selectedReturnWallet),
-                curve: wallets.find(wallet => wallet.value === selectedReturnWallet)?.curve
-            }));
-        }
-    }, [selectedReturnWallet, dispatch]);
-
-    const handleAddressChange = (e, { value }) => setSelectedReturnWallet(value);
-
-    const handleAddressAdded = (e, { value }) => {
-        if (Web3.utils.isAddress(value)) {
-            setAdHocWallets(prevState => prevState.concat([{ name: "New Wallet", address: value, curve: curveTypes.SECP256K1 }]));
+        if (formState.ChangeReturn.value) {
+            setCurveType(wallets.find(wallet => wallet.value === formState.ChangeReturn.value)?.curve);
+            setIsBNCurveChecked(false);
         }
         else {
-            toast.error(<SyncToastMessageWarning title="Error" message="Not a valid return address" />, { className: "basic", "autoClose": 1500 });
+            setCurveType(changeReturn?.curve);
         }
+    }, [changeReturn?.curve, formState, wallets]);
+
+    const handleSubmit = async () => {
+        dispatch(TRANSACTION_ACTIONS.saveChangeReturnAddress({
+            address: utils.string.removeHexPrefix(formState.ChangeReturn.value),
+            curve: wallets.find(wallet => wallet.value === formState.ChangeReturn.value)?.curve
+        }));
+        onClose();
     };
 
     return (
@@ -72,19 +65,55 @@ export default function ChangeReturnAddressModal({ open, onClose }) {
 
             <Modal.Content>
 
-                <Form size="small" className="text-sm mini-error-form">
+                <Form className="text-sm mini-error-form" onSubmit={() => onSubmit(handleSubmit)}>
 
-                    <Form.Dropdown
-                        options={wallets}
-                        placeholder='Choose UTXO Return Address'
-                        search
-                        selection
-                        allowAdditions
-                        closeOnChange
-                        defaultValue={selectedReturnWallet}
-                        onAddItem={handleAddressAdded}
-                        onChange={handleAddressChange}
-                    />
+                    <Grid className="m-0">
+
+                        <Grid.Row className="content-between">
+
+                            <Form.Dropdown
+                                required
+                                label="Return Address"
+                                className="w-full"
+                                defaultValue={changeReturn?.address}
+                                options={wallets}
+                                placeholder='Choose UTXO Return Address'
+                                search
+                                selection
+                                closeOnChange
+                                onChange={(e, { value }) => formSetter.setChangeReturn(value)}
+                                error={!!formState.ChangeReturn.error && { content: formState.ChangeReturn.error }}
+                            />
+
+                        </Grid.Row>
+
+                        {
+                            curveType === curveTypes.BARRETO_NAEHRIG &&
+
+                            <Grid.Row className="content-between pb-0">
+
+                                <Checkbox
+                                    className="flex items-end text-xs uppercase font-bold pb-2"
+                                    checked={isBNCurveChecked}
+                                    onChange={() => {setIsBNCurveChecked(prevState => !prevState)}}
+                                    label={
+                                        <>
+                                            <label className={"labelCheckbox"}>This is a BN</label>
+                                            <Popup
+                                                size="mini"
+                                                position="right center"
+                                                trigger={<Icon name="question circle" className="ml-1 mb-1.5" />}
+                                                content="Is this a BN Curve address?"
+                                            />
+                                        </>
+                                    }
+                                />
+
+                            </Grid.Row>
+
+                        }
+
+                    </Grid>
 
                 </Form>
 
@@ -94,8 +123,14 @@ export default function ChangeReturnAddressModal({ open, onClose }) {
 
                 <Button color="black" basic onClick={onClose} content="Close" />
 
-            </Modal.Actions>
+                <Button
+                    content="Submit"
+                    color="teal"
+                    disabled={curveType === curveTypes.BARRETO_NAEHRIG && !isBNCurveChecked}
+                    onClick={() => onSubmit(handleSubmit)}
+                />
 
+            </Modal.Actions>
         </Modal>
     )
 }

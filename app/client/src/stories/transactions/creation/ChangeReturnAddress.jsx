@@ -1,17 +1,35 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Icon, Popup } from 'semantic-ui-react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import head from 'lodash/head';
 
 import utils from 'util/_util';
 import ChangeReturnAddressModal from './ChangeReturnAddressModal';
+import { TRANSACTION_ACTIONS } from "redux/actions/_actions";
 
 export default function ChangeReturnAddress() {
 
-    const { changeReturn } = useSelector(state => ({
+    const dispatch = useDispatch();
+
+    const { internal, external, changeReturn } = useSelector(state => ({
+        internal: state.vault.wallets.internal,
+        external: state.vault.wallets.external,
         changeReturn: state.transaction.changeReturn,
     }));
 
+    const wallets = useMemo(() => (internal.concat(external)) || [], [internal, external]);
+
     const [showChangeReturnAddressModal, setShowChangeReturnAddressModal] = useState(false);
+
+    useEffect(() => {
+        if (!changeReturn) {
+            const firstWallet = head(wallets);
+            dispatch(TRANSACTION_ACTIONS.saveChangeReturnAddress({
+                address: utils.string.removeHexPrefix(firstWallet.address),
+                curve: firstWallet.curve
+            }))
+        }
+    }, [wallets, changeReturn, dispatch]);
 
     return (
         <>
