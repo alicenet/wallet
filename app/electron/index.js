@@ -31,7 +31,7 @@ async function createWindow() {
       nodeIntegrationInSubFrames: false,
       contextIsolation: true,
       worldSafeExecuteJavaScript: true,
-      webSecurity: false,
+      webSecurity: true,
       enableRemoteModule: false,
       additionalArguments: [`storePath:${app.getPath('userData')}`],
       preload: path.join(__dirname, './preload.js'),
