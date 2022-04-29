@@ -2,7 +2,7 @@
  * Derives public keys from a private key using the internal utilities and MadNetWalletJS
  */
 
-const madnetjs = require('madnetjs');
+const madnetjs = require('alicenetjs');
 
 const rl = require('readline').createInterface({
     input: process.stdin,
