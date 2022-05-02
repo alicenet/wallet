@@ -48,6 +48,9 @@ function InspectionModule() {
     };
 
     const txObj = !tx.error ? utils.transaction.parseRpcTxObject(tx.txDetails || tx) : tx;
+
+    // console.log(txObj)
+
     const txFee = Web3.utils.toBN(String(txObj.wholeTx.Fee)).toString();
 
     // Need a state for the async owner extraction
