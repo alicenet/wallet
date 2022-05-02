@@ -4,7 +4,7 @@
   "private": true,
   "homepage": "./",
   "dependencies": {
-    "alicenetjs": "git+https://github.com/MadBase/alicenetjs.git",
+    "alicenetjs": "git+https://github.com/MadBase/alicenetjs.git#buildfix2",
     "big-integer": "1.6.48",
     "bip39": "3.0.4",
     "cross-env": "7.0.3",
