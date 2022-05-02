@@ -68,13 +68,17 @@ export default function Datastores({ wallet }) {
             else {
                 setNextPageExists(false);
             }
-            if (foundStores.length === 0) {
-                return setDataStores([]);
-            }
+
             let UTXOIDS = [];
             for (let i = 0; i < foundStores.length; i++) {
-                UTXOIDS.push(foundStores[i]["UTXOID"]);
+                if (foundStores[i]["UTXOID"]) {
+                    UTXOIDS.push(foundStores[i]["UTXOID"]);
+                }
             }
+            if (foundStores.length === 0 || UTXOIDS.length === 0) {
+                return setDataStores([]);
+            }
+
             let DStores = await madWalletInstance.Rpc.getUTXOsByIds(UTXOIDS); // This returns [DS, VS, AS] stores respectively
             let dStores = DStores[0]; // Extract just the Datastore array
             // Extract data from stores
