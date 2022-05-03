@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import { VAULT_ACTIONS } from 'redux/actions/_actions';
 import { default_log as log } from 'log/logHelper';
 
-import MadWalletJs from 'madnetjs';
+import MadWalletJs from 'alicenetjs';
 import utils, { walletUtils } from 'util/_util';
 import { curveTypes } from 'util/wallet';
 import Page from 'layout/Page';
