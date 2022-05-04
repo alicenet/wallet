@@ -4,19 +4,19 @@ export const transactionTypes = {
     DATA_STORE: 1,
     VALUE_STORE: 2,
     ATOMIC_SWAP_STORE: 3,
-}
+};
 
 export const transactionStatus = {
     CREATION: 1,
     LOADING: 2,
     INSPECTION: 3,
-}
+};
 
 export const storeTypes = {
     DATA_STORE: 1,
     VALUE_STORE: 2,
     ATOMIC_SWAP_STORE: 3
-}
+};
 
 const transactionStatusProgression = [transactionStatus.CREATION, transactionStatus.LOADING, transactionStatus.INSPECTION];
 
@@ -34,8 +34,8 @@ export const createValueStoreObject = (fromAddress, toAddress, value, bnCurve = 
         value: value,
         toAddress: toAddress,
         bnCurve: bnCurve,
-    }
-}
+    };
+};
 
 /**
  * Creates and returns a standardized DataStoreObject
@@ -50,11 +50,11 @@ export const createDataStoreObject = (fromAddress, index, rawData, duration) => 
         rawData: rawData,
         duration: duration,
         bnCurve: false,
-    }
-}
+    };
+};
 
 /**
- * Parse an RPV Returned TX Object to a simpler state relevant object -- Object passed hould have Vin: Arr[] and Vout: Arr[]
+ * Parse an RPV Returned TX Object to a simpler state relevant object -- Object passed should have Vin: Arr[] and Vout: Arr[]
  * @param {*} rpcTxObject
  */
 export const parseRpcTxObject = (rpcTxObject) => {
@@ -72,11 +72,11 @@ export const parseRpcTxObject = (rpcTxObject) => {
             chain_id: vin["TXInLinker"]["TXInPreImage"]["ChainID"],
             consumed_tx_hash: vin["TXInLinker"]["TXInPreImage"].ConsumedTxHash,
             consumed_tx_idx: vin["TXInLinker"]["TXInPreImage"].ConsumedTxIdx,
-        })
-    })
+        });
+    });
+
     // Parse each VOUT to VOUT Details accessible by index of VIN:
     rpcTxObject["Vout"].forEach((vout) => {
-
         if (!!vout["ValueStore"]) {
             valueStoreCount++;
             vouts.push({
@@ -86,7 +86,7 @@ export const parseRpcTxObject = (rpcTxObject) => {
                 fee: vout["ValueStore"]["VSPreImage"].Fee,
                 tx_out_idx: vout["ValueStore"]["VSPreImage"].TXOutIdx || "0",
                 value: vout["ValueStore"]["VSPreImage"].Value,
-            })
+            });
         }
         else {
             dataStoreCount++;
@@ -100,10 +100,9 @@ export const parseRpcTxObject = (rpcTxObject) => {
                 index: vout["DataStore"]["DSLinker"]["DSPreImage"].Index || "0",
                 value: vout["DataStore"]["DSLinker"]["DSPreImage"].RawData,
                 issued: vout["DataStore"]["DSLinker"]["DSPreImage"].IssuedAt,
-            })
+            });
         }
-
-    })
+    });
 
     // We will show count of VIN/VOUT in table and allow dropdown rows for any individual VIN/VOUT
     const builtTxObj = {
@@ -115,11 +114,10 @@ export const parseRpcTxObject = (rpcTxObject) => {
         "voutCount": vouts.length,
         "vins": vins,
         "vouts": vouts,
-    }
+    };
 
     return builtTxObj;
-
-}
+};
 
 /**
  * Compose a data collections using rpcTxObjects that will return a key value array of hash=>data respectively for each passed rpcTxObj
@@ -137,7 +135,7 @@ export const parseArrayOfTxObjs = (arrayofRpcTxObjs) => {
         parsedData[hash] = data;
     })
     return parsedData;
-}
+};
 
 /**
  * Parse a collection of DSLinker Objects
@@ -176,16 +174,15 @@ export const parseDsLinkers = async (dsLinkers) => {
                 value: dsL["DSLinker"]["DSPreImage"].RawData,
                 issued: dsL["DSLinker"]["DSPreImage"].IssuedAt,
                 txHash: dsL["DSLinker"].TxHash,
-            })
+            });
         }
 
     } catch (ex) {
-        return { error: "Error parsing DSLinkers: " + ex }
+        return { error: "Error parsing DSLinkers: " + ex };
     }
 
     return data;
-
-}
+};
 
 export const txTypeToName = (typeInt) => {
     let type;
@@ -204,4 +201,4 @@ export const txTypeToName = (typeInt) => {
             break;
     }
     return type;
-}
+};
