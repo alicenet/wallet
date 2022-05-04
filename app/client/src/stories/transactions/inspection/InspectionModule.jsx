@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Grid, Header, Label, Message, Table } from 'semantic-ui-react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -19,8 +19,8 @@ function InspectionModule() {
     const dispatch = useDispatch();
     const history = useHistory();
 
-    const [vinFocus, setVinFocus] = React.useState(0); // IDX of the focused VIN
-    const [voutFocus, setVoutFocus] = React.useState(0); // IDX of the focused vOUT
+    const [vinFocus, setVinFocus] = useState(0); // IDX of the focused VIN
+    const [voutFocus, setVoutFocus] = useState(0); // IDX of the focused vOUT
 
     let showBackButton = false; // Default false -- If state available from push show true
 
@@ -49,12 +49,10 @@ function InspectionModule() {
 
     const txObj = !tx.error ? utils.transaction.parseRpcTxObject(tx.txDetails || tx) : tx;
 
-    // console.log(txObj)
-
     const txFee = Web3.utils.toBN(String(txObj.wholeTx.Fee)).toString();
 
     // Need a state for the async owner extraction
-    const [voutOwners, setVoutOwners] = React.useState(Array(txObj && txObj.voutCount));
+    const [voutOwners, setVoutOwners] = useState(Array(txObj && txObj.voutCount));
 
     // On mount extract the owners for any vouts and vins
     useEffect(() => {
@@ -120,11 +118,15 @@ function InspectionModule() {
                 <Header sub className="text-xs m-0 flex items-center">
                     VINs {txObj.vins.map((vin, idx) => (
                     <div
+                        key={idx}
                         onClick={() => setVinFocus(idx)}
-                        className={classNames("first:ml-4 ml-4 cursor-pointer border-solid border border-gray-300 px-2 py-1 rounded hover:text-blue-500 hover:border-blue-400",
-                            { "text-blue-500": idx === vinFocus },
-                            { "border-blue-400": idx === vinFocus },
-                        )}
+                        className={
+                            classNames(
+                                "first:ml-4 ml-4 cursor-pointer border-solid border border-gray-300 px-2 py-1 rounded hover:text-blue-500 hover:border-blue-400",
+                                { "text-blue-500": idx === vinFocus },
+                                { "border-blue-400": idx === vinFocus },
+                            )
+                        }
                     >
                         {idx}
                     </div>
@@ -193,11 +195,17 @@ function InspectionModule() {
                 <Header sub className="text-xs m-0 flex items-center justify-between w-full">
                     <div className="flex items-center">
                         VOUTs {txObj.vouts.map((vout, idx) => (
-                        <div onClick={() => setVoutFocus(idx)}
-                             className={classNames("first:ml-4 ml-4 cursor-pointer border-solid border border-gray-300 px-2 py-1 rounded hover:text-blue-500 hover:border-blue-400",
-                                 { "text-blue-500": idx === voutFocus },
-                                 { "border-blue-400": idx === voutFocus },
-                             )}>
+                        <div
+                            key={idx}
+                            onClick={() => setVoutFocus(idx)}
+                            className={
+                                classNames(
+                                    "first:ml-4 ml-4 cursor-pointer border-solid border border-gray-300 px-2 py-1 rounded hover:text-blue-500 hover:border-blue-400",
+                                    { "text-blue-500": idx === voutFocus },
+                                    { "border-blue-400": idx === voutFocus },
+                                )
+                            }
+                        >
                             {idx}
                         </div>
                     ))}
@@ -226,7 +234,12 @@ function InspectionModule() {
                         <Header textAlign="left" sub className="mb-2 text-lg"><span className="text-gray-700">
                             TxHash: </span> <span className="text-gray-500">{txObj["txHash"]}</span>
                         </Header>
-                        <div className="mb-2 text-left text-base cursor-pointer text-gray-400" onClick={() => window.open(`${BLOCK_EXPLORER_LINK}/tx?txHash=${txObj["txHash"]}`, '_blank')}>View TX on Block Explorer</div>
+                        <div
+                            className="mb-2 text-left text-base cursor-pointer text-gray-400"
+                            onClick={() => window.open(`${BLOCK_EXPLORER_LINK}/tx?txHash=${txObj["txHash"]}`, '_blank')}
+                        >
+                            View TX on Block Explorer
+                        </div>
                         <div className="flex justify-start mb-3">
                             <Label className="text-xs">TxFee: {txFee} MadBytes</Label>
                         </div>

@@ -385,7 +385,7 @@ class MadNetAdapter {
             store.dispatch({ type: TRANSACTION_ACTION_TYPES.SET_LAST_SENT_TX_HASH, payload: tx });
             await this.pendingTxStatus.set("Pending TxHash: " + this.trimTxHash(tx));
             await this.wallet().Transaction._reset();
-            toast.success(<SyncToastMessageWarning basic title="TX Pending" message={utils.string.splitStringWithEllipsis(tx, 6)} hideIcon />)
+            toast.success(<SyncToastMessageWarning basic title="TX Pending" message={utils.string.splitStringWithEllipsis(tx, 6)} hideIcon />);
             // Clear any TXOuts on a successful mine
             this.txOuts.set([]);
             return await this.monitorPending();
@@ -416,7 +416,7 @@ class MadNetAdapter {
             await this.backOffRetry('pending-' + JSON.stringify(tx), true);
             this.pendingTx.set(false);
             // Success TX Mine
-            toast.success(<SyncToastMessageSuccess title="TX Mined" message={utils.string.splitStringWithEllipsis(tx, 6)} hideIcon basic />)
+            toast.success(<SyncToastMessageSuccess title="TX Mined" message={utils.string.splitStringWithEllipsis(tx, 6)} hideIcon basic />);
             return { "txDetails": txDetails.Tx, "txHash": tx, "msg": "Mined: " + this.trimTxHash(tx) };
         } catch (ex) {
             await this.backOffRetry('pending-' + JSON.stringify(tx));
