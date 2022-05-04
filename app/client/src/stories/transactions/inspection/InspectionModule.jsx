@@ -30,9 +30,7 @@ function InspectionModule() {
             showBackButton = true;
             return history.location.state.tx;
         }
-        else {
-            return state.transaction.lastSentAndMinedTx;
-        }
+        return state.transaction.lastSentAndMinedTx;
     });
 
     const handleOnClick = () => {
@@ -123,8 +121,7 @@ function InspectionModule() {
                         className={
                             classNames(
                                 "first:ml-4 ml-4 cursor-pointer border-solid border border-gray-300 px-2 py-1 rounded hover:text-blue-500 hover:border-blue-400",
-                                { "text-blue-500": idx === vinFocus },
-                                { "border-blue-400": idx === vinFocus },
+                                { "text-blue-500 border-blue-400": idx === vinFocus },
                             )
                         }
                     >
@@ -201,8 +198,7 @@ function InspectionModule() {
                             className={
                                 classNames(
                                     "first:ml-4 ml-4 cursor-pointer border-solid border border-gray-300 px-2 py-1 rounded hover:text-blue-500 hover:border-blue-400",
-                                    { "text-blue-500": idx === voutFocus },
-                                    { "border-blue-400": idx === voutFocus },
+                                    { "text-blue-500 border-blue-400": idx === voutFocus }
                                 )
                             }
                         >
