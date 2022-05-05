@@ -26,7 +26,7 @@ function InspectionModule() {
     let showBackButton = false; // Default false -- If state available from push show true
 
     // If forwarded to this view with state, fetch the TX from the RPC else use latest mined TX state
-    let tx = useSelector(state => {
+    const tx = useSelector(state => {
         if (history?.location?.state?.tx) {
             showBackButton = true;
             return history.location.state.tx;
