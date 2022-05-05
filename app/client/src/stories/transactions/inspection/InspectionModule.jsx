@@ -231,7 +231,7 @@ function InspectionModule() {
                             :
                             <>
                                 <Header textAlign="left" sub className="mb-2 text-lg">
-                                    <span className="text-gray-700"> TxHash: </span>
+                                    <span className="text-gray-700">TxHash:&nbsp;</span>
                                     <span className="text-gray-500">{txObj["txHash"]}</span>
                                 </Header>
                                 <div
