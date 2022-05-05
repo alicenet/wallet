@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Grid, Header, Label, Message, Table } from 'semantic-ui-react';
 import { useDispatch, useSelector } from 'react-redux';
+import get from 'lodash/get';
 
 import { TRANSACTION_ACTIONS } from 'redux/actions/_actions';
 import Page from 'layout/Page';
@@ -25,7 +26,7 @@ function InspectionModule() {
     let showBackButton = false; // Default false -- If state available from push show true
 
     // If forwarded to this view with state, fetch the TX from the RPC else use latest mined TX state
-    const tx = useSelector(state => {
+    let tx = useSelector(state => {
         if (history?.location?.state?.tx) {
             showBackButton = true;
             return history.location.state.tx;
@@ -45,12 +46,16 @@ function InspectionModule() {
 
     };
 
-    const txObj = !tx.error ? utils.transaction.parseRpcTxObject(tx.txDetails || tx) : tx;
+    let txObj = tx;
+    let txFee = 0;
 
-    const txFee = Web3.utils.toBN(String(txObj.wholeTx.Fee)).toString();
+    if (!tx.error) {
+        txObj = utils.transaction.parseRpcTxObject(tx.txDetails || tx);
+        txFee = Web3.utils.toBN(String(get(txObj, ["wholeTx", "Fee"], 0))).toString();
+    }
 
     // Need a state for the async owner extraction
-    const [voutOwners, setVoutOwners] = useState(Array(txObj && txObj.voutCount));
+    const [voutOwners, setVoutOwners] = useState(Array(get(txObj, "voutCount", 0)));
 
     // On mount extract the owners for any vouts and vins
     useEffect(() => {
@@ -87,14 +92,9 @@ function InspectionModule() {
     /** Table view for TX VINs */
     const VinTable = () => {
 
-        if (txObj.error) {
-            return null;
-        }
-
         const genRows = () => {
 
-            let focusVin = txObj.vins[vinFocus];
-
+            let focusVin = get(txObj, ["vins", vinFocus], []);
             return Object.keys(focusVin).map(key => {
                 let value = focusVin[key];
                 return (
@@ -141,14 +141,10 @@ function InspectionModule() {
     /** Table view for TX VOUTs */
     const VoutTable = () => {
 
-        if (txObj.error) {
-            return null;
-        }
-
         const genRows = () => {
 
-            let focusVout = txObj.vouts[voutFocus];
             let skipKeys = ["type"];
+            let focusVout = get(txObj, ["vouts", voutFocus], []);
 
             return Object.keys(focusVout).map(key => {
 
@@ -207,7 +203,11 @@ function InspectionModule() {
                     ))}
                     </div>
                     <div>
-                        <Label content={txObj.vouts[voutFocus].type} color={txObj.vouts[voutFocus].type === "ValueStore" ? "green" : "purple"} className="opacity-70" />
+                        <Label
+                            content={get(txObj, ["vouts", voutFocus, "type"])}
+                            color={get(txObj, ["vouts", voutFocus, "type"]) === "ValueStore" ? "green" : "purple"}
+                            className="opacity-70"
+                        />
                     </div>
                 </Header>
                 <Table definition color="blue" size="small" compact className="text-xs m-0 my-2">
@@ -225,26 +225,28 @@ function InspectionModule() {
             <Grid textAlign="center" className="m-0" container>
 
                 <Grid.Column width={16} className="p-0 self-center text-md" style={{ height: "370px" }}>
-
-                    {!txObj.error && (<>
-                        <Header textAlign="left" sub className="mb-2 text-lg"><span className="text-gray-700">
-                            TxHash: </span> <span className="text-gray-500">{txObj["txHash"]}</span>
-                        </Header>
-                        <div
-                            className="mb-2 text-left text-base cursor-pointer text-gray-400"
-                            onClick={() => window.open(`${BLOCK_EXPLORER_LINK}/tx?txHash=${txObj["txHash"]}`, '_blank')}
-                        >
-                            View TX on Block Explorer
-                        </div>
-                        <div className="flex justify-start mb-3">
-                            <Label className="text-xs">TxFee: {txFee} MadBytes</Label>
-                        </div>
-                        <VinTable />
-                        <VoutTable />
-                    </>)}
-
-                    {txObj.error && <Message error content={txObj.error} />}
-
+                    {
+                        txObj.error ?
+                            <Message error content={txObj.error} />
+                            :
+                            <>
+                                <Header textAlign="left" sub className="mb-2 text-lg">
+                                    <span className="text-gray-700"> TxHash: </span>
+                                    <span className="text-gray-500">{txObj["txHash"]}</span>
+                                </Header>
+                                <div
+                                    className="mb-2 text-left text-base cursor-pointer text-gray-400"
+                                    onClick={() => window.open(`${BLOCK_EXPLORER_LINK}/tx?txHash=${txObj["txHash"]}`, '_blank')}
+                                >
+                                    View TX on Block Explorer
+                                </div>
+                                <div className="flex justify-start mb-3">
+                                    <Label className="text-xs">TxFee: {txFee} MadBytes</Label>
+                                </div>
+                                <VinTable />
+                                <VoutTable />
+                            </>
+                    }
                 </Grid.Column>
 
                 <Grid.Column width={16} className="p-0 self-center mt-16">

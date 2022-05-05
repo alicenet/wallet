@@ -1,3 +1,5 @@
+import get from 'lodash/get';
+
 import { getMadWalletInstance } from "redux/middleware/WalletManagerMiddleware";
 
 export const transactionTypes = {
@@ -66,7 +68,7 @@ export const parseRpcTxObject = (rpcTxObject) => {
     let valueStoreCount = 0;
 
     // Parse each VIN to VIN Details accessible by index of VIN:
-    rpcTxObject["Vin"].forEach((vin) => {
+    rpcTxObject["Vin"]?.forEach((vin) => {
         vins.push({
             object_signature: vin["Signature"],
             chain_id: vin["TXInLinker"]["TXInPreImage"]["ChainID"],
@@ -76,7 +78,7 @@ export const parseRpcTxObject = (rpcTxObject) => {
     });
 
     // Parse each VOUT to VOUT Details accessible by index of VIN:
-    rpcTxObject["Vout"].forEach((vout) => {
+    rpcTxObject["Vout"]?.forEach((vout) => {
         if (!!vout["ValueStore"]) {
             valueStoreCount++;
             vouts.push({
@@ -107,7 +109,7 @@ export const parseRpcTxObject = (rpcTxObject) => {
     // We will show count of VIN/VOUT in table and allow dropdown rows for any individual VIN/VOUT
     const builtTxObj = {
         "wholeTx": rpcTxObject,
-        "txHash": rpcTxObject["Vout"][0]["ValueStore"] ? rpcTxObject["Vout"][0]["ValueStore"].TxHash : rpcTxObject["Vout"][0]["DataStore"]["DSLinker"].TxHash,
+        "txHash": get(rpcTxObject,["Vout", "0", "ValueStore"]) ? get(rpcTxObject, ["Vout", "0", "ValueStore", "TxHash"]) : get(rpcTxObject["Vout", "0", "DataStore", "DSLinker", "TxHash"]),
         "valueStoreCount": valueStoreCount,
         "dataStoreCount": dataStoreCount,
         "vinCount": vins.length,
