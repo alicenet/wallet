@@ -12,6 +12,9 @@ import 'style/main.scss';
 import store from 'redux/store/store.js';
 import { Provider } from 'react-redux';
 
+window.process = {};
+process = {};
+
 ReactDOM.render(
     <Provider store={store}>
         <App/>

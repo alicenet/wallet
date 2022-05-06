@@ -1,82 +1,85 @@
 {
-  "name": "madwallet",
-  "version": "1.0.2",
-  "description": "",
-  "homepage": "./",
-  "main": "./app-build/electron/index.js",
-  "scripts": {
-    "setup": "chmod +x ./helpers/* && ./helpers/setup.sh",
-    "build-linux": "./helpers/build-helper.sh && electron-builder build -c.extraMetadata.main=./app-build/electron/index.js --linux --publish never",
-    "build-windows": "./helpers/build-helper.sh && electron-builder build -c.extraMetadata.main=./app-build/electron/index.js --windows --publish never",
-    "build-mac": "./helpers/build-helper.sh && electron-builder build -c.extraMetadata.main=./app-build/electron/index.js --mac --publish never",
-    "build-all": "./helpers/build-helper.sh && electron-builder build -c.extraMetadata.main=./app-build/electron/index.js --mac --windows --linux --publish never",
-    "dev": "concurrently \"cd app/client && npm start\" \"electron ./app/electron\"",
-    "lint": "eslint .",
-    "lint-fix": "eslint --fix .",
-    "postinstall": "cd app/client && npm install",
-    "clean-build": "rm -rf node_modules package-lock.json app/client/node_modules app/client/package-lock.json; npm i",
-    "build-docs": "jsdoc -c jsdoc.json"
-  },
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "dotenv": "^16.0.0",
-    "electron-is-dev": "1.2.0",
-    "electron-settings": "4.0.2",
-    "secure-electron-store": "1.3.3"
-  },
-  "devDependencies": {
-    "@babel/plugin-proposal-class-properties": "7.10.4",
-    "concurrently": "7.0.0",
-    "electron": "17.0.0",
-    "electron-builder": "22.8.0",
-    "electron-notarize": "1.0.1",
-    "electron-rebuild": "3.1.1",
-    "jsdoc": "3.6.10",
-    "mad-doc-template": "git+https://github.com/MadBase/mad-doc-template.git"
-  },
-  "build": {
-    "afterSign": "notarize.js",
-    "appId": "com.MadHive.MadWallet",
-    "files": [
-      "app-build/**/*",
-      "app-build/electron/icon.png",
-      "node_modules/**/*",
-      "static/**/*"
-    ],
-    "productName": "MadWallet",
-    "directories": {
-      "buildResources": "app/electron"
+    "name": "madwallet",
+    "version": "1.0.2",
+    "description": "",
+    "homepage": "./",
+    "main": "./app-build/electron/index.js",
+    "scripts": {
+        "setup": "chmod +x ./helpers/* && ./helpers/setup.sh",
+        "build-linux": "./helpers/build-helper.sh && electron-builder build -c.extraMetadata.main=./app-build/electron/index.js --linux --publish never",
+        "build-windows": "./helpers/build-helper.sh && electron-builder build -c.extraMetadata.main=./app-build/electron/index.js --windows --publish never",
+        "build-mac": "./helpers/build-helper.sh && electron-builder build -c.extraMetadata.main=./app-build/electron/index.js --mac --publish never",
+        "build-all": "./helpers/build-helper.sh && electron-builder build -c.extraMetadata.main=./app-build/electron/index.js --mac --windows --linux --publish never",
+        "dev": "concurrently \"cd app/client && npm start\" \"electron ./app/electron\"",
+        "lint": "eslint .",
+        "lint-fix": "eslint --fix .",
+        "postinstall": "cd app/client && yarn",
+        "clean-install": "rm -rf node_modules package-lock.json yarn.lock app/client/node_modules app/client/package-lock.json app/client/yarn.lock; yarn",
+        "build-docs": "jsdoc -c jsdoc.json"
     },
-    "linux": {
-      "target": [
-        "zip"
-      ]
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "dotenv": "^16.0.0",
+        "electron-is-dev": "1.2.0",
+        "electron-settings": "4.0.2",
+        "secure-electron-store": "1.3.3"
     },
-    "dmg": {
-      "sign": true,
-      "icon": "icon.png",
-      "contents": [
-        {
-          "x": 130,
-          "y": 220
+    "resolutions": {
+        "react-error-overlay": "6.0.8"
+    },
+    "devDependencies": {
+        "@babel/plugin-proposal-class-properties": "7.10.4",
+        "concurrently": "7.0.0",
+        "electron": "17.0.0",
+        "electron-builder": "22.8.0",
+        "electron-notarize": "1.0.1",
+        "electron-rebuild": "3.1.1",
+        "jsdoc": "3.6.10",
+        "mad-doc-template": "git+https://github.com/MadBase/mad-doc-template.git"
+    },
+    "build": {
+        "afterSign": "notarize.js",
+        "appId": "com.MadHive.MadWallet",
+        "files": [
+            "app-build/**/*",
+            "app-build/electron/icon.png",
+            "node_modules/**/*",
+            "static/**/*"
+        ],
+        "productName": "MadWallet",
+        "directories": {
+            "buildResources": "app/electron"
         },
-        {
-          "x": 410,
-          "y": 220,
-          "type": "link",
-          "path": "/Applications"
+        "linux": {
+            "target": [
+                "zip"
+            ]
+        },
+        "dmg": {
+            "sign": true,
+            "icon": "icon.png",
+            "contents": [
+                {
+                    "x": 130,
+                    "y": 220
+                },
+                {
+                    "x": 410,
+                    "y": 220,
+                    "type": "link",
+                    "path": "/Applications"
+                }
+            ]
+        },
+        "win": {
+            "target": "NSIS"
+        },
+        "mac": {
+            "hardenedRuntime": true,
+            "gatekeeperAssess": false,
+            "entitlements": "entitlements.plist",
+            "entitlementsInherit": "entitlements.plist"
         }
-      ]
-    },
-    "win": {
-      "target": "NSIS"
-    },
-    "mac": {
-      "hardenedRuntime": true,
-      "gatekeeperAssess": false,
-      "entitlements": "entitlements.plist",
-      "entitlementsInherit": "entitlements.plist"
     }
-  }
 }
