@@ -1,7 +1,7 @@
 import { ADAPTER_ACTION_TYPES, TRANSACTION_ACTION_TYPES, VAULT_ACTION_TYPES } from '../constants/_constants';
 import web3Adapter from 'adapters/web3Adapter';
 import { default_log as log } from 'log/logHelper';
-import madNetAdapter from 'adapters/madAdapter';
+import madNetAdapter from 'adapters/alicenetAdapter';
 import { transactionTypes } from 'util/transaction';
 import utils, { genericUtils, transactionUtils } from 'util/_util';
 import { TRANSACTION_ACTIONS, VAULT_ACTIONS } from './_actions';

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Header, Icon, Loader, Message, Popup, Segment, Table } from 'semantic-ui-react';
-import madNetAdapter from 'adapters/madAdapter';
+import madNetAdapter from 'adapters/alicenetAdapter';
 import { getMadWalletInstance } from 'redux/middleware/WalletManagerMiddleware';
 import utils from 'util/_util';
 import usePrevious from 'hooks/usePrevious';

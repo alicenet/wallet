@@ -1,6 +1,6 @@
 import { TRANSACTION_ACTION_TYPES } from '../constants/_constants';
 import { default_log as log } from 'log/logHelper';
-import madNetAdapter from 'adapters/madAdapter';
+import madNetAdapter from 'adapters/alicenetAdapter';
 import { ADAPTER_ACTIONS } from './_actions';
 import utils from 'util/_util';
 

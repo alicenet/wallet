@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Form, Grid, Header, Segment } from 'semantic-ui-react';
 import { useSelector } from 'react-redux';
-import madNetAdapter from 'adapters/madAdapter';
+import madNetAdapter from 'adapters/alicenetAdapter';
 import { useValueStoreFormState } from 'hooks/_hooks';
 import { walletUtils } from 'util/_util';
 

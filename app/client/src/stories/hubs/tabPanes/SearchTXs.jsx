@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Icon, Input, Message, Segment, Table } from 'semantic-ui-react';
-import madNetAdapter from 'adapters/madAdapter';
+import madNetAdapter from 'adapters/alicenetAdapter';
 import Web3 from 'web3';
 import utils, { stringUtils } from 'util/_util';
 import { useHistory } from 'react-router';
