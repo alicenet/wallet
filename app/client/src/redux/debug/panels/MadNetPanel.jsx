@@ -34,11 +34,9 @@ export default function Web3Panel() {
     };
 
     const getWalletButtons = (cb = () => { }) => {
-        return wallets.map((wallet, idx) => {
-            return (
-                <Form.Button size="mini" fluid content={"w" + (idx + 1)} onClick={() => cb(wallet)} />
-            )
-        })
+        return wallets.map((wallet, idx) =>
+            <Form.Button size="mini" fluid content={"w" + (idx + 1)} onClick={() => cb(wallet)} />
+        );
     };
 
     const useFromWallet = (wallet) => {
@@ -49,95 +47,105 @@ export default function Web3Panel() {
         valueFormSetters.setToAddress(wallet.address);
     };
 
-    return (<>
-        <Segment>
-            <Header as="h4">
-                MadNet Overview
-                <Header.Subheader>Debug madNet instance initiated: {String(!!adapterState.connected)}</Header.Subheader>
-            </Header>
-        </Segment>
-
-        <Segment>
-
-            <Header>Transaction Panel</Header>
+    return (
+        <>
 
             <Segment>
-                <Button content="Print MadWalletInstance" size='mini' onClick={() => console.log(madNetAdapter.getMadNetWalletInstance())} />
-                <Button content="Print TXout List" size='mini' onClick={() => console.log(madNetAdapter.txOuts.get())} className="ml-4" />
+
+                <Header as="h4">
+                    MadNet Overview
+                    <Header.Subheader>Debug madNet instance initiated: {String(!!adapterState.connected)}</Header.Subheader>
+                </Header>
+
             </Segment>
 
-            <Grid columns={2}>
+            <Segment>
 
-                <Grid.Column>
-                    <Segment>
-                        <Header className="text-sm text-blue-500">Add Value TXo</Header>
-                        <Form size="mini" className="mini-error-form">
+                <Header>Transaction Panel</Header>
 
-                            <FormInput
-                                error={!!valueFormErrors.fromAddress && { content: valueFormErrors.fromAddress }}
-                                label={"From " + walletUtils.getWalletNameFromAddress(valueFormState.fromAddress)}
-                                size="mini"
-                                value={valueFormState.fromAddress}
-                                onChange={e => valueFormSetters.setFromAddress(e.target.value)}
-                            />
+                <Segment>
+                    <Button content="Print MadWalletInstance" size='mini' onClick={() => console.log(madNetAdapter.getMadNetWalletInstance())} />
+                    <Button content="Print TXout List" size='mini' onClick={() => console.log(madNetAdapter.txOuts.get())} className="ml-4" />
+                </Segment>
 
-                            <Form.Group widths="equal">
-                                {getWalletButtons(useFromWallet)}
-                            </Form.Group>
+                <Grid columns={2}>
 
-                            <FormInput
-                                error={!!valueFormErrors.toAddress && { content: valueFormErrors.toAddress }}
-                                label={"To: " + walletUtils.getWalletNameFromAddress(valueFormState.toAddress)}
-                                size="mini"
-                                value={valueFormState.toAddress}
-                                onChange={e => valueFormSetters.setFromAddress(e.target.value)}
-                            />
+                    <Grid.Column>
 
-                            <Form.Group widths="equal">
-                                {getWalletButtons(useToWallet)}
-                            </Form.Group>
+                        <Segment>
 
-                            <FormInput
-                                error={!!valueFormErrors.value && { content: valueFormErrors.value }}
-                                label="Value"
-                                size="mini"
-                                value={valueFormState.value}
-                                onChange={e => valueFormSetters.setValue(e.target.value)}
-                            />
+                            <Header className="text-sm text-blue-500">Add Value TXo</Header>
 
-                            <Form.Checkbox
-                                className="small-checkbox"
-                                label="Is BN Address"
-                                checked={valueFormState.isBn}
-                                onChange={() => valueFormSetters.setIsBn(!valueFormState.isBn)}
-                            />
+                            <Form size="mini" className="mini-error-form">
 
-                            <div className="flex justify-between">
+                                <FormInput
+                                    error={!!valueFormErrors.fromAddress && { content: valueFormErrors.fromAddress }}
+                                    label={"From " + walletUtils.getWalletNameFromAddress(valueFormState.fromAddress)}
+                                    size="mini"
+                                    value={valueFormState.fromAddress}
+                                    onChange={e => valueFormSetters.setFromAddress(e.target.value)}
+                                />
 
-                                <Form.Button content="Add TXO" size="mini" className="mt-4" onClick={() => onValueSubmit(addValueStore)} />
-                                <Form.Button content="Print TXO List" size="mini" className="mt-4" onClick={() => console.log(madNetAdapter.txOuts.get())} />
+                                <Form.Group widths="equal">
+                                    {getWalletButtons(useFromWallet)}
+                                </Form.Group>
 
-                            </div>
+                                <FormInput
+                                    error={!!valueFormErrors.toAddress && { content: valueFormErrors.toAddress }}
+                                    label={"To: " + walletUtils.getWalletNameFromAddress(valueFormState.toAddress)}
+                                    size="mini"
+                                    value={valueFormState.toAddress}
+                                    onChange={e => valueFormSetters.setFromAddress(e.target.value)}
+                                />
 
-                        </Form>
-                    </Segment>
-                </Grid.Column>
+                                <Form.Group widths="equal">
+                                    {getWalletButtons(useToWallet)}
+                                </Form.Group>
 
-                <Grid.Column>
+                                <FormInput
+                                    error={!!valueFormErrors.value && { content: valueFormErrors.value }}
+                                    label="Value"
+                                    size="mini"
+                                    value={valueFormState.value}
+                                    onChange={e => valueFormSetters.setValue(e.target.value)}
+                                />
 
-                    <Segment>
+                                <Form.Checkbox
+                                    className="small-checkbox"
+                                    label="Is BN Address"
+                                    checked={valueFormState.isBn}
+                                    onChange={() => valueFormSetters.setIsBn(!valueFormState.isBn)}
+                                />
 
-                        <Header sub>Add Data TXo</Header>
-                        <Button content="Send" onClick={sendTx} />
+                                <div className="flex justify-between">
 
-                    </Segment>
+                                    <Form.Button content="Add TXO" size="mini" className="mt-4" onClick={() => onValueSubmit(addValueStore)} />
+                                    <Form.Button content="Print TXO List" size="mini" className="mt-4" onClick={() => console.log(madNetAdapter.txOuts.get())} />
 
-                </Grid.Column>
+                                </div>
 
-            </Grid>
+                            </Form>
 
-        </Segment>
+                        </Segment>
 
-    </>)
+                    </Grid.Column>
+
+                    <Grid.Column>
+
+                        <Segment>
+
+                            <Header sub>Add Data TXo</Header>
+                            <Button content="Send" onClick={sendTx} />
+
+                        </Segment>
+
+                    </Grid.Column>
+
+                </Grid>
+
+            </Segment>
+
+        </>
+    )
 
 }
