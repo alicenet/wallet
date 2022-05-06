@@ -1,5 +1,5 @@
 {
-  "name": "madwallet",
+  "name": "alicenetwallet",
   "version": "1.0.2",
   "description": "",
   "homepage": "./",
@@ -37,14 +37,14 @@
   },
   "build": {
     "afterSign": "notarize.js",
-    "appId": "com.MadHive.MadWallet",
+    "appId": "com.MadHive.AliceNetWallet",
     "files": [
       "app-build/**/*",
       "app-build/electron/icon.png",
       "node_modules/**/*",
       "static/**/*"
     ],
-    "productName": "MadWallet",
+    "productName": "AliceNetWallet",
     "directories": {
       "buildResources": "app/electron"
     },

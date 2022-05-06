@@ -39,9 +39,9 @@ export const buildVaultStateObject = ({ exists = null, isLocked = null, optout =
             // utilAllowance: 0
             // stake: 0
             // stakeAllowance: 0
-            // madBytes: 0
-            // madUTXOs: []
-        }, // K:V store of address:balances,utxos -- Updated via madNetWallet and web3Wallet actions
+            // aliceNetBytes: 0
+            // aliceNetUTXOs: []
+        }, // K:V store of address:balances,utxos -- Updated via aliceNetWallet and web3Wallet actions
         recentTxs: {
             // Recent TXs K:V per address:[..txs]
         }

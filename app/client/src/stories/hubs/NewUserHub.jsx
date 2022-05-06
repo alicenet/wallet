@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { Button, Container, Grid, Header, Image } from 'semantic-ui-react';
 
-import MadIcon from 'Assets/icon.png';
+import AliceNetIcon from 'Assets/icon.png';
 
 import { USER_ACTIONS } from 'redux/actions/_actions';
 import { useDispatch, useSelector } from "react-redux";
@@ -44,9 +44,9 @@ function NewUserHub() {
 
                     <Header content="Welcome to" as="h3" className="my-0" />
 
-                    <Image src={MadIcon} size="tiny" centered />
+                    <Image src={AliceNetIcon} size="tiny" centered />
 
-                    <Header content="MadWallet" as="h3" className="my-0" />
+                    <Header content="AliceNetWallet" as="h3" className="my-0" />
 
                 </Grid.Column>
 

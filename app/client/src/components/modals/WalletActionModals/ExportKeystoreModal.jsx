@@ -32,7 +32,7 @@ export default function ExportKeystoreModal() {
     const generateWallet = async () => {
         const newStoreBlob = await utils.wallet.generateKeystoreFromPrivK(targetWallet.privK, formState.keystorePassword.value, targetWallet.curve, true);
         setKeystoreDL({
-            filename: "MadWallet_" + targetWallet.name + ".json",
+            filename: "AliceNetWallet_" + targetWallet.name + ".json",
             data: newStoreBlob
         });
         downloadRef.current.href = URL.createObjectURL(newStoreBlob);

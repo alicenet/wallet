@@ -12,7 +12,7 @@ exports.default = async function notarizing(context) {
   const password = process.env.APPLE_PASSWORD;
 
   return await notarize({
-    appBundleId: 'com.MadHive.MadWallet',
+    appBundleId: 'com.MadHive.AliceNetWallet',
     appPath: `${appOutDir}/${appName}.app`,
     appleId: email,
     appleIdPassword: password,

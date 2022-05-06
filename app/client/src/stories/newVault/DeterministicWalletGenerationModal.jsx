@@ -23,7 +23,7 @@ function DeterministicWalletGenerationModal({ children }) {
 
                     <Container className="flex flex-auto flex-col gap-3 px-3 text-center">
 
-                        <p>Mad wallet uses the BIP44 standard to implement Seed Phrases and
+                        <p>AliceNet wallet uses the BIP44 standard to implement Seed Phrases and
                             Deterministic Wallets.</p>
 
                         <p>Similar to other wallet software, only the wallets generated inside the Mad
