@@ -7,7 +7,7 @@ import BigInt from 'big-integer';
 
 import { TRANSACTION_ACTIONS } from 'redux/actions/_actions';
 import utils, { transactionTypes } from 'util/_util';
-import { getMadWalletInstance } from "redux/middleware/WalletManagerMiddleware";
+import { getAliceNetWalletInstance } from "redux/middleware/WalletManagerMiddleware";
 
 export default function AddEditDataStoreModal({ dataStore, onClose }) {
 
@@ -68,10 +68,10 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
             try {
                 setError('');
                 if (formState.Duration.value && formState.Value.value) {
-                    let madWallet = getMadWalletInstance();
-                    const dataStoreFee = await madWallet.Utils.calculateFee(fees.dataStoreFee, formState.Duration.value);
+                    let aliceNetWallet = getAliceNetWalletInstance();
+                    const dataStoreFee = await aliceNetWallet.Utils.calculateFee(fees.dataStoreFee, formState.Duration.value);
                     let rawValue = Buffer(formState.Value.value).toString('hex');
-                    const depositFee = await madWallet.Utils.calculateDeposit(rawValue, formState.Duration.value);
+                    const depositFee = await aliceNetWallet.Utils.calculateDeposit(rawValue, formState.Duration.value);
                     const totalStoreCost = BigInt(dataStoreFee) + BigInt(depositFee);
                     setCalculatedFee(totalStoreCost);
                 }

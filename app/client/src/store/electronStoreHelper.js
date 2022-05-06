@@ -383,15 +383,15 @@ function readPasswordHint() {
 
 /** -- Write configuration values to electron store
  * @param { Object } configValues
- * @property { String } configValues.mad_net_chainID - Mad net chain id to save
- * @property { String } configValues.mad_net_provider - Mad net chain id to save
- * @property { String } ethereum_provider - Mad net chain id to save
- * @property { String } registry_contract_address - Mad net chain id to save
+ * @property { String } configValues.alice_net_chainID - AliceNet chain id to save
+ * @property { String } configValues.alice_net_provider - AliceNet provider to save
+ * @property { String } ethereum_provider - Ethereum provider to save
+ * @property { String } registry_contract_address - Registry contract address to save
  */
 function storeConfigurationValues(configValues) {
     let updateObject = {
-        mad_net_chainID: configValues.mad_net_chainID,
-        mad_net_provider: configValues.mad_net_provider,
+        alice_net_chainID: configValues.alice_net_chainID,
+        alice_net_provider: configValues.alice_net_provider,
         ethereum_provider: configValues.ethereum_provider,
         registry_contract_address: configValues.registry_contract_address,
         advanced_settings: configValues.advanced_settings,

@@ -3,7 +3,7 @@ import store from 'redux/store/store';
 import BigInt from 'big-integer';
 import { ADAPTER_ACTION_TYPES, TRANSACTION_ACTION_TYPES } from 'redux/constants/_constants';
 import { ADAPTER_ACTIONS, TRANSACTION_ACTIONS } from 'redux/actions/_actions';
-import { getMadWalletInstance } from 'redux/middleware/WalletManagerMiddleware'
+import { getAliceNetWalletInstance } from 'redux/middleware/WalletManagerMiddleware'
 import { default_log as log } from 'log/logHelper'
 import { SyncToastMessageSuccess, SyncToastMessageWarning } from 'components/customToasts/CustomToasts'
 import { toast } from 'react-toastify';
@@ -11,20 +11,20 @@ import { curveTypes } from 'util/wallet';
 import { history } from 'history/history';
 import utils from 'util/_util';
 
-class MadNetAdapter {
+class AliceNetAdapter {
 
     constructor() {
 
-        this.wallet = () => getMadWalletInstance(); // Get latest madWallet for any actions needing it.
-        this.provider = () => (store.getState().config.mad_net_provider);
-        this.chainID = () => (store.getState().config.mad_net_chainID);
+        this.wallet = () => getAliceNetWalletInstance(); // Get latest aliceNetWallet for any actions needing it.
+        this.provider = () => (store.getState().config.alice_net_provider);
+        this.chainID = () => (store.getState().config.alice_net_chainID);
 
         this.subscribed = false;
         this.isInitializing = false; // Is the instance currently initializing? -- Used to prevent repeat initializations
 
         this.lastNotedConfig = {
-            mad_net_chainID: false,
-            mad_net_provider: false,
+            alice_net_chainID: false,
+            alice_net_provider: false,
         }
 
         // Error cache -- Cache first errors so that on retries the correct error is relayed to the user
@@ -79,13 +79,13 @@ class MadNetAdapter {
     }
 
     /**
-     * Initiate the MadNet Adapter and verify a connection is possible
+     * Initiate the AliceNet Adapter and verify a connection is possible
      * @param {Object} config - Init Config
      * @property { Bool } config.preventToast - Should the success toast be prevented?
      * @property { Bool } config.reinit - Is this a reinit cycle?
      */
     async __init(config = {}) {
-        store.dispatch(ADAPTER_ACTIONS.setMadNetBusy(true));
+        store.dispatch(ADAPTER_ACTIONS.setAliceNetBusy(true));
         // this._listenToStore(); // Don't listen -- Use manual update in adapter actions
         try {
             this._updateLastNotedConfig();
@@ -93,9 +93,9 @@ class MadNetAdapter {
             this.connected.set(true);
             this.failed.set(false);
             if (!config.preventToast) {
-                toast.success(<SyncToastMessageSuccess basic title="Success" message="MadNet Connected" />, { className: "basic", "autoClose": 2400 })
+                toast.success(<SyncToastMessageSuccess basic title="Success" message="AliceNet Connected" />, { className: "basic", "autoClose": 2400 })
             }
-            store.dispatch(ADAPTER_ACTIONS.setMadNetBusy(false));
+            store.dispatch(ADAPTER_ACTIONS.setAliceNetBusy(false));
             // Attempt to get fees -- RPC will throw if unfetchable
             let fees = await this.wallet().Rpc.getFees();
             // Re-assign to internal camelCase keys
@@ -114,18 +114,18 @@ class MadNetAdapter {
             return { success: true }
         } catch (ex) {
             this.failed.set(ex.message);
-            toast.error(<SyncToastMessageWarning title="Madnet Error!" message="Check network settings" />,
+            toast.error(<SyncToastMessageWarning title="AliceNet Error!" message="Check network settings" />,
                 { className: "basic", "autoClose": 5000, "onClick": () => { history.push("/wallet/advancedSettings") } })
-            store.dispatch(ADAPTER_ACTIONS.setMadNetBusy(false));
-            store.dispatch(ADAPTER_ACTIONS.setMadNetConnected(false));
+            store.dispatch(ADAPTER_ACTIONS.setAliceNetBusy(false));
+            store.dispatch(ADAPTER_ACTIONS.setAliceNetConnected(false));
             return ({ error: ex })
         }
     }
 
-    _updateLastNotedConfig(mad_net_chainID = this.chainID(), mad_net_provider = this.provider()) {
+    _updateLastNotedConfig(alice_net_chainID = this.chainID(), alice_net_provider = this.provider()) {
         this.lastNotedConfig = {
-            mad_net_chainID: mad_net_chainID,
-            mad_net_provider: mad_net_provider,
+            alice_net_chainID: alice_net_chainID,
+            alice_net_provider: alice_net_provider,
         }
     }
 
@@ -145,14 +145,14 @@ class MadNetAdapter {
             let isLocked = state.vault.is_locked;
             // If at any point attempts are made when the vault is locked -- Ignore them
             if (isLocked) {
-                log.debug("Skipping subscription checks on MadNet Adapter -- Account is locked")
+                log.debug("Skipping subscription checks on AliceNet Adapter -- Account is locked")
                 return
             }
             let newNotableState = {
-                mad_net_chainID: latestConfig.mad_net_chainID,
-                mad_net_provider: latestConfig.mad_net_provider,
+                alice_net_chainID: latestConfig.alice_net_chainID,
+                alice_net_provider: latestConfig.alice_net_provider,
             }
-            let updateOccurance = await (() => {
+            let updateOccurrence = await (() => {
                 return new Promise(res => {
                     Object.keys(newNotableState).forEach(key => {
                         if (newNotableState[key] !== this.lastNotedConfig[key]) {
@@ -162,9 +162,9 @@ class MadNetAdapter {
                     res(false);
                 })
             })()
-            if (updateOccurance) {
+            if (updateOccurrence) {
                 if (!this.isInitializing) { // Guard against re-entrances on initializing
-                    log.debug("Configuration change for MadAdapter Adapter -- Reinitializing")
+                    log.debug("Configuration change for AliceNetAdapter Adapter -- Reinitializing")
                     this.isInitializing = true;
                     await this.__init({ preventToast: true, reinit: true });
                     this.isInitializing = false;
@@ -173,14 +173,14 @@ class MadNetAdapter {
         })
     }
 
-    /** Fetch upto date balances for MadNetWallets
+    /** Fetch upto date balances for AliceNetWallets
      * @returns { Object } -- Returns latest balances state
      */
-    async getAllMadWalletBalancesWithUTXOs() {
-        let madWallet = this.wallet();
+    async getAllAliceNetWalletBalancesWithUTXOs() {
+        let aliceNetWallet = this.wallet();
         let balancesAndUtxos = {};
-        for (let wallet of madWallet.Account.accounts) {
-            let [balance, utxos] = await this._getMadNetWalletBalanceAndUTXOs(wallet.address, wallet.curve);
+        for (let wallet of aliceNetWallet.Account.accounts) {
+            let [balance, utxos] = await this._getAliceNetWalletBalanceAndUTXOs(wallet.address, wallet.curve);
             if (balance.error) {
                 return { error: balance.error }
             }
@@ -197,8 +197,8 @@ class MadNetAdapter {
                 newBalances[address] = {};
             }
             // Update balances
-            newBalances[address].madBytes = addressBalancesAndUtxos["balance"];
-            newBalances[address].madUTXOs = addressBalancesAndUtxos["utxos"];
+            newBalances[address].aliceNetBytes = addressBalancesAndUtxos["balance"];
+            newBalances[address].aliceNetUTXOs = addressBalancesAndUtxos["utxos"];
         }
 
         // Return newly updated balances and utxos
@@ -210,18 +210,18 @@ class MadNetAdapter {
      * @param { String } address
      * @returns {Array} - [balance, utxos]
      */
-    async getMadWalletBalanceWithUTXOsForAddress(address) {
-        let madWallet = this.wallet();
-        let madJSWallet;
+    async getAliceNetWalletBalanceWithUTXOsForAddress(address) {
+        let aliceNetWallet = this.wallet();
+        let aliceNetJSWallet;
         try {
-            madJSWallet = madWallet.Account.accounts.filter(wallet => wallet.address === address)[0];
+            aliceNetJSWallet = aliceNetWallet.Account.accounts.filter(wallet => wallet.address === address)[0];
         } catch (ex) {
-            return { error: "Unable to filter out address from current madJSWallet instance. State imbalance? See error: ", ex }
+            return { error: "Unable to filter out address from current aliceNetJSWallet instance. State imbalance? See error: ", ex }
         }
-        if (!madJSWallet) {
-            return [{ error: "MadNetJS wallet instance not found" }, null];
+        if (!aliceNetJSWallet) {
+            return [{ error: "AliceNetJS wallet instance not found" }, null];
         }
-        let [balance, utxos] = await this._getMadNetWalletBalanceAndUTXOs(madJSWallet.address, madJSWallet.curve);
+        let [balance, utxos] = await this._getAliceNetWalletBalanceAndUTXOs(aliceNetJSWallet.address, aliceNetJSWallet.curve);
         if (balance.error) {
             return { error: balance.error }
         }
@@ -229,14 +229,14 @@ class MadNetAdapter {
     }
 
     /**
-     * Returns mad wallet balance and utxoids for respective address and curve
+     * Returns Alice Net wallet balance and utxoids for respective address and curve
      * @param address - Wallet address to look up the balance for
      * @param curve - Address curve to use
      */
-    async _getMadNetWalletBalanceAndUTXOs(address, curve) {
-        let madWallet = this.wallet();
+    async _getAliceNetWalletBalanceAndUTXOs(address, curve) {
+        let aliceNetWallet = this.wallet();
         try {
-            let [utxoids, balance] = await madWallet.Rpc.getValueStoreUTXOIDs(address, curve)
+            let [utxoids, balance] = await aliceNetWallet.Rpc.getValueStoreUTXOIDs(address, curve)
             balance = String(parseInt(balance, 16));
             return [balance, utxoids];
         } catch (ex) {
@@ -244,7 +244,7 @@ class MadNetAdapter {
         }
     }
 
-    getMadNetWalletInstance() {
+    getAliceNetWalletInstance() {
         return this.wallet();
     }
 
@@ -255,18 +255,18 @@ class MadNetAdapter {
      */
     async getPrevTransactions(addresses) {
         try {
-            let madWallet = this.wallet();
+            let aliceNetWallet = this.wallet();
             let blockRange = 256;
-            let currentBlock = await madWallet.Rpc.getBlockNumber();
+            let currentBlock = await aliceNetWallet.Rpc.getBlockNumber();
             let pTx = [];
             for (let i = currentBlock; i >= (currentBlock - blockRange); i--) {
-                let block = await madWallet.Rpc.getBlockHeader(i);
+                let block = await aliceNetWallet.Rpc.getBlockHeader(i);
                 if (!block["TxHshLst"] || block["TxHshLst"].length <= 0) {
                     continue;
                 }
                 transactionLoop:
                 for (let l = 0; l < block["TxHshLst"].length; l++) {
-                    let tx = await madWallet.Rpc.getMinedTransaction(block["TxHshLst"][l]);
+                    let tx = await aliceNetWallet.Rpc.getMinedTransaction(block["TxHshLst"][l]);
                     for (let j = 0; j < tx["Tx"]["Vout"].length; j++) {
                         for (let k = 0; k < addresses.length; k++) {
                             let address = addresses[k]["address"].toLowerCase();
@@ -314,7 +314,7 @@ class MadNetAdapter {
     _handleReduxStateValue(keyChain) {
         let depth = keyChain.length;
         let getter = () => {
-            let state = store.getState().adapter.madNetAdapter;
+            let state = store.getState().adapter.aliceNetAdapter;
             if (depth === 1) {
                 return state[keyChain[0]]
             }
@@ -327,7 +327,7 @@ class MadNetAdapter {
         };
         let setter = (value) => {
             store.dispatch({
-                type: ADAPTER_ACTION_TYPES.SET_MADNET_KEYCHAIN_VALUE, payload: {
+                type: ADAPTER_ACTION_TYPES.SET_ALICENET_KEYCHAIN_VALUE, payload: {
                     keyChain: keyChain, value: value
                 }
             })
@@ -586,7 +586,7 @@ class MadNetAdapter {
             let newTxOuts = [...this.txOuts.get()];
             newTxOuts.push(txOut);
             this.txOuts.set(newTxOuts);
-            log.debug("MadNet Adapter: Added new TXOut: ", txOut);
+            log.debug("AliceNet Adapter: Added new TXOut: ", txOut);
             return newTxOuts;
         } catch (ex) {
             return { error: ex };
@@ -597,7 +597,7 @@ class MadNetAdapter {
         try {
             let newTxOuts = [];
             this.txOuts.set(newTxOuts);
-            log.debug("MadNet Adapter: Cleared TXOuts :", this.txOuts.get());
+            log.debug("AliceNet Adapter: Cleared TXOuts :", this.txOuts.get());
             return newTxOuts;
         } catch (ex) {
             return { error: ex };
@@ -695,6 +695,6 @@ class MadNetAdapter {
     }
 }
 
-const madNetAdapter = new MadNetAdapter();
+const aliceNetAdapter = new AliceNetAdapter();
 
-export default madNetAdapter;
+export default aliceNetAdapter;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { MIDDLEWARE_ACTION_TYPES, VAULT_ACTION_TYPES } from 'redux/constants/_constants';
-import { getMadWalletInstance } from 'redux/middleware/WalletManagerMiddleware'
+import { getAliceNetWalletInstance } from 'redux/middleware/WalletManagerMiddleware'
 import { electronStoreCommonActions, electronStoreUtilityActions } from '../../store/electronStoreHelper';
 import { reduxState_logger as log } from 'log/logHelper';
 import util from 'util/_util';
@@ -15,13 +15,13 @@ import { SyncToastMessageSuccess } from 'components/customToasts/CustomToasts';
 /* !!!!!!! ____   ATTENTION: ______ !!!!!!!!  
 
 It is critical that new vault actions have implementations written in the WalletManagerMiddleware to facilitate synchronous state between
-the global MadNetJS Wallet and the Redux State! 
+the global AliceNetJS Wallet and the Redux State!
 
 To facilitate the Virtual DOM being updated when wallet mutation happens, we store an immutable state collection of
-what the MadNetWallet object in ../middleware/WalletManagerMiddleware is composed of to the reduxState :: Immutable keys are stored in state, while
-the mutable Wallet objects themselves are handled within MadNetWalletJS's instance 
+what the AliceNetWallet object in ../middleware/WalletManagerMiddleware is composed of to the reduxState :: Immutable keys are stored in state, while
+the mutable Wallet objects themselves are handled within AliceNetWalletJS's instance
 
-:: This way wallet actions occurring in the Redux state are mirrored to MadWallet.Account global mutable.
+:: This way wallet actions occurring in the Redux state are mirrored to AliceNetWallet.Account global mutable.
 
 :: Some dispatched actions occur exclusively in the middleware!
   
@@ -51,8 +51,8 @@ export function generateNewSecureHDVault(mnemonic, password, curveType = util.wa
         electronStoreCommonActions.setPasswordHint(hint); //Store password hint
         electronStoreCommonActions.storePreflightHash(preflightHash); // Store preflight hash for pre-action auth checking
         let firstWallet = await utils.wallet.generateBasicWalletObject("Main Wallet", firstWalletNode.privateKey.toString('hex'), curveType);
-        const preInitPayload = { wallets: { internal: [firstWallet], external: [] } }; // Payload needed by initMadWallet() in WalletManagerMiddleware
-        await dispatch({ type: MIDDLEWARE_ACTION_TYPES.INIT_MAD_WALLET, payload: preInitPayload }); // Pass off to MadWalletMiddleware to finish state initiation
+        const preInitPayload = { wallets: { internal: [firstWallet], external: [] } }; // Payload needed by initAliceNetWallet() in WalletManagerMiddleware
+        await dispatch({ type: MIDDLEWARE_ACTION_TYPES.INIT_ALICENET_WALLET, payload: preInitPayload }); // Pass off to AliceNetWalletMiddleware to finish state initiation
         dispatch({ type: VAULT_ACTION_TYPES.SET_MNEMONIC, payload: mnemonic });
         dispatch({ type: VAULT_ACTION_TYPES.MARK_EXISTS_AND_UNLOCKED });
 
@@ -60,21 +60,21 @@ export function generateNewSecureHDVault(mnemonic, password, curveType = util.wa
         let newVaultBackedUp = await electronStoreUtilityActions.backupStore();
         log.debug("New Vault Backup Success:", newVaultBackedUp);
 
-        // Once the vault is created attempt to connect web3, and then madNet
-        log.debug("Vault Created: Attempting to init MadNet && Web3 Adapters. . .");
+        // Once the vault is created attempt to connect web3, and then aliceNet
+        log.debug("Vault Created: Attempting to init AliceNet && Web3 Adapters. . .");
         let adaptersConnected = await dispatch(ADAPTER_ACTIONS.initAdapters());
 
         // Check and log any errors -- Allow unlock to happen even if network errors occur -- Appropriate toasts will be delivered to user via their respective adapaters
         if (adaptersConnected.error) {
             log.error("GeneralNetworkConnectionError:", adaptersConnected.error);
-            log.error("MadNetConnectionError: ", adaptersConnected.errors.madNet);
+            log.error("AliceNetConnectionError: ", adaptersConnected.errors.aliceNet);
             log.error("Web3ConnectionError: ", adaptersConnected.errors.web3);
         }
     };
 }
 
 /**
- * Used to load a secure HD vault from storage -- Passes to WalletMiddleware to sync MadWallet state.
+ * Used to load a secure HD vault from storage -- Passes to WalletMiddleware to sync AliceNetWallet state.
  * @param { String } password - The password used to initially encrypt the vault
  * @returns { Array } [done<Bool>, errorArray<Array>]
  */
@@ -105,7 +105,7 @@ export function loadSecureHDVaultFromStorage(password) {
         }
 
         const internalHDWallets = await wu.streamLineHDWalletNodesFromMnemonic(mnemonic, hdNodesToLoad);
-        const preInitPayload = { wallets: { internal: [], external: [] } }; // Payload needed by initMadWallet() in WalletManagerMiddleware
+        const preInitPayload = { wallets: { internal: [], external: [] } }; // Payload needed by initAliceNetWallet() in WalletManagerMiddleware
 
         for (let i = 0; i < internalHDWallets.length; i++) {
             const walletNode = internalHDWallets[i];
@@ -128,19 +128,19 @@ export function loadSecureHDVaultFromStorage(password) {
             toast.error("Error loading configuration values.");
         }
 
-        let res = await dispatch({ type: MIDDLEWARE_ACTION_TYPES.INIT_MAD_WALLET, payload: preInitPayload }); // Pass off to MadWalletMiddleware to finish state initiation
+        let res = await dispatch({ type: MIDDLEWARE_ACTION_TYPES.INIT_ALICENET_WALLET, payload: preInitPayload }); // Pass off to AliceNetWalletMiddleware to finish state initiation
         dispatch({ type: VAULT_ACTION_TYPES.MARK_EXISTS_AND_UNLOCKED });
         dispatch({ type: VAULT_ACTION_TYPES.SET_CURVE, payload: hdCurve });
         dispatch({ type: VAULT_ACTION_TYPES.SET_MNEMONIC, payload: mnemonic });
 
-        // Once the vault is unlocked attempt to connect web3, and then madNet
-        log.debug("Vault Unlock: Attempting to init MadNet && Web3 Adapters. . .");
+        // Once the vault is unlocked attempt to connect web3, and then aliceNet
+        log.debug("Vault Unlock: Attempting to init AliceNet && Web3 Adapters. . .");
         let adaptersConnected = await dispatch(ADAPTER_ACTIONS.initAdapters());
 
         // Check and log any errors -- Allow unlock to happen even if network errors occur -- Appropriate toasts will be delivered to user via their respective adapaters
         if (adaptersConnected.error) {
             log.error("GeneralNetworkConnectionError:", adaptersConnected.error);
-            log.error("MadNetConnectionError: ", adaptersConnected.errors.madNet);
+            log.error("AliceNetConnectionError: ", adaptersConnected.errors.aliceNet);
             log.error("Web3ConnectionError: ", adaptersConnected.errors.web3);
         }
 
@@ -148,7 +148,7 @@ export function loadSecureHDVaultFromStorage(password) {
     }
 }
 
-/** After a vault has been decrypted call this actions for any wallets to be added to the internal keyring and to the MadWallet object within state
+/** After a vault has been decrypted call this actions for any wallets to be added to the internal keyring and to the AliceNetWallet object within state
  * Internal keyring wallets are validated for existence and stored inside the vault
  * @param {String} walletName - The name of the wallet - extracted from the vault
  */
@@ -183,8 +183,8 @@ export function addExternalWalletToState(keystore, password, walletName) {
             throw new Error("Must only pass valid JSON Keystore Object to addExternalWalletToState", ex);
         }
         let unlocked = { data: util.wallet.unlockKeystore(JSON.parse(ksString), password), name: walletName };
-        let additions = await dispatch({ type: MIDDLEWARE_ACTION_TYPES.ADD_WALLET_FROM_KEYSTORE, payload: unlocked }); // Pass off to MadWalletMiddleware to finish state balancing
-        // Waiting for the above to dispatch will prevent doubles from being added -- MadNetJS will catch them
+        let additions = await dispatch({ type: MIDDLEWARE_ACTION_TYPES.ADD_WALLET_FROM_KEYSTORE, payload: unlocked }); // Pass off to AliceNetWalletMiddleware to finish state balancing
+        // Waiting for the above to dispatch will prevent doubles from being added -- AliceNetJS will catch them
         if (additions.error) {
             return additions;
         }
@@ -208,24 +208,24 @@ export function addExternalWalletToState(keystore, password, walletName) {
 }
 
 /**
- * Returns a reference to the mad wallet instance from WalletManagerMiddleware
- * @returns {Object<MadWallet-JS>}
+ * Returns a reference to the Alice Net wallet instance from WalletManagerMiddleware
+ * @returns {Object<AliceNetWallet-JS>}
  */
-export function getMadWallet() {
+export function getAliceNetWallet() {
     return function () {
-        return getMadWalletInstance();
+        return getAliceNetWalletInstance();
     }
 }
 
 /**
- * Dispatches actions to clear state and reinstance madNetJs to prep it for garbage collection
+ * Dispatches actions to clear state and reinstance aliceNetJs to prep it for garbage collection
  * @returns { Function }
  */
 export function lockVault() {
     return async function (dispatch) {
         return new Promise(async res => {
             toast.success(<SyncToastMessageSuccess hideIcon basic message="Locked & Disconnected" />, { autoClose: 1750, className: "basic" });
-            await dispatch({ type: MIDDLEWARE_ACTION_TYPES.REINSTANCE_MAD_WALLET });
+            await dispatch({ type: MIDDLEWARE_ACTION_TYPES.REINSTANCE_ALICENET_WALLET });
             await dispatch({ type: VAULT_ACTION_TYPES.LOCK_VAULT });
             // Additionally, mark web3 and madnet as not connected so they can be instanced on reconnect
             web3Adapter.setDefaultState(); // Mark default state on web3 adapter --

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Header, Icon, Loader, Message, Popup, Segment, Table } from 'semantic-ui-react';
-import madNetAdapter from 'adapters/alicenetAdapter';
-import { getMadWalletInstance } from 'redux/middleware/WalletManagerMiddleware';
+import aliceNetAdapter from 'adapters/alicenetAdapter';
+import { getAliceNetWalletInstance } from 'redux/middleware/WalletManagerMiddleware';
 import utils from 'util/_util';
 import usePrevious from 'hooks/usePrevious';
 import { useHistory } from 'react-router';
@@ -26,7 +26,7 @@ export default function Datastores({ wallet }) {
 
     const inspectTx = async (dStore) => {
         setLoadingTx(true);
-        let res = await madNetAdapter.viewTransaction(dStore.txHash);
+        let res = await aliceNetAdapter.viewTransaction(dStore.txHash);
         setLoadingTx(false);
         history.push('/inspectTx', {
             tx: res.tx.Tx,
@@ -48,11 +48,11 @@ export default function Datastores({ wallet }) {
 
             let indexToUse = dir === "forwards" ? nextIndexToUse : prevIndex;
 
-            let madWalletInstance = getMadWalletInstance();
-            let dsSearchOpts = madNetAdapter.dsSearchOpts.get();
+            let aliceNetWalletInstance = getAliceNetWalletInstance();
+            let dsSearchOpts = aliceNetAdapter.dsSearchOpts.get();
             let foundStores = [];
             for (let i = (maxDataPerPage + 1); i > 0; i--) {
-                let attempt = await madWalletInstance.Rpc.getDataStoreUTXOIDs(dsSearchOpts["address"], (dsSearchOpts["bnCurve"] ? 2 : 1), i, indexToUse);
+                let attempt = await aliceNetWalletInstance.Rpc.getDataStoreUTXOIDs(dsSearchOpts["address"], (dsSearchOpts["bnCurve"] ? 2 : 1), i, indexToUse);
                 if (attempt && attempt.length > 0) {
                     foundStores = attempt;
                     break;
@@ -79,7 +79,7 @@ export default function Datastores({ wallet }) {
                 return setDataStores([]);
             }
 
-            let DStores = await madWalletInstance.Rpc.getUTXOsByIds(UTXOIDS); // This returns [DS, VS, AS] stores respectively
+            let DStores = await aliceNetWalletInstance.Rpc.getUTXOsByIds(UTXOIDS); // This returns [DS, VS, AS] stores respectively
             let dStores = DStores[0]; // Extract just the Datastore array
             // Extract data from stores
             dStores = await utils.transaction.parseDsLinkers(dStores);
@@ -93,9 +93,9 @@ export default function Datastores({ wallet }) {
         const fetchDatastores = async () => {
             setFetchLoader(true);
             // Set active page in adapter to 1
-            madNetAdapter.setDsActivePage(1);
+            aliceNetAdapter.setDsActivePage(1);
             // Set dataStoreSearch address to the active wallet to the current wallet address
-            madNetAdapter.setDsSearchAddress(wallet.address);
+            aliceNetAdapter.setDsSearchAddress(wallet.address);
             await getData();
             setFetchLoader(false);
         };

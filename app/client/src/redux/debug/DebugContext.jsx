@@ -6,7 +6,7 @@ export const views = {
     ELECTRON_STORE: "Electron Store",
     VAULT_WALLETS: "Vault & Wallets",
     WEB3: "Web3 Provider",
-    MADNET: "MadNet Adapter",
+    ALICENET: "AliceNet Adapter",
     TOAST: "Toasts",
 }
 

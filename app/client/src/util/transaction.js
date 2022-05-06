@@ -1,6 +1,6 @@
 import get from 'lodash/get';
 
-import { getMadWalletInstance } from "redux/middleware/WalletManagerMiddleware";
+import { getAliceNetWalletInstance } from "redux/middleware/WalletManagerMiddleware";
 
 export const transactionTypes = {
     DATA_STORE: 1,
@@ -146,7 +146,7 @@ export const parseArrayOfTxObjs = (arrayofRpcTxObjs) => {
 export const parseDsLinkers = async (dsLinkers) => {
     let data = [];
 
-    let madWallet = getMadWalletInstance(); // Need for utils
+    let aliceNetWallet = getAliceNetWalletInstance(); // Need for utils
 
     try {
 
@@ -157,7 +157,7 @@ export const parseDsLinkers = async (dsLinkers) => {
             // Remove leading zeroes and mark as hex
             let deposit = "0x" + dsL["DSLinker"]["DSPreImage"].Deposit.replace(/^0+/, '');
 
-            let epochNums = await madWallet.Utils.calculateNumEpochs(
+            let epochNums = await aliceNetWallet.Utils.calculateNumEpochs(
                 dsL["DSLinker"]["DSPreImage"].RawData.length % 2,
                 deposit
             );

@@ -14,22 +14,22 @@ export default function NetworkStatusIndicator() {
 
     const [openModal, setOpenModal] = useState(false);
 
-    const { web3Connected, web3Error, web3Busy, madConnected, madError, madBusy, madNetProvider, ethereumProvider, registryContractAddress } = useSelector(s => ({
+    const { web3Connected, web3Error, web3Busy, aliceNetConnected, aliceNetError, aliceNetBusy, aliceNetProvider, ethereumProvider, registryContractAddress } = useSelector(s => ({
         web3Connected: s.adapter.web3Adapter.connected,
         web3Error: s.adapter.web3Adapter.error,
         web3Busy: s.adapter.web3Adapter.busy,
 
-        madConnected: s.adapter.madNetAdapter.connected,
-        madError: s.adapter.madNetAdapter.error,
-        madBusy: s.adapter.madNetAdapter.busy,
+        aliceNetConnected: s.adapter.aliceNetAdapter.connected,
+        aliceNetError: s.adapter.aliceNetAdapter.error,
+        aliceNetBusy: s.adapter.aliceNetAdapter.busy,
 
-        madNetProvider: s.config.mad_net_provider,
+        aliceNetProvider: s.config.alice_net_provider,
         ethereumProvider: s.config.ethereum_provider,
         registryContractAddress: s.config.registry_contract_address,
     }));
 
     const [formState, formSetter, onSubmit] = useFormState([
-        { name: 'MadNetProvider', display: 'MadNet Provider', type: 'url', isRequired: true, value: madNetProvider },
+        { name: 'AliceNetProvider', display: 'AliceNet Provider', type: 'url', isRequired: true, value: aliceNetProvider },
         { name: 'EthereumProvider', display: 'Ethereum Provider', type: 'url', isRequired: true, value: ethereumProvider },
         { name: 'RegistryContractAddress', display: 'Registry Contract Address', type: 'string', isRequired: true, value: registryContractAddress },
     ]);
@@ -48,7 +48,7 @@ export default function NetworkStatusIndicator() {
     }
 
     const web3Color = web3Busy ? "yellow" : web3Connected ? "green" : "red";
-    const madColor = madBusy ? "yellow" : madConnected ? "green" : "red";
+    const madColor = aliceNetBusy ? "yellow" : aliceNetConnected ? "green" : "red";
 
     const handleSubmit = async () => {
 
@@ -56,7 +56,7 @@ export default function NetworkStatusIndicator() {
 
         dispatch(INTERFACE_ACTIONS.toggleGlobalLoadingBool(true));
         const result = await dispatch(CONFIG_ACTIONS.saveConfigurationValues({
-            madNetProvider: formState.MadNetProvider.value,
+            aliceNetProvider: formState.AliceNetProvider.value,
             ethProvider: formState.EthereumProvider.value,
             registryContractAddress: formState.RegistryContractAddress.value
         }));
@@ -92,9 +92,9 @@ export default function NetworkStatusIndicator() {
                     onClick={() => setOpenModal(true)}
                 >
 
-                    <div className={classNames("flex items-center text-gray-600", { "animate-pulse text-red-600": madError })}>
+                    <div className={classNames("flex items-center text-gray-600", { "animate-pulse text-red-600": aliceNetError })}>
                         <div className="font-bold font-mono">
-                            MAD
+                            ALI
                         </div>
                         <div className="relative" style={{ top: "-1px", marginLeft: "4px" }}>
                             <StatusLight color={madColor} />
@@ -129,27 +129,27 @@ export default function NetworkStatusIndicator() {
                         <Form className="text-sm">
 
                             <Form.Input
-                                id='madNetProvider'
+                                id="aliceNetProvider"
                                 label={
                                     <div className="flex items-center">
                                         <div className="font-bold">
-                                            Madnet Provider
+                                            AliceNet Provider
                                         </div>
                                         <div className="relative" style={{ top: "-1px", marginLeft: "4px" }}>
                                             <StatusLight color={madColor} />
                                         </div>
                                     </div>
                                 }
-                                disabled={madBusy || web3Busy}
-                                placeholder='Enter MadNet Provider'
+                                disabled={aliceNetBusy || web3Busy}
+                                placeholder="Enter AliceNet Provider"
                                 required
-                                value={formState.MadNetProvider.value}
-                                onChange={e => formSetter.setMadNetProvider(e.target.value)}
-                                error={(!!formState.MadNetProvider.error && { content: formState.MadNetProvider.error }) || madError}
+                                value={formState.AliceNetProvider.value}
+                                onChange={e => formSetter.setAliceNetProvider(e.target.value)}
+                                error={(!!formState.AliceNetProvider.error && { content: formState.AliceNetProvider.error }) || aliceNetError}
                             />
 
                             <Form.Input
-                                id='ethereumProvider'
+                                id="ethereumProvider"
                                 label={
                                     <div className="flex items-center">
                                         <div className="font-bold">
@@ -160,8 +160,8 @@ export default function NetworkStatusIndicator() {
                                         </div>
                                     </div>
                                 }
-                                disabled={web3Busy || madBusy}
-                                placeholder='Enter Ethereum Provider'
+                                disabled={web3Busy || aliceNetBusy}
+                                placeholder="Enter Ethereum Provider"
                                 required
                                 value={formState.EthereumProvider.value}
                                 onChange={e => formSetter.setEthereumProvider(e.target.value)}
@@ -169,7 +169,7 @@ export default function NetworkStatusIndicator() {
                             />
 
                             <Form.Input
-                                id='registryContractAddress'
+                                id="registryContractAddress"
                                 label={
                                     <div className="flex items-center">
                                         <div className="font-bold">
@@ -177,8 +177,8 @@ export default function NetworkStatusIndicator() {
                                         </div>
                                     </div>
                                 }
-                                disabled={web3Busy || madBusy}
-                                placeholder='Enter Registry Contract Address'
+                                disabled={web3Busy || aliceNetBusy}
+                                placeholder="Enter Registry Contract Address"
                                 required
                                 value={formState.RegistryContractAddress.value}
                                 onChange={e => formSetter.setRegistryContractAddress(e.target.value)}
@@ -197,7 +197,7 @@ export default function NetworkStatusIndicator() {
                 <Button color="black" basic onClick={handleClose} content="Close" />
 
                 <Button
-                    icon={<Icon name='sync' />}
+                    icon={<Icon name="sync" />}
                     content="Retry"
                     color="teal"
                     onClick={() => onSubmit(handleSubmit)}
@@ -220,6 +220,6 @@ function StatusLight({ className, color }) {
 
     return (
         <div className={fullClass} style={{ width: "7px", height: "7px" }} />
-    )
+    );
 
 }

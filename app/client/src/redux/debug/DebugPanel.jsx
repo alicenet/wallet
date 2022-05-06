@@ -8,7 +8,7 @@ import VaultPanel from './panels/VaultPanel/_VaultPanel.jsx';
 import ElectronPanel from './panels/ElectronStorePanel.jsx';
 import UserStoriesPanel from './panels/UserStoriesPanel.jsx';
 import Web3Panel from './panels/Web3Panel.jsx';
-import MadNetPanel from './panels/MadNetPanel.jsx';
+import AliceNetPanel from './panels/MadNetPanel.jsx';
 
 import store from 'redux/store/store';
 import { useDispatch, useSelector } from "react-redux";
@@ -44,7 +44,7 @@ function DebugPanel() {
             case views.ELECTRON_STORE: return <ElectronPanel />;
             case views.USER_STORIES: return <UserStoriesPanel />;
             case views.WEB3: return <Web3Panel />;
-            case views.MADNET: return <MadNetPanel />;
+            case views.ALICENET: return <AliceNetPanel />;
             case views.TOAST: return <ToastPanel/>;
             default: return null;
         }

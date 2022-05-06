@@ -25,9 +25,9 @@ function ConstructionModule() {
     const emptyDataStore = { from: null, to: null, duration: null, key: null, value: null };
     const emptyValueStore = { from: null, to: null, value: null, bnCurve: false };
 
-    const { list, fees, web3Connected, madConnected } = useSelector(state => ({
+    const { list, fees, web3Connected, aliceNetConnected } = useSelector(state => ({
         web3Connected: state.adapter.web3Adapter.connected,
-        madConnected: state.adapter.madNetAdapter.connected,
+        aliceNetConnected: state.adapter.aliceNetAdapter.connected,
         list: state.transaction.list,
         fees: state.transaction.fees,
     }));
@@ -122,11 +122,11 @@ function ConstructionModule() {
 
                             <Menu compact icon='labeled' size="small">
 
-                                <Menu.Item name="add-data-store" onClick={() => setDataStore(emptyDataStore)} disabled={!web3Connected || !madConnected}>
+                                <Menu.Item name="add-data-store" onClick={() => setDataStore(emptyDataStore)} disabled={!web3Connected || !aliceNetConnected}>
                                     <Icon name="chart bar" className="text-gray-600" />Create Data Store
                                 </Menu.Item>
 
-                                <Menu.Item name='add-value-store' onClick={() => setValueStore(emptyValueStore)} disabled={!web3Connected || !madConnected}>
+                                <Menu.Item name='add-value-store' onClick={() => setValueStore(emptyValueStore)} disabled={!web3Connected || !aliceNetConnected}>
                                     <Icon name="currency" className="text-gray-600" />Create Value Store
                                 </Menu.Item>
 

@@ -11,7 +11,7 @@ export const initialAdapterState = {
         validators: false, // Current number of validators -- False if not able to || hasn't been polled
         max_validators: false, // Max number of validators -- False if not able to || hasn't been polled
     },
-    madNetAdapter: {
+    aliceNetAdapter: {
         connected: false,
         busy: false,
         error: false,
@@ -32,7 +32,7 @@ export const initialAdapterState = {
     }
 }
 
-// madNetAdapter[key1][key2][key3]
+// aliceNetAdapter[key1][key2][key3]
 
 /* Modal Reducer */
 export default function adapterReducer(state = initialAdapterState, action) {
@@ -59,14 +59,14 @@ export default function adapterReducer(state = initialAdapterState, action) {
                 web3Adapter: { ...state.web3Adapter, epoch: action.payload }
             });
 
-        case ADAPTER_ACTION_TYPES.SET_MADNET_CONNECTED:
+        case ADAPTER_ACTION_TYPES.SET_ALICENET_CONNECTED:
             return Object.assign({}, state, {
-                madNetAdapter: { ...state.madNetAdapter, connected: action.payload }
+                aliceNetAdapter: { ...state.aliceNetAdapter, connected: action.payload }
             });
 
-        case ADAPTER_ACTION_TYPES.SET_MADNET_ERROR:
+        case ADAPTER_ACTION_TYPES.SET_ALICENET_ERROR:
             return Object.assign({}, state, {
-                madNetAdapter: { ...state.madNetAdapter, error: action.payload }
+                aliceNetAdapter: { ...state.aliceNetAdapter, error: action.payload }
             });
 
         // On disconnect set initial adapter state
@@ -78,20 +78,20 @@ export default function adapterReducer(state = initialAdapterState, action) {
                 web3Adapter: { ...state.web3Adapter, busy: action.payload }
             });
 
-        case ADAPTER_ACTION_TYPES.SET_MADNET_BUSY:
+        case ADAPTER_ACTION_TYPES.SET_ALICENET_BUSY:
             return Object.assign({}, state, {
-                madNetAdapter: { ...state.madNetAdapter, busy: action.payload }
+                aliceNetAdapter: { ...state.aliceNetAdapter, busy: action.payload }
             });
 
         /**
-         * A payload dependant state setter action for the madNetAdapter state 
+         * A payload dependant state setter action for the aliceNetAdapter state
          * --  Supports upto object depth of 3
          * Requires payload.keyChain and payload.value
          */
-        case ADAPTER_ACTION_TYPES.SET_MADNET_KEYCHAIN_VALUE:
+        case ADAPTER_ACTION_TYPES.SET_ALICENET_KEYCHAIN_VALUE:
             let keyDepth = action.payload.keyChain.length;
             let keyTargets = action.payload.keyChain;
-            let newAdapterState = { ...state.madNetAdapter };
+            let newAdapterState = { ...state.aliceNetAdapter };
             if (keyDepth === 1) {
                 newAdapterState[keyTargets[0]] = action.payload.value;
             } else if (keyDepth === 2) {
@@ -103,11 +103,11 @@ export default function adapterReducer(state = initialAdapterState, action) {
             } else if (keyDepth === 3) {
                 newAdapterState[keyTargets[0]][keyTargets[1]][keyTargets[2]] = action.payload.value;
             } else { // Fallback to prev state
-                log.warn("Falling back to previous state during SET_MADNET_KEYCHAIN_VALUE, verify keyChain accessors and value set on payload correctly.")
-                newAdapterState = { ...state.madNetAdapter }
+                log.warn("Falling back to previous state during SET_ALICENET_KEYCHAIN_VALUE, verify keyChain accessors and value set on payload correctly.")
+                newAdapterState = { ...state.aliceNetAdapter }
             }
             return Object.assign({}, state, {
-                madNetAdapter: newAdapterState,
+                aliceNetAdapter: newAdapterState,
             });
 
         default:

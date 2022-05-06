@@ -4,7 +4,7 @@ import store from 'redux/store/store'
 import utils from './_util';
 
 const bip39 = require('bip39');
-const MadNetWalletJS = require('alicenetjs')
+const AliceNetWalletJS = require('alicenetjs')
 var HDKey = require('hdkey');
 
 /** Creates a raw state wallet object from a wallet_name and private key
@@ -277,7 +277,7 @@ export function getVaultWalletByAddress(address) {
  * @returns {Promise<String>} - secp256k1 derived public key string
  */
 export async function getSecp256k1FromPrivKey(privK) {
-    let walletInstance = new MadNetWalletJS();
+    let walletInstance = new AliceNetWalletJS();
     await walletInstance.Account.addAccount(privK, curveTypes.SECP256K1);
     return walletInstance.Account.accounts[0].address;
 }
@@ -287,7 +287,7 @@ export async function getSecp256k1FromPrivKey(privK) {
  * @returns {Promise<String>} - barreto-naehrig derived public key string
  */
 export async function getBNfromPrivKey(privK) {
-    let walletInstance = new MadNetWalletJS();
+    let walletInstance = new AliceNetWalletJS();
     await walletInstance.Account.addAccount(privK, curveTypes.BARRETO_NAEHRIG);
     return walletInstance.Account.accounts[0].address;
 }
