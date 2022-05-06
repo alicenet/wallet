@@ -79,7 +79,7 @@ class MadNetAdapter {
     }
 
     /**
-     * Initiate the madNet Adapter and verify a connection is possible
+     * Initiate the MadNet Adapter and verify a connection is possible
      * @param {Object} config - Init Config
      * @property { Bool } config.preventToast - Should the success toast be prevented?
      * @property { Bool } config.reinit - Is this a reinit cycle?
@@ -586,7 +586,7 @@ class MadNetAdapter {
             let newTxOuts = [...this.txOuts.get()];
             newTxOuts.push(txOut);
             this.txOuts.set(newTxOuts);
-            log.debug("Mad Net Adapter: Added new TXOut: ", txOut);
+            log.debug("MadNet Adapter: Added new TXOut: ", txOut);
             return newTxOuts;
         } catch (ex) {
             return { error: ex };
@@ -597,7 +597,7 @@ class MadNetAdapter {
         try {
             let newTxOuts = [];
             this.txOuts.set(newTxOuts);
-            log.debug("Mad Net Adapter: Cleared TXOuts :", this.txOuts.get());
+            log.debug("MadNet Adapter: Cleared TXOuts :", this.txOuts.get());
             return newTxOuts;
         } catch (ex) {
             return { error: ex };
