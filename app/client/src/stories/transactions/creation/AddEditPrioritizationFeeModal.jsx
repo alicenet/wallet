@@ -25,7 +25,7 @@ export default function AddEditPrioritizationFeeModal() {
     };
 
     const [formState, formSetter, onSubmit] = useFormState([
-        { name: 'Fee', display: 'AliceNet Bytes Fee', type: 'integer', isRequired: true, value: prioritizationFee },
+        { name: 'Fee', display: 'MadNet Bytes Fee', type: 'integer', isRequired: true, value: prioritizationFee },
     ]);
 
     const handleClose = () => {
@@ -61,7 +61,7 @@ export default function AddEditPrioritizationFeeModal() {
                         <Grid.Row>
                             <Grid.Column width="16">
                                 <p>
-                                    AliceNet Transactions cost a minimum fee. <br />
+                                    MadNet Transactions cost a minimum fee. <br />
                                     You may provide additional MadBytes to give your transaction priority. <br />
                                 </p>
                             </Grid.Column>
@@ -73,14 +73,14 @@ export default function AddEditPrioritizationFeeModal() {
 
                                 <Form.Input
                                     id='MinFee'
-                                    label='AliceNet Bytes Minimum Fee'
+                                    label='MadNet Bytes Minimum Fee'
                                     disabled
                                     value={minFee}
                                 />
 
                                 <Form.Input
                                     id='Fee'
-                                    label='AliceNet Bytes Prioritization Fee'
+                                    label='MadNet Bytes Prioritization Fee'
                                     required
                                     value={formState.Fee.value}
                                     onChange={e => formSetter.setFee(e.target.value)}

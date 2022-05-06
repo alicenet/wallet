@@ -50,11 +50,11 @@ export default function ResetWalletModal() {
             <Modal.Content className="text-left">
 
                 <p>
-                    On this page you can completely reset AliceNetWallet to its initial settings.
+                    On this page you can completely reset MadWallet to its initial settings.
                 </p>
 
                 <p>
-                    This action will completely remove any vaults associated with AliceNetWallet, as well as any stored settings.
+                    This action will completely remove any vaults associated with MadWallet, as well as any stored settings.
                 </p>
 
                 <p>

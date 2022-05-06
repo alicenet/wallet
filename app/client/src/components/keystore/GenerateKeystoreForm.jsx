@@ -50,7 +50,7 @@ export default function GenerateKeystoreForm(
     const generateWallet = async () => {
         let newStoreBlob = await utils.wallet.generateKeystore(true, formState.password.value, curveType);
         setKeystoreDL({
-            filename: "AliceNetWallet_" + Date.now() + ".json",
+            filename: "MadWallet_" + Date.now() + ".json",
             data: newStoreBlob
         });
         downloadRef.current.href = URL.createObjectURL(newStoreBlob);

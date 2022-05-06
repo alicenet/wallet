@@ -9,7 +9,11 @@ import { history } from 'history/history';
 import { SyncToastMessageSuccess, SyncToastMessageWarning } from 'components/customToasts/CustomToasts';
 import { toast } from 'react-toastify';
 
+import { ethers } from 'ethers'
+
+// const reqContracts = ["staking", "validators", "deposit", "stakingToken", "utilityToken"] // Old reference
 const reqContracts = ["ValidatorStaking", "ValidatorPool", "BToken", "BToken", "AToken"];
+const REGISTRY_VERSION = "/v1"; // CHANGE OR PUT IN SETTINGS
 
 const Web3Error = ({ msg }) => {
     return (
@@ -156,7 +160,7 @@ class Web3Adapter {
                 ethereum_provider: latestConfig.ethereum_provider,
                 registry_contract_address: latestConfig.registry_contract_address,
             };
-            let updateOccurrence = await (() => {
+            let updateOccurance = await (() => {
                 return new Promise(res => {
                     Object.keys(newNotableState).forEach(key => {
                         if (newNotableState[key] !== this.lastNotedConfig[key]) {
@@ -166,7 +170,7 @@ class Web3Adapter {
                     res(false);
                 })
             })();
-            if (updateOccurrence) {
+            if (updateOccurance) {
                 if (!this.isInitializing) { // Guard against re-entrances on initializing
                     log.debug("Configuration change for Web3 Adapter -- Reinitializing");
                     this.isInitializing = true;
@@ -617,7 +621,7 @@ class Web3Adapter {
         return [gasPrice, gasEst]
     }
 
-    // Deposit utility tokens to AliceNet
+    // Deposit utility tokens to MadNet
     async deposit(amount) {
         try {
             await this.method("BToken", "deposit", {

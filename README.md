@@ -1,4 +1,4 @@
-# AliceNet Wallet
+# Mad Wallet
 
 #### Requirements
 - `Bash 4.5+`

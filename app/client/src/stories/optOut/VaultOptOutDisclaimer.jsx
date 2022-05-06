@@ -31,7 +31,7 @@ function VaultOptOutDisclaimer() {
                         the first wallet’s private keys will be stored in it’s own keystore file.</p>
 
                     <p>In addition you will be required to input the password for all keystores generated and
-                        reimport any imported keys every time you use AliceNetWallet.</p>
+                        reimport any imported keys every time you use MadWallet.</p>
 
                     <p>New keys will be generated off of this mnemonic key and placed into a newly passworded
                         keystores that must be unlocked upon load.</p>
