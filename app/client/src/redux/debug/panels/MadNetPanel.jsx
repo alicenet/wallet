@@ -5,16 +5,14 @@ import madNetAdapter from 'adapters/alicenetAdapter';
 import { useValueStoreFormState } from 'hooks/_hooks';
 import { walletUtils } from 'util/_util';
 
-const FormInput = ({ ...props }) => (<Form.Input size="mini"  {...props} />)
+const FormInput = ({ ...props }) => (<Form.Input size="mini"  {...props} />);
 
 export default function Web3Panel() {
 
     const { wallets, adapterState } = useSelector(s => ({
         wallets: [...s.vault.wallets.internal, ...s.vault.wallets.external],
         adapterState: s.adapter.madNetAdapter,
-    }))
-
-    const [loading, setLoading] = React.useState(false); //eslint-disable-line
+    }));
 
     const [valueFormState, valueFormSetters, valueFormErrors, onValueSubmit] = useValueStoreFormState();
 
@@ -28,12 +26,12 @@ export default function Web3Panel() {
         txObject["bnCurve"] = false;
 
         madNetAdapter.addTxOut(txObject);
-    }
+    };
 
     const sendTx = async () => {
         await madNetAdapter.createTx();
         await madNetAdapter.sendTx();
-    }
+    };
 
     const getWalletButtons = (cb = () => { }) => {
         return wallets.map((wallet, idx) => {
@@ -41,15 +39,15 @@ export default function Web3Panel() {
                 <Form.Button size="mini" fluid content={"w" + (idx + 1)} onClick={() => cb(wallet)} />
             )
         })
-    }
+    };
 
     const useFromWallet = (wallet) => {
         valueFormSetters.setFromAddress(wallet.address);
-    }
+    };
 
     const useToWallet = (wallet) => {
         valueFormSetters.setToAddress(wallet.address);
-    }
+    };
 
     return (<>
         <Segment>
@@ -75,37 +73,65 @@ export default function Web3Panel() {
                         <Header className="text-sm text-blue-500">Add Value TXo</Header>
                         <Form size="mini" className="mini-error-form">
 
-                            <FormInput error={!!valueFormErrors.fromAddress && { content: valueFormErrors.fromAddress }}
+                            <FormInput
+                                error={!!valueFormErrors.fromAddress && { content: valueFormErrors.fromAddress }}
                                 label={"From " + walletUtils.getWalletNameFromAddress(valueFormState.fromAddress)}
-                                size='mini' value={valueFormState.fromAddress} onChange={e => valueFormSetters.setFromAddress(e.target.value)} />
+                                size="mini"
+                                value={valueFormState.fromAddress}
+                                onChange={e => valueFormSetters.setFromAddress(e.target.value)}
+                            />
+
                             <Form.Group widths="equal">
                                 {getWalletButtons(useFromWallet)}
                             </Form.Group>
 
-                            <FormInput error={!!valueFormErrors.toAddress && { content: valueFormErrors.toAddress }}
+                            <FormInput
+                                error={!!valueFormErrors.toAddress && { content: valueFormErrors.toAddress }}
                                 label={"To: " + walletUtils.getWalletNameFromAddress(valueFormState.toAddress)}
-                                size='mini' value={valueFormState.toAddress} onChange={e => valueFormSetters.setFromAddress(e.target.value)} />
+                                size="mini"
+                                value={valueFormState.toAddress}
+                                onChange={e => valueFormSetters.setFromAddress(e.target.value)}
+                            />
+
                             <Form.Group widths="equal">
                                 {getWalletButtons(useToWallet)}
                             </Form.Group>
 
-                            <FormInput error={!!valueFormErrors.value && { content: valueFormErrors.value }}
-                                label="Value" size='mini' value={valueFormState.value} onChange={e => valueFormSetters.setValue(e.target.value)} />
-                            <Form.Checkbox className="small-checkbox" label="Is BN Address" checked={valueFormState.isBn} onChange={e => valueFormSetters.setIsBn(!valueFormState.isBn)} />
+                            <FormInput
+                                error={!!valueFormErrors.value && { content: valueFormErrors.value }}
+                                label="Value"
+                                size="mini"
+                                value={valueFormState.value}
+                                onChange={e => valueFormSetters.setValue(e.target.value)}
+                            />
+
+                            <Form.Checkbox
+                                className="small-checkbox"
+                                label="Is BN Address"
+                                checked={valueFormState.isBn}
+                                onChange={() => valueFormSetters.setIsBn(!valueFormState.isBn)}
+                            />
 
                             <div className="flex justify-between">
+
                                 <Form.Button content="Add TXO" size="mini" className="mt-4" onClick={() => onValueSubmit(addValueStore)} />
                                 <Form.Button content="Print TXO List" size="mini" className="mt-4" onClick={() => console.log(madNetAdapter.txOuts.get())} />
+
                             </div>
+
                         </Form>
                     </Segment>
                 </Grid.Column>
 
                 <Grid.Column>
+
                     <Segment>
+
                         <Header sub>Add Data TXo</Header>
-                        <Button content="Send" onClick={sendTx}/>
+                        <Button content="Send" onClick={sendTx} />
+
                     </Segment>
+
                 </Grid.Column>
 
             </Grid>
