@@ -18,7 +18,7 @@ function WhatIsAVaultModal() {
 
                 <Modal.Description className="flex flex-col items-center gap-10">
 
-                    <Header content="MadBase Wallet Vault" as="h3" className="my-0" />
+                    <Header content="AliceNet Wallet Vault" as="h3" className="my-0" />
 
                     <Container className="flex flex-auto flex-col gap-3 px-3 text-center">
 

@@ -1,10 +1,7 @@
-const { ipcRenderer } = require("electron");
 const pathModule = require("path");
 
 const writeBakFileRequest = "WriteBakFile-Request";
 const writeBakFileResponse = "WriteBakFile-Response";
-// const readBakFileRequest = "ReadBakFile-Request";
-// const readBakFileResponse = "ReadBakFile-Request";
 
 const defaultOptions = {
     path: "",
