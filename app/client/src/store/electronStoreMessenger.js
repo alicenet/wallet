@@ -97,7 +97,7 @@ class StoreMessenger {
     }
 
     /**
-     * Calls the underlying IPC method to make a direct copy of the MadWalletUser file
+     * Calls the underlying IPC method to make a direct copy of the AliceNet WalletUser file
      * This file can act as a manual replacement backup if any issues occur - See BackupStore.js in app/electron
      * @param cb - Callback to call withs (args) => {} from BackupStore event
      */

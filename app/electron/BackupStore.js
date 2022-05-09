@@ -93,9 +93,9 @@ module.exports = class BackupStore {
             send: (channel, jsonObj) => {
                 if (this.validSendChannels.includes(channel)) {
                     switch (channel) {
-                        // Save Data to MadWalletEnc.bak
+                        // Save Data to AliceNetWalletEnc.bak
                         case writeBakFileRequest: ipcRenderer.send(writeBakFileRequest, { jsonObj }); break;
-                        // Read contents of MadWalletEnc.bak - TBD if needed
+                        // Read contents of AliceNetWalletEnc.bak - TBD if needed
                         // case readBakFileRequest: ipcRenderer.send(readBakFileRequest, {}); break;
                     }
                 }

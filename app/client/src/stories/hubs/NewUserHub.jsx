@@ -46,7 +46,7 @@ function NewUserHub() {
 
                     <Image src={MadIcon} size="tiny" centered />
 
-                    <Header content="MadWallet" as="h3" className="my-0" />
+                    <Header content="AliceNet Wallet" as="h3" className="my-0" />
 
                 </Grid.Column>
 
