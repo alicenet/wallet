@@ -25,7 +25,7 @@ export default function AddEditPrioritizationFeeModal() {
     };
 
     const [formState, formSetter, onSubmit] = useFormState([
-        { name: 'Fee', display: 'MadNet Bytes Fee', type: 'integer', isRequired: true, value: prioritizationFee },
+        { name: 'Fee', display: 'AliceNet Bytes Fee', type: 'integer', isRequired: true, value: prioritizationFee },
     ]);
 
     const handleClose = () => {
@@ -61,8 +61,8 @@ export default function AddEditPrioritizationFeeModal() {
                         <Grid.Row>
                             <Grid.Column width="16">
                                 <p>
-                                    MadNet Transactions cost a minimum fee. <br />
-                                    You may provide additional MadBytes to give your transaction priority. <br />
+                                    AliceNet Transactions cost a minimum fee. <br />
+                                    You may provide additional AliceNetBytes to give your transaction priority. <br />
                                 </p>
                             </Grid.Column>
                         </Grid.Row>
@@ -72,15 +72,15 @@ export default function AddEditPrioritizationFeeModal() {
                             <Grid.Column>
 
                                 <Form.Input
-                                    id='MinFee'
-                                    label='MadNet Bytes Minimum Fee'
+                                    id="MinFee"
+                                    label="AliceNet Bytes Minimum Fee"
                                     disabled
                                     value={minFee}
                                 />
 
                                 <Form.Input
-                                    id='Fee'
-                                    label='MadNet Bytes Prioritization Fee'
+                                    id="Fee"
+                                    label="AliceNet Bytes Prioritization Fee"
                                     required
                                     value={formState.Fee.value}
                                     onChange={e => formSetter.setFee(e.target.value)}
@@ -104,7 +104,7 @@ export default function AddEditPrioritizationFeeModal() {
                 <Button color="black" basic onClick={handleClose} content="Close" />
 
                 <Button
-                    icon={<Icon name='chain' />}
+                    icon={<Icon name="chain" />}
                     content="Set Prioritization Fee"
                     color="black"
                     onClick={() => onSubmit(handleSubmit)}

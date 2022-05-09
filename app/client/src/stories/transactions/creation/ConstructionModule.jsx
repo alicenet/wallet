@@ -74,7 +74,7 @@ function ConstructionModule() {
         <div className="flex text-xs justify-between">
             <div className="font-bold w-16 text-left">{`${feesLabel}:`}</div>
             <div className="flex flex-shrink gap-1">
-                <div className="text-gray-500">{`${feesAmount} MadBytes`}</div>
+                <div className="text-gray-500">{`${feesAmount} AliceNetBytes`}</div>
                 <Popup
                     content={tooltipText}
                     size="mini"

@@ -241,7 +241,7 @@ function InspectionModule() {
                                     View TX on Block Explorer
                                 </div>
                                 <div className="flex justify-start mb-3">
-                                    <Label className="text-xs">TxFee: {txFee} MadBytes</Label>
+                                    <Label className="text-xs">TxFee: {txFee} AliceNetBytes</Label>
                                 </div>
                                 <VinTable />
                                 <VoutTable />

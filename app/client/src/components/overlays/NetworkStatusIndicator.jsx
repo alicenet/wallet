@@ -48,7 +48,7 @@ export default function NetworkStatusIndicator() {
     }
 
     const web3Color = web3Busy ? "yellow" : web3Connected ? "green" : "red";
-    const madColor = aliceNetBusy ? "yellow" : aliceNetConnected ? "green" : "red";
+    const aliceNetColor = aliceNetBusy ? "yellow" : aliceNetConnected ? "green" : "red";
 
     const handleSubmit = async () => {
 
@@ -97,7 +97,7 @@ export default function NetworkStatusIndicator() {
                             ALI
                         </div>
                         <div className="relative" style={{ top: "-1px", marginLeft: "4px" }}>
-                            <StatusLight color={madColor} />
+                            <StatusLight color={aliceNetColor} />
                         </div>
                     </div>
 
@@ -136,7 +136,7 @@ export default function NetworkStatusIndicator() {
                                             AliceNet Provider
                                         </div>
                                         <div className="relative" style={{ top: "-1px", marginLeft: "4px" }}>
-                                            <StatusLight color={madColor} />
+                                            <StatusLight color={aliceNetColor} />
                                         </div>
                                     </div>
                                 }
@@ -206,7 +206,7 @@ export default function NetworkStatusIndicator() {
             </Modal.Actions>
 
         </Modal>
-    )
+    );
 
 }
 

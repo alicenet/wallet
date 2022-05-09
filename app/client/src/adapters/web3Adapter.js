@@ -621,7 +621,7 @@ class Web3Adapter {
         return [gasPrice, gasEst]
     }
 
-    // Deposit utility tokens to MadNet
+    // Deposit utility tokens to AliceNet
     async deposit(amount) {
         try {
             await this.method("BToken", "deposit", {
