@@ -80,7 +80,7 @@ function HeaderMenu({ showMenu }) {
 
                         <Container fluid>
 
-                            <Header content="AliceNetWallet" as="h4" />
+                            <Header content="AliceNet Wallet" as="h4" />
 
                         </Container>
 
