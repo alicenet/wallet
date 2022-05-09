@@ -227,7 +227,7 @@ export function lockVault() {
             toast.success(<SyncToastMessageSuccess hideIcon basic message="Locked & Disconnected" />, { autoClose: 1750, className: "basic" });
             await dispatch({ type: MIDDLEWARE_ACTION_TYPES.REINSTANCE_ALICENET_WALLET });
             await dispatch({ type: VAULT_ACTION_TYPES.LOCK_VAULT });
-            // Additionally, mark web3 and madnet as not connected so they can be instanced on reconnect
+            // Additionally, mark web3 and AliceNet as not connected so they can be instanced on reconnect
             web3Adapter.setDefaultState(); // Mark default state on web3 adapter --
             await dispatch(ADAPTER_ACTIONS.disconnectAdapters()); // Mark adapter state back to default and disconnected
             res(true);

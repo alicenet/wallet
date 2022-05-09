@@ -95,7 +95,7 @@ export const initAdapters = () => {
     return async (dispatch, getState) => {
 
         let web3Connected = await dispatch(initWeb3({ preventToast: true })); // Attempt to init web3Adapter -- Adapter will handle error toasts
-        let aliceNetConnected = await dispatch(initAliceNet({ preventToast: true })); // Attempt to init madAdapter -- Adapter will handle error toasts
+        let aliceNetConnected = await dispatch(initAliceNet({ preventToast: true })); // Attempt to init aliceNetAdapter -- Adapter will handle error toasts
 
         if (web3Connected.error && aliceNetConnected) {
             return { success: true } // This is a partial success but the above adapter will issue the error
@@ -184,7 +184,7 @@ export const getAndStoreLatestBalancesForAddress = (address) => {
             log.debug("Skipping aliceNetBytes/UTXO balance fetch for address: " + address + " :: AliceNet not connected.");
         }
 
-        // If neither mad nor web3 is connected, don't bother to try and pull balances
+        // If neither alice net nor web3 is connected, don't bother to try and pull balances
         if (!aliceNetConnected && !web3Connected) {
             dispatch(VAULT_ACTIONS.setBalancesLoading(false));
             return false;
@@ -205,9 +205,9 @@ export const getAndStoreLatestBalancesForAddress = (address) => {
         }
         // AliceNet Bytes/UTXOs
         if (typeof foundBalances[1] !== 'undefined' && !foundBalances[1].error) {
-            let [aliceNetBytes, madUtxos] = foundBalances[1];
+            let [aliceNetBytes, aliceNetUTXOs] = foundBalances[1];
             addressBalances.aliceNetBytes = aliceNetBytes;
-            addressBalances.aliceNetUTXOs = madUtxos;
+            addressBalances.aliceNetUTXOs = aliceNetUTXOs;
         }
 
         // Condense to updated state
