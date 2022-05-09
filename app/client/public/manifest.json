@@ -1,6 +1,6 @@
 {
-  "short_name": "MadWallet",
-  "name": "MadWallet",
+  "short_name": "AliceNetWallet",
+  "name": "AliceNetWallet",
   "start_url": ".",
   "display": "standalone",
   "theme_color": "#000000",
