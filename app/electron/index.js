@@ -46,7 +46,7 @@ async function createWindow() {
 
   const storeBak = new BackupStore({
     path: app.getPath('userData'),
-    filename: 'AliceWalletUser',
+    filename: 'AliceNetWalletUser',
     extension: '.json.bak',
   });
 
