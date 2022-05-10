@@ -7,7 +7,7 @@ import BigInt from 'big-integer';
 
 import { TRANSACTION_ACTIONS } from 'redux/actions/_actions';
 import utils, { transactionTypes } from 'util/_util';
-import { getMadWalletInstance } from "redux/middleware/WalletManagerMiddleware";
+import { getAliceNetWalletInstance } from "redux/middleware/WalletManagerMiddleware";
 
 export default function AddEditDataStoreModal({ dataStore, onClose }) {
 
@@ -68,16 +68,16 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
             try {
                 setError('');
                 if (formState.Duration.value && formState.Value.value) {
-                    let madWallet = getMadWalletInstance();
-                    const dataStoreFee = await madWallet.Utils.calculateFee(fees.dataStoreFee, formState.Duration.value);
+                    let aliceNetWallet = getAliceNetWalletInstance();
+                    const dataStoreFee = await aliceNetWallet.Utils.calculateFee(fees.dataStoreFee, formState.Duration.value);
                     let rawValue = Buffer(formState.Value.value).toString('hex');
-                    const depositFee = await madWallet.Utils.calculateDeposit(rawValue, formState.Duration.value);
+                    const depositFee = await aliceNetWallet.Utils.calculateDeposit(rawValue, formState.Duration.value);
                     const totalStoreCost = BigInt(dataStoreFee) + BigInt(depositFee);
                     setCalculatedFee(totalStoreCost);
                 }
             } catch (error) {
                 console.log(error);
-                setError('Could not calculate cost, please check your inputs');
+                setError("Could not calculate cost, please check your inputs");
                 setCalculatedFee(0);
             }
         }
@@ -98,7 +98,7 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
 
                 <Header as="h4">{`${isEditing ? 'Edit' : 'Add'} Data Store`}
                     <Header.Subheader className="text-xs">Fee Per Data
-                        Store: {fees.dataStoreFee} {utils.string.pluralStringCheck("MadByte", fees.dataStoreFee > 1)}</Header.Subheader>
+                        Store: {fees.dataStoreFee} {utils.string.pluralStringCheck("AliceNetByte", fees.dataStoreFee > 1)}</Header.Subheader>
                 </Header>
 
             </Modal.Header>
@@ -115,8 +115,8 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
 
                                 <Form.Select
                                     required
-                                    id='From'
-                                    label='From'
+                                    id="From"
+                                    label="From"
                                     options={wallets}
                                     selection
                                     closeOnChange
@@ -130,8 +130,8 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
                             <Grid.Column>
 
                                 <Form.Input
-                                    id='Duration'
-                                    label='Duration (EPOCHs)'
+                                    id="Duration"
+                                    label="Duration (EPOCHs)"
                                     required
                                     value={formState.Duration.value}
                                     onChange={e => formSetter.setDuration(e.target.value)}
@@ -147,8 +147,8 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
                             <Grid.Column>
 
                                 <Form.Input
-                                    id='Index'
-                                    label='Index'
+                                    id="Index"
+                                    label="Index"
                                     required
                                     value={formState.Index.value}
                                     onChange={e => formSetter.setIndex(e.target.value)}
@@ -160,8 +160,8 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
                             <Grid.Column>
 
                                 <Form.Input
-                                    id='Value'
-                                    label='Value'
+                                    id="Value"
+                                    label="Value"
                                     required
                                     value={formState.Value.value}
                                     onChange={e => formSetter.setValue(e.target.value)}
@@ -187,7 +187,7 @@ export default function AddEditDataStoreModal({ dataStore, onClose }) {
 
                 <Button
                     icon={<Icon name='chart bar' />}
-                    content={"Add Datastore for " + totalStoreCostLabel + " MadBytes"}
+                    content={"Add Datastore for " + totalStoreCostLabel + " AliceNetBytes"}
                     color="black"
                     onClick={() => onSubmit(handleSubmit)}
                 />

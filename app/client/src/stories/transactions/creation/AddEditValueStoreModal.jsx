@@ -78,7 +78,7 @@ export default function AddEditValueStoreModal({ valueStore, onClose }) {
             <Modal.Header className="text-center">
 
                 <Header as="h4">{`${isEditing ? 'Edit' : 'Add'} Value Store`}
-                    <Header.Subheader className="text-xs">Base Fee Per Value Store: {fees.valueStoreFee} MadByte{fees.valueStoreFee > 1 ? "s" : ""}</Header.Subheader>
+                    <Header.Subheader className="text-xs">Base Fee Per Value Store: {fees.valueStoreFee} AliceNetByte{fees.valueStoreFee > 1 ? "s" : ""}</Header.Subheader>
                 </Header>
 
             </Modal.Header>
@@ -184,5 +184,5 @@ export default function AddEditValueStoreModal({ valueStore, onClose }) {
             </Modal.Actions>
 
         </Modal>
-    )
+    );
 }

@@ -19,8 +19,8 @@ export default function OptOutSegment() {
     ////////////////////////////
     /* Vault       Functions  */
     ////////////////////////////
-    const printMadWalletInstance = () => {
-        dispatch(VAULT_ACTIONS.getMadWallet());
+    const printAliceNetWalletInstance = () => {
+        dispatch(VAULT_ACTIONS.getAliceNetWallet());
     }
 
     const addOptOutKeystore = async (keystoreJson, password) => {
@@ -54,10 +54,10 @@ export default function OptOutSegment() {
                             onChange={e => setNewWalletName(e.target.value)}/>
             </Form>
 
-            <Header as="h6" className="m-0 mt-2">Mad Wallet Instance</Header>
-            <p className="text-xs mt-1">State of the mad wallet instance should be balanced with the current redux state.</p>
+            <Header as="h6" className="m-0 mt-2">AliceNet Wallet Instance</Header>
+            <p className="text-xs mt-1">State of the Alice Net wallet instance should be balanced with the current redux state.</p>
             <Form className="max-w-xs">
-                <DButton color="purple" basic onClick={printMadWalletInstance} content="Print madWallet instance (getMadWallet)"/>
+                <DButton color="purple" basic onClick={printAliceNetWalletInstance} content="Print aliceNetWallet instance (getAliceNetWallet)"/>
             </Form>
 
             <Header as="h6" className="m-0 mt-2">{"Wallet<=>Vault State Verification"}</Header>

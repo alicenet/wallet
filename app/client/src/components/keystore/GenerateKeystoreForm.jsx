@@ -50,7 +50,7 @@ export default function GenerateKeystoreForm(
     const generateWallet = async () => {
         let newStoreBlob = await utils.wallet.generateKeystore(true, formState.password.value, curveType);
         setKeystoreDL({
-            filename: "MadWallet_" + Date.now() + ".json",
+            filename: "AliceNetWallet_" + Date.now() + ".json",
             data: newStoreBlob
         });
         downloadRef.current.href = URL.createObjectURL(newStoreBlob);
@@ -141,13 +141,13 @@ export default function GenerateKeystoreForm(
                 </Form.Group>
 
             </Form>
-        )
+        );
     }
 
     /////////////////////
     // Column Version //
     ////////////////////
-    return (<>
+    return (
 
         <Form size="mini" className="w-96 mb-12 mini-error-form text-left">
 
@@ -234,6 +234,6 @@ export default function GenerateKeystoreForm(
 
         </Form>
 
-    </>)
+    );
 
 }

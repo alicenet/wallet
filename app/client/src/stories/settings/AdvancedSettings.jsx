@@ -17,15 +17,15 @@ function AdvancedSettings() {
     const history = useHistory();
     const dispatch = useDispatch();
 
-    const { madNetProvider, ethereumProvider, registryContractAddress, loading } = useSelector(state => ({
-        madNetProvider: state.config.mad_net_provider,
+    const { aliceNetProvider, ethereumProvider, registryContractAddress, loading } = useSelector(state => ({
+        aliceNetProvider: state.config.alice_net_provider,
         ethereumProvider: state.config.ethereum_provider,
         registryContractAddress: state.config.registry_contract_address,
         loading: state.interface.globalLoading,
     }));
 
     const [formState, formSetter, onSubmit] = useFormState([
-        { name: 'MadNetProvider', display: 'MadNet Provider', type: 'url', isRequired: true, value: madNetProvider },
+        { name: 'AliceNetProvider', display: 'AliceNet Provider', type: 'url', isRequired: true, value: aliceNetProvider },
         { name: 'EthereumProvider', display: 'Ethereum Provider', type: 'url', isRequired: true, value: ethereumProvider },
         { name: 'RegistryContractAddress', display: 'Registry Contract Address', type: 'address', isRequired: true, value: registryContractAddress }
     ]);
@@ -35,7 +35,7 @@ function AdvancedSettings() {
 
         dispatch(INTERFACE_ACTIONS.toggleGlobalLoadingBool(true));
         const result = await dispatch(CONFIG_ACTIONS.saveConfigurationValues({
-            madNetProvider: formState.MadNetProvider.value,
+            aliceNetProvider: formState.AliceNetProvider.value,
             ethProvider: formState.EthereumProvider.value,
             registryContractAddress: formState.RegistryContractAddress.value
         }));
@@ -51,18 +51,18 @@ function AdvancedSettings() {
     };
 
     const notifyError = message => {
-        toast.error(<SyncToastMessageWarning title="Error" message={message}/>, { autoClose: 2000 });
+        toast.error(<SyncToastMessageWarning title="Error" message={message} />, { autoClose: 2000 });
         dispatch(INTERFACE_ACTIONS.toggleGlobalLoadingBool(false));
     };
 
     const notifySuccess = message => {
-        toast.success(<SyncToastMessageSuccess title="Success" message={message}/>, { autoClose: 1000 });
+        toast.success(<SyncToastMessageSuccess title="Success" message={message} />, { autoClose: 1000 });
         dispatch(INTERFACE_ACTIONS.toggleGlobalLoadingBool(false));
     };
 
     // Instead, we can pull in the default values from the context and use it as a local setter, and propagate those changes upwards to redux
     const handleLoadDefaultValues = async () => {
-        formSetter.setMadNetProvider(initialConfigurationState.mad_net_provider);
+        formSetter.setAliceNetProvider(initialConfigurationState.alice_net_provider);
         formSetter.setEthereumProvider(initialConfigurationState.ethereum_provider);
         formSetter.setRegistryContractAddress(initialConfigurationState.registry_contract_address);
 
@@ -80,7 +80,7 @@ function AdvancedSettings() {
 
                 <Grid.Column width={16} className="p-0 self-center">
 
-                    <Header content="Advanced Settings" as="h3" className="m-0"/>
+                    <Header content="Advanced Settings" as="h3" className="m-0" />
 
                 </Grid.Column>
 
@@ -89,19 +89,19 @@ function AdvancedSettings() {
                     <Form className="text-sm">
 
                         <Form.Input
-                            id='madNetProvider'
-                            label='MadNet Provider'
-                            placeholder='Enter MadNet Provider'
+                            id="aliceNetProvider"
+                            label="AliceNet Provider"
+                            placeholder="Enter AliceNet Provider"
                             required
-                            value={formState.MadNetProvider.value}
-                            onChange={e => formSetter.setMadNetProvider(e.target.value)}
-                            error={!!formState.MadNetProvider.error && { content: formState.MadNetProvider.error }}
+                            value={formState.AliceNetProvider.value}
+                            onChange={e => formSetter.setAliceNetProvider(e.target.value)}
+                            error={!!formState.AliceNetProvider.error && { content: formState.AliceNetProvider.error }}
                         />
 
                         <Form.Input
-                            id='ethereumProvider'
-                            label='Ethereum Provider'
-                            placeholder='Enter Ethereum Provider'
+                            id="ethereumProvider"
+                            label="Ethereum Provider"
+                            placeholder="Enter Ethereum Provider"
                             required
                             value={formState.EthereumProvider.value}
                             onChange={e => formSetter.setEthereumProvider(e.target.value)}
@@ -109,9 +109,9 @@ function AdvancedSettings() {
                         />
 
                         <Form.Input
-                            id='registryContractAddress'
-                            label='Registry Contract Address'
-                            placeholder='Enter Address'
+                            id="registryContractAddress"
+                            label="Registry Contract Address"
+                            placeholder="Enter Address"
                             required
                             value={formState.RegistryContractAddress.value}
                             onChange={e => formSetter.setRegistryContractAddress(e.target.value)}
@@ -144,7 +144,7 @@ function AdvancedSettings() {
                                     onClick={() => onSubmit(handleSubmit)}
                                 />
 
-                                <Button.Or className="w-0 self-center text-sm"/>
+                                <Button.Or className="w-0 self-center text-sm" />
 
                                 <Button
                                     disabled={loading}

@@ -27,9 +27,9 @@ export default function VaultSegment() {
     ////////////////////////////
     /* Vault       Functions  */
     ////////////////////////////
-    const printMadWalletInstance = () => {
-        let madWallet = dispatch(VAULT_ACTIONS.getMadWallet());
-        console.log(madWallet); // For Debug Panel
+    const printAliceNetWalletInstance = () => {
+        let aliceNetWallet = dispatch(VAULT_ACTIONS.getAliceNetWallet());
+        console.log(aliceNetWallet); // For Debug Panel
     }
 
     const unlockVault = async () => {
@@ -107,10 +107,10 @@ export default function VaultSegment() {
                 <Form.Input label="Name for Above Generated Wallet ( Saved As the wallet name on 'Load' )" size="mini" value={newWalletName} onChange={e => setNewWalletName(e.target.value)} />
             </Form>
 
-            <Header as="h6" className="m-0 mt-2">Mad Wallet Instance</Header>
-            <p className="text-xs mt-1">State of the mad wallet instance should be balanced with the current redux state.</p>
+            <Header as="h6" className="m-0 mt-2">AliceNet Wallet Instance</Header>
+            <p className="text-xs mt-1">State of the Alice Net wallet instance should be balanced with the current redux state.</p>
             <Form className="max-w-xs">
-                <DButton color="purple" basic onClick={printMadWalletInstance} content="Print madWallet instance (getMadWallet)" />
+                <DButton color="purple" basic onClick={printAliceNetWalletInstance} content="Print aliceNetWallet instance (getAliceNetWallet)" />
             </Form>
 
             <Header as="h6" className="m-0 mt-2">{"Wallet<=>Vault State Verification"}</Header>

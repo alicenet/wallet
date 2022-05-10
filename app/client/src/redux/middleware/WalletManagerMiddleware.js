@@ -1,14 +1,14 @@
-import MadWallet from 'alicenetjs';
+import AliceNetWallet from 'alicenetjs';
 import { MIDDLEWARE_ACTION_TYPES, VAULT_ACTION_TYPES } from '../constants/_constants';
 import util from 'util/_util';
 import utils from 'util/_util';
 import { walletManMiddleware_logger as log } from '../../log/logHelper.js';
 import { curveTypes } from 'util/wallet';
 
-let madWallet = new MadWallet();
+let aliceNetWallet = new AliceNetWallet();
 
 /**
- * Syncronoizes state between the mutable madWallet instance above and the redux store that saves immutable data about the wallets
+ * Syncronoizes state between the mutable aliceNetWallet instance above and the redux store that saves immutable data about the wallets
  * @param {*} storeAPI
  * @returns { Function }
  */
@@ -16,14 +16,14 @@ export default function WalletManagerMiddleware(storeAPI) {
     return function wrapDispatch(next) {
         return function handleAction(action) {
             switch (action.type) {
-                case MIDDLEWARE_ACTION_TYPES.INIT_MAD_WALLET:
-                    return initMadWallet(action.payload, storeAPI.dispatch);
+                case MIDDLEWARE_ACTION_TYPES.INIT_ALICENET_WALLET:
+                    return initAliceNetWallet(action.payload, storeAPI.dispatch);
                 case MIDDLEWARE_ACTION_TYPES.ADD_WALLET_FROM_KEYSTORE:
                     return addWalletFromKeystore(action.payload.data, action.payload.name, storeAPI.dispatch, storeAPI.getState);
                 case MIDDLEWARE_ACTION_TYPES.ADD_NEXT_HD_WALLET:
                     return addNextHDWallet(storeAPI, action.payload.name);
-                case MIDDLEWARE_ACTION_TYPES.REINSTANCE_MAD_WALLET:
-                    return reinstanceMadWallet();
+                case MIDDLEWARE_ACTION_TYPES.REINSTANCE_ALICENET_WALLET:
+                    return reinstanceAliceNetWallet();
                 case MIDDLEWARE_ACTION_TYPES.REMOVE_WALLET:
                     return removeWallet(action.payload);
                 default:
@@ -37,12 +37,12 @@ export default function WalletManagerMiddleware(storeAPI) {
     }
 }
 
-/** Used to reinstance madNetJS -- Used to locked wallet :: Old instance should be picked up by garbage collection */
-function reinstanceMadWallet() {
+/** Used to reinstance AliceNetJS -- Used to locked wallet :: Old instance should be picked up by garbage collection */
+function reinstanceAliceNetWallet() {
     // Remove accounts from current instance
-    madWallet.Account.accounts = [];
+    aliceNetWallet.Account.accounts = [];
     // Recreate a new instance on the old reference
-    madWallet = new MadWallet();
+    aliceNetWallet = new AliceNetWallet();
 }
 
 /**
@@ -64,10 +64,10 @@ async function _walletArrayStructure(pKey, curve, name, address = "") {
  * @param { Object } initPayload - Payload called from SET_VAULT_TO_STATE
  * @returns { Array } [isDone?, [array of errors] ]
  */
-function initMadWallet(initPayload, dispatch) {
+function initAliceNetWallet(initPayload, dispatch) {
     return new Promise(async res => {
-        log.debug("Initiating MadWallet Instance & Synchronizing to Redux State. . .")
-        // Extract all wallets from payload and add to MadWallet.Accounts
+        log.debug("Initiating AliceNetWallet Instance & Synchronizing to Redux State. . .")
+        // Extract all wallets from payload and add to AliceNetWallet.Accounts
         let internalAccountAdds = []; // Internal HD Accounts
         let externalAccountAdds = []; // Externally imported accounts
         for (let walletType in initPayload.wallets) {
@@ -92,11 +92,11 @@ function initMadWallet(initPayload, dispatch) {
                     async () => {
                         return new Promise(async res => {
                             try {
-                                await madWallet.Account.addAccount(addition[0], addition[1])
+                                await aliceNetWallet.Account.addAccount(addition[0], addition[1])
                                 res(true);
                             } catch (ex) {
                                 if (ex.message === "Account.addAccount: Account already added") {
-                                    log.warn("Wallet " + addition[2] + " already exists in the MadNetJS Instance.")
+                                    log.warn("Wallet " + addition[2] + " already exists in the AliceNetJS Instance.")
                                     res({ error: "Wallet " + addition[2] + " already exists." })
                                 }
                                 res({ error: ex });
@@ -113,18 +113,18 @@ function initMadWallet(initPayload, dispatch) {
                 })
                 // After adding inject internal || external based on match in previous array to redux state with constructed wallet objects
                 let balancedState = await buildBalancedWalletState(internalAccountAdds, externalAccountAdds);
-                log.debug("MadWalletInit SUCCESS :: Dispatching set vault state ");
+                log.debug("AliceNetWalletInit SUCCESS :: Dispatching set vault state ");
                 dispatch({ type: VAULT_ACTION_TYPES.SET_WALLETS_STATE, payload: balancedState });
                 res([true, errors]);
             });
         } catch (ex) {
-            res({ error: "Error initiating madNetJs: ", ex });
+            res({ error: "Error initiating AliceNetJs: ", ex });
         }
     });
 }
 
 /**
- * Add a keystore to madNetJS wallet state prior to sending to redux state
+ * Add a keystore to AliceNetJS wallet state prior to sending to redux state
  * @param { Object } keystore - JSON Keystore containing the key to add
  * @param { Function } dispatch - Redux Dispatch
  * @returns { Object } - List of added wallets
@@ -133,7 +133,7 @@ function addWalletFromKeystore(keystore, walletName, dispatch, getState) {
     return new Promise(async res => {
         // Extract pkey from keystore
         let pKey = keystore.privateKey;
-        // Extract the curve if viable -- Will only be present on MadNetJs Generated Stores :: Fallback to SECP256k1
+        // Extract the curve if viable -- Will only be present on AliceNetJs Generated Stores :: Fallback to SECP256k1
         let curve = keystore.curve ? keystore.curve : 1;
         // Verify curve
         if (curve !== curveTypes.SECP256K1 && curve !== curveTypes.BARRETO_NAEHRIG) {
@@ -147,9 +147,9 @@ function addWalletFromKeystore(keystore, walletName, dispatch, getState) {
         if (pKeyMatches.length > 0) {
             res({ error: "This private key is already loaded as wallet: " + pKeyMatches[0].name });
         }
-        // Add the private key to the MadNetJs instance
+        // Add the private key to the AliceNetJs instance
         try {
-            await madWallet.Account.addAccount(pKey, curve);
+            await aliceNetWallet.Account.addAccount(pKey, curve);
             // Balance the wallet state to redux with the wallet name
             let address = curve === curveTypes.BARRETO_NAEHRIG ? await utils.wallet.getBNfromPrivKey(pKey) : await utils.wallet.getSecp256k1FromPrivKey(pKey);
             let externalAdds = [await _walletArrayStructure(util.wallet.strip0x(pKey), curve, walletName, address)];
@@ -157,7 +157,7 @@ function addWalletFromKeystore(keystore, walletName, dispatch, getState) {
             res(balancedState);
         } catch (ex) {
             if (ex.message === "Account.addAccount: Account already added") {
-                log.warn("Wallet " + walletName + " already exists in the MadNetJs Instance.")
+                log.warn("Wallet " + walletName + " already exists in the AliceNetJs Instance.")
                 res({ error: "Wallet " + walletName + " already exists." })
             }
             res({ error: ex });
@@ -166,7 +166,7 @@ function addWalletFromKeystore(keystore, walletName, dispatch, getState) {
 }
 
 /**
- * Determine next HD Wallet to add, and subsequently add it to MadNetJs and return any additions that have been made
+ * Determine next HD Wallet to add, and subsequently add it to AliceNetJs and return any additions that have been made
  * @param { Object } storeAPI  - Redux store api -- Notabley has dispatch and getState as needed
  * @param { String } walletName - Name for the new HD Wallet
  */
@@ -184,16 +184,16 @@ function addNextHDWallet(storeAPI, walletName) {
         let nextHdWallet = await utils.wallet.streamLineHDWalletNodeFromMnemonic(mnemonic, nextDerrivationPath);
         // Generate internal wallet object
         let walletObj = await utils.wallet.generateBasicWalletObject(walletName, nextHdWallet.privateKey.toString('hex'), desiredCurve);
-        // Add the private key to the MadNetJs instance
+        // Add the private key to the AliceNetJs instance
         try {
-            await madWallet.Account.addAccount(walletObj.privK, walletObj.curve);
+            await aliceNetWallet.Account.addAccount(walletObj.privK, walletObj.curve);
             // Balance the wallet state to redux with the wallet name
             let internalAdds = [await _walletArrayStructure(util.wallet.strip0x(walletObj.privK), walletObj.curve, walletObj.name)];
             let balancedState = await buildBalancedWalletState(internalAdds, []);
             res(balancedState);
         } catch (ex) {
             if (ex.message === "Account.addAccount: Account already added") {
-                log.warn("Wallet " + walletName + " already exists in the MadNetJs Instance.");
+                log.warn("Wallet " + walletName + " already exists in the AliceNetJs Instance.");
                 res({ error: "Wallet " + walletName + " already exists." });
             }
             res({ error: ex });
@@ -202,7 +202,7 @@ function addNextHDWallet(storeAPI, walletName) {
 }
 
 /**
- * Build wallet state object against current MadNetJs instance accounts and passed wallets -- The return can be used to dispatch updated wallets accordingly
+ * Build wallet state object against current AliceNetJs instance accounts and passed wallets -- The return can be used to dispatch updated wallets accordingly
  * @param { Array } internalAdds - List of recently added internal _walletArrayStructs that need to be balanced
  * @param { Array } externalAdds - List of recently added external _walletArrayStructs that need to be balanced
  * @returns { Object } - Object with internal and external wallet arrays
@@ -212,23 +212,23 @@ function buildBalancedWalletState(internalAdds, externalAdds) {
         let allToAdd = [...internalAdds, ...externalAdds];
         let internalWallets = []; // Final Internal State Array
         let externalWallets = []; // Final External State Array
-        for (let account of madWallet.Account.accounts) {
+        for (let account of aliceNetWallet.Account.accounts) {
             let signerKeyToUse = parseInt(account.curve) === 1 ? "secpSigner" : "bnSigner";  // Key to use under MultiSigner for this account to get privK
             let privK = account.signer.privK; // Note the privK
-            let address = account.address; // Note the address from MadNetJs
+            let address = account.address; // Note the address from AliceNetJs
 
             // Additionally check the expected derived address relative to the curve from signerKey for the filtering process
             privK = util.wallet.strip0x(privK); // Use 0x-stripped pkey
             let matches = allToAdd.filter(addition => addition[0] === privK && addition[3] === address);
-            // Match privK to an account from MadNetWallet.accounts if available -- This should only match once per iteration
+            // Match privK to an account from AliceNetWallet.accounts if available -- This should only match once per iteration
             let match = matches[0];
 
             if (matches.length > 1) {
                 throw Error("During balancing, a private key & address combo was filtered twice. This signals a duplicate wallet. Verify state balancing does not allow multiple matches per iteration. Check all forwarded paramaters and current state.");
             }
-            // Construct the wallet based off of data creation from madwallet -- We let mad wallet build this data and then store it back to state 
+            // Construct the wallet based off of data creation from alicenetwallet -- We let Alice Net wallet build this data and then store it back to state
             if (!match) {
-                log.warn("No match found for recently added wallet list against a MadNetJs Account List -- This is normal during additions up to the current wallet count, only matches need balanced.");
+                log.warn("No match found for recently added wallet list against a AliceNetJs Account List -- This is normal during additions up to the current wallet count, only matches need balanced.");
                 continue;
             }
             let walletObj = util.wallet.constructWalletObject(
@@ -250,11 +250,11 @@ function buildBalancedWalletState(internalAdds, externalAdds) {
 }
 
 /**
- * Return reference to active madWallet instance
+ * Return reference to active aliceNetWallet instance
  * @returns { Function }
  */
-export function getMadWalletInstance() {
-    return madWallet;
+export function getAliceNetWalletInstance() {
+    return aliceNetWallet;
 }
 
 /**
@@ -291,8 +291,8 @@ export function removeWallet({ wallets, targetWallet, optout, exists }) {
             }
         }
 
-        let madWalletInstance = getMadWalletInstance();
-        madWalletInstance.Account.removeAccount(targetWallet.address);
+        let aliceNetWalletInstance = getAliceNetWalletInstance();
+        aliceNetWalletInstance.Account.removeAccount(targetWallet.address);
 
         // Recompile newly mutated wallet states, this should be balancedState
         let newWalletsState = { internal: internalWallets, external: externalWallets };

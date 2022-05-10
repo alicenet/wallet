@@ -23,7 +23,7 @@ function KeyOperationCurveModal({ children }) {
 
                     <Container className="flex flex-auto flex-col gap-3 px-3 text-center">
 
-                        <p>Mad Wallet allows you to set the default ECC for generating the key pair.</p>
+                        <p>AliceNet Wallet allows you to set the default ECC for generating the key pair.</p>
 
                         <p>ECC types are set on a per vault basis and will be used for all wallets
                             generated with this seed.</p>

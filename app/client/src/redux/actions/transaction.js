@@ -1,6 +1,6 @@
 import { TRANSACTION_ACTION_TYPES } from '../constants/_constants';
 import { default_log as log } from 'log/logHelper';
-import madNetAdapter from 'adapters/alicenetAdapter';
+import aliceNetAdapter from 'adapters/alicenetAdapter';
 import { ADAPTER_ACTIONS } from './_actions';
 import utils from 'util/_util';
 
@@ -166,18 +166,18 @@ export function clearPolledTxs() {
 export function resetFeeState() {
     return async function (dispatch, getState) {
         const state = getState();
-        const madNetFees = state.adapter.madNetAdapter.fees;
+        const aliceNetFees = state.adapter.aliceNetAdapter.fees;
 
         // Reset FEE state to existing fee state
         let fees = {
-            atomicSwapFee: madNetFees.atomicSwapFee, // Hex Parsed Base Atomic Swap Fee from RPC.getFees()
+            atomicSwapFee: aliceNetFees.atomicSwapFee, // Hex Parsed Base Atomic Swap Fee from RPC.getFees()
             atomicSwapFees: 0, // Total Fees for all atomicSwap VOUTs in txList
-            dataStoreFee: madNetFees.dataStoreFee, // Hex Parsed Base DataStore fee from RPC.getFees()
+            dataStoreFee: aliceNetFees.dataStoreFee, // Hex Parsed Base DataStore fee from RPC.getFees()
             dataStoreFees: 0, // Total Fees for all dataStore VOUTs in txList
             depositFees: 0, // Any fees surrounding deposits for data stores
-            valueStoreFee: madNetFees.valueStoreFee, // Hex Parsed Base ValueStore from RPC.getFees()
+            valueStoreFee: aliceNetFees.valueStoreFee, // Hex Parsed Base ValueStore from RPC.getFees()
             valueStoreFees: 0, // Total Fees for all valueStore VOUTs in txList
-            minTxFee: madNetFees.minTxFee, // Parsed minimum tx fee
+            minTxFee: aliceNetFees.minTxFee, // Parsed minimum tx fee
             prioritizationFee: 0, // Any additional prioritization fee set by the user
             txFee: 0, // Prioritization + Minimum Fee
             totalFee: 0, // Total TX Fee ( All Store Fees + Min Fee + Prioritization )
@@ -201,37 +201,37 @@ export function parseAndUpdateFees(rpcFees) {
     return async function (dispatch, getState) {
 
         const state = getState();
-        const madNetFees = rpcFees ? rpcFees : state.adapter.madNetAdapter.fees;
+        const aliceNetFees = rpcFees ? rpcFees : state.adapter.aliceNetAdapter.fees;
         const txList = state.transaction.list;
 
         // Convert RPC Fees to human-readable format for transaction reducer state
-        Object.keys(madNetFees).forEach(key => {
-            madNetFees[key] = parseInt(madNetFees[key], 16);
+        Object.keys(aliceNetFees).forEach(key => {
+            aliceNetFees[key] = parseInt(aliceNetFees[key], 16);
         })
 
         // Build fees from passed parameters or available state
         let fees = {
-            atomicSwapFee: madNetFees.atomicSwapFee, // Hex Parsed Base Atomic Swap Fee from RPC.getFees()
+            atomicSwapFee: aliceNetFees.atomicSwapFee, // Hex Parsed Base Atomic Swap Fee from RPC.getFees()
             atomicSwapFees: 0, // Total Fees for all atomicSwap VOUTs in txList
-            dataStoreFee: madNetFees.dataStoreFee, // Hex Parsed Base DataStore fee from RPC.getFees()
+            dataStoreFee: aliceNetFees.dataStoreFee, // Hex Parsed Base DataStore fee from RPC.getFees()
             dataStoreFees: 0, // Total Fees for all dataStore VOUTs in txList
             depositFees: 0, // Any fees surrounding deposits for data stores
-            valueStoreFee: madNetFees.valueStoreFee, // Hex Parsed Base ValueStore from RPC.getFees()
+            valueStoreFee: aliceNetFees.valueStoreFee, // Hex Parsed Base ValueStore from RPC.getFees()
             valueStoreFees: 0, // Total Fees for all valueStore VOUTs in txList
-            minTxFee: madNetFees.minTxFee, // Parsed minimum tx fee
+            minTxFee: aliceNetFees.minTxFee, // Parsed minimum tx fee
             prioritizationFee: state.transaction.fees.prioritizationFee, // Any additional prioritization fee set by the user
             txFee: 0, // Prioritization + Minimum Fee
             totalFee: 0, // Total TX Fee ( All Store Fees + Min Fee + Prioritization )
             errors: [] // Errors in fee estimation
         };
 
-        // Grab MadNetAdapter instance for the MadNetJS Wallet instance
-        const madWallet = madNetAdapter.wallet();
+        // Grab AliceNetAdapter instance for the AliceNetJS Wallet instance
+        const aliceNetWallet = aliceNetAdapter.wallet();
 
         // Note the current epoch for DataStore Reward calculations
-        const currentEpoch = await madWallet.Rpc.getEpoch();
+        const currentEpoch = await aliceNetWallet.Rpc.getEpoch();
 
-        // Get estimate fees from madWalletFakeTx -- These fees resemble the fees per store and not deposit fees on DataStores
+        // Get estimate fees from aliceNetWalletFakeTx -- These fees resemble the fees per store and not deposit fees on DataStores
         // We can get the store fee per idx in the iteration below
         let estimateFees = await dispatch(ADAPTER_ACTIONS.createAndClearFakeTxForFeeEstimates());
 
@@ -246,7 +246,7 @@ export function parseAndUpdateFees(rpcFees) {
             }
         }
 
-        log.debug("parseAndUpdateFees :: MadNetJS.Transaction.Tx.estimateFees():", estimateFees);
+        log.debug("parseAndUpdateFees :: AliceNetJS.Transaction.Tx.estimateFees():", estimateFees);
 
         // If the txList > 0, we need to calculate any special/specific fees such as datastore deposit cost
         // Per store/vout fee will be called at the end

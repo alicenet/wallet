@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Icon, Input, Message, Segment, Table } from 'semantic-ui-react';
-import madNetAdapter from 'adapters/alicenetAdapter';
+import aliceNetAdapter from 'adapters/alicenetAdapter';
 import Web3 from 'web3';
 import utils, { stringUtils } from 'util/_util';
 import { useHistory } from 'react-router';
@@ -37,7 +37,7 @@ export default function SearchTXs() {
         updateTxHashErr("");
         setHashFetchFetchLoading(true);
         let res;
-        res = await madNetAdapter.viewTransaction(txHashVal.value);
+        res = await aliceNetAdapter.viewTransaction(txHashVal.value);
         setHashFetchFetchLoading(false);
         if (res.error) {
             return updateTxHashErr(res.error.message);

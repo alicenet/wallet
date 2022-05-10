@@ -20,18 +20,18 @@ export function loadDefaultValues() {
 /**
  * Load default values to every field under configuration
  * @prop { String } chainId - Chain ID to update settings to
- * @prop { String } madNetProvider - MadNetProvider URL to update settings to
+ * @prop { String } aliceNetProvider - AliceNetProvider URL to update settings to
  * @prop { String } ethProvider - EthProvider URL to update settings to
  * @prop { String } registryContractAddress - Registry Contract Address to update settings to
  * @returns { Bool | Object.error }
  */
-export function saveConfigurationValues({ chainId, madNetProvider, ethProvider, registryContractAddress, enableAdvancedSettings, hideGenericTooltips, hasSeenTxHelpModal }) {
+export function saveConfigurationValues({ chainId, aliceNetProvider, ethProvider, registryContractAddress, enableAdvancedSettings, hideGenericTooltips, hasSeenTxHelpModal }) {
     return async function (dispatch, getState) {
         let currentConfig = getState().config;
         try {
             let updateObject = {
-                mad_net_chainID: useFallbackValueForUndefinedInput(chainId, currentConfig.mad_net_chainID),
-                mad_net_provider: useFallbackValueForUndefinedInput(madNetProvider, currentConfig.mad_net_provider),
+                alice_net_chainID: useFallbackValueForUndefinedInput(chainId, currentConfig.alice_net_chainID),
+                alice_net_provider: useFallbackValueForUndefinedInput(aliceNetProvider, currentConfig.alice_net_provider),
                 ethereum_provider: useFallbackValueForUndefinedInput(ethProvider, currentConfig.ethereum_provider),
                 registry_contract_address: useFallbackValueForUndefinedInput(registryContractAddress, currentConfig.registry_contract_address),
                 advanced_settings: useFallbackValueForUndefinedInput(enableAdvancedSettings, currentConfig.advanced_settings),
@@ -64,7 +64,7 @@ export function loadConfigurationValuesFromStore() {
             }
             dispatch({ type: CONFIG_ACTION_TYPES.SAVE_CONFIGURATION, payload: loadedConfig });
             dispatch({ type: ADAPTER_ACTION_TYPES.SET_WEB3_ERROR, payload: false });
-            dispatch({ type: ADAPTER_ACTION_TYPES.SET_MADNET_ERROR, payload: false });
+            dispatch({ type: ADAPTER_ACTION_TYPES.SET_ALICENET_ERROR, payload: false });
             return true;
         } catch (ex) {
             return { error: ex };

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Form, Grid, Header, Segment } from 'semantic-ui-react';
 import { useSelector } from 'react-redux';
-import madNetAdapter from 'adapters/alicenetAdapter';
+import aliceNetAdapter from 'adapters/alicenetAdapter';
 import { useValueStoreFormState } from 'hooks/_hooks';
 import { walletUtils } from 'util/_util';
 
@@ -11,7 +11,7 @@ export default function Web3Panel() {
 
     const { wallets, adapterState } = useSelector(s => ({
         wallets: [...s.vault.wallets.internal, ...s.vault.wallets.external],
-        adapterState: s.adapter.madNetAdapter,
+        adapterState: s.adapter.aliceNetAdapter,
     }));
 
     const [valueFormState, valueFormSetters, valueFormErrors, onValueSubmit] = useValueStoreFormState();
@@ -25,12 +25,12 @@ export default function Web3Panel() {
         txObject["toAddress"] = state.toAddress;
         txObject["bnCurve"] = false;
 
-        madNetAdapter.addTxOut(txObject);
+        aliceNetAdapter.addTxOut(txObject);
     };
 
     const sendTx = async () => {
-        await madNetAdapter.createTx();
-        await madNetAdapter.sendTx();
+        await aliceNetAdapter.createTx();
+        await aliceNetAdapter.sendTx();
     };
 
     const getWalletButtons = (cb = () => { }) => {
@@ -53,8 +53,8 @@ export default function Web3Panel() {
             <Segment>
 
                 <Header as="h4">
-                    MadNet Overview
-                    <Header.Subheader>Debug madNet instance initiated: {String(!!adapterState.connected)}</Header.Subheader>
+                    AliceNet Overview
+                    <Header.Subheader>Debug AliceNet instance initiated: {String(!!adapterState.connected)}</Header.Subheader>
                 </Header>
 
             </Segment>
@@ -64,8 +64,8 @@ export default function Web3Panel() {
                 <Header>Transaction Panel</Header>
 
                 <Segment>
-                    <Button content="Print MadWalletInstance" size='mini' onClick={() => console.log(madNetAdapter.getMadNetWalletInstance())} />
-                    <Button content="Print TXout List" size='mini' onClick={() => console.log(madNetAdapter.txOuts.get())} className="ml-4" />
+                    <Button content="Print AliceNetWalletInstance" size='mini' onClick={() => console.log(aliceNetAdapter.getAliceNetWalletInstance())} />
+                    <Button content="Print TXout List" size='mini' onClick={() => console.log(aliceNetAdapter.txOuts.get())} className="ml-4" />
                 </Segment>
 
                 <Grid columns={2}>
@@ -120,7 +120,7 @@ export default function Web3Panel() {
                                 <div className="flex justify-between">
 
                                     <Form.Button content="Add TXO" size="mini" className="mt-4" onClick={() => onValueSubmit(addValueStore)} />
-                                    <Form.Button content="Print TXO List" size="mini" className="mt-4" onClick={() => console.log(madNetAdapter.txOuts.get())} />
+                                    <Form.Button content="Print TXO List" size="mini" className="mt-4" onClick={() => console.log(aliceNetAdapter.txOuts.get())} />
 
                                 </div>
 

@@ -1,47 +1,47 @@
 import { ADAPTER_ACTION_TYPES, TRANSACTION_ACTION_TYPES, VAULT_ACTION_TYPES } from '../constants/_constants';
 import web3Adapter from 'adapters/web3Adapter';
 import { default_log as log } from 'log/logHelper';
-import madNetAdapter from 'adapters/alicenetAdapter';
+import aliceNetAdapter from 'adapters/alicenetAdapter';
 import { transactionTypes } from 'util/transaction';
 import utils, { genericUtils, transactionUtils } from 'util/_util';
 import { TRANSACTION_ACTIONS, VAULT_ACTIONS } from './_actions';
-import { getMadWalletInstance } from 'redux/middleware/WalletManagerMiddleware';
+import { getAliceNetWalletInstance } from 'redux/middleware/WalletManagerMiddleware';
 
 export const setWeb3Connected = (isConnected) => {
     return dispatch => {
         dispatch({ type: ADAPTER_ACTION_TYPES.SET_WEB3_CONNECTED, payload: isConnected })
     }
-}
+};
 
 export const setWeb3Error = (error) => {
     return dispatch => {
-        dispatch({ type: ADAPTER_ACTION_TYPES.SET_WEB3_ERROR, payload: error })
-    }
-}
+        dispatch({ type: ADAPTER_ACTION_TYPES.SET_WEB3_ERROR, payload: error });
+    };
+};
 
 export const setWeb3Info = (epoch, validators, max_validators) => {
     return dispatch => {
-        dispatch({ type: ADAPTER_ACTION_TYPES.SET_WEB3_INFO, payload: { epoch: epoch, validators: validators, max_validators: max_validators } })
-    }
-}
+        dispatch({ type: ADAPTER_ACTION_TYPES.SET_WEB3_INFO, payload: { epoch: epoch, validators: validators, max_validators: max_validators } });
+    };
+};
 
 export const setWeb3Epoch = epoch => {
     return dispatch => {
-        dispatch({ type: ADAPTER_ACTION_TYPES.SET_WEB3_EPOCH, payload: epoch })
-    }
-}
+        dispatch({ type: ADAPTER_ACTION_TYPES.SET_WEB3_EPOCH, payload: epoch });
+    };
+};
 
 export const setWeb3Busy = busyState => {
     return dispatch => {
-        dispatch({ type: ADAPTER_ACTION_TYPES.SET_WEB3_BUSY, payload: busyState })
-    }
-}
+        dispatch({ type: ADAPTER_ACTION_TYPES.SET_WEB3_BUSY, payload: busyState });
+    };
+};
 
-export const setMadNetBusy = busyState => {
+export const setAliceNetBusy = busyState => {
     return dispatch => {
-        dispatch({ type: ADAPTER_ACTION_TYPES.SET_MADNET_BUSY, payload: busyState })
-    }
-}
+        dispatch({ type: ADAPTER_ACTION_TYPES.SET_ALICENET_BUSY, payload: busyState });
+    };
+};
 
 /**
  * If web3Adapter is not in a connected state attempt to connect
@@ -54,56 +54,56 @@ export const setMadNetBusy = busyState => {
             return { error: connected.error };
         }
         return true;
-    }
-}
-
-export const setMadNetConnected = (isConnected) => {
-    return dispatch => {
-        dispatch({ type: ADAPTER_ACTION_TYPES.SET_MADNET_CONNECTED, payload: isConnected })
     };
-}
+};
 
-export const setMadNetError = (error) => {
+export const setAliceNetConnected = (isConnected) => {
     return dispatch => {
-        dispatch({ type: ADAPTER_ACTION_TYPES.SET_MADNET_ERROR, payload: error })
+        dispatch({ type: ADAPTER_ACTION_TYPES.SET_ALICENET_CONNECTED, payload: isConnected });
     };
-}
+};
 
-export const setMadNetKeyChainValue = (keyChain, value) => {
+export const setAliceNetError = (error) => {
     return dispatch => {
-        dispatch({ type: ADAPTER_ACTION_TYPES.SET_MADNET_KEYCHAIN_VALUE, payload: { keyChain: keyChain, value: value } })
+        dispatch({ type: ADAPTER_ACTION_TYPES.SET_ALICENET_ERROR, payload: error });
     };
-}
+};
+
+export const setAliceNetKeyChainValue = (keyChain, value) => {
+    return dispatch => {
+        dispatch({ type: ADAPTER_ACTION_TYPES.SET_ALICENET_KEYCHAIN_VALUE, payload: { keyChain: keyChain, value: value } });
+    };
+};
 
 /**
- * If madNetAdapter is not in a connected state attempt to connect
- * @param { Object } initConfig - Init config passthrough for the madNetAdapter __init function
+ * If aliceNetAdapter is not in a connected state attempt to connect
+ * @param { Object } initConfig - Init config passthrough for the aliceNetAdapter __init function
  * @returns { Any } - DOC TODO: NEEDS DOCUMENTED -- Placed to fix JS doc building
  */
-export const initMadNet = (initConfig) => {
+export const initAliceNet = (initConfig) => {
     return async (dispatch, getState) => {
-        let connected = await madNetAdapter.__init(initConfig);
+        let connected = await aliceNetAdapter.__init(initConfig);
         if (connected.error) {
             return { error: connected.error };
         }
         return true;
-    }
-}
+    };
+};
 
-// Single dispatch to call for initiating both Web3 and MadNet adapters after vault unlocking / wallet loads
+// Single dispatch to call for initiating both Web3 and AliceNet adapters after vault unlocking / wallet loads
 export const initAdapters = () => {
     return async (dispatch, getState) => {
 
         let web3Connected = await dispatch(initWeb3({ preventToast: true })); // Attempt to init web3Adapter -- Adapter will handle error toasts
-        let madConnected = await dispatch(initMadNet({ preventToast: true })); // Attempt to init madAdapter -- Adapter will handle error toasts
+        let aliceNetConnected = await dispatch(initAliceNet({ preventToast: true })); // Attempt to init aliceNetAdapter -- Adapter will handle error toasts
 
-        if (web3Connected.error && madConnected) {
+        if (web3Connected.error && aliceNetConnected) {
             return { success: true } // This is a partial success but the above adapter will issue the error
         }
-        else if (madConnected.error && web3Connected) {
+        else if (aliceNetConnected.error && web3Connected) {
             return { success: true } // This is a partial success but the above adapter will issue the error       
         }
-        else if (web3Connected && madConnected) {
+        else if (web3Connected && aliceNetConnected) {
             // Refetch balance for primary wallet if it exists on success
             let wallets = [...getState().vault.wallets.internal, ...getState().vault.wallets.external];
             if (wallets.length === 0) {
@@ -116,19 +116,19 @@ export const initAdapters = () => {
             return {
                 error: "Unable to initiate both adapters -- Verify network configuration, and check property errors for error collection if needed on subsequent runs.", errors: {
                     web3: web3Connected.error,
-                    madNet: madConnected.error,
+                    aliceNet: aliceNetConnected.error,
                 }
             };
         }
-    }
-}
+    };
+};
 
 // Mark adapters as disconnected
 export const disconnectAdapters = () => {
     return async (dispatch) => {
         dispatch({ type: ADAPTER_ACTION_TYPES.SET_DISCONNECTED });
     };
-}
+};
 
 /**
  * Get and store the latest balances for a given address to redux state
@@ -137,14 +137,13 @@ export const disconnectAdapters = () => {
  */
 export const getAndStoreLatestBalancesForAddress = (address) => {
     return async (dispatch, getState) => {
-
         // Anytime balances are being loaded, set the loader to true
         dispatch(VAULT_ACTIONS.setBalancesLoading(true));
 
         let state = getState();
         let wallets = [...state.vault.wallets.internal, ...state.vault.wallets.external];
         let web3Connected = state.adapter.web3Adapter.connected;
-        let madNetConnected = state.adapter.madNetAdapter.connected;
+        let aliceNetConnected = state.adapter.aliceNetAdapter.connected;
         let balanceState = { ...state.vault.balances }; // Get current balances for state object update
 
         // Set default balance object for this address
@@ -154,11 +153,11 @@ export const getAndStoreLatestBalancesForAddress = (address) => {
             stakeAllowance: "Not Available",
             util: "Not Available",
             utilAllowance: "Not Available",
-            madBytes: "Not Available",
-            madUTXOs: [],
+            aliceNetBytes: "Not Available",
+            aliceNetUTXOs: [],
         };
 
-        let balancePromises = []; // [eth, [stake,stakeAllow,util,utilAllow], [madBytes, UTXOs]]
+        let balancePromises = []; // [eth, [stake,stakeAllow,util,utilAllow], [aliceNetBytes, UTXOs]]
 
         // First get eth/staking/util balances -- Only if web3 connected
         if (web3Connected) {
@@ -176,24 +175,24 @@ export const getAndStoreLatestBalancesForAddress = (address) => {
             balancePromises.push((() => (new Promise(res => (res(false)))))());
             log.debug("Skipping eth/staking/util balance fetch for address: " + address + " :: Web3 not connected.");
         }
-        // Second get madBytes balance/utxos -- Only if madNet connected
-        if (madNetConnected) {
-            balancePromises.push(madNetAdapter.getMadWalletBalanceWithUTXOsForAddress(address));
+        // Second get aliceNetBytes balance/utxos -- Only if aliceNet connected
+        if (aliceNetConnected) {
+            balancePromises.push(aliceNetAdapter.getAliceNetWalletBalanceWithUTXOsForAddress(address));
         }
         else {
-            addressBalances.madBytes = "Not Connected"
-            log.debug("Skipping madBytes/UTXO balance fetch for address: " + address + " :: MadNet not connected.");
+            addressBalances.aliceNetBytes = "Not Connected"
+            log.debug("Skipping aliceNetBytes/UTXO balance fetch for address: " + address + " :: AliceNet not connected.");
         }
 
-        // If neither mad nor web3 is connected, don't bother to try and pull balances
-        if (!madNetConnected && !web3Connected) {
+        // If neither alice net nor web3 is connected, don't bother to try and pull balances
+        if (!aliceNetConnected && !web3Connected) {
             dispatch(VAULT_ACTIONS.setBalancesLoading(false));
             return false;
         }
 
         let foundBalances = await Promise.all(balancePromises);
 
-        console.log("FOUND", foundBalances)
+        log.debug("FOUND", foundBalances);
 
         // Inject eth -- We expect false if these don't exist see ~L158 -- Self resolving IIFE for non-connects,
         // Additionally if an error exists on the balance resolve, don't attempt to parse them
@@ -204,11 +203,11 @@ export const getAndStoreLatestBalancesForAddress = (address) => {
             addressBalances.util = foundBalances[0].balances.utilityToken.balance;
             addressBalances.utilAllowance = foundBalances[0].balances.utilityToken.allowance;
         }
-        // Mad Bytes/UTXOs
+        // AliceNet Bytes/UTXOs
         if (typeof foundBalances[1] !== 'undefined' && !foundBalances[1].error) {
-            let [madBytes, madUtxos] = foundBalances[1];
-            addressBalances.madBytes = madBytes;
-            addressBalances.madUTXOs = madUtxos;
+            let [aliceNetBytes, aliceNetUTXOs] = foundBalances[1];
+            addressBalances.aliceNetBytes = aliceNetBytes;
+            addressBalances.aliceNetUTXOs = aliceNetUTXOs;
         }
 
         // Condense to updated state
@@ -223,9 +222,8 @@ export const getAndStoreLatestBalancesForAddress = (address) => {
         // Return latest found balances and the complete updated balance state
         dispatch(VAULT_ACTIONS.setBalancesLoading(false));
         return [addressBalances, updatedBalanceState];
-
-    }
-}
+    };
+};
 
 /**
  * Get and store recent TXs for a specific address into vault.recentTxs
@@ -235,7 +233,7 @@ export const getAndStoreLatestBalancesForAddress = (address) => {
 export const getAndStoreRecentTXsForAddress = (address, curve) => {
     return async (dispatch) => {
         log.debug("Fetching recent TXs for addresses: ", address);
-        let [txs, currentBlock] = await madNetAdapter.getPrevTransactions([{ //eslint-disable-line
+        let [txs, currentBlock] = await aliceNetAdapter.getPrevTransactions([{ //eslint-disable-line
             address: address,
             curve: curve,
         }]);
@@ -251,17 +249,17 @@ export const getAndStoreRecentTXsForAddress = (address, curve) => {
         });
         log.debug("Recent TXs fetched and updated to state for address: ", address);
         return true;
-    }
-}
+    };
+};
 
 /**
- * Prep TX Objects into MadNetAdapter state -- Requires a forwarded dispatch state
+ * Prep TX Objects into AliceNetAdapter state -- Requires a forwarded dispatch state
  * @param { Object } state - Forwarded dispatch -- getState() state
  */
-const _prepTxObjectsToMadNetAdapter = async (state) => {
+const _prepTxObjectsToAliceNetAdapter = async (state) => {
 
     let txReducerTxs = state.transaction.list;
-    let preppedTxObjs = []; // Convert to proper tx format for madNetAdapter
+    let preppedTxObjs = []; // Convert to proper tx format for aliceNetAdapter
 
     txReducerTxs.forEach((tx) => {
         if (tx.type === transactionTypes.DATA_STORE) {
@@ -279,21 +277,21 @@ const _prepTxObjectsToMadNetAdapter = async (state) => {
         }
     });
 
-    // Add each tx to the txOutList of the madNetAdapter
+    // Add each tx to the txOutList of the aliceNetAdapter
     preppedTxObjs.forEach(tx => {
-        madNetAdapter.addTxOut(tx);
+        aliceNetAdapter.addTxOut(tx);
     });
 
-    log.debug("Prepped TX Objects To MadNetAdapter ( Not in MadNetJS Instance yet) => ", {
+    log.debug("Prepped TX Objects To AliceNetAdapter (Not in AliceNetJS Instance yet) => ", {
         txReducerTxs: txReducerTxs,
         preppedTxObjs: preppedTxObjs,
     });
 
     return true;
-}
+};
 
 /**
- * Creates a fake TX using madWallet instance, estimates fees, and immediately clears it for the next estimate or real transaction
+ * Creates a fake TX using aliceNetWallet instance, estimates fees, and immediately clears it for the next estimate or real transaction
  * @returns { Object | Boolean } - Successful fee estimate will return an object with fees or false for any failure in estimation
  */
 export const createAndClearFakeTxForFeeEstimates = () => {
@@ -306,9 +304,9 @@ export const createAndClearFakeTxForFeeEstimates = () => {
             return false;
         }
 
-        await _prepTxObjectsToMadNetAdapter(state);
+        await _prepTxObjectsToAliceNetAdapter(state);
 
-        log.debug("MadNetAdapter FAKE_TxOuts(ForFeeEstimates) pending: ", madNetAdapter.txOuts.get());
+        log.debug("AliceNetAdapter FAKE_TxOuts(ForFeeEstimates) pending: ", aliceNetAdapter.txOuts.get());
 
         // Create the fee input
         let feePayerWallet = state.transaction.feePayer.wallet;
@@ -319,28 +317,28 @@ export const createAndClearFakeTxForFeeEstimates = () => {
             txFee: txFee,
         });
 
-        await madNetAdapter.wallet().Transaction.createTxFee(feePayerWallet.address, feePayerWallet.curve, txFee);
-        await madNetAdapter.createTx();
-        let estimateFees = await madNetAdapter.getEstimatedFees();
+        await aliceNetAdapter.wallet().Transaction.createTxFee(feePayerWallet.address, feePayerWallet.curve, txFee);
+        await aliceNetAdapter.createTx();
+        let estimateFees = await aliceNetAdapter.getEstimatedFees();
 
         // After fees have been estimated clear the tx state from the adapter and the wallet
-        await madNetAdapter.wallet().Transaction._reset();
-        madNetAdapter.clearTXouts();
+        await aliceNetAdapter.wallet().Transaction._reset();
+        aliceNetAdapter.clearTXouts();
 
         return estimateFees;
-    }
-}
+    };
+};
 
 /**
- * Aggregate the TXs from the transaction reduce into the madNetAdapter state and send the grouped tx
+ * Aggregate the TXs from the transaction reduce into the aliceNetAdapter state and send the grouped tx
  */
 export const sendTransactionReducerTXs = () => {
     return async (dispatch, getState) => {
 
         const state = getState();
-        await _prepTxObjectsToMadNetAdapter(state);
+        await _prepTxObjectsToAliceNetAdapter(state);
 
-        log.debug("MadNetAdapter TxOuts pending: ", madNetAdapter.txOuts.get());
+        log.debug("AliceNetAdapter TxOuts pending: ", aliceNetAdapter.txOuts.get());
 
         // Create the fee input
         let feePayerWallet = state.transaction.feePayer.wallet;
@@ -351,15 +349,15 @@ export const sendTransactionReducerTXs = () => {
             txFee: txFee,
         });
 
-        await madNetAdapter.wallet().Transaction.createTxFee(feePayerWallet.address, feePayerWallet.curve, txFee);
+        await aliceNetAdapter.wallet().Transaction.createTxFee(feePayerWallet.address, feePayerWallet.curve, txFee);
 
         // First create the transaction
-        let create = await madNetAdapter.createTx();
+        let create = await aliceNetAdapter.createTx();
         if (create.error) {
             return { error: "Unable to create transaction: " + String(create.error) }
         }
         // If OK, send it
-        let tx = await madNetAdapter.sendTx();
+        let tx = await aliceNetAdapter.sendTx();
 
         try {
             // Grab any owners, and send to balance updater for those addresses
@@ -376,10 +374,10 @@ export const sendTransactionReducerTXs = () => {
             };
 
             let owners = [];
-            const madWalletInstance = getMadWalletInstance();
+            const aliceNetWalletInstance = getAliceNetWalletInstance();
             for (let i = 0; i < txDatas.vouts.length; i++) {
                 let vout = txDatas.vouts[i];
-                let extractedOwner = (await madWalletInstance.Transaction.Utils.extractOwner(vout.owner))[2];
+                let extractedOwner = (await aliceNetWalletInstance.Transaction.Utils.extractOwner(vout.owner))[2];
                 if (utils.wallet.userOwnsAddress(extractedOwner)) {
                     owners.push(extractedOwner);
                 }
@@ -400,5 +398,5 @@ export const sendTransactionReducerTXs = () => {
         dispatch(TRANSACTION_ACTIONS.resetFeeState());
 
         return tx;
-    }
-}
+    };
+};

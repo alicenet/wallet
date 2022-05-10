@@ -7,13 +7,13 @@ import { TRANSACTION_ACTIONS } from 'redux/actions/_actions';
 import Page from 'layout/Page';
 import { useHistory } from 'react-router-dom';
 import utils, { stringUtils } from 'util/_util';
-import { getMadWalletInstance } from 'redux/middleware/WalletManagerMiddleware';
+import { getAliceNetWalletInstance } from 'redux/middleware/WalletManagerMiddleware';
 import { classNames } from 'util/generic';
 import Web3 from 'web3';
 
 const BLOCK_EXPLORER_LINK = process.env.REACT_APP_BLOCK_EXPLORER_LINK;
 
-const madNetJs = getMadWalletInstance();
+const aliceNetJs = getAliceNetWalletInstance();
 
 function InspectionModule() {
 
@@ -62,7 +62,7 @@ function InspectionModule() {
         const getOwners = async () => {
             let newVoutOwners = [];
             for (let i = 0; i < txObj.voutCount; i++) {
-                let idxOwner = await madNetJs.Utils.extractOwner(txObj.vouts[i].owner);
+                let idxOwner = await aliceNetJs.Utils.extractOwner(txObj.vouts[i].owner);
                 newVoutOwners.push(idxOwner);
             }
             setVoutOwners(newVoutOwners);
@@ -241,7 +241,7 @@ function InspectionModule() {
                                     View TX on Block Explorer
                                 </div>
                                 <div className="flex justify-start mb-3">
-                                    <Label className="text-xs">TxFee: {txFee} MadBytes</Label>
+                                    <Label className="text-xs">TxFee: {txFee} AliceNetBytes</Label>
                                 </div>
                                 <VinTable />
                                 <VoutTable />

@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import { VAULT_ACTIONS } from 'redux/actions/_actions';
 import { default_log as log } from 'log/logHelper';
 
-import MadWalletJs from 'alicenetjs';
+import AliceNetWalletJs from 'alicenetjs';
 import utils, { walletUtils } from 'util/_util';
 import { curveTypes } from 'util/wallet';
 import Page from 'layout/Page';
@@ -32,17 +32,17 @@ export default function VerifyImport() {
         }
     }, [history, toLoad])
 
-    // Use an empty MadNetWalletJS Instance to extract potential wallet information
+    // Use an empty AliceNetWalletJS Instance to extract potential wallet information
     useEffect(() => {
 
         const getPotentialWallet = async () => {
             // Create temp instance
-            let tempMadWallet = new MadWalletJs();
+            let tempAliceNetWallet = new AliceNetWalletJs();
             try {
                 // Unlock the passed keystore to add
                 let ks = walletUtils.unlockKeystore(toLoad.locked, toLoad.password);
-                await tempMadWallet.Account.addAccount(ks.privateKey, ks.curve ? ks.curve : curveTypes.SECP256K1); // Default to secp
-                setPotentialWallet(tempMadWallet.Account.accounts[0]);
+                await tempAliceNetWallet.Account.addAccount(ks.privateKey, ks.curve ? ks.curve : curveTypes.SECP256K1); // Default to secp
+                setPotentialWallet(tempAliceNetWallet.Account.accounts[0]);
                 setAddressLoading(false);
             } catch (ex) {
                 log.error(ex);

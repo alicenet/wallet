@@ -5,13 +5,13 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Notifications } from './Notifications';
 
-import MadIcon from 'Assets/icon.png';
+import AliceNetIcon from 'Assets/icon.png';
 import { VAULT_ACTIONS } from 'redux/actions/_actions';
 
 export const tabPaneIndex = {
     Wallets: 0,
     Transactions: 1,
-    MadNet: 2,
+    AliceNet: 2,
     Ethereum: 3,
 }
 
@@ -76,11 +76,11 @@ function HeaderMenu({ showMenu }) {
 
                     <Container fluid className="flex flex-row items-center gap-4">
 
-                        <Image src={MadIcon} size="mini" className="logo" />
+                        <Image src={AliceNetIcon} size="mini" className="logo" />
 
                         <Container fluid>
 
-                            <Header content="MadWallet" as="h4" />
+                            <Header content="AliceNet Wallet" as="h4" />
 
                         </Container>
 

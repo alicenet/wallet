@@ -13,10 +13,10 @@ export default function Overview({ wallet }) {
     const [copyClick, setCopyClick] = useState(0);
     const [tellTheSender, setTellTheSender] = useState(false);
 
-    const { madNetConnected, web3Connected, vaultExists, balances, balancesLoading } = useSelector(state => (
+    const { aliceNetConnected, web3Connected, vaultExists, balances, balancesLoading } = useSelector(state => (
         {
             web3Connected: state.adapter.web3Adapter.connected,
-            madNetConnected: state.adapter.madNetAdapter.connected,
+            aliceNetConnected: state.adapter.aliceNetAdapter.connected,
             vaultExists: state.vault.exists,
             balances: state.vault.balances,
             balancesLoading: state.vault.balancesLoading
@@ -29,10 +29,10 @@ export default function Overview({ wallet }) {
 
     // Only fetch balances when connected status changes and is true.
     useEffect(() => {
-        if ((web3Connected || madNetConnected) && !balances[wallet.address] && !balancesLoading) {
+        if ((web3Connected || aliceNetConnected) && !balances[wallet.address] && !balancesLoading) {
             fetchBalances();
         }
-    }, [web3Connected, madNetConnected, wallet, fetchBalances, balances, balancesLoading]);
+    }, [web3Connected, aliceNetConnected, wallet, fetchBalances, balances, balancesLoading]);
 
     const MicroBalanceLoader = ({ balanceType, balanceKey, balanceAllowance }) => {
 
@@ -134,9 +134,9 @@ export default function Overview({ wallet }) {
 
                     <Container>
 
-                        <label className="font-semibold text-gray-800 underline">MadNet Balances</label>
+                        <label className="font-semibold text-gray-800 underline">AliceNet Balances</label>
                         <div className="py-1">
-                            <MicroBalanceLoader balanceType="MadBytes" balanceKey={"madBytes"} />
+                            <MicroBalanceLoader balanceType="AliceNetBytes" balanceKey={"aliceNetBytes"} />
                         </div>
 
                     </Container>

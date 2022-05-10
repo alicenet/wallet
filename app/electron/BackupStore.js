@@ -1,10 +1,7 @@
-const { ipcRenderer } = require("electron");
 const pathModule = require("path");
 
 const writeBakFileRequest = "WriteBakFile-Request";
 const writeBakFileResponse = "WriteBakFile-Response";
-// const readBakFileRequest = "ReadBakFile-Request";
-// const readBakFileResponse = "ReadBakFile-Request";
 
 const defaultOptions = {
     path: "",
@@ -93,9 +90,9 @@ module.exports = class BackupStore {
             send: (channel, jsonObj) => {
                 if (this.validSendChannels.includes(channel)) {
                     switch (channel) {
-                        // Save Data to MadWalletEnc.bak
+                        // Save Data to AliceNetWalletEnc.bak
                         case writeBakFileRequest: ipcRenderer.send(writeBakFileRequest, { jsonObj }); break;
-                        // Read contents of MadWalletEnc.bak - TBD if needed
+                        // Read contents of AliceNetWalletEnc.bak - TBD if needed
                         // case readBakFileRequest: ipcRenderer.send(readBakFileRequest, {}); break;
                     }
                 }

@@ -41,12 +41,12 @@ async function createWindow() {
   const store = new Store({
     path: app.getPath('userData'),
     unprotectedPath: app.getPath('userData'),
-    filename: 'MadWalletUser',
+    filename: 'AliceNetWalletUser',
   });
 
   const storeBak = new BackupStore({
     path: app.getPath('userData'),
-    filename: 'MadWalletUser',
+    filename: 'AliceNetWalletUser',
     extension: '.json.bak',
   });
 
