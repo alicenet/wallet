@@ -71,8 +71,8 @@ export default function Datastores({ wallet }) {
 
             let UTXOIDS = [];
             for (let i = 0; i < foundStores.length; i++) {
-                if (foundStores[i]["UTXOID"]) {
-                    UTXOIDS.push(foundStores[i]["UTXOID"]);
+                if (foundStores[i]) {
+                    UTXOIDS.push(foundStores[i]);
                 }
             }
             if (foundStores.length === 0 || UTXOIDS.length === 0) {

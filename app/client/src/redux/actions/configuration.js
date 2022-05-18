@@ -2,7 +2,7 @@ import { electronStoreCommonActions } from 'store/electronStoreHelper';
 import { ADAPTER_ACTION_TYPES, CONFIG_ACTION_TYPES } from 'redux/constants/_constants';
 import { reduxState_logger as log } from 'log/logHelper'
 import { useFallbackValueForUndefinedInput } from 'util/generic';
-import { initialConfigurationState } from 'redux/reducers/configuration';
+import { initialConfigurationState, envConfigurationState } from 'redux/reducers/configuration';
 
 /**
  * Load default values to every field under configuration
@@ -13,6 +13,19 @@ export function loadDefaultValues() {
         // Anytime we load defaults -- Make sure we update the electron store to reflect it
         electronStoreCommonActions.storeConfigurationValues(initialConfigurationState);
         dispatch({ type: CONFIG_ACTION_TYPES.LOAD_DEFAULT_VALUES });
+        return true;
+    }
+}
+
+/**
+ * Load env values to fields under configuration
+ * @returns null
+ */
+ export function loadEnvValues() {
+    return async function (dispatch) {
+        // Anytime we load defaults -- Make sure we update the electron store to reflect it
+        electronStoreCommonActions.storeConfigurationValues(envConfigurationState);
+        dispatch({ type: CONFIG_ACTION_TYPES.LOAD_ENV_VALUES });
         return true;
     }
 }

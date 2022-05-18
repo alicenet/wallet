@@ -1,11 +1,13 @@
 import React from 'react';
-import { useSelector } from "react-redux";
-import { Table, Grid, Header, Segment } from 'semantic-ui-react';
+import { useSelector, useDispatch } from "react-redux";
+import { loadEnvValues } from 'redux/actions/configuration';
+import { Table, Grid, Header, Segment, Button } from 'semantic-ui-react';
 import { classNames } from "util/generic";
 
 export default function ReduxState() {
 
     const redux = useSelector(s => s);
+    const dispatch = useDispatch();
 
     const mapReduxStateToTable = () => {
 
@@ -20,8 +22,8 @@ export default function ReduxState() {
                 rows.push(
                     <Table.Row key={key}>
                         <Table.Cell>{key}</Table.Cell>
-                        <Table.Cell  
-                            className={classNames({"cursor-pointer hover:text-blue-500 ": typeof redux[reducer][key] === "object" })}
+                        <Table.Cell
+                            className={classNames({ "cursor-pointer hover:text-blue-500 ": typeof redux[reducer][key] === "object" })}
                             onClick={typeof redux[reducer][key] === "object" ? () => console.log(redux[reducer][key]) : null}
                         >
                             {typeof redux[reducer][key] !== "object" ? String(redux[reducer][key]) : 'object (click=>print)'}
@@ -56,6 +58,7 @@ export default function ReduxState() {
         <div>
             <Segment>
                 <Header as="h2"> Redux State Debug View </Header>
+                <Button small onClick={() => { dispatch(loadEnvValues()) }}>Load ENV Config</Button>
             </Segment>
             <Segment>
                 <Grid>

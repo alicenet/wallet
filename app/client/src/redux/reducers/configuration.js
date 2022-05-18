@@ -10,6 +10,14 @@ export const initialConfigurationState = {
     advanced_settings: false,
 }
 
+export const envConfigurationState = {
+    ethereum_provider: process.env.REACT_APP_ETH_PROVIDER, // Ethereum RPC endpoint
+    alice_net_chainID: "66", // Chain ID to use on AliceNet
+    alice_net_provider: process.env.REACT_APP_ALC_PROVIDER, // AliceNet API endpoint
+    registry_contract_address: process.env.REACT_APP_REG_CONTRACT, // Contract address for Registry Contract
+    advanced_settings: false,
+}
+
 /* Modal Reducer */
 export default function configurationReducer(state = initialConfigurationState, action) {
 
@@ -38,6 +46,19 @@ export default function configurationReducer(state = initialConfigurationState, 
                 hide_generic_tooltips: action.payload.hide_generic_tooltips,
                 has_seen_tx_help_modal: action.payload.has_seen_tx_help_modal
             });
+
+        case CONFIG_ACTION_TYPES.LOAD_ENV_VALUES:
+            log.debug("Setting new configuration values:", action.payload);
+            return Object.assign({}, state, {
+                alice_net_chainID: envConfigurationState.alice_net_chainID,
+                alice_net_provider: envConfigurationState.alice_net_provider,
+                ethereum_provider: envConfigurationState.ethereum_provider,
+                registry_contract_address: envConfigurationState.registry_contract_address,
+                advanced_settings: envConfigurationState.advanced_settings,
+                hide_generic_tooltips: envConfigurationState.hide_generic_tooltips,
+                has_seen_tx_help_modal: envConfigurationState.has_seen_tx_help_modal
+            });
+
 
         default:
             return state;
