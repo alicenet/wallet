@@ -88,7 +88,8 @@ export default function Overview({ wallet }) {
                                     <div className="relative inline text-xs mb-2 text-gray-500">
                                         Copied to clipboard!
                                     </div>
-                                )}</>
+                                )}
+                            </>
                         }
                     </div>
                     {
