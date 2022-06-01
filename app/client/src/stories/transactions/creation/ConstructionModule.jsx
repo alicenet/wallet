@@ -259,7 +259,7 @@ function ConstructionModule() {
                                 <Button
                                     color="teal"
                                     content="Send Transaction"
-                                    disabled={isEmpty(list) || fees.errors?.length > 0 || (fees.totalFee + valueStoreTotal <= fees.txFee)}
+                                    disabled={isEmpty(list) || fees.errors?.length > 0 || (fees.totalFee + valueStoreTotal <= fees.txFee && fees.totalFee > 0)}
                                     onClick={handleSendTransaction}
                                 />
 
