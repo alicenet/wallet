@@ -11,7 +11,7 @@ export function addCurvePrefix(address, curve = curveTypes.SECP256K1) {
     if (!address) {
         return null;
     }
-    return `0x${curve === curveTypes.SECP256K1 ? '' : 'BN'}${removeHexPrefix(address)}`;
+    return `${curve === curveTypes.SECP256K1 ? '0x' : 'BN0x'}${removeHexPrefix(address)}`;
 }
 
 /**
