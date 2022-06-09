@@ -46,8 +46,7 @@
             "app-build/**/*",
             "app-build/electron/icon.png",
             "node_modules/**/*",
-            "static/**/*",
-            "./dist/**/*"
+            "static/**/*"
         ],
         "productName": "AliceNetWallet",
         "directories": {
