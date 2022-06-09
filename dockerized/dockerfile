@@ -1,0 +1,76 @@
+# From Ubuntu ##
+FROM ubuntu:22.04 AS builder
+# Symlink Bash so we can source
+RUN rm /bin/sh && ln -s /bin/bash /bin/sh
+
+# Update container and install needed dependencies
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends git ca-certificates openssh-client curl wget build-essential libssl-dev \
+    && apt-get clean
+
+### Install wine dependencies for windows build ###
+RUN dpkg --add-architecture i386 
+# Download wine repository key
+RUN wget -nc https://dl.winehq.org/wine-builds/winehq.key
+RUN mv winehq.key /usr/share/keyrings/winehq-archive.key
+# Add repository
+RUN wget -nc https://dl.winehq.org/wine-builds/ubuntu/dists/jammy/winehq-jammy.sources
+RUN mv winehq-jammy.sources /etc/apt/sources.list.d/
+# Update container after repoistory adds and install wine w/ recommends
+RUN apt-get update
+RUN apt-get install --install-recommends wine-stable -y
+
+
+## Setup ENV && Install NVM
+ENV NVM_DIR /usr/local/nvm
+ENV NODE_VERSION 14.18.2
+
+RUN curl https://raw.githubusercontent.com/creationix/nvm/v0.30.1/install.sh | bash \
+    && source $NVM_DIR/nvm.sh \
+    && nvm install $NODE_VERSION \
+    && nvm alias default $NODE_VERSION \
+    && nvm use default
+
+ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
+ENV PATH      $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
+# Install yarn global
+RUN npm i -g yarn
+
+## Download public key for github.com ##
+RUN mkdir -p -m 0600 ~/.ssh && ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+# Clone repository to /app
+RUN mkdir /app
+RUN --mount=type=ssh cd /app && \
+    git clone git@github.com:MadBase/MadNetWallet-v2.git
+
+# Enter directory install dependencies && build linux
+RUN cd /app/MadNetWallet-v2/ \
+    && sed -i 's/"electron": "13.6.9"/"electron": "17.0.0"/g' ./package.json \
+    && rm -rf node_modules yarn.lock \
+    && yarn \
+    && yarn build-linux
+
+# Create builds directories
+RUN cd /app/MadNetWallet-v2/ \
+    && mkdir builds \
+    && cd builds \
+    && mkdir linux \
+    && mkdir windows
+
+# Move fresh linux build to lin dir
+RUN mv /app/MadNetWallet-v2/dist/* /app/MadNetWallet-v2/builds/linux
+
+## Prep Windows build by removing node_modules, dist/*, and changing electron version
+RUN cd /app/MadNetWallet-v2/ \
+    && sed -i 's/"electron": "17.0.0"/"electron": "13.6.9"/g' ./package.json \
+    && rm -rf node_modules yarn.lock dist/* \
+    && yarn \
+    && yarn build-windows
+
+# Move fresh windows build to win dir
+RUN mv /app/MadNetWallet-v2/dist/* /app/MadNetWallet-v2/builds/windows
+
+## Export built code
+FROM scratch AS exporter
+COPY --from=builder /app/MadNetWallet-v2/builds /

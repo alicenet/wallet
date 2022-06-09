@@ -9,6 +9,10 @@ app-build/*
 teststore.json
 teststore_bn.json
 
+# Dockerized build
+dockerized/dist/*
+
+# Docs
 docs/
 
 # React App
