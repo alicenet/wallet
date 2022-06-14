@@ -412,12 +412,17 @@ class AliceNetAdapter {
     async monitorPending() {
         let tx = this.pendingTx.get();
         try {
-            let txDetails = await this.wallet().Rpc.getMinedTransaction(tx);
-            await this.backOffRetry('pending-' + JSON.stringify(tx), true);
-            this.pendingTx.set(false);
-            // Success TX Mine
-            toast.success(<SyncToastMessageSuccess title="TX Mined" message={utils.string.splitStringWithEllipsis(tx, 6)} hideIcon basic />);
-            return { "txDetails": txDetails.Tx, "txHash": tx, "msg": "Mined: " + this.trimTxHash(tx) };
+            let txStatus = await this.wallet().Rpc.getTxStatus(tx);
+            if(txStatus.IsMined){
+                let txDetails = await this.wallet().Rpc.getMinedTransaction(tx);
+                await this.backOffRetry('pending-' + JSON.stringify(tx), true);
+                this.pendingTx.set(false);
+                // Success TX Mine
+                toast.success(<SyncToastMessageSuccess title="TX Mined" message={utils.string.splitStringWithEllipsis(tx, 6)} hideIcon basic />);
+                return { "txDetails": txDetails.Tx, "txHash": tx, "msg": "Mined: " + this.trimTxHash(tx) };
+            }else{
+                throw new Error("Tx not mined yet");
+            }
         } catch (ex) {
             await this.backOffRetry('pending-' + JSON.stringify(tx));
             if (this['pending-' + JSON.stringify(tx) + "-attempts"] > 30) {
