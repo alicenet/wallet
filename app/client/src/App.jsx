@@ -1,9 +1,8 @@
 import React from 'react';
 import { Container } from 'semantic-ui-react';
-import { HashRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch, useLocation } from 'react-router-dom';
 import DebugPanel, { handleDebugListener } from 'redux/debug/DebugPanel';
 import { ToastContainer } from 'react-toastify';
-import { history } from 'history/history';
 
 import util from 'util/_util';
 
@@ -102,7 +101,7 @@ function App() {
 
     return (
         <Container fluid className="h-full w-full justify-center items-center">
-            <Router history={history}>
+            <Router basename={`#`}>
                 <Switch>
                     <DefaultRoutes/>
                 </Switch>
