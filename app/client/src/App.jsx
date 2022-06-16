@@ -101,7 +101,7 @@ function App() {
 
     return (
         <Container fluid className="h-full w-full justify-center items-center">
-            <Router basename={`#`}>
+            <Router basename={'#'}>
                 <Switch>
                     <DefaultRoutes/>
                 </Switch>
