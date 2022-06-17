@@ -17,7 +17,7 @@ function LoadingModule() {
 
                     <Header as="h4" className="m-0">
                         TX Hash:
-                        <Header.Subheader className="mt-2">{pendingTxHash ? pendingTxHash : <Loader size="mini" inline/> }</Header.Subheader>
+                        <Header.Subheader className="mt-2">{pendingTxHash ? pendingTxHash.txHash : <Loader size="mini" inline/> }</Header.Subheader>
                     </Header>
 
                 </Grid.Column>

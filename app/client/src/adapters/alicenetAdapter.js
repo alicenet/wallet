@@ -379,32 +379,23 @@ class AliceNetAdapter {
 
     async sendTx() {
         try {
-            let tx = await this.wallet().Transaction.sendTx(this.changeAddress.get()["address"], this.changeAddress.get()["bnCurve"]);
-            await this.backOffRetry('sendTx', true);
-            this.pendingTx.set(tx);
-            store.dispatch({ type: TRANSACTION_ACTION_TYPES.SET_LAST_SENT_TX_HASH, payload: tx });
-            await this.pendingTxStatus.set("Pending TxHash: " + this.trimTxHash(tx));
+            let tx = await this.wallet().Transaction.sendWaitableTx(this.changeAddress.get()["address"], this.changeAddress.get()["bnCurve"]);
+            this.pendingTx.set(tx.txHash);
+            store.dispatch({ type: TRANSACTION_ACTION_TYPES.SET_LAST_SENT_TX_HASH, payload: tx.txHash });
+            await this.pendingTxStatus.set("Pending TxHash: " + this.trimTxHash(tx.txHash));
             await this.wallet().Transaction._reset();
             toast.success(<SyncToastMessageWarning basic title="TX Pending" message={utils.string.splitStringWithEllipsis(tx, 6)} hideIcon />);
+            await tx.wait();
+            let txDetails = await this.wallet().Rpc.getMinedTransaction(tx.txHash);
             // Clear any TXOuts on a successful mine
             this.txOuts.set([]);
-            return await this.monitorPending();
+            return { "txDetails": txDetails.Tx, "txHash": tx.txHash, "msg": "Mined: " + this.trimTxHash(tx.txHash) };
         } catch (ex) {
-            if (!this['sendTx-attempts']) {
-                // Only overwrite error on first attempt
-                this.errors['sendTx'] = ex;
-            }
-            await this.backOffRetry('sendTx');
-            if (this['sendTx-attempts'] > 2) {
-                // Clear txOuts on a final fail
-                this.txOuts.set([]);
-                this.changeAddress.set({});
-                await this.wallet().Transaction._reset();
-                await this.backOffRetry('sendTx', true);
-                return { error: this.errors['sendTx'].message };
-            }
-            await this.sleep(this['sendTx-timeout']);
-            return await this.sendTx();
+            this.errors['sendTx'] = ex;
+            this.txOuts.set([]);
+            this.changeAddress.set({});
+            await this.wallet().Transaction._reset();
+            return { error: this.errors['sendTx'].message };
         }
     }
 
