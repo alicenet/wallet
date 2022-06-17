@@ -26,7 +26,7 @@ export function isBNAddress(address) {
     if (!Web3.utils.isAddress(removeBNPrefix(removeHexPrefix(address)))) {
         return false;
     }
-    return removeHexPrefix(address).indexOf('BN') === 0;
+    return address.indexOf('BN') === 0;
 }
 
 /**

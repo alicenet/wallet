@@ -358,7 +358,7 @@ class AliceNetAdapter {
                 switch (txOut.type) {
                     case "VS":
                         log.debug("TxOut created as ValueStore: ", txOut);
-                        await this.wallet().Transaction.createValueStore(txOut.fromAddress, txOut.value, txOut.toAddress, txOut.bnCurve ? curveTypes.BARRETO_NAEHRIG : curveTypes.SECP256K1)
+                        await this.wallet().Transaction.createValueStore(txOut.fromAddress, txOut.value, txOut.toAddress, txOut.bnCurve)
                         break;
                     case "DS":
                         log.debug("TxOut created as DataStore: ", txOut);
