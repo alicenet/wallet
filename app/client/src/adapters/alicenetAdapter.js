@@ -7,7 +7,6 @@ import { getAliceNetWalletInstance } from 'redux/middleware/WalletManagerMiddlew
 import { default_log as log } from 'log/logHelper'
 import { SyncToastMessageSuccess, SyncToastMessageWarning } from 'components/customToasts/CustomToasts'
 import { toast } from 'react-toastify';
-import { curveTypes } from 'util/wallet';
 import { history } from 'history/history';
 import utils from 'util/_util';
 
