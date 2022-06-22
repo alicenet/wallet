@@ -379,6 +379,7 @@ class AliceNetAdapter {
 
     async sendTx() {
         try {
+            await this.backOffRetry('sendTx', true);
             let tx = await this.wallet().Transaction.sendWaitableTx(this.changeAddress.get()["address"], this.changeAddress.get()["bnCurve"]);
             this.pendingTx.set(tx.txHash);
             store.dispatch({ type: TRANSACTION_ACTION_TYPES.SET_LAST_SENT_TX_HASH, payload: tx.txHash });
@@ -389,6 +390,10 @@ class AliceNetAdapter {
             let txDetails = await this.wallet().Rpc.getMinedTransaction(tx.txHash);
             // Clear any TXOuts on a successful mine
             this.txOuts.set([]);
+            await this.backOffRetry('pending-' + JSON.stringify(tx), true);
+            this.pendingTx.set(false);
+            // Success TX Mine
+            toast.success(<SyncToastMessageSuccess title="TX Mined" message={utils.string.splitStringWithEllipsis(tx, 6)} hideIcon basic />);
             return { "txDetails": txDetails.Tx, "txHash": tx.txHash, "msg": "Mined: " + this.trimTxHash(tx.txHash) };
         } catch (ex) {
             this.errors['sendTx'] = ex;
