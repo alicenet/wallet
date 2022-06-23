@@ -385,15 +385,15 @@ class AliceNetAdapter {
             store.dispatch({ type: TRANSACTION_ACTION_TYPES.SET_LAST_SENT_TX_HASH, payload: tx.txHash });
             await this.pendingTxStatus.set("Pending TxHash: " + this.trimTxHash(tx.txHash));
             await this.wallet().Transaction._reset();
-            toast.success(<SyncToastMessageWarning basic title="TX Pending" message={utils.string.splitStringWithEllipsis(tx, 6)} hideIcon />);
+            toast.success(<SyncToastMessageWarning basic title="TX Pending" message={utils.string.splitStringWithEllipsis(tx.txHash, 6)} hideIcon />);
             await tx.wait();
             let txDetails = await this.wallet().Rpc.getMinedTransaction(tx.txHash);
             // Clear any TXOuts on a successful mine
             this.txOuts.set([]);
-            await this.backOffRetry('pending-' + JSON.stringify(tx), true);
+            await this.backOffRetry('pending-' + JSON.stringify(tx.txHash), true);
             this.pendingTx.set(false);
             // Success TX Mine
-            toast.success(<SyncToastMessageSuccess title="TX Mined" message={utils.string.splitStringWithEllipsis(tx, 6)} hideIcon basic />);
+            toast.success(<SyncToastMessageSuccess title="TX Mined" message={utils.string.splitStringWithEllipsis(tx.txHash, 6)} hideIcon basic />);
             return { "txDetails": txDetails.Tx, "txHash": tx.txHash, "msg": "Mined: " + this.trimTxHash(tx.txHash) };
         } catch (ex) {
             this.errors['sendTx'] = ex;
