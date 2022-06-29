@@ -6,6 +6,7 @@ export const initialTransactionState = {
     status: transactionStatus.CREATION, //The status reflects the transaction workflow
     list: [], //The list of transactions before being sent to the chain
     fees: { // Human readable fees -- The fees to be used by the adapter are in adapter reducer as HEX values
+        isLoading: false,
         atomicSwapFee: 0, // Hex Parsed Base Atomic Swap Fee from RPC.getFees()
         atomicSwapFees: 0, // Total Fees for all atomicSwap VOUTs in txList
         dataStoreFee: 0, // Hex Parsed Base DataStore fee from RPC.getFees()
@@ -65,6 +66,7 @@ export default function transactionReducer(state = initialTransactionState, acti
             }
             return Object.assign({}, state, {
                 fees: {
+                    isLoading: typeof action.payload.isLoading !== 'undefined' ? action.payload.isLoading : state.fees.isLoading,
                     atomicSwapFee: typeof action.payload.atomicSwapFee !== 'undefined' ? action.payload.atomicSwapFee : state.fees.atomicSwapFee,
                     atomicSwapFees: typeof action.payload.atomicSwapFees !== 'undefined' ? action.payload.atomicSwapFees : state.fees.atomicSwapFees,
                     dataStoreFee: typeof action.payload.dataStoreFee !== 'undefined' ? action.payload.dataStoreFee : state.fees.dataStoreFee,

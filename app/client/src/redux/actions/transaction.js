@@ -211,6 +211,7 @@ export function parseAndUpdateFees(rpcFees) {
 
         // Build fees from passed parameters or available state
         let fees = {
+            isLoading: true,
             atomicSwapFee: aliceNetFees.atomicSwapFee, // Hex Parsed Base Atomic Swap Fee from RPC.getFees()
             atomicSwapFees: 0, // Total Fees for all atomicSwap VOUTs in txList
             dataStoreFee: aliceNetFees.dataStoreFee, // Hex Parsed Base DataStore fee from RPC.getFees()
@@ -224,6 +225,8 @@ export function parseAndUpdateFees(rpcFees) {
             totalFee: 0, // Total TX Fee ( All Store Fees + Min Fee + Prioritization )
             errors: [] // Errors in fee estimation
         };
+
+        dispatch({ type: TRANSACTION_ACTION_TYPES.UPDATE_FEES_BY_TYPE, payload: fees });
 
         // Grab AliceNetAdapter instance for the AliceNetJS Wallet instance
         const aliceNetWallet = aliceNetAdapter.wallet();
@@ -285,6 +288,8 @@ export function parseAndUpdateFees(rpcFees) {
 
         fees.txFee = fees.minTxFee + fees.prioritizationFee;
         fees.totalFee = fees.txFee + fees.valueStoreFees + fees.dataStoreFees + fees.atomicSwapFees;
+
+        fees.isLoading = false;
 
         dispatch({ type: TRANSACTION_ACTION_TYPES.UPDATE_FEES_BY_TYPE, payload: fees });
     }
