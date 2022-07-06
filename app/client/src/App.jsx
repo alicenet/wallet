@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Container } from 'semantic-ui-react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import DebugPanel, { handleDebugListener } from 'redux/debug/DebugPanel';
@@ -28,10 +28,10 @@ import ResetWalletModal from 'components/modals/ResetWalletModal';
 function App() {
 
     /* Redux State -- Debug Handlers */
-    React.useEffect(() => {
+    useEffect(() => {
         handleDebugListener("add");
         return () => handleDebugListener("remove");
-    }, [])
+    }, []);
 
     const DefaultRoutes = () => {
         return (
@@ -91,13 +91,13 @@ function App() {
 
             </>
         )
-    }
+    };
 
     const DebugTools = () => {
         return util.generic.isDebug ? (<>
             <DebugPanel />
         </>) : null
-    }
+    };
 
     return (
         <Container fluid className="h-full w-full justify-center items-center">

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import { Header, Segment, Button } from 'semantic-ui-react';
+import { Button, Header, Segment } from 'semantic-ui-react';
 import { INTERFACE_ACTIONS } from 'redux/actions/_actions.js';
 import { useDispatch } from 'react-redux';
 
@@ -12,15 +12,15 @@ export default function UserStoriesPanel() {
     // Nav Actions //
     const goto = (locationPath) => {
         dispatch(INTERFACE_ACTIONS.DEBUG_toggleShowDebug(false));
-        history.push(locationPath)
-    }
+        history.push(locationPath);
+    };
 
     const navButtonProps = (content, pathname) => ({
         content: content,
         size: "mini",
         fluid: true,
         onClick: () => goto(pathname)
-    })
+    });
 
     return (
         <Segment>
@@ -61,6 +61,6 @@ export default function UserStoriesPanel() {
             </Segment>
 
         </Segment>
-    )
+    );
 
 }
