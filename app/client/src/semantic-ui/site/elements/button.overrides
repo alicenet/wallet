@@ -13,6 +13,12 @@
     background-color: transparent;
 }
 
+.ui.basic.teal.button:focus-visible,
+.ui.basic.black.button:focus-visible,
+.ui.button:focus-visible {
+    box-shadow:inset 0px 0px 0px 3px #CACBCD !important;
+}
+
 .ui.basic.button {
     border-radius: 0;
     font-weight: 700;
