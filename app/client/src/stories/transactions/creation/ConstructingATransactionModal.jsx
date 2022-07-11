@@ -30,7 +30,7 @@ function ConstructingATransactionModal() {
             open={openModal}
             dimmer="inverted"
             trigger={
-                <Menu.Item name="how-to-construct-a-transaction" onClick={() => setOpenModal(true)}>
+                <Menu.Item as="Button" className="border-0" name="how-to-construct-a-transaction" onClick={() => setOpenModal(true)}>
                     <Icon name="question" className="text-gray-600" />Build Transaction
                 </Menu.Item>
             }

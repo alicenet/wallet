@@ -40,7 +40,7 @@ export default function AddEditPrioritizationFeeModal() {
             onClose={handleClose}
             size="small"
             trigger={
-                <Menu.Item name='add-prioritization-fee' disabled={txList.length === 0} onClick={() => setOpenModal(true)}>
+                <Menu.Item as={Button} name='add-prioritization-fee' disabled={txList.length === 0} onClick={() => setOpenModal(true)}>
                     <Icon name="chain" className="text-gray-600" />Adjust Tx Fee
                 </Menu.Item>
             }

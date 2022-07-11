@@ -132,6 +132,8 @@ export default function Hub() {
                                     <Menu tabular attached={"top"} className="tab-panes">
                                         {panes.map((pane, index) =>
                                             <Menu.Item
+                                                as={Button}
+                                                className="text-sm"
                                                 key={`menu-item-${index}-${pane.name}`}
                                                 name={pane.name}
                                                 index={index}
@@ -141,6 +143,8 @@ export default function Hub() {
                                         )}
                                         <Menu.Menu position="right">
                                             <Menu.Item
+                                                as={Button}
+                                                className="text-sm"
                                                 icon="external alternate"
                                                 name="Block Explorer"
                                                 onClick={() => window.open(`${BLOCK_EXPLORER_LINK}/tx`, '_blank')}
