@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Icon, Menu, Popup, Table } from 'semantic-ui-react';
+import { Button, Icon, Menu, Popup, Table } from 'semantic-ui-react';
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 
@@ -97,7 +97,7 @@ export default function TransactionRow({ transaction, index, onUpdate }) {
 
                     <Popup
                         trigger={
-                            <Menu.Item name='edit' fitted onClick={() => handleEdit(transaction, index)}>
+                            <Menu.Item as={Button} className="p-2" name='edit' fitted onClick={() => handleEdit(transaction, index)}>
                                 <Icon name='edit' />
                             </Menu.Item>
                         }
@@ -108,7 +108,7 @@ export default function TransactionRow({ transaction, index, onUpdate }) {
 
                     <Popup
                         trigger={
-                            <Menu.Item name='delete' fitted onClick={() => handleDelete(index)}>
+                            <Menu.Item as={Button} className="p-2" name='delete' fitted onClick={() => handleDelete(index)}>
                                 <Icon name='delete' />
                             </Menu.Item>
                         }

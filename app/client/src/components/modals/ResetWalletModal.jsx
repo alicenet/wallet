@@ -4,6 +4,7 @@ import { electronStoreUtilityActions } from 'store/electronStoreHelper';
 import { useSelector } from 'react-redux';
 import { MODAL_ACTIONS } from 'redux/actions/_actions';
 import { useDispatch } from 'react-redux';
+import FocusTrap from 'focus-trap-react';
 
 /**
  * Shows a prompt to open a modal regarding forgotten vault password
@@ -47,43 +48,48 @@ export default function ResetWalletModal() {
 
             </Modal.Header>
 
-            <Modal.Content className="text-left">
+            <FocusTrap>
+                <div className="p-6">
+                    <Modal.Content className="text-left">
 
-                <p>
-                    On this page you can completely reset AliceNet wallet to its initial settings.
-                </p>
+                    <p>
+                        On this page you can completely reset AliceNet wallet to its initial settings.
+                    </p>
 
-                <p>
-                    This action will completely remove any vaults associated with AliceNet wallet, as well as any stored settings.
-                </p>
+                    <p>
+                        This action will completely remove any vaults associated with AliceNet wallet, as well as any stored settings.
+                    </p>
 
-                <p>
-                    Please make sure you backup any keys that you would like to backup before proceeding with this.
-                </p>
+                    <p>
+                        Please make sure you backup any keys that you would like to backup before proceeding with this.
+                    </p>
 
-                <p>
-                    As a safe guard this action does not remove the latest backup (.bak) file and should be done manually.
-                </p>
+                    <p>
+                        As a safe guard this action does not remove the latest backup (.bak) file and should be done manually.
+                    </p>
 
-                <p>
-                    Please be aware this <span className="font-bold">will remove the existing vault and it will be lost forever</span>.
-                </p>
+                    <p>
+                        Please be aware this <span className="font-bold">will remove the existing vault and it will be lost forever</span>.
+                    </p>
 
-            </Modal.Content>
+                    </Modal.Content>
 
-            <Modal.Actions className="flex justify-between items-center">
+                    <Modal.Actions className="flex justify-between items-center mt-6">
 
-                <div className="flex flex-col gap-4 text-left">
+                        <div className="flex flex-col gap-4 text-left">
 
-                    <Checkbox label="I acknowledge this will delete my current vault" checked={okWithDelete} onChange={toggleOkWithDelete} />
+                            <Checkbox onKeyDown={e => (e.key === " " || e.key === "Enter" || e.key === "Spacebar") && toggleOkWithDelete() } role="checkbox" aria-checked="false" tabindex="0" label="I acknowledge this will delete my current vault" checked={okWithDelete} onChange={toggleOkWithDelete} />
 
-                    <Checkbox label="I want to reset the wallet" checked={doubleCheck} onChange={toggleDoubleCheck} />
+                            <Checkbox onKeyDown={e => (e.key === " " || e.key === "Enter" || e.key === "Spacebar") && toggleDoubleCheck() } role="checkbox" aria-checked="false" tabindex="0" label="I want to reset the wallet" checked={doubleCheck} onChange={toggleDoubleCheck} />
 
+                        </div>
+
+                        <Button content="Close" color="gray" onClick={toggleOpen} />
+                        <Button loading={resetting} content="Reset Wallet2" color="red" disabled={!okWithDelete || !doubleCheck} onClick={deleteTheVault} />
+
+                    </Modal.Actions>
                 </div>
-
-                <Button loading={resetting} content="Reset Wallet" color="red" disabled={!okWithDelete || !doubleCheck} onClick={deleteTheVault} />
-
-            </Modal.Actions>
+            </FocusTrap>
 
         </Modal>
     )

@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useFormState } from 'hooks/_hooks';
 import { TRANSACTION_ACTIONS } from 'redux/actions/_actions';
 import ChangeFeePayer from './ChangeFeePayer';
+import FocusTrap from 'focus-trap-react';
 
 export default function AddEditPrioritizationFeeModal() {
 
@@ -52,65 +53,71 @@ export default function AddEditPrioritizationFeeModal() {
 
             </Modal.Header>
 
-            <Modal.Content>
+            <FocusTrap>
+                <div className="p-6">
+                    
+                    <Modal.Content>
 
-                <Form size="small" className="text-sm mini-error-form" onSubmit={() => onSubmit(handleSubmit)}>
+                        <Form size="small" className="text-sm mini-error-form" onSubmit={() => onSubmit(handleSubmit)}>
 
-                    <Grid className="m-0 content-evenly gap-2">
+                            <Grid className="m-0 content-evenly gap-2">
 
-                        <Grid.Row>
-                            <Grid.Column width="16">
-                                <p>
-                                    AliceNet Transactions cost a minimum fee. <br />
-                                    You may provide additional AliceNetBytes to give your transaction priority. <br />
-                                </p>
-                            </Grid.Column>
-                        </Grid.Row>
+                                <Grid.Row>
+                                    <Grid.Column width="16">
+                                        <p>
+                                            AliceNet Transactions cost a minimum fee. <br />
+                                            You may provide additional AliceNetBytes to give your transaction priority. <br />
+                                        </p>
+                                    </Grid.Column>
+                                </Grid.Row>
 
-                        <Grid.Row columns={1} className="p-0">
+                                <Grid.Row columns={1} className="p-0">
 
-                            <Grid.Column>
+                                    <Grid.Column>
 
-                                <Form.Input
-                                    id="MinFee"
-                                    label="AliceNet Bytes Minimum Fee"
-                                    disabled
-                                    value={minFee}
-                                />
+                                        <Form.Input
+                                            id="MinFee"
+                                            label="AliceNet Bytes Minimum Fee"
+                                            disabled
+                                            value={minFee}
+                                        />
 
-                                <Form.Input
-                                    id="Fee"
-                                    label="AliceNet Bytes Prioritization Fee"
-                                    required
-                                    value={formState.Fee.value}
-                                    onChange={e => formSetter.setFee(e.target.value)}
-                                    error={!!formState.Fee.error && { content: formState.Fee.error }}
-                                />
+                                        <Form.Input
+                                            id="Fee"
+                                            label="AliceNet Bytes Prioritization Fee"
+                                            required
+                                            value={formState.Fee.value}
+                                            onChange={e => formSetter.setFee(e.target.value)}
+                                            error={!!formState.Fee.error && { content: formState.Fee.error }}
+                                        />
 
-                                <ChangeFeePayer />
+                                        <ChangeFeePayer />
 
-                            </Grid.Column>
+                                    </Grid.Column>
 
-                        </Grid.Row>
+                                </Grid.Row>
 
-                    </Grid>
+                            </Grid>
 
-                </Form>
+                        </Form>
 
-            </Modal.Content>
+                    </Modal.Content>
 
-            <Modal.Actions className="flex justify-between">
+                    <Modal.Actions className="flex justify-between mt-6" >
 
-                <Button color="black" basic onClick={handleClose} content="Close" />
+                        <Button color="black" basic onClick={handleClose} content="Close" />
 
-                <Button
-                    icon={<Icon name="chain" />}
-                    content="Set Prioritization Fee"
-                    color="black"
-                    onClick={() => onSubmit(handleSubmit)}
-                />
+                        <Button
+                            icon={<Icon name="chain" />}
+                            content="Set Prioritization Fee"
+                            color="black"
+                            onClick={() => onSubmit(handleSubmit)}
+                        />
 
-            </Modal.Actions>
+                    </Modal.Actions>
+
+                </div>
+            </FocusTrap>
 
         </Modal>
     );

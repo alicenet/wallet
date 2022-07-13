@@ -5,6 +5,7 @@ import { useFormState } from 'hooks/_hooks';
 import utils, { stringUtils } from 'util/_util';
 import { MODAL_ACTIONS } from 'redux/actions/_actions';
 import { electronStoreCommonActions } from 'store/electronStoreHelper';
+import FocusTrap from 'focus-trap-react';
 
 export default function ExportPrivateKeyModal() {
 
@@ -109,89 +110,95 @@ export default function ExportPrivateKeyModal() {
                 </Header>
             </Modal.Header>
 
-            <Modal.Content className="text-sm">
+            <FocusTrap>
+                <div className="p-6">
 
-                <p>
-                    Showing your private key is considered an administrative action.
-                </p>
-                <p>
-                    Please provide your vault password below to show your private key for 15 seconds.
-                </p>
+                    <Modal.Content className="text-sm">
 
-                <div className="mt-2">
-                    <Header>Your Private Key</Header>
-                </div>
+                        <p>
+                            Showing your private key is considered an administrative action.
+                        </p>
+                        <p>
+                            Please provide your vault password below to show your private key for 15 seconds.
+                        </p>
 
-                {keyVisible ? (<div className="h-10 flex items-center cursor-pointer hover:text-gray-600" onClick={copyPkey}>
-                        {targetWallet.privK}
-                        <Icon name="copy outline" className="ml-1 mb-2 cursor-pointer" />
-                        {!!copyClick && (
-                            <div className="relative inline text-xs mb-2 text-gray-500">
-                                Copied to clipboard!
-                            </div>
-                        )}
-                    </div>) :
-                    <Placeholder className="h-10">
-                        <Placeholder.Line />
-                    </Placeholder>
-                }
+                        <div className="mt-2">
+                            <Header>Your Private Key</Header>
+                        </div>
 
-                <Form
-                    error={!!formState.vaultPassword.error}
-                    size="small"
-                    className="mt-2"
-                    onSubmit={submit}
-                >
+                        {keyVisible ? (<div className="h-10 flex items-center cursor-pointer hover:text-gray-600" onClick={copyPkey}>
+                                {targetWallet.privK}
+                                <Icon name="copy outline" className="ml-1 mb-2 cursor-pointer" />
+                                {!!copyClick && (
+                                    <div className="relative inline text-xs mb-2 text-gray-500">
+                                        Copied to clipboard!
+                                    </div>
+                                )}
+                            </div>) :
+                            <Placeholder className="h-10">
+                                <Placeholder.Line />
+                            </Placeholder>
+                        }
 
-                    <Form.Group>
-
-                        <Form.Input
-                            width={6}
-                            type={showPass ? "text" : "password"}
+                        <Form
+                            error={!!formState.vaultPassword.error}
                             size="small"
-                            label="Vault Password"
-                            placeholder="Vault Password"
-                            value={formState.vaultPassword.value}
-                            onChange={e => formSetter.setVaultPassword(e.target.value)}
-                            error={!!formState.vaultPassword.error && { content: formState.vaultPassword.error }}
-                            disabled={visibleTime !== 0}
-                            icon={
-                                <Icon
-                                    color={keyVisible ? "green" : "black"}
-                                    name={keyVisible ? "thumbs up" : showPass ? "eye" : "eye slash"}
-                                    link
-                                    onClick={keyVisible ? null : () => setShowPass(s => !s)}
+                            className="mt-2"
+                            onSubmit={submit}
+                        >
+
+                            <Form.Group>
+
+                                <Form.Input
+                                    width={6}
+                                    type={showPass ? "text" : "password"}
+                                    size="small"
+                                    label="Vault Password"
+                                    placeholder="Vault Password"
+                                    value={formState.vaultPassword.value}
+                                    onChange={e => formSetter.setVaultPassword(e.target.value)}
+                                    error={!!formState.vaultPassword.error && { content: formState.vaultPassword.error }}
+                                    disabled={visibleTime !== 0}
+                                    icon={
+                                        <Icon
+                                            color={keyVisible ? "green" : "black"}
+                                            name={keyVisible ? "thumbs up" : showPass ? "eye" : "eye slash"}
+                                            link
+                                            onClick={keyVisible ? null : () => setShowPass(s => !s)}
+                                        />
+                                    }
                                 />
-                            }
-                        />
 
-                    </Form.Group>
+                            </Form.Group>
 
-                    <div>
-                        <span className="font-bold text-gray-600">Password Hint:</span>
-                        <span className="text-gray-400 ml-2">
-                            {passwordHint}
-                        </span>
-                    </div>
+                            <div>
+                                <span className="font-bold text-gray-600">Password Hint:</span>
+                                <span className="text-gray-400 ml-2">
+                                    {passwordHint}
+                                </span>
+                            </div>
 
-                </Form>
+                        </Form>
 
-            </Modal.Content>
+                    </Modal.Content>
 
-            <Modal.Actions>
-
-                <div className="flex justify-between">
-                    <Button size="small" className="transparent" content="Close" onClick={closeModal} basic />
-                    <Button
-                        size="small"
-                        content={formState.vaultPassword.error ? "Try Again" : visibleTime === 0 ? "Show Key" : `Vanishing in ${String(visibleTime)}`}
-                        disabled={visibleTime !== 0}
-                        color="teal"
-                        onClick={submit}
-                    />
+                    <Modal.Actions>
+                        
+                            <div className="flex justify-between">
+                                <Button size="small" className="transparent" content="Close" onClick={closeModal} basic />
+                                <Button
+                                    size="small"
+                                    content={formState.vaultPassword.error ? "Try Again" : visibleTime === 0 ? "Show Key" : `Vanishing in ${String(visibleTime)}`}
+                                    disabled={visibleTime !== 0}
+                                    color="teal"
+                                    onClick={submit}
+                                />
+                            </div>
+                    
+                    </Modal.Actions>
+                    
                 </div>
-
-            </Modal.Actions>
+            </FocusTrap>
 
         </Modal>
 

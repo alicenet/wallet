@@ -81,6 +81,8 @@ function Settings() {
                                 key={`settings-toggle-${index}`}
                                 label={toggle.label}
                                 toggle
+                                tabindex="0"
+                                onKeyDown={e => (e.key === " " || e.key === "Enter" || e.key === "Spacebar") && toggle.onChange() }
                                 onChange={toggle.onChange}
                                 checked={toggle.checked}
                             />
