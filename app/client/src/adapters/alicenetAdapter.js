@@ -7,7 +7,6 @@ import { getAliceNetWalletInstance } from 'redux/middleware/WalletManagerMiddlew
 import { default_log as log } from 'log/logHelper'
 import { SyncToastMessageSuccess, SyncToastMessageWarning } from 'components/customToasts/CustomToasts'
 import { toast } from 'react-toastify';
-import { curveTypes } from 'util/wallet';
 import { history } from 'history/history';
 import utils from 'util/_util';
 
@@ -358,7 +357,7 @@ class AliceNetAdapter {
                 switch (txOut.type) {
                     case "VS":
                         log.debug("TxOut created as ValueStore: ", txOut);
-                        await this.wallet().Transaction.createValueStore(txOut.fromAddress, txOut.value, txOut.toAddress, txOut.bnCurve ? curveTypes.BARRETO_NAEHRIG : curveTypes.SECP256K1)
+                        await this.wallet().Transaction.createValueStore(txOut.fromAddress, txOut.value, txOut.toAddress, txOut.bnCurve)
                         break;
                     case "DS":
                         log.debug("TxOut created as DataStore: ", txOut);
