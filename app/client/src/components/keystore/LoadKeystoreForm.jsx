@@ -91,6 +91,10 @@ export default function LoadKeystoreForm({ submitText, submitFunction, cancelTex
                     <label className="flex justify-between">
                         Keystore File
                         <Checkbox
+                            onKeyDown={e => (e.key === " " || e.key === "Enter" || e.key === "Spacebar") && toggleCurveType() } 
+                            role="checkbox" 
+                            aria-checked="false" 
+                            tabindex="0"
                             checked={curveType === curveTypes.BARRETO_NAEHRIG}
                             onChange={toggleCurveType}
                             label={

@@ -46,7 +46,7 @@ export default function ChangeReturnAddress() {
                         position="right center"
                         offset={"0,2"}
                         trigger={
-                            <div className="flex items-center text-xl gap-2 cursor-pointer" onClick={() => setShowChangeReturnAddressModal(true)}>
+                            <div className="flex items-center text-xl gap-2 cursor-pointer" tabindex="0" onKeyDown={e => (e.key === " " || e.key === "Enter" || e.key === "Spacebar") && setShowChangeReturnAddressModal(true) } onClick={() => setShowChangeReturnAddressModal(true)}>
                                 <div className="m-0 font-bold text-sm">Change Address</div>
                                 <Icon size="small" name="edit" className="m-0" />
                             </div>

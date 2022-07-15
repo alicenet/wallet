@@ -5,6 +5,7 @@ import { useFormState } from 'hooks/_hooks';
 import { MODAL_ACTIONS } from 'redux/actions/_actions';
 import { electronStoreCommonActions } from 'store/electronStoreHelper';
 import utils from 'util/_util';
+import FocusTrap from 'focus-trap-react';
 
 export default function ExportKeystoreModal() {
 
@@ -86,7 +87,6 @@ export default function ExportKeystoreModal() {
     }, []);
 
     return (
-
         <Modal open={isOpen}>
 
             <Modal.Header>
@@ -95,87 +95,92 @@ export default function ExportKeystoreModal() {
                 </Header>
             </Modal.Header>
 
-            <Modal.Content className="text-sm">
 
-                <p>
-                    Exporting a wallet keystore is considered an administrative action.
-                </p>
-                <p>
-                    Please provide your vault password below as well as a password for the exported keystore.
-                </p>
-                <p>
-                    There are no restrictions on this password, but it should be strong.
-                </p>
+            <FocusTrap> 
 
-                <Form
-                    error={!!formState.keystorePassword.error || !!formState.vaultPassword.error}
-                    size="small"
-                    className="mt-2"
-                    onSubmit={submit}
-                >
+                <div className="p-6">
+                    
+                    <Modal.Content className="text-sm">
 
-                    <Form.Group>
-
-                        {!optout && <Form.Input
-                            width={6}
-                            type={showPass ? "text" : "password"}
+                        <p>
+                            Exporting a wallet keystore is considered an administrative action.
+                        </p>
+                        <p>
+                            Please provide your vault password below as well as a password for the exported keystore.
+                        </p>
+                        <p>
+                            There are no restrictions on this password, but it should be strong.
+                        </p>
+                        <Form
+                            error={!!formState.keystorePassword.error || !!formState.vaultPassword.error}
                             size="small"
-                            label="Vault Password"
-                            placeholder="Vault Password"
-                            value={formState.vaultPassword.value}
-                            onChange={e => formSetter.setVaultPassword(e.target.value)}
-                            error={!!formState.vaultPassword.error && { content: formState.vaultPassword.error }}
-                            icon={
-                                <Icon color={keyVisible ? "green" : "black"} name={showPass ? "eye" : "eye slash"} link onClick={() => setShowPass(s => !s)} />
-                            } />
-                        }
+                            className="mt-2"
+                            onSubmit={submit}
+                        >
 
-                        <Form.Input
-                            width={6}
-                            type={storePassVisible ? "text" : "password"}
-                            value={formState.keystorePassword.value}
-                            error={!!formState.keystorePassword.error && { content: formState.keystorePassword.error }}
-                            label="Keystore Password"
-                            placeholder="Keystore Password"
-                            onChange={e => formSetter.setKeystorePassword(e.target.value)}
-                            icon={
-                                <Icon color={"black"} name={storePassVisible ? "eye" : "eye slash"} link onClick={() => setStorePassVisible(s => !s)} />
-                            }
-                        />
+                            <Form.Group>
 
-                    </Form.Group>
+                                {!optout && <Form.Input
+                                    width={6}
+                                    type={showPass ? "text" : "password"}
+                                    size="small"
+                                    label="Vault Password"
+                                    placeholder="Vault Password"
+                                    value={formState.vaultPassword.value}
+                                    onChange={e => formSetter.setVaultPassword(e.target.value)}
+                                    error={!!formState.vaultPassword.error && { content: formState.vaultPassword.error }}
+                                    icon={
+                                        <Icon color={keyVisible ? "green" : "black"} name={showPass ? "eye" : "eye slash"} link onClick={() => setShowPass(s => !s)} />
+                                    } />
+                                }
 
-                    <div>
-                        <span className="font-bold text-gray-600">Password Hint:</span>
-                        <span className="text-gray-400 ml-2">
-                            {passwordHint}
-                        </span>
-                    </div>
+                                <Form.Input
+                                    width={6}
+                                    type={storePassVisible ? "text" : "password"}
+                                    value={formState.keystorePassword.value}
+                                    error={!!formState.keystorePassword.error && { content: formState.keystorePassword.error }}
+                                    label="Keystore Password"
+                                    placeholder="Keystore Password"
+                                    onChange={e => formSetter.setKeystorePassword(e.target.value)}
+                                    icon={
+                                        <Icon color={"black"} name={storePassVisible ? "eye" : "eye slash"} link onClick={() => setStorePassVisible(s => !s)} />
+                                    }
+                                />
 
-                </Form>
+                            </Form.Group>
 
-            </Modal.Content>
+                            <div>
+                                <span className="font-bold text-gray-600">Password Hint:</span>
+                                <span className="text-gray-400 ml-2">
+                                    {passwordHint}
+                                </span>
+                            </div>
 
-            <Modal.Actions>
+                        </Form>
 
-                <div className="flex justify-between">
+                    </Modal.Content>
 
-                    <Button size="small" className="transparent" content="Close" onClick={closeModal} basic />
+                    <Modal.Actions>
+                        <div className="flex justify-between">
 
-                    <Button
-                        size="small"
-                        ref={downloadRef}
-                        href={keystoreDL ? URL.createObjectURL(keystoreDL.data) : ""} download={keystoreDL.filename}
-                        content={(!optout && formState.vaultPassword.error) || formState.keystorePassword.error ? "Try Again" : keystoreDL ? "Download Keystore" : "Create Keystore"}
-                        color="teal"
-                        onClick={keystoreDL ? closeModal : submit}
-                        icon={keystoreDL ? "download" : null}
-                    />
+                            <Button size="small" className="transparent" content="Close" onClick={closeModal} basic />
+
+                            <Button
+                                size="small"
+                                ref={downloadRef}
+                                href={keystoreDL ? URL.createObjectURL(keystoreDL.data) : ""} download={keystoreDL.filename}
+                                content={(!optout && formState.vaultPassword.error) || formState.keystorePassword.error ? "Try Again" : keystoreDL ? "Download Keystore" : "Create Keystore"}
+                                color="teal"
+                                onClick={keystoreDL ? closeModal : submit}
+                                icon={keystoreDL ? "download" : null}
+                            />
+
+                        </div>  
+                        
+                    </Modal.Actions>
 
                 </div>
-
-            </Modal.Actions>
-
+            </FocusTrap> 
         </Modal>
     )
 

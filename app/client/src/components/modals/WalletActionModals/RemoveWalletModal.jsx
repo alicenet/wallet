@@ -6,6 +6,7 @@ import { MODAL_ACTIONS, VAULT_ACTIONS } from 'redux/actions/_actions';
 import { electronStoreCommonActions } from 'store/electronStoreHelper';
 import { useFormState } from 'hooks/_hooks';
 import { WalletHubContext } from 'context/WalletHubContext';
+import FocusTrap from 'focus-trap-react';
 
 export default function RemoveWalletModal() {
 
@@ -124,11 +125,12 @@ export default function RemoveWalletModal() {
             </Modal.Content>
 
             <Modal.Actions>
-
-                <div className="flex justify-between">
-                    <Button size="small" className="transparent" content="Close" onClick={closeModal} basic />
-                    <Button size="small" content={error ? "Try Again" : "Delete Wallet"} color="teal" onClick={removeWallet} loading={loading && !error} />
-                </div>
+                <FocusTrap>
+                    <div className="flex justify-between">
+                        <Button size="small" className="transparent" content="Close" onClick={closeModal} basic />
+                        <Button size="small" content={error ? "Try Again" : "Delete Wallet"} color="teal" onClick={removeWallet} loading={loading && !error} />
+                    </div>
+                </FocusTrap>
 
             </Modal.Actions>
 
