@@ -12,6 +12,7 @@ import AddEditPrioritizationFeeModal from './AddEditPrioritizationFeeModal';
 import AddEditDataStoreModal from './AddEditDataStoreModal';
 import AddEditValueStoreModal from './AddEditValueStoreModal';
 import ChangeReturnAddress from './ChangeReturnAddress';
+import FilterTransactions from './FilterTransactions';
 import Page from 'layout/Page';
 
 const recordsPerPage = 5;
@@ -36,6 +37,7 @@ function ConstructionModule() {
     const [valueStore, setValueStore] = useState(null);
     const [activePage, setActivePage] = useState(1);
     const [paginatedList, setPaginatedList] = useState([]);
+    const [filterTransactions, setFilterTransactions] = useState(0);
 
     const totalPages = Math.ceil(list.length / 5);
     const nextAvailable = (activePage + 1) <= totalPages;
@@ -89,6 +91,8 @@ function ConstructionModule() {
         </div>
     );
 
+    const handleFilterTransactions = (e, { value }) => setFilterTransactions(value);
+
     useEffect(() => {
         if (list.length > 0) {
             const chunks = chunk(list, recordsPerPage);
@@ -108,6 +112,9 @@ function ConstructionModule() {
             }
         }
     }, [list, activePage]);
+
+    const filteredArray = filterTransactions === 0 ? paginatedList : paginatedList.filter(tx => tx.type === filterTransactions);
+    const filteredTxs = filterTransactions === 0 ? filteredArray : filteredArray.concat(Array(4).fill(false));
 
     return (
         <Page showMenu showNetworkStatus>
@@ -167,7 +174,7 @@ function ConstructionModule() {
 
                             <Table.Body>
 
-                                {isEmpty(list) ?
+                                {isEmpty(filterTransactions === 0 ? list : list.filter(tx => tx.type === filterTransactions)) ?
 
                                     <Table.Row>
 
@@ -182,18 +189,19 @@ function ConstructionModule() {
                                         </Table.Cell>
 
                                     </Table.Row> :
-
-                                    paginatedList.map(
-                                        (transaction, index) => {
-                                            const absoluteIndex = (activePage - 1) * recordsPerPage + index;
-                                            return <TransactionRow
-                                                key={`transaction-row-${index}`}
-                                                transaction={transaction}
-                                                index={absoluteIndex}
-                                                onUpdate={transaction.type === transactionTypes.DATA_STORE ? setDataStore : setValueStore}
-                                            />;
-                                        }
-                                    )
+                                        filteredTxs
+                                        .map(
+                                            (transaction, index) => {
+                                                const absoluteIndex = (activePage - 1) * recordsPerPage + index;
+                                                
+                                                return <TransactionRow
+                                                    key={`transaction-row-${index}`}
+                                                    transaction={transaction}
+                                                    index={absoluteIndex}
+                                                    onUpdate={transaction.type === transactionTypes.DATA_STORE ? setDataStore : setValueStore}
+                                                />;
+                                            }
+                                        )
                                 }
 
                             </Table.Body>
@@ -236,6 +244,7 @@ function ConstructionModule() {
 
                             <Grid.Column className="p-0 flex flex-col justify-between">
 
+                                <FilterTransactions value={filterTransactions} handleChange={handleFilterTransactions}/>
                                 <ChangeReturnAddress />
 
                             </Grid.Column>
