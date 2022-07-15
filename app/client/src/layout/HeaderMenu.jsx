@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Container, Header, Icon, Image, Menu, Popup } from 'semantic-ui-react';
+import { Button, Container, Header, Icon, Image, Menu, Popup } from 'semantic-ui-react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Notifications } from './Notifications';
@@ -59,7 +59,8 @@ function HeaderMenu({ showMenu }) {
     const MenuTabItem = ({ name, activeId, gotoPath }) => {
         return (
             <Menu.Item
-                className="cursor-pointer hover:bg-gray-200 hover:bg-opacity-50 hover:rounded-2xl"
+                as={Button}
+                className="cursor-pointer hover:bg-gray-200 hover:bg-opacity-50 hover:rounded-2xl text-sm m-t:5"
                 content={name}
                 active={activeId === activeTabPane}
                 onClick={() => goto(gotoPath)}
@@ -109,7 +110,7 @@ function HeaderMenu({ showMenu }) {
                             position="right center"
                             offset="0, -4"
                             trigger={
-                                <Menu.Item as='a' header onClick={() => dispatch(VAULT_ACTIONS.lockVault())} className="group px-3 hover:bg-transparent">
+                                <Menu.Item as="a" header onClick={() => dispatch(VAULT_ACTIONS.lockVault())} onKeyDown={e => (e.key === " " || e.key === "Enter" || e.key === "Spacebar") &&  dispatch(VAULT_ACTIONS.lockVault())} className="group px-3 hover:bg-transparent" role="button" tabindex="0" aria-pressed="false">
 
                                     <Icon
                                         onMouseEnter={() => setLockIcon("lock")}
@@ -129,7 +130,7 @@ function HeaderMenu({ showMenu }) {
                             position="right center"
                             offset="0, -4"
                             trigger={
-                                <Menu.Item as='a' header onClick={() => history.push('/wallet/settings')} className="px-3 hover:bg-transparent group">
+                                <Menu.Item as='a' header onClick={() => history.push('/wallet/settings')} onKeyDown={e => (e.key === " " || e.key === "Enter" || e.key === "Spacebar") && history.push('/wallet/settings')} className="px-3 hover:bg-transparent group" role="button" tabindex="0" aria-pressed="false">
                                     <Icon name="cog" className="transform duration-300 group-hover:rotate-90" />
                                 </Menu.Item>
                             }

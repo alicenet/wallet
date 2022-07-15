@@ -87,8 +87,8 @@ export default function NetworkStatusIndicator() {
             onClose={handleClose}
             size="small"
             trigger={
-                <div
-                    className="group transition-all transition-slow ease hover:w-14 w-12 flex flex-col absolute bottom-0 left-0 text-xs cursor-pointer p-1 rounded-tr"
+                <Button
+                    className="bg-transparent group transition-all transition-slow ease hover:w-14 w-12 flex flex-col absolute bottom-0 left-0 text-xs cursor-pointer p-1 rounded-tr"
                     onClick={() => setOpenModal(true)}
                 >
 
@@ -110,7 +110,7 @@ export default function NetworkStatusIndicator() {
                         </div>
                     </div>
 
-                </div>
+                </Button>
             }
         >
 

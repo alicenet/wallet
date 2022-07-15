@@ -122,12 +122,12 @@ function ConstructionModule() {
 
                             <Menu compact icon='labeled' size="small">
 
-                                <Menu.Item name="add-data-store" onClick={() => setDataStore(emptyDataStore)} disabled={!web3Connected || !aliceNetConnected}>
-                                    <Icon name="chart bar" className="text-gray-600" />Create Data Store
+                                <Menu.Item as={Button} name="add-data-store" className="mr-0" onClick={() => setDataStore(emptyDataStore)} disabled={!web3Connected || !aliceNetConnected}>
+                                    <Icon name="chart bar" className="text-gray-600"/>Create Data Store
                                 </Menu.Item>
 
-                                <Menu.Item name='add-value-store' onClick={() => setValueStore(emptyValueStore)} disabled={!web3Connected || !aliceNetConnected}>
-                                    <Icon name="currency" className="text-gray-600" />Create Value Store
+                                <Menu.Item as={Button} name='add-value-store' className="mr-0" onClick={() => setValueStore(emptyValueStore)} disabled={!web3Connected || !aliceNetConnected}>
+                                    <Icon name="currency" className="text-gray-600"/>Create Value Store
                                 </Menu.Item>
 
                                 <AddEditPrioritizationFeeModal />
