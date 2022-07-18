@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Grid, Header, Label, Message, Table } from 'semantic-ui-react';
+import { Button, Checkbox, Grid, Header, Label, Message, Table } from 'semantic-ui-react';
 import { useDispatch, useSelector } from 'react-redux';
 import get from 'lodash/get';
 
@@ -22,6 +22,8 @@ function InspectionModule() {
 
     const [vinFocus, setVinFocus] = useState(0); // IDX of the focused VIN
     const [voutFocus, setVoutFocus] = useState(0); // IDX of the focused vOUT
+
+    const [toggleView, setToggleView] = useState(0);
 
     let showBackButton = false; // Default false -- If state available from push show true
 
@@ -243,8 +245,14 @@ function InspectionModule() {
                                 <div className="flex justify-start mb-3">
                                     <Label className="text-xs">TxFee: {txFee} AliceNetBytes</Label>
                                 </div>
-                                <VinTable />
-                                <VoutTable />
+
+                                <div className="flex justify-start mb-3">
+                                    <Checkbox label="Toggle view vout/vin" toggle checked={toggleView} onChange={() => setToggleView(!toggleView)} />
+                                </div>
+                                
+                                {toggleView  ? <VinTable /> : <VoutTable />}
+                                
+                                
                             </>
                     }
                 </Grid.Column>
