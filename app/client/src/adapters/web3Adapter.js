@@ -335,7 +335,6 @@ class Web3Adapter {
     // Get the abi method object from contract and method name
     async getMethod(contract, fn) {
         try {
-            console.log({ contract, fn })
             let method = await ABI[contract].find(e => e["name"] === fn);
             if (!method) {
                 throw new Error({
