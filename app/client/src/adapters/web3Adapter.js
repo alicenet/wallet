@@ -9,7 +9,7 @@ import { history } from 'history/history';
 import { SyncToastMessageSuccess, SyncToastMessageWarning } from 'components/customToasts/CustomToasts';
 import { toast } from 'react-toastify';
 
-const reqContracts = ["ValidatorStaking", "ValidatorPool", "BToken", "BToken", "AToken"];
+const reqContracts = ["ValidatorStaking", "ValidatorPool", "BToken", "AToken"];
 
 const Web3Error = ({ msg }) => {
     return (
@@ -335,6 +335,7 @@ class Web3Adapter {
     // Get the abi method object from contract and method name
     async getMethod(contract, fn) {
         try {
+            console.log({ contract, fn })
             let method = await ABI[contract].find(e => e["name"] === fn);
             if (!method) {
                 throw new Error({
@@ -498,14 +499,14 @@ class Web3Adapter {
             console.log("GETVALINFO")
             let isValidator = await this.internalMethod("ValidatorPool", "isValidator", { account_: this.selectedAddress });
             console.log("ISVAL", isValidator);
-            let stakingBalance = await this.internalMethod("BToken", "balanceOf", { account: this.selectedAddress });
+            let stakingBalance = await this.internalMethod("AToken", "balanceOf", { account: this.selectedAddress });
             console.log("STAKEBAL", stakingBalance)
             let isStaking, rewardBalance, unlockedBalance = false;
             if (stakingBalance && stakingBalance !== "0") {
                 isStaking = true;
-                rewardBalance = await this.internalMethod("ValidatorStaking", "balanceReward");
+                // rewardBalance = await this.internalMethod("ValidatorStaking", "balanceReward");
                 console.log("REWARDBAL", rewardBalance);
-                unlockedBalance = await this.internalMethod("ValidatorStaking", "balanceUnlocked");
+                // unlockedBalance = await this.internalMethod("ValidatorStaking", "balanceUnlocked");
                 console.log("UNLOCKBAL", unlockedBalance);
             }
             else {
@@ -568,12 +569,12 @@ class Web3Adapter {
      */
     async getTokenBalances(address) {
         try {
-            let stakingToken = await this.getContract("BToken");
+            let stakingToken = await this.getContract("AToken");
             let stakingBalance = await stakingToken.methods.balanceOf(address ? address : this.selectedAddress).call();
             let staking = await this.getContract("ValidatorStaking");
             let stakingAllowance = await stakingToken.methods.allowance(address ? address : this.selectedAddress, staking["_address"]).call();
 
-            let utilityToken = await this.getContract("AToken");
+            let utilityToken = await this.getContract("BToken");
             let utilityBalance = await utilityToken.methods.balanceOf(address ? address : this.selectedAddress).call();
             let utility = await this.getContract("BToken");
             let utilityAllowance = await utilityToken.methods.allowance(address ? address : this.selectedAddress, utility["_address"]).call();
@@ -635,7 +636,7 @@ class Web3Adapter {
             let staking = await this.getContract("ValidatorStaking")
             data["guy"] = staking["_address"];
             data["wad"] = amount;
-            await this.method("btoken", "approve", data);
+            await this.method("AToken", "approve", data);
         } catch (ex) {
             return { error: ex.message };
         }
@@ -648,7 +649,7 @@ class Web3Adapter {
             let deposit = await this.getContract("BToken");
             data["guy"] = deposit["_address"];
             data["wad"] = amount;
-            await this.method("AToken", "approve", data);
+            await this.method("BToken", "approve", data);
         } catch (ex) {
             return ({ error: ex.message });
         }
