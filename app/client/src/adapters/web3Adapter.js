@@ -504,8 +504,10 @@ class Web3Adapter {
             let isStaking, rewardBalance, unlockedBalance = false;
             if (stakingBalance && stakingBalance !== "0") {
                 isStaking = true;
+                // TODO: Define correct method
                 // rewardBalance = await this.internalMethod("ValidatorStaking", "balanceReward");
                 console.log("REWARDBAL", rewardBalance);
+                // TODO: Define correct method
                 // unlockedBalance = await this.internalMethod("ValidatorStaking", "balanceUnlocked");
                 console.log("UNLOCKBAL", unlockedBalance);
             }
