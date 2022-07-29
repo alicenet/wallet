@@ -23,7 +23,7 @@ function InspectionModule() {
     const [vinFocus, setVinFocus] = useState(0); // IDX of the focused VIN
     const [voutFocus, setVoutFocus] = useState(0); // IDX of the focused vOUT
 
-    const [toggleView, setToggleView] = useState(0);
+    const [toggleView, setToggleView] = useState(false);
 
     let showBackButton = false; // Default false -- If state available from push show true
 
