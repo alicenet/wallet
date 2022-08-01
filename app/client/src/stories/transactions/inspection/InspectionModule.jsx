@@ -247,7 +247,7 @@ function InspectionModule() {
                                 </div>
 
                                 <div className="flex justify-start mb-3">
-                                    <Checkbox label="Toggle view vout/vin" toggle checked={toggleView} onChange={() => setToggleView(!toggleView)} />
+                                    <Checkbox label={toggleView ? "VToggle - Showing VINs" : " VToggle - Showing VOUTs"} toggle checked={toggleView} onChange={() => setToggleView(!toggleView)} />
                                 </div>
                                 
                                 {toggleView  ? <VinTable /> : <VoutTable />}
