@@ -122,8 +122,8 @@ export default function Overview({ wallet }) {
                                 </div>
                             ) : (<>
                                 <MicroBalanceLoader balanceType="ETH" balanceKey={"eth"} />
-                                <MicroBalanceLoader balanceType="STAKE" balanceKey={"stake"} balanceAllowance={"stakeAllowance"} />
-                                <MicroBalanceLoader balanceType="UTIL" balanceKey={"util"} balanceAllowance={"utilAllowance"} />
+                                <MicroBalanceLoader balanceType="ALCA" balanceKey={"stake"} balanceAllowance={"stakeAllowance"} />
+                                <MicroBalanceLoader balanceType="ALCB" balanceKey={"util"} balanceAllowance={"utilAllowance"} />
                             </>)}
                         </div>
 
@@ -137,7 +137,7 @@ export default function Overview({ wallet }) {
 
                         <label className="font-semibold text-gray-800 underline">AliceNet Balances</label>
                         <div className="py-1">
-                            <MicroBalanceLoader balanceType="AliceNetBytes" balanceKey={"aliceNetBytes"} />
+                            <MicroBalanceLoader balanceType="ALCB" balanceKey={"aliceNetBytes"} />
                         </div>
 
                     </Container>
