@@ -247,7 +247,7 @@ function InspectionModule() {
                                 </div>
 
                                 <div className="flex justify-start mb-3">
-                                    <Radio label="VToggle - Showing VOUTs" checked={toggleView} onChange={() => setToggleView(!toggleView)}/>
+                                    <Radio label="VToggle - Showing VOUTs" checked={toggleView} onChange={() => setToggleView(!toggleView)} className="mr-4"/>
                                     <Radio label="VToggle - Showing VINs" checked={!toggleView} onChange={() => setToggleView(!toggleView)}/>
                                 </div>
                                 
