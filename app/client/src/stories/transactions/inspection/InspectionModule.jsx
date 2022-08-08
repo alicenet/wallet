@@ -102,9 +102,9 @@ function InspectionModule() {
                 return (
                     <Table.Row key={`row-detail-${key}`}>
 
-                        <Table.Cell>{stringUtils.prettifyUnderscoreKey(key)}</Table.Cell>
+                        <Table.Cell style={{ borderRight: '1px solid silver' }}>{stringUtils.prettifyUnderscoreKey(key)}</Table.Cell>
 
-                        <Table.Cell className="flex items-center">
+                        <Table.Cell className="flex items-center border-l-0">
                             {typeof value !== "object" && value && value.length > 52 ? stringUtils.splitStringWithEllipsis(value, 52) : value}
                         </Table.Cell>
 
