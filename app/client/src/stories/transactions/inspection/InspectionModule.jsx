@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Checkbox, Grid, Header, Label, Message, Table } from 'semantic-ui-react';
+import { Button, Grid, Header, Label, Message, Radio, Table } from 'semantic-ui-react';
 import { useDispatch, useSelector } from 'react-redux';
 import get from 'lodash/get';
 
@@ -23,7 +23,7 @@ function InspectionModule() {
     const [vinFocus, setVinFocus] = useState(0); // IDX of the focused VIN
     const [voutFocus, setVoutFocus] = useState(0); // IDX of the focused vOUT
 
-    const [toggleView, setToggleView] = useState(false);
+    const [toggleView, setToggleView] = useState(true);
 
     let showBackButton = false; // Default false -- If state available from push show true
 
@@ -247,10 +247,11 @@ function InspectionModule() {
                                 </div>
 
                                 <div className="flex justify-start mb-3">
-                                    <Checkbox label={toggleView ? "VToggle - Showing VINs" : " VToggle - Showing VOUTs"} toggle checked={toggleView} onChange={() => setToggleView(!toggleView)} />
+                                    <Radio label="Show VOUTs" checked={toggleView} onChange={() => setToggleView(!toggleView)} className="mr-4"/>
+                                    <Radio label="Show VINs" checked={!toggleView} onChange={() => setToggleView(!toggleView)}/>
                                 </div>
                                 
-                                {toggleView  ? <VinTable /> : <VoutTable />}
+                                {toggleView  ?  <VoutTable /> : <VinTable />}
                                 
                                 
                             </>
