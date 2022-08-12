@@ -118,10 +118,9 @@ function InspectionModule() {
         return (
             <>
                 <Header sub className="text-xs m-0 flex items-center">
-                    VINs
-                    <div className="flex justify-between items-center m-auto">
+                    <div className="flex justify-between items-center m-auto w-full">
                         <Button disabled={vinFocus === 0} icon="left chevron" size="mini" onClick={() => setVinFocus(vinFocus => vinFocus - 1)} />
-                        <div className="text-xs text-gray-600 mr-1">Page {vinFocus + 1} of {totalPages} </div>
+                        <div className="text-xs text-gray-600 mr-1">VINs {vinFocus + 1} of {totalPages} </div>
                         <Button disabled={vinFocus >= totalPages - 1} icon="right chevron" size="mini" onClick={() => setVinFocus(vinFocus => vinFocus + 1)} />
                     </div>
                 </Header>
@@ -184,12 +183,9 @@ function InspectionModule() {
         return (
             <>
                 <Header sub className="text-xs m-0 flex items-center justify-between w-full">
-                    <div className="flex items-center">
-                        VOUTs
-                    </div>
-                    <div className="flex justify-between items-center">
+                    <div className="flex items-center justify-between w-full">
                         <Button disabled={voutFocus === 0} icon="left chevron" size="mini" onClick={() => setVoutFocus(voutFocus => voutFocus - 1)} />
-                        <div className="text-xs text-gray-600 mr-1">Page {voutFocus + 1} of {totalPages} </div>
+                        <div className="text-xs text-gray-600 mr-1">VOUTs {voutFocus + 1} of {totalPages} </div>
                         <Button disabled={voutFocus >= totalPages - 1} icon="right chevron" size="mini" onClick={() => setVoutFocus(voutFocus => voutFocus + 1)} />
                     </div>
                     <div>
