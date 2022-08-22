@@ -113,24 +113,18 @@ function InspectionModule() {
             })
         };
 
+        const totalPages = txObj.vins.length;
+
         return (
             <>
                 <Header sub className="text-xs m-0 flex items-center">
-                    VINs {txObj.vins.map((vin, idx) => (
-                    <div
-                        key={idx}
-                        onClick={() => setVinFocus(idx)}
-                        className={
-                            classNames(
-                                "first:ml-4 ml-4 cursor-pointer border-solid border border-gray-300 px-2 py-1 rounded hover:text-blue-500 hover:border-blue-400",
-                                { "text-blue-500 border-blue-400": idx === vinFocus },
-                            )
-                        }
-                    >
-                        {idx}
+                    <div className="flex justify-between items-center m-auto w-full">
+                        <Button disabled={vinFocus === 0} icon="left chevron" size="mini" onClick={() => setVinFocus(vinFocus => vinFocus - 1)} />
+                        <div className="text-xs text-gray-600 mr-1">VINs {vinFocus + 1} of {totalPages} </div>
+                        <Button disabled={vinFocus >= totalPages - 1} icon="right chevron" size="mini" onClick={() => setVinFocus(vinFocus => vinFocus + 1)} />
                     </div>
-                ))}
                 </Header>
+                
                 <Table definition color="blue" size="small" compact className="text-xs m-0 my-2">
                     <Table.Body>
                         {genRows()}
@@ -184,25 +178,15 @@ function InspectionModule() {
                 );
             });
         };
+        const totalPages = txObj.vouts.length;
 
         return (
             <>
                 <Header sub className="text-xs m-0 flex items-center justify-between w-full">
-                    <div className="flex items-center">
-                        VOUTs {txObj.vouts.map((vout, idx) => (
-                        <div
-                            key={idx}
-                            onClick={() => setVoutFocus(idx)}
-                            className={
-                                classNames(
-                                    "first:ml-4 ml-4 cursor-pointer border-solid border border-gray-300 px-2 py-1 rounded hover:text-blue-500 hover:border-blue-400",
-                                    { "text-blue-500 border-blue-400": idx === voutFocus }
-                                )
-                            }
-                        >
-                            {idx}
-                        </div>
-                    ))}
+                    <div className="flex items-center justify-between w-full">
+                        <Button disabled={voutFocus === 0} icon="left chevron" size="mini" onClick={() => setVoutFocus(voutFocus => voutFocus - 1)} />
+                        <div className="text-xs text-gray-600 mr-1">VOUTs {voutFocus + 1} of {totalPages} </div>
+                        <Button disabled={voutFocus >= totalPages - 1} icon="right chevron" size="mini" onClick={() => setVoutFocus(voutFocus => voutFocus + 1)} />
                     </div>
                     <div>
                         <Label
