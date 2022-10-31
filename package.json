@@ -15,7 +15,8 @@
         "lint-fix": "eslint --fix .",
         "postinstall": "cd app/client && yarn",
         "clean-install": "rm -rf node_modules package-lock.json yarn.lock app/client/node_modules app/client/package-lock.json app/client/yarn.lock; yarn",
-        "build-docs": "jsdoc -c jsdoc.json"
+        "build-docs": "jsdoc -c jsdoc.json",
+        "prepare": "husky install"
     },
     "author": "",
     "license": "ISC",
@@ -35,8 +36,18 @@
         "electron": "17.0.0",
         "electron-builder": "22.11.10",
         "electron-notarize": "1.0.1",
+        "eslint": "^8.26.0",
+        "eslint-plugin-react": "^7.31.10",
+        "husky": "^8.0.1",
         "jsdoc": "3.6.10",
-        "mad-doc-template": "git+https://github.com/MadBase/mad-doc-template.git"
+        "mad-doc-template": "git+https://github.com/MadBase/mad-doc-template.git",
+        "prettier": "2.7.1"
+    },
+    "lint-staged": {
+        "*.js": [
+            "prettier --write",
+            "eslint --cache --fix"
+        ]
     },
     "build": {
         "afterSign": "notarize.js",
