@@ -41,7 +41,7 @@ export default function Overview({ wallet }) {
                 <div className="text-right w-24 inline font-bold">{balanceType}:</div>
                 <div className="ml-2 text-left inline text-gray-500">
                     {balancesLoading ? <div className="ellipses-after inline" /> :
-                        thisWalletBalances[balanceKey] ? (thisWalletBalances[balanceKey]) : ""}
+                        thisWalletBalances[balanceKey] ? (thisWalletBalances[balanceKey]).toString() : ""}
                     {balanceAllowance && !balancesLoading && thisWalletBalances[balanceAllowance] ? " / " + (thisWalletBalances[balanceAllowance]) : ""}
                 </div>
             </div>
