@@ -1,23 +1,30 @@
-import React from 'react';
-import store from 'redux/store/store';
-import Web3 from 'web3';
-import ABI from './abi.js';
-import { ADAPTER_ACTIONS } from 'redux/actions/_actions';
-import { default_log as log } from 'log/logHelper'
-import { history } from 'history/history';
+import React from "react";
+import store from "redux/store/store";
+import Web3 from "web3";
+import ABI from "./abi.js";
+import { ADAPTER_ACTIONS } from "redux/actions/_actions";
+import { default_log as log } from "log/logHelper";
+import { history } from "history/history";
 
-import { SyncToastMessageSuccess, SyncToastMessageWarning } from 'components/customToasts/CustomToasts';
-import { toast } from 'react-toastify';
+import {
+    SyncToastMessageSuccess,
+    SyncToastMessageWarning,
+} from "components/customToasts/CustomToasts";
+import { toast } from "react-toastify";
 
 const reqContracts = ["ValidatorStaking", "ValidatorPool", "BToken", "AToken"];
 
 const Web3Error = ({ msg }) => {
-    return (
-        <SyncToastMessageWarning title="Web3 Error" message={msg} />
-    );
+    return <SyncToastMessageWarning title="Web3 Error" message={msg} />;
 };
 
-const Web3ErrToastOpts = { className: "basic", "autoClose": 5000, "onClick": () => { history.push("/wallet/advancedSettings") } };
+const Web3ErrToastOpts = {
+    className: "basic",
+    autoClose: 5000,
+    onClick: () => {
+        history.push("/wallet/advancedSettings");
+    },
+};
 
 /**
  * Web3Adapter that provides ethereum access across the application
@@ -27,7 +34,6 @@ const Web3ErrToastOpts = { className: "basic", "autoClose": 5000, "onClick": () 
  * After instancing the Web3Adapter it must be initiated prior to use -- Once initiated it will remain available until close
  */
 class Web3Adapter {
-
     /**
      * @typedef Web3ContractAccount
      * @property { String } address - Ethereum Address
@@ -56,12 +62,13 @@ class Web3Adapter {
         this.selectedAddress = false; // Currently selected address
 
         /** @type { Web3ContractAccount } */
-        this.account = { // Account information from the contracts
-            "address": "",
-            "balances": {
-                "token": {}
+        this.account = {
+            // Account information from the contracts
+            address: "",
+            balances: {
+                token: {},
             },
-            "validatorInfo": {}
+            validatorInfo: {},
         };
 
         this.lastNotedConfig = {
@@ -86,9 +93,11 @@ class Web3Adapter {
         // Set the latest contracts
         let connected = await this._setAndGetUptoDateContracts();
         if (connected.error) {
-            store.dispatch(ADAPTER_ACTIONS.setWeb3Connected(false)) // On any error dispatch not connected state
+            store.dispatch(ADAPTER_ACTIONS.setWeb3Connected(false)); // On any error dispatch not connected state
             store.dispatch(ADAPTER_ACTIONS.setWeb3Busy(false));
-            store.dispatch(ADAPTER_ACTIONS.setWeb3Error(connected.error.message));
+            store.dispatch(
+                ADAPTER_ACTIONS.setWeb3Error(connected.error.message)
+            );
             toast.error(<Web3Error msg="Verify Settings" />, Web3ErrToastOpts);
             return { error: connected.error };
         }
@@ -100,7 +109,10 @@ class Web3Adapter {
             store.dispatch(ADAPTER_ACTIONS.setWeb3Connected(false)); // On any error dispatch not connected state
             store.dispatch(ADAPTER_ACTIONS.setWeb3Busy(false));
             store.dispatch(ADAPTER_ACTIONS.setWeb3Error(error));
-            toast.error(<Web3Error msg="Verify Eth Provider" />, Web3ErrToastOpts);
+            toast.error(
+                <Web3Error msg="Verify Eth Provider" />,
+                Web3ErrToastOpts
+            );
             return { error };
         }
         if (!this._getRegistryContractFromStore()) {
@@ -108,7 +120,10 @@ class Web3Adapter {
             store.dispatch(ADAPTER_ACTIONS.setWeb3Connected(false)); // On any error dispatch not connected state
             store.dispatch(ADAPTER_ACTIONS.setWeb3Busy(false));
             store.dispatch(ADAPTER_ACTIONS.setWeb3Error(error));
-            toast.error(<Web3Error msg="Verify Registry Contract" />, Web3ErrToastOpts);
+            toast.error(
+                <Web3Error msg="Verify Registry Contract" />,
+                Web3ErrToastOpts
+            );
             return { error: "No registry contract found in state." };
         }
         // If all of these pass, note that the instance is connected and no error has occurred
@@ -116,12 +131,22 @@ class Web3Adapter {
         store.dispatch(ADAPTER_ACTIONS.setWeb3Busy(false));
         store.dispatch(ADAPTER_ACTIONS.setWeb3Error(false));
         if (!config.preventToast) {
-            toast.success(<SyncToastMessageSuccess basic title="Success" message="Web3 Connected" />, { className: "basic", "autoClose": 2400, delay: 1000 });
+            toast.success(
+                <SyncToastMessageSuccess
+                    basic
+                    title="Success"
+                    message="Web3 Connected"
+                />,
+                { className: "basic", autoClose: 2400, delay: 1000 }
+            );
         }
         return { success: true };
     }
 
-    _updateLastNotedConfig(ethereumProvider = this._getEthereumProviderFromStore(), registryContractAddress = this._getRegistryContractFromStore()) {
+    _updateLastNotedConfig(
+        ethereumProvider = this._getEthereumProviderFromStore(),
+        registryContractAddress = this._getRegistryContractFromStore()
+    ) {
         this.lastNotedConfig = {
             ethereum_provider: ethereumProvider,
             registry_contract_address: registryContractAddress,
@@ -149,32 +174,40 @@ class Web3Adapter {
             let isLocked = state.vault.is_locked;
             // If at any point attempts are made when the vault is locked -- Ignore them
             if (isLocked) {
-                log.debug("Skipping subscription checks on Web3 Adapter -- Account is locked");
+                log.debug(
+                    "Skipping subscription checks on Web3 Adapter -- Account is locked"
+                );
                 return;
             }
             let newNotableState = {
                 ethereum_provider: latestConfig.ethereum_provider,
-                registry_contract_address: latestConfig.registry_contract_address,
+                registry_contract_address:
+                    latestConfig.registry_contract_address,
             };
             let updateOccurence = await (() => {
-                return new Promise(res => {
-                    Object.keys(newNotableState).forEach(key => {
-                        if (newNotableState[key] !== this.lastNotedConfig[key]) {
+                return new Promise((res) => {
+                    Object.keys(newNotableState).forEach((key) => {
+                        if (
+                            newNotableState[key] !== this.lastNotedConfig[key]
+                        ) {
                             res(true);
                         }
-                    })
+                    });
                     res(false);
-                })
+                });
             })();
             if (updateOccurence) {
-                if (!this.isInitializing) { // Guard against re-entrances on initializing
-                    log.debug("Configuration change for Web3 Adapter -- Reinitializing");
+                if (!this.isInitializing) {
+                    // Guard against re-entrances on initializing
+                    log.debug(
+                        "Configuration change for Web3 Adapter -- Reinitializing"
+                    );
                     this.isInitializing = true;
                     await this.__init({ preventToast: true, reinit: true });
                     this.isInitializing = false;
                 }
             }
-        })
+        });
     }
 
     /**
@@ -197,7 +230,12 @@ class Web3Adapter {
      */
     _setAndGetUptoDateWeb3Instance() {
         try {
-            let newWeb3 = new Web3(new Web3.providers.HttpProvider(this._getEthereumProviderFromStore(), { timeout: 5000 }));
+            let newWeb3 = new Web3(
+                new Web3.providers.HttpProvider(
+                    this._getEthereumProviderFromStore(),
+                    { timeout: 5000 }
+                )
+            );
             this.web3 = newWeb3;
             return this.web3;
         } catch (ex) {
@@ -214,33 +252,49 @@ class Web3Adapter {
             let web3 = this._setAndGetUptoDateWeb3Instance(); // Get an uptoDate web3 instance
             // Registry === New Factory Contract -- To update this name atm would be exceptionally painful, leaving as registry contract variable at the moment
             // TODO: Update all registryContract references to "Factory Contract" references ( someday )
-            let registryContract = new web3.eth.Contract(ABI["factory"], this._getRegistryContractFromStore()); // Note the current registry address from config -- 
+            let registryContract = new web3.eth.Contract(
+                ABI["factory"],
+                this._getRegistryContractFromStore()
+            ); // Note the current registry address from config --
             let contractList = []; // Array to push contracts to and return
             for await (let contract of reqContracts) {
-                let contractAddr = await registryContract.methods.lookup(web3.utils.asciiToHex(contract)).call();
-                let newContract = new this.web3.eth.Contract(ABI[contract], contractAddr);
+                let contractAddr = await registryContract.methods
+                    .lookup(web3.utils.asciiToHex(contract))
+                    .call();
+                let newContract = new this.web3.eth.Contract(
+                    ABI[contract],
+                    contractAddr
+                );
                 let info = {};
                 info["name"] = contract;
                 info["instance"] = newContract;
                 contractList.push(info);
             }
-            console.log(contractList)
+            console.log(contractList);
             this.contracts = contractList;
             return this.contracts;
         } catch (ex) {
-            return { error: ex }
+            return { error: ex };
         }
     }
 
     /** Sets the current information to redux state regarding validators and epoch time */
     async _setAndGetInfo() {
         try {
-            let validatorCount = await this.internalMethod("ValidatorPool", "getValidatorsCount");
-            console.log("HEY", validatorCount)
-            let validatorMax = await this.internalMethod("ValidatorPool", "getMaxNumValidators");
-            console.log("HEY", validatorMax)
+            let validatorCount = await this.internalMethod(
+                "ValidatorPool",
+                "getValidatorsCount"
+            );
+            console.log("HEY", validatorCount);
+            let validatorMax = await this.internalMethod(
+                "ValidatorPool",
+                "getMaxNumValidators"
+            );
+            console.log("HEY", validatorMax);
             let epoch = await this.getEpoch();
-            store.dispatch(ADAPTER_ACTIONS.setWeb3Info(epoch, validatorCount, validatorMax));
+            store.dispatch(
+                ADAPTER_ACTIONS.setWeb3Info(epoch, validatorCount, validatorMax)
+            );
         } catch (ex) {
             console.error("Could not get validator info.", ex);
             throw new Error(ex);
@@ -255,12 +309,14 @@ class Web3Adapter {
      */
     async useAccount(privK) {
         try {
-            let account = await this.web3.eth.accounts.privateKeyToAccount("0x" + privK);
+            let account = await this.web3.eth.accounts.privateKeyToAccount(
+                "0x" + privK
+            );
             await this.web3.eth.accounts.wallet.add(account);
             this.selectedAddress = account["address"];
             return await this.updateAccount();
         } catch (ex) {
-            return { error: ex }
+            return { error: ex };
         }
     }
 
@@ -272,7 +328,7 @@ class Web3Adapter {
     async updateAccount() {
         try {
             let balances = await this.getAccountBalances(this.selectedAddress);
-            console.log("UPDATEACCOUNTBALS", balances)
+            console.log("UPDATEACCOUNTBALS", balances);
             this.getEpoch(); // Fire off an epoch update
             // Get the latest validator information on account updates
             let validatorInfo = await this.getValidatorInfo();
@@ -280,7 +336,7 @@ class Web3Adapter {
             this.account = {
                 address: this.selectedAddress,
                 balances,
-                "validatorInfo": validatorInfo
+                validatorInfo: validatorInfo,
             };
             return this.account;
         } catch (ex) {
@@ -296,20 +352,30 @@ class Web3Adapter {
     async getAccountBalances(address) {
         try {
             let ethBalance = await this.getEthBalance(address);
-            console.log("ETHBAL:", ethBalance)
-            let [stakingBalance, stakingAllowance, utilityBalance, utilityAllowance] = await this.getTokenBalances(address);
-            console.log("FOUNDBALSWEB3", [stakingBalance, stakingAllowance, utilityBalance, utilityAllowance])
+            console.log("ETHBAL:", ethBalance);
+            let [
+                stakingBalance,
+                stakingAllowance,
+                utilityBalance,
+                utilityAllowance,
+            ] = await this.getTokenBalances(address);
+            console.log("FOUNDBALSWEB3", [
+                stakingBalance,
+                stakingAllowance,
+                utilityBalance,
+                utilityAllowance,
+            ]);
             this.getEpoch(); // Fire off an epoch update
             let balances = {
-                "eth": ethBalance,
-                "stakingToken": {
-                    "balance": stakingBalance,
-                    "allowance": stakingAllowance
+                eth: ethBalance,
+                stakingToken: {
+                    balance: stakingBalance,
+                    allowance: stakingAllowance,
                 },
-                "utilityToken": {
-                    "balance": utilityBalance,
-                    "allowance": utilityAllowance
-                }
+                utilityToken: {
+                    balance: utilityBalance,
+                    allowance: utilityAllowance,
+                },
             };
             return balances;
         } catch (ex) {
@@ -320,10 +386,10 @@ class Web3Adapter {
     // Get the contract instance by contract name
     async getContract(name) {
         try {
-            let contract = await this.contracts.find(e => e["name"] === name);
+            let contract = await this.contracts.find((e) => e["name"] === name);
             if (!contract) {
                 throw new Error({
-                    "argument": "Invalid contract"
+                    argument: "Invalid contract",
                 });
             }
             return contract["instance"];
@@ -335,10 +401,10 @@ class Web3Adapter {
     // Get the abi method object from contract and method name
     async getMethod(contract, fn) {
         try {
-            let method = await ABI[contract].find(e => e["name"] === fn);
+            let method = await ABI[contract].find((e) => e["name"] === fn);
             if (!method) {
                 throw new Error({
-                    "argument": "Invalid Method"
+                    argument: "Invalid Method",
                 });
             }
             return method;
@@ -351,19 +417,19 @@ class Web3Adapter {
     async internalMethod(c, m, data) {
         if (!c || !m) {
             throw new Error({
-                "arguments": "Invalid arguments"
+                arguments: "Invalid arguments",
             });
         }
         console.log({
             c: c,
             m: m,
             data: data,
-        })
+        });
         try {
             let contract = await this.getContract(c);
             console.log(contract);
             let method = await this.getMethod(c, m);
-            console.log(method)
+            console.log(method);
             let args = [];
             for (let i = 0; i < method.inputs.length; i++) {
                 if (data[method.inputs[i].name]) {
@@ -371,36 +437,35 @@ class Web3Adapter {
                 }
             }
             if (args.length !== method.inputs.length) {
-                throw new Error("arguments: Method arguments do not match given arguments");
+                throw new Error(
+                    "arguments: Method arguments do not match given arguments"
+                );
             }
             let ret;
             let [gasPrice, gasEst] = await this.getGas(contract, method, args);
-            if (method.stateMutability === 'view') {
+            if (method.stateMutability === "view") {
                 if (args && args.length > 0) {
                     ret = await contract.methods[method.name](...args).call({
-                        from: this.selectedAddress
+                        from: this.selectedAddress,
                     });
-                }
-                else {
+                } else {
                     console.log(contract.methods[method.name]());
                     ret = await contract.methods[method.name]().call({
-                        from: this.selectedAddress
+                        from: this.selectedAddress,
                     });
                 }
-            }
-            else {
+            } else {
                 if (args && args.length > 0) {
                     await contract.methods[method.name](...args).send({
                         from: this.selectedAddress,
                         gasPrice: gasPrice,
-                        gas: gasEst
+                        gas: gasEst,
                     });
-                }
-                else {
+                } else {
                     await contract.methods[method.name]().send({
                         from: this.selectedAddress,
                         gasPrice: gasPrice,
-                        gas: gasEst
+                        gas: gasEst,
                     });
                 }
                 await this.updateAccount();
@@ -414,7 +479,7 @@ class Web3Adapter {
     // Do a contract method based on contract name, method name, and method argument data {argument: data}
     async method(c, m, data) {
         if (!c || !m) {
-            return { error: "Missing contract or method" }
+            return { error: "Missing contract or method" };
         }
         try {
             let contract = await this.getContract(c);
@@ -426,12 +491,13 @@ class Web3Adapter {
                 }
             }
             if (args.length !== method.inputs.length) {
-                return { error: "Arguments given do not match contract method arguments" };
+                return {
+                    error: "Arguments given do not match contract method arguments",
+                };
             }
-            if (method.stateMutability === 'view') {
+            if (method.stateMutability === "view") {
                 await this.call(contract, method, args);
-            }
-            else {
+            } else {
                 await this.send(contract, method, args);
             }
         } catch (ex) {
@@ -447,14 +513,13 @@ class Web3Adapter {
                 await contract.methods[fn.name](...args).call({
                     from: this.selectedAddress,
                     gasPrice: gasPrice,
-                    gas: gasEst
+                    gas: gasEst,
                 });
-            }
-            else {
+            } else {
                 await contract.methods[fn.name]().call({
                     from: this.selectedAddress,
                     gasPrice: gasPrice,
-                    gas: gasEst
+                    gas: gasEst,
                 });
             }
         } catch (ex) {
@@ -472,14 +537,13 @@ class Web3Adapter {
                 tx = await contract.methods[fn.name](...args).send({
                     from: this.selectedAddress,
                     gasPrice: gasPrice,
-                    gas: gasEst
+                    gas: gasEst,
                 });
-            }
-            else {
+            } else {
                 tx = await contract.methods[fn.name]().send({
                     from: this.selectedAddress,
                     gasPrice: gasPrice,
-                    gas: gasEst
+                    gas: gasEst,
                 });
             }
             await this.updateAccount();
@@ -487,20 +551,30 @@ class Web3Adapter {
             return { error: ex.message };
         }
         return {
-            "msg": "Tx Hash: " + this.trimTxHash(tx.transactionHash),
-            "type": "success"
+            msg: "Tx Hash: " + this.trimTxHash(tx.transactionHash),
+            type: "success",
         };
     }
 
     // Get Staking and Validator information for the selectedAddress
     async getValidatorInfo() {
         try {
-            console.log("GETVALINFO")
-            let isValidator = await this.internalMethod("ValidatorPool", "isValidator", { account_: this.selectedAddress });
+            console.log("GETVALINFO");
+            let isValidator = await this.internalMethod(
+                "ValidatorPool",
+                "isValidator",
+                { account_: this.selectedAddress }
+            );
             console.log("ISVAL", isValidator);
-            let stakingBalance = await this.internalMethod("AToken", "balanceOf", { account: this.selectedAddress });
-            console.log("STAKEBAL", stakingBalance)
-            let isStaking, rewardBalance, unlockedBalance = false;
+            let stakingBalance = await this.internalMethod(
+                "AToken",
+                "balanceOf",
+                { account: this.selectedAddress }
+            );
+            console.log("STAKEBAL", stakingBalance);
+            let isStaking,
+                rewardBalance,
+                unlockedBalance = false;
             if (stakingBalance && stakingBalance !== "0") {
                 isStaking = true;
                 // TODO: Define correct method
@@ -509,39 +583,44 @@ class Web3Adapter {
                 // TODO: Define correct method
                 // unlockedBalance = await this.internalMethod("ValidatorStaking", "balanceUnlocked");
                 console.log("UNLOCKBAL", unlockedBalance);
-            }
-            else {
+            } else {
                 isStaking = false;
             }
-            let validatorCount = await this.internalMethod("ValidatorPool", "getValidatorsCount");
+            let validatorCount = await this.internalMethod(
+                "ValidatorPool",
+                "getValidatorsCount"
+            );
             console.log("VALCOUNT", validatorCount);
-            let validatorMax = await this.internalMethod("ValidatorPool", "getMaxNumValidators");
-            console.log("VALMAX", validatorMax)
+            let validatorMax = await this.internalMethod(
+                "ValidatorPool",
+                "getMaxNumValidators"
+            );
+            console.log("VALMAX", validatorMax);
 
-            // TODO: Ask Leonardo if minstake is still available -- appears internal in ValidatorPoolStorage.sol 
+            // TODO: Ask Leonardo if minstake is still available -- appears internal in ValidatorPoolStorage.sol
             // let minStake = await this.internalMethod("ValidatorPool", "minimumStake");
             // console.log("MINSTAKE", minStake)
 
             console.log({
-                "isValidator": isValidator,
-                "isStaking": isStaking,
-                "rewardBalance": rewardBalance,
-                "stakingBalance": stakingBalance,
-                "unlockedBalance": unlockedBalance,
-                "validatorCount": validatorCount,
-                "validatorMax": validatorMax,
-                "minStake": 0 //minStake
-            })
+                isValidator: isValidator,
+                isStaking: isStaking,
+                rewardBalance: rewardBalance,
+                stakingBalance: stakingBalance,
+                unlockedBalance: unlockedBalance,
+                validatorCount: validatorCount,
+                validatorMax: validatorMax,
+                minStake: 0, //minStake
+            });
 
             return {
-                "isValidator": isValidator,
-                "isStaking": isStaking,
-                "rewardBalance": rewardBalance,
-                "stakingBalance": stakingBalance,
-                "unlockedBalance": unlockedBalance,
-                "validatorCount": validatorCount,
-                "validatorMax": validatorMax,
-                "minStake": 0 //minStake
+                isValidator: isValidator,
+                isStaking: isStaking,
+                rewardBalance: rewardBalance,
+                stakingBalance: stakingBalance,
+                unlockedBalance: unlockedBalance,
+                validatorCount: validatorCount,
+                validatorMax: validatorMax,
+                minStake: 0, //minStake
             };
         } catch (ex) {
             console.log(ex);
@@ -556,7 +635,12 @@ class Web3Adapter {
      */
     async getEthBalance(address) {
         try {
-            let balance = await this.web3.utils.fromWei(await this.web3.eth.getBalance(address ? address : this.selectedAddress), 'ether');
+            let balance = await this.web3.utils.fromWei(
+                await this.web3.eth.getBalance(
+                    address ? address : this.selectedAddress
+                ),
+                "ether"
+            );
             return balance.substring(0, 12);
         } catch (ex) {
             return { error: ex };
@@ -571,14 +655,28 @@ class Web3Adapter {
     async getTokenBalances(address) {
         try {
             let stakingToken = await this.getContract("AToken");
-            let stakingBalance = await stakingToken.methods.balanceOf(address ? address : this.selectedAddress).call();
+            let stakingBalance = await stakingToken.methods
+                .balanceOf(address ? address : this.selectedAddress)
+                .call();
             let staking = await this.getContract("ValidatorStaking");
-            let stakingAllowance = await stakingToken.methods.allowance(address ? address : this.selectedAddress, staking["_address"]).call();
+            let stakingAllowance = await stakingToken.methods
+                .allowance(
+                    address ? address : this.selectedAddress,
+                    staking["_address"]
+                )
+                .call();
 
             let utilityToken = await this.getContract("BToken");
-            let utilityBalance = await utilityToken.methods.balanceOf(address ? address : this.selectedAddress).call();
+            let utilityBalance = await utilityToken.methods
+                .balanceOf(address ? address : this.selectedAddress)
+                .call();
             let utility = await this.getContract("BToken");
-            let utilityAllowance = await utilityToken.methods.allowance(address ? address : this.selectedAddress, utility["_address"]).call();
+            let utilityAllowance = await utilityToken.methods
+                .allowance(
+                    address ? address : this.selectedAddress,
+                    utility["_address"]
+                )
+                .call();
 
             console.log({
                 stakingTokenContract_BToken: stakingToken,
@@ -589,10 +687,15 @@ class Web3Adapter {
                 utilityTokenContract_AToken: utilityToken,
                 utilityTokenAllowanceContract_BToken: utility,
                 utilityTokenBalance: utilityBalance,
-                utilityTokenAllowance: utilityAllowance
-            })
+                utilityTokenAllowance: utilityAllowance,
+            });
 
-            return [stakingBalance, stakingAllowance, utilityBalance, utilityAllowance];
+            return [
+                stakingBalance,
+                stakingAllowance,
+                utilityBalance,
+                utilityAllowance,
+            ];
         } catch (ex) {
             return [{ error: ex }];
         }
@@ -600,41 +703,41 @@ class Web3Adapter {
 
     // Get gas price and contract method gas cost estimate
     async getGas(contract, fn, args) {
-        let gasPrice, gasEst = false;
+        let gasPrice,
+            gasEst = false;
         try {
             gasPrice = await this.web3.eth.getGasPrice();
             if (args && args.length > 0) {
                 gasEst = await contract.methods[fn.name](...args).estimateGas({
-                    from: this.selectedAddress
+                    from: this.selectedAddress,
                 });
-            }
-            else {
+            } else {
                 gasEst = await contract.methods[fn.name]().estimateGas({
-                    from: this.selectedAddress
+                    from: this.selectedAddress,
                 });
             }
         } catch (ex) {
             throw ex;
         }
-        return [gasPrice, gasEst]
+        return [gasPrice, gasEst];
     }
 
     // Deposit utility tokens to AliceNet
     async deposit(amount) {
         try {
             await this.method("BToken", "deposit", {
-                "amount": amount
+                amount: amount,
             });
         } catch (ex) {
-            return ({ error: ex.message });
+            return { error: ex.message };
         }
     }
 
     // Approve staking token spending allowance of staking token from staking contract
     async approveStakingAllowance(amount) {
         try {
-            let data = {}
-            let staking = await this.getContract("ValidatorStaking")
+            let data = {};
+            let staking = await this.getContract("ValidatorStaking");
             data["guy"] = staking["_address"];
             data["wad"] = amount;
             await this.method("AToken", "approve", data);
@@ -652,7 +755,7 @@ class Web3Adapter {
             data["wad"] = amount;
             await this.method("BToken", "approve", data);
         } catch (ex) {
-            return ({ error: ex.message });
+            return { error: ex.message };
         }
     }
 
@@ -666,7 +769,7 @@ class Web3Adapter {
             data["_madID"].push(String("2"));
             await this.method("ValidatorPool", fn, data);
         } catch (ex) {
-            return ({ error: ex.message });
+            return { error: ex.message };
         }
     }
 
@@ -677,7 +780,7 @@ class Web3Adapter {
             data["amount"] = amount;
             await this.method("ValidatorStaking", fn, data);
         } catch (ex) {
-            return ({ error: ex.message });
+            return { error: ex.message };
         }
     }
 
@@ -686,7 +789,10 @@ class Web3Adapter {
      */
     async getEpoch() {
         try {
-            let epoch = await this.internalMethod("ValidatorStaking", "currentEpoch");
+            let epoch = await this.internalMethod(
+                "ValidatorStaking",
+                "currentEpoch"
+            );
             store.dispatch(ADAPTER_ACTIONS.setWeb3Epoch(epoch));
             return epoch;
         } catch (ex) {
@@ -698,7 +804,12 @@ class Web3Adapter {
     // Trim txHash for readability
     trimTxHash(txHash) {
         try {
-            return "0x" + txHash.substring(0, 6) + "..." + txHash.substring(txHash.length - 6);
+            return (
+                "0x" +
+                txHash.substring(0, 6) +
+                "..." +
+                txHash.substring(txHash.length - 6)
+            );
         } catch (ex) {
             throw String(ex);
         }

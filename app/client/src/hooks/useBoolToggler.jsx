@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 /**
  * Return React.useState() functionality with a toggler function that accepts on override
@@ -7,5 +7,9 @@ import React from 'react';
  */
 export default function useBoolToggler(initialState) {
     const [bool, setBool] = React.useState(initialState);
-    return [bool, (force) => setBool(bool => typeof force === "undefined" ? !bool : force)];
+    return [
+        bool,
+        (force) =>
+            setBool((bool) => (typeof force === "undefined" ? !bool : force)),
+    ];
 }

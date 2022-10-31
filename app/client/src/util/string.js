@@ -1,4 +1,4 @@
-import { upperFirst } from 'lodash';
+import { upperFirst } from "lodash";
 import { curveTypes } from "./wallet";
 import Web3 from "web3";
 
@@ -11,7 +11,9 @@ export function addCurvePrefix(address, curve = curveTypes.SECP256K1) {
     if (!address) {
         return null;
     }
-    return `${curve === curveTypes.SECP256K1 ? '0x' : 'BN0x'}${removeHexPrefix(address)}`;
+    return `${curve === curveTypes.SECP256K1 ? "0x" : "BN0x"}${removeHexPrefix(
+        address
+    )}`;
 }
 
 /**
@@ -26,7 +28,7 @@ export function isBNAddress(address) {
     if (!Web3.utils.isAddress(removeBNPrefix(removeHexPrefix(address)))) {
         return false;
     }
-    return address.indexOf('BN') === 0;
+    return address.indexOf("BN") === 0;
 }
 
 /**
@@ -38,9 +40,11 @@ export function splitStringWithEllipsis(str, lengthOnSides = 3) {
     if (typeof str !== "string") {
         return "";
     }
-    return str.slice(0, lengthOnSides)
-        + "..."
-        + str.slice(str.length - lengthOnSides, str.length);
+    return (
+        str.slice(0, lengthOnSides) +
+        "..." +
+        str.slice(str.length - lengthOnSides, str.length)
+    );
 }
 
 /**
@@ -49,7 +53,7 @@ export function splitStringWithEllipsis(str, lengthOnSides = 3) {
  * @returns Returns the address
  */
 export function removeHexPrefix(address) {
-    if (address.indexOf('0x') >= 0) {
+    if (address.indexOf("0x") >= 0) {
         return address.slice(2);
     }
     return address;
@@ -61,7 +65,7 @@ export function removeHexPrefix(address) {
  * @returns Returns the address
  */
 export function removeBNPrefix(address) {
-    if (address.indexOf('BN') >= 0) {
+    if (address.indexOf("BN") >= 0) {
         return address.slice(2);
     }
     return address;
@@ -83,7 +87,7 @@ export function isTxHash(hash) {
  */
 export function prettifyUnderscoreKey(input) {
     let keyString = input.split("_");
-    let keyWords = keyString.map(word => (upperFirst(word)));
+    let keyWords = keyString.map((word) => upperFirst(word));
     return keyWords.join(" ");
 }
 

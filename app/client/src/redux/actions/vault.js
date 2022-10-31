@@ -1,16 +1,22 @@
-import React from 'react';
-import { MIDDLEWARE_ACTION_TYPES, VAULT_ACTION_TYPES } from 'redux/constants/_constants';
-import { getAliceNetWalletInstance } from 'redux/middleware/WalletManagerMiddleware'
-import { electronStoreCommonActions, electronStoreUtilityActions } from '../../store/electronStoreHelper';
-import { reduxState_logger as log } from 'log/logHelper';
-import util from 'util/_util';
-import utils from 'util/_util';
-import { ACTION_ELECTRON_SYNC } from 'redux/middleware/VaultUpdateManagerMiddleware';
-import { curveTypes } from 'util/wallet';
-import { ADAPTER_ACTIONS, CONFIG_ACTIONS } from './_actions';
-import web3Adapter from 'adapters/web3Adapter';
-import { toast } from 'react-toastify';
-import { SyncToastMessageSuccess } from 'components/customToasts/CustomToasts';
+import React from "react";
+import {
+    MIDDLEWARE_ACTION_TYPES,
+    VAULT_ACTION_TYPES,
+} from "redux/constants/_constants";
+import { getAliceNetWalletInstance } from "redux/middleware/WalletManagerMiddleware";
+import {
+    electronStoreCommonActions,
+    electronStoreUtilityActions,
+} from "../../store/electronStoreHelper";
+import { reduxState_logger as log } from "log/logHelper";
+import util from "util/_util";
+import utils from "util/_util";
+import { ACTION_ELECTRON_SYNC } from "redux/middleware/VaultUpdateManagerMiddleware";
+import { curveTypes } from "util/wallet";
+import { ADAPTER_ACTIONS, CONFIG_ACTIONS } from "./_actions";
+import web3Adapter from "adapters/web3Adapter";
+import { toast } from "react-toastify";
+import { SyncToastMessageSuccess } from "components/customToasts/CustomToasts";
 
 /* !!!!!!! ____   ATTENTION: ______ !!!!!!!!  
 
@@ -32,8 +38,11 @@ the mutable Wallet objects themselves are handled within AliceNetWalletJS's inst
  */
 export function setBalancesLoading(bool) {
     return async function (dispatch) {
-        dispatch({ type: VAULT_ACTION_TYPES.SET_BALANCES_LOADING, payload: bool });
-    }
+        dispatch({
+            type: VAULT_ACTION_TYPES.SET_BALANCES_LOADING,
+            payload: bool,
+        });
+    };
 }
 
 /**
@@ -42,17 +51,36 @@ export function setBalancesLoading(bool) {
  * @param {String} password  - Password to encrypt vault with
  * @param {String} curveType - Curve type for public address derivation :: default: see util.wallet curve types -- Default secp256k1
  */
-export function generateNewSecureHDVault(mnemonic, password, curveType = util.wallet.curveTypes.SECP256K1, hint = "No hint provided") {
+export function generateNewSecureHDVault(
+    mnemonic,
+    password,
+    curveType = util.wallet.curveTypes.SECP256K1,
+    hint = "No hint provided"
+) {
     return async function (dispatch) {
-        // Anytime we generate a vault make sure to note the curve in the vault store as well 
+        // Anytime we generate a vault make sure to note the curve in the vault store as well
         // -- This prevents immediately generated vault from not having the correct curve for new wallet generations
         dispatch({ type: VAULT_ACTION_TYPES.SET_CURVE, payload: curveType });
-        let [preflightHash, firstWalletNode] = await electronStoreCommonActions.createNewSecureHDVault(mnemonic, password, curveType);
+        let [preflightHash, firstWalletNode] =
+            await electronStoreCommonActions.createNewSecureHDVault(
+                mnemonic,
+                password,
+                curveType
+            );
         electronStoreCommonActions.setPasswordHint(hint); //Store password hint
         electronStoreCommonActions.storePreflightHash(preflightHash); // Store preflight hash for pre-action auth checking
-        let firstWallet = await utils.wallet.generateBasicWalletObject("Main Wallet", firstWalletNode.privateKey.toString('hex'), curveType);
-        const preInitPayload = { wallets: { internal: [firstWallet], external: [] } }; // Payload needed by initAliceNetWallet() in WalletManagerMiddleware
-        await dispatch({ type: MIDDLEWARE_ACTION_TYPES.INIT_ALICENET_WALLET, payload: preInitPayload }); // Pass off to AliceNetWalletMiddleware to finish state initiation
+        let firstWallet = await utils.wallet.generateBasicWalletObject(
+            "Main Wallet",
+            firstWalletNode.privateKey.toString("hex"),
+            curveType
+        );
+        const preInitPayload = {
+            wallets: { internal: [firstWallet], external: [] },
+        }; // Payload needed by initAliceNetWallet() in WalletManagerMiddleware
+        await dispatch({
+            type: MIDDLEWARE_ACTION_TYPES.INIT_ALICENET_WALLET,
+            payload: preInitPayload,
+        }); // Pass off to AliceNetWalletMiddleware to finish state initiation
         dispatch({ type: VAULT_ACTION_TYPES.SET_MNEMONIC, payload: mnemonic });
         dispatch({ type: VAULT_ACTION_TYPES.MARK_EXISTS_AND_UNLOCKED });
 
@@ -61,13 +89,21 @@ export function generateNewSecureHDVault(mnemonic, password, curveType = util.wa
         log.debug("New Vault Backup Success:", newVaultBackedUp);
 
         // Once the vault is created attempt to connect web3, and then aliceNet
-        log.debug("Vault Created: Attempting to init AliceNet && Web3 Adapters. . .");
+        log.debug(
+            "Vault Created: Attempting to init AliceNet && Web3 Adapters. . ."
+        );
         let adaptersConnected = await dispatch(ADAPTER_ACTIONS.initAdapters());
 
         // Check and log any errors -- Allow unlock to happen even if network errors occur -- Appropriate toasts will be delivered to user via their respective adapaters
         if (adaptersConnected.error) {
-            log.error("GeneralNetworkConnectionError:", adaptersConnected.error);
-            log.error("AliceNetConnectionError: ", adaptersConnected.errors.aliceNet);
+            log.error(
+                "GeneralNetworkConnectionError:",
+                adaptersConnected.error
+            );
+            log.error(
+                "AliceNetConnectionError: ",
+                adaptersConnected.errors.aliceNet
+            );
             log.error("Web3ConnectionError: ", adaptersConnected.errors.web3);
         }
     };
@@ -82,11 +118,13 @@ export function loadSecureHDVaultFromStorage(password) {
     return async function (dispatch) {
         let wu = util.wallet;
         // Unlock vault for parsing and note the mnemonic for HD wallets
-        const unlockedVault = await electronStoreCommonActions.unlockAndGetSecuredHDVault(password);
+        const unlockedVault =
+            await electronStoreCommonActions.unlockAndGetSecuredHDVault(
+                password
+            );
         if (unlockedVault.error) {
             return [false, [unlockedVault]];
-        }
-        ; // Bubble the done/error upwards
+        } // Bubble the done/error upwards
         // Anytime we unlock a vault on user load without an error -- Assume it is in a healthy state and request a backup be made and wait for the response before moving on
         let backupSuccess = await electronStoreUtilityActions.backupStore();
         log.debug("Vault Backup Success:", backupSuccess);
@@ -95,8 +133,14 @@ export function loadSecureHDVaultFromStorage(password) {
         const hdLoadCount = unlockedVault.hd_wallet_count;
         const hdCurve = unlockedVault.hd_wallet_curve;
         // Verify curve integrity
-        if (hdCurve !== curveTypes.SECP256K1 && hdCurve !== curveTypes.BARRETO_NAEHRIG) {
-            throw new Error("Vault state HD Curve is incompatible. Should be int(1) or int(2). Curve read: " + hdCurve);
+        if (
+            hdCurve !== curveTypes.SECP256K1 &&
+            hdCurve !== curveTypes.BARRETO_NAEHRIG
+        ) {
+            throw new Error(
+                "Vault state HD Curve is incompatible. Should be int(1) or int(2). Curve read: " +
+                    hdCurve
+            );
         }
         // Extract internal wallets by using mnemonic
         let hdNodesToLoad = [];
@@ -104,48 +148,74 @@ export function loadSecureHDVaultFromStorage(password) {
             hdNodesToLoad.push(i);
         }
 
-        const internalHDWallets = await wu.streamLineHDWalletNodesFromMnemonic(mnemonic, hdNodesToLoad);
+        const internalHDWallets = await wu.streamLineHDWalletNodesFromMnemonic(
+            mnemonic,
+            hdNodesToLoad
+        );
         const preInitPayload = { wallets: { internal: [], external: [] } }; // Payload needed by initAliceNetWallet() in WalletManagerMiddleware
 
         for (let i = 0; i < internalHDWallets.length; i++) {
             const walletNode = internalHDWallets[i];
             const walletName = unlockedVault.wallets.internal[i].name; // Pair walletNode IDX with it's name
             // Construct the wallet Object
-            const internalWalletObj = await utils.wallet.generateBasicWalletObject(walletName, walletNode.privateKey.toString('hex'), hdCurve);
+            const internalWalletObj =
+                await utils.wallet.generateBasicWalletObject(
+                    walletName,
+                    walletNode.privateKey.toString("hex"),
+                    hdCurve
+                );
             preInitPayload.wallets.internal.push(internalWalletObj); // Add it to the wallet init
         }
 
         // Add externals to preInit
         for (let wallet of unlockedVault.wallets.external) {
-            const internalWalletObj = await utils.wallet.generateBasicWalletObject(wallet.name, wallet.privK, wallet.curve);
+            const internalWalletObj =
+                await utils.wallet.generateBasicWalletObject(
+                    wallet.name,
+                    wallet.privK,
+                    wallet.curve
+                );
             preInitPayload.wallets.external.push(internalWalletObj); // Add it to the wallet init
         }
 
         // Load any stored configuration values
-        let configLoaded = await dispatch(CONFIG_ACTIONS.loadConfigurationValuesFromStore());
+        let configLoaded = await dispatch(
+            CONFIG_ACTIONS.loadConfigurationValuesFromStore()
+        );
         if (configLoaded.error) {
             log.debug(configLoaded.error);
             toast.error("Error loading configuration values.");
         }
 
-        let res = await dispatch({ type: MIDDLEWARE_ACTION_TYPES.INIT_ALICENET_WALLET, payload: preInitPayload }); // Pass off to AliceNetWalletMiddleware to finish state initiation
+        let res = await dispatch({
+            type: MIDDLEWARE_ACTION_TYPES.INIT_ALICENET_WALLET,
+            payload: preInitPayload,
+        }); // Pass off to AliceNetWalletMiddleware to finish state initiation
         dispatch({ type: VAULT_ACTION_TYPES.MARK_EXISTS_AND_UNLOCKED });
         dispatch({ type: VAULT_ACTION_TYPES.SET_CURVE, payload: hdCurve });
         dispatch({ type: VAULT_ACTION_TYPES.SET_MNEMONIC, payload: mnemonic });
 
         // Once the vault is unlocked attempt to connect web3, and then aliceNet
-        log.debug("Vault Unlock: Attempting to init AliceNet && Web3 Adapters. . .");
+        log.debug(
+            "Vault Unlock: Attempting to init AliceNet && Web3 Adapters. . ."
+        );
         let adaptersConnected = await dispatch(ADAPTER_ACTIONS.initAdapters());
 
         // Check and log any errors -- Allow unlock to happen even if network errors occur -- Appropriate toasts will be delivered to user via their respective adapaters
         if (adaptersConnected.error) {
-            log.error("GeneralNetworkConnectionError:", adaptersConnected.error);
-            log.error("AliceNetConnectionError: ", adaptersConnected.errors.aliceNet);
+            log.error(
+                "GeneralNetworkConnectionError:",
+                adaptersConnected.error
+            );
+            log.error(
+                "AliceNetConnectionError: ",
+                adaptersConnected.errors.aliceNet
+            );
             log.error("Web3ConnectionError: ", adaptersConnected.errors.web3);
         }
 
         return res;
-    }
+    };
 }
 
 /** After a vault has been decrypted call this actions for any wallets to be added to the internal keyring and to the AliceNetWallet object within state
@@ -155,16 +225,25 @@ export function loadSecureHDVaultFromStorage(password) {
 export function addInternalWalletToState(walletName) {
     return async function (dispatch, getState) {
         // Let the middleware handle wallet addition -- Await for any addition.errors
-        let additions = await dispatch({ type: MIDDLEWARE_ACTION_TYPES.ADD_NEXT_HD_WALLET, payload: { name: walletName } });
+        let additions = await dispatch({
+            type: MIDDLEWARE_ACTION_TYPES.ADD_NEXT_HD_WALLET,
+            payload: { name: walletName },
+        });
         if (additions.error) {
             return additions;
         }
         // Add the internal wallet to redux state
-        let added = await dispatch({ type: VAULT_ACTION_TYPES.ADD_INTERNAL_WALLET, payload: additions.internal[0] });
+        let added = await dispatch({
+            type: VAULT_ACTION_TYPES.ADD_INTERNAL_WALLET,
+            payload: additions.internal[0],
+        });
         // When a wallet is added, dispatch sync-store -- Provide keystoreString for optout keystore additions where necessary
-        dispatch({ type: ACTION_ELECTRON_SYNC, payload: { reason: "Adding Internal Wallet" } });
+        dispatch({
+            type: ACTION_ELECTRON_SYNC,
+            payload: { reason: "Adding Internal Wallet" },
+        });
         return added;
-    }
+    };
 }
 
 /**
@@ -176,35 +255,63 @@ export function addInternalWalletToState(walletName) {
 export function addExternalWalletToState(keystore, password, walletName) {
     return async function (dispatch, getState) {
         let ksString;
-        log.debug("Adding wallet with name ", walletName, " to external wallets from keystore: ", keystore);
+        log.debug(
+            "Adding wallet with name ",
+            walletName,
+            " to external wallets from keystore: ",
+            keystore
+        );
         try {
             ksString = JSON.stringify(keystore);
         } catch (ex) {
-            throw new Error("Must only pass valid JSON Keystore Object to addExternalWalletToState", ex);
+            throw new Error(
+                "Must only pass valid JSON Keystore Object to addExternalWalletToState",
+                ex
+            );
         }
-        let unlocked = { data: util.wallet.unlockKeystore(JSON.parse(ksString), password), name: walletName };
-        let additions = await dispatch({ type: MIDDLEWARE_ACTION_TYPES.ADD_WALLET_FROM_KEYSTORE, payload: unlocked }); // Pass off to AliceNetWalletMiddleware to finish state balancing
+        let unlocked = {
+            data: util.wallet.unlockKeystore(JSON.parse(ksString), password),
+            name: walletName,
+        };
+        let additions = await dispatch({
+            type: MIDDLEWARE_ACTION_TYPES.ADD_WALLET_FROM_KEYSTORE,
+            payload: unlocked,
+        }); // Pass off to AliceNetWalletMiddleware to finish state balancing
         // Waiting for the above to dispatch will prevent doubles from being added -- AliceNetJS will catch them
         if (additions.error) {
             return additions;
         }
         // If additions.external does not have at least one wallet, something is wrong
         if (additions.external.length < 1) {
-            log.error("An attempt to add no additional wallets to redux state was almost made after a Middleware Action to ADD_WALLET_FROM_KEYSTORE")
+            log.error(
+                "An attempt to add no additional wallets to redux state was almost made after a Middleware Action to ADD_WALLET_FROM_KEYSTORE"
+            );
             return additions;
         }
-        let added = await dispatch({ type: VAULT_ACTION_TYPES.ADD_EXTERNAL_WALLET, payload: additions.external[0] });
+        let added = await dispatch({
+            type: VAULT_ACTION_TYPES.ADD_EXTERNAL_WALLET,
+            payload: additions.external[0],
+        });
         // When adding external wallets we need to check if this addition is to an existing vault -- If not, make sure we set optout as true.
         let hasVault = getState().vault.exists;
         let isOptout = getState().vault.optout;
         // If the vault has not been determined as existing by the time a wallet addition happens, we can safely assume this is an opt out user and mark as such
-        if (!hasVault && !isOptout) { // We only need to dispatch this if the user isn't already marked as an optout
-            dispatch({ type: VAULT_ACTION_TYPES.MARK_OPTOUT__VAULT_NONEXIST_AND_UNLOCKED }); // Set as optout user
+        if (!hasVault && !isOptout) {
+            // We only need to dispatch this if the user isn't already marked as an optout
+            dispatch({
+                type: VAULT_ACTION_TYPES.MARK_OPTOUT__VAULT_NONEXIST_AND_UNLOCKED,
+            }); // Set as optout user
         }
         // When a wallet is added, dispatch sync-store -- Provide keystoreString for optout keystore additions where necessary
-        dispatch({ type: ACTION_ELECTRON_SYNC, payload: { reason: "Adding External Wallet", keystoreAdded: { string: ksString, name: walletName } } });
+        dispatch({
+            type: ACTION_ELECTRON_SYNC,
+            payload: {
+                reason: "Adding External Wallet",
+                keystoreAdded: { string: ksString, name: walletName },
+            },
+        });
         return added;
-    }
+    };
 }
 
 /**
@@ -214,7 +321,7 @@ export function addExternalWalletToState(keystore, password, walletName) {
 export function getAliceNetWallet() {
     return function () {
         return getAliceNetWalletInstance();
-    }
+    };
 }
 
 /**
@@ -223,9 +330,18 @@ export function getAliceNetWallet() {
  */
 export function lockVault() {
     return async function (dispatch) {
-        return new Promise(async res => {
-            toast.success(<SyncToastMessageSuccess hideIcon basic message="Locked & Disconnected" />, { autoClose: 1750, className: "basic" });
-            await dispatch({ type: MIDDLEWARE_ACTION_TYPES.REINSTANCE_ALICENET_WALLET });
+        return new Promise(async (res) => {
+            toast.success(
+                <SyncToastMessageSuccess
+                    hideIcon
+                    basic
+                    message="Locked & Disconnected"
+                />,
+                { autoClose: 1750, className: "basic" }
+            );
+            await dispatch({
+                type: MIDDLEWARE_ACTION_TYPES.REINSTANCE_ALICENET_WALLET,
+            });
             await dispatch({ type: VAULT_ACTION_TYPES.LOCK_VAULT });
             // Additionally, mark web3 and AliceNet as not connected so they can be instanced on reconnect
             web3Adapter.setDefaultState(); // Mark default state on web3 adapter --
@@ -250,7 +366,9 @@ export function renameWalletByAddress(targetWallet, newName, password) {
         // First determine if internal or external
         // Is internal
         if (targetWallet.isInternal) {
-            let internalTargetIndex = internalWallets.findIndex(e => (targetWallet.address === e.address));
+            let internalTargetIndex = internalWallets.findIndex(
+                (e) => targetWallet.address === e.address
+            );
             if (internalTargetIndex === -1) {
                 return { error: "Unable to find wallet in state." };
             }
@@ -258,27 +376,37 @@ export function renameWalletByAddress(targetWallet, newName, password) {
         }
         // Else external...
         else {
-            let externalTargetIndex = externalWallets.findIndex(e => (targetWallet.address === e.address));
+            let externalTargetIndex = externalWallets.findIndex(
+                (e) => targetWallet.address === e.address
+            );
             if (externalTargetIndex === -1) {
                 return { error: "Unable to find wallet in state." };
             }
             externalWallets[externalTargetIndex].name = newName;
         }
         // Recompile newly mutated wallet states
-        let newWalletsState = { internal: internalWallets, external: externalWallets };
+        let newWalletsState = {
+            internal: internalWallets,
+            external: externalWallets,
+        };
 
         try {
             // Submit the update to the redux store --
-            await dispatch({ type: VAULT_ACTION_TYPES.SET_WALLETS_STATE, payload: newWalletsState })
+            await dispatch({
+                type: VAULT_ACTION_TYPES.SET_WALLETS_STATE,
+                payload: newWalletsState,
+            });
             // Submit it to the electron helper for writing the vault --
-            await electronStoreCommonActions.updateVaultWallets(password, newWalletsState);
+            await electronStoreCommonActions.updateVaultWallets(
+                password,
+                newWalletsState
+            );
         } catch (ex) {
             return { error: ex };
         }
 
         return true;
-
-    }
+    };
 }
 
 /**
@@ -294,29 +422,41 @@ export function removeWalletByAddress(targetWallet, password, optout, exists) {
         // Get latest wallet state and create mutable instances of internal/external state
         let wallets = getState().vault.wallets;
         try {
-            const newWalletsState = await dispatch({ type: MIDDLEWARE_ACTION_TYPES.REMOVE_WALLET, payload: { wallets, targetWallet, optout, exists } });
+            const newWalletsState = await dispatch({
+                type: MIDDLEWARE_ACTION_TYPES.REMOVE_WALLET,
+                payload: { wallets, targetWallet, optout, exists },
+            });
 
             if (newWalletsState.error) {
                 return { error: newWalletsState.error };
             }
 
             // Submit the update to the redux store --
-            await dispatch({ type: VAULT_ACTION_TYPES.SET_WALLETS_STATE, payload: newWalletsState })
+            await dispatch({
+                type: VAULT_ACTION_TYPES.SET_WALLETS_STATE,
+                payload: newWalletsState,
+            });
 
             // Password and updateVaultWallets required for vault users only
             // Submit it to the electron helper for writing the vault --
             if (exists) {
-                await electronStoreCommonActions.updateVaultWallets(password, newWalletsState);
+                await electronStoreCommonActions.updateVaultWallets(
+                    password,
+                    newWalletsState
+                );
+            } else {
+                dispatch({
+                    type: ACTION_ELECTRON_SYNC,
+                    payload: {
+                        reason: "Keystore removed",
+                        optOutWalletRemoved: targetWallet,
+                    },
+                });
             }
-            else {
-                dispatch({ type: ACTION_ELECTRON_SYNC, payload: { reason: "Keystore removed", optOutWalletRemoved: targetWallet } });
-            }
-
         } catch (ex) {
-            return { error: ex }
+            return { error: ex };
         }
 
         return true;
-
-    }
+    };
 }

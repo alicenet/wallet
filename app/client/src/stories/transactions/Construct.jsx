@@ -1,29 +1,27 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React from "react";
+import { useSelector } from "react-redux";
 
-import { transactionStatus } from 'util/_util';
+import { transactionStatus } from "util/_util";
 
-import ConstructionModule from './creation/ConstructionModule';
-import LoadingModule from './loading/LoadingModule';
-import InspectionModule from './inspection/InspectionModule';
+import ConstructionModule from "./creation/ConstructionModule";
+import LoadingModule from "./loading/LoadingModule";
+import InspectionModule from "./inspection/InspectionModule";
 
 function Construct() {
-
-    const { status } = useSelector(state => ({
-        status: state.transaction.status
+    const { status } = useSelector((state) => ({
+        status: state.transaction.status,
     }));
 
     switch (status) {
         case transactionStatus.CREATION:
-            return <ConstructionModule/>;
+            return <ConstructionModule />;
         case transactionStatus.LOADING:
-            return <LoadingModule/>;
+            return <LoadingModule />;
         case transactionStatus.INSPECTION:
-            return <InspectionModule/>;
+            return <InspectionModule />;
         default:
             return null;
     }
-
 }
 
 export default Construct;

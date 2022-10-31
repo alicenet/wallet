@@ -1,5 +1,5 @@
-import { CONFIG_ACTION_TYPES } from '../constants/_constants';
-import { reduxState_logger as log } from 'log/logHelper';
+import { CONFIG_ACTION_TYPES } from "../constants/_constants";
+import { reduxState_logger as log } from "log/logHelper";
 
 //  Any user editable and savable configurations are loaded here
 export const initialConfigurationState = {
@@ -8,31 +8,36 @@ export const initialConfigurationState = {
     alice_net_provider: "https://testnet.edge.mnexplore.com/v1/", // AliceNet API endpoint
     registry_contract_address: "0x70c43ed0989fc0f50772d6a949cb0470753ae486", // Contract address for Registry Contract
     advanced_settings: false,
-}
+};
 
 export const envConfigurationState = {
     ethereum_provider: process.env.REACT_APP_ETH_PROVIDER, // Ethereum RPC endpoint
-    alice_net_chainID: "66", // Chain ID to use on AliceNet
+    alice_net_chainID: process.env.REACT_APP_CHAIN_ID, // Chain ID to use on AliceNet
     alice_net_provider: process.env.REACT_APP_ALC_PROVIDER, // AliceNet API endpoint
     registry_contract_address: process.env.REACT_APP_REG_CONTRACT, // Contract address for Registry Contract
     advanced_settings: false,
-}
+};
 
 /* Modal Reducer */
-export default function configurationReducer(state = initialConfigurationState, action) {
-
+export default function configurationReducer(
+    state = initialConfigurationState,
+    action
+) {
     switch (action.type) {
-
         case CONFIG_ACTION_TYPES.LOAD_DEFAULT_VALUES:
             log.debug(["Loading configuration default values:"]);
             return Object.assign({}, state, {
                 alice_net_chainID: initialConfigurationState.alice_net_chainID,
-                alice_net_provider: initialConfigurationState.alice_net_provider,
+                alice_net_provider:
+                    initialConfigurationState.alice_net_provider,
                 ethereum_provider: initialConfigurationState.ethereum_provider,
-                registry_contract_address: initialConfigurationState.registry_contract_address,
+                registry_contract_address:
+                    initialConfigurationState.registry_contract_address,
                 advanced_settings: initialConfigurationState.advanced_settings,
-                hide_generic_tooltips: initialConfigurationState.hide_generic_tooltips,
-                has_seen_tx_help_modal: initialConfigurationState.has_seen_tx_help_modal
+                hide_generic_tooltips:
+                    initialConfigurationState.hide_generic_tooltips,
+                has_seen_tx_help_modal:
+                    initialConfigurationState.has_seen_tx_help_modal,
             });
 
         case CONFIG_ACTION_TYPES.SAVE_CONFIGURATION:
@@ -41,10 +46,11 @@ export default function configurationReducer(state = initialConfigurationState, 
                 alice_net_chainID: action.payload.alice_net_chainID,
                 alice_net_provider: action.payload.alice_net_provider,
                 ethereum_provider: action.payload.ethereum_provider,
-                registry_contract_address: action.payload.registry_contract_address,
+                registry_contract_address:
+                    action.payload.registry_contract_address,
                 advanced_settings: action.payload.advanced_settings,
                 hide_generic_tooltips: action.payload.hide_generic_tooltips,
-                has_seen_tx_help_modal: action.payload.has_seen_tx_help_modal
+                has_seen_tx_help_modal: action.payload.has_seen_tx_help_modal,
             });
 
         case CONFIG_ACTION_TYPES.LOAD_ENV_VALUES:
@@ -53,16 +59,16 @@ export default function configurationReducer(state = initialConfigurationState, 
                 alice_net_chainID: envConfigurationState.alice_net_chainID,
                 alice_net_provider: envConfigurationState.alice_net_provider,
                 ethereum_provider: envConfigurationState.ethereum_provider,
-                registry_contract_address: envConfigurationState.registry_contract_address,
+                registry_contract_address:
+                    envConfigurationState.registry_contract_address,
                 advanced_settings: envConfigurationState.advanced_settings,
-                hide_generic_tooltips: envConfigurationState.hide_generic_tooltips,
-                has_seen_tx_help_modal: envConfigurationState.has_seen_tx_help_modal
+                hide_generic_tooltips:
+                    envConfigurationState.hide_generic_tooltips,
+                has_seen_tx_help_modal:
+                    envConfigurationState.has_seen_tx_help_modal,
             });
-
 
         default:
             return state;
-
     }
-
 }

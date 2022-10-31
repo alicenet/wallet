@@ -1,5 +1,5 @@
-import { ADAPTER_ACTION_TYPES } from '../constants/_constants';
-import { reduxState_logger as log } from '../../log/logHelper';
+import { ADAPTER_ACTION_TYPES } from "../constants/_constants";
+import { reduxState_logger as log } from "../../log/logHelper";
 
 //  Any user editable and savable configurations are loaded here
 export const initialAdapterState = {
@@ -19,7 +19,7 @@ export const initialAdapterState = {
             txOuts: [],
             pendingtx: false,
             pendingLocked: false,
-            changeAddress: { "address": "", "bnCurve": false },
+            changeAddress: { address: "", bnCurve: false },
         },
         blocks: {
             list: [],
@@ -29,44 +29,56 @@ export const initialAdapterState = {
             mbAttempts: false,
         },
         fees: {},
-    }
-}
+    },
+};
 
 // aliceNetAdapter[key1][key2][key3]
 
 /* Modal Reducer */
 export default function adapterReducer(state = initialAdapterState, action) {
-
     switch (action.type) {
-
         case ADAPTER_ACTION_TYPES.SET_WEB3_CONNECTED:
             return Object.assign({}, state, {
-                web3Adapter: { ...state.web3Adapter, connected: action.payload }
+                web3Adapter: {
+                    ...state.web3Adapter,
+                    connected: action.payload,
+                },
             });
 
         case ADAPTER_ACTION_TYPES.SET_WEB3_ERROR:
             return Object.assign({}, state, {
-                web3Adapter: { ...state.web3Adapter, error: action.payload }
+                web3Adapter: { ...state.web3Adapter, error: action.payload },
             });
 
         case ADAPTER_ACTION_TYPES.SET_WEB3_INFO:
             return Object.assign({}, state, {
-                web3Adapter: { ...state.web3Adapter, epoch: action.payload.epoch, validators: action.payload.validators, max_validators: action.payload.validators }
+                web3Adapter: {
+                    ...state.web3Adapter,
+                    epoch: action.payload.epoch,
+                    validators: action.payload.validators,
+                    max_validators: action.payload.validators,
+                },
             });
 
         case ADAPTER_ACTION_TYPES.SET_WEB3_EPOCH:
             return Object.assign({}, state, {
-                web3Adapter: { ...state.web3Adapter, epoch: action.payload }
+                web3Adapter: { ...state.web3Adapter, epoch: action.payload },
             });
 
         case ADAPTER_ACTION_TYPES.SET_ALICENET_CONNECTED:
             return Object.assign({}, state, {
-                aliceNetAdapter: { ...state.aliceNetAdapter, connected: action.payload }
+                aliceNetAdapter: {
+                    ...state.aliceNetAdapter,
+                    connected: action.payload,
+                },
             });
 
         case ADAPTER_ACTION_TYPES.SET_ALICENET_ERROR:
             return Object.assign({}, state, {
-                aliceNetAdapter: { ...state.aliceNetAdapter, error: action.payload }
+                aliceNetAdapter: {
+                    ...state.aliceNetAdapter,
+                    error: action.payload,
+                },
             });
 
         // On disconnect set initial adapter state
@@ -75,12 +87,15 @@ export default function adapterReducer(state = initialAdapterState, action) {
 
         case ADAPTER_ACTION_TYPES.SET_WEB3_BUSY:
             return Object.assign({}, state, {
-                web3Adapter: { ...state.web3Adapter, busy: action.payload }
+                web3Adapter: { ...state.web3Adapter, busy: action.payload },
             });
 
         case ADAPTER_ACTION_TYPES.SET_ALICENET_BUSY:
             return Object.assign({}, state, {
-                aliceNetAdapter: { ...state.aliceNetAdapter, busy: action.payload }
+                aliceNetAdapter: {
+                    ...state.aliceNetAdapter,
+                    busy: action.payload,
+                },
             });
 
         /**
@@ -99,12 +114,17 @@ export default function adapterReducer(state = initialAdapterState, action) {
                 if (!newAdapterState[keyTargets[0]]) {
                     newAdapterState[keyTargets[0]] = {};
                 }
-                newAdapterState[keyTargets[0]][keyTargets[1]] = action.payload.value;
+                newAdapterState[keyTargets[0]][keyTargets[1]] =
+                    action.payload.value;
             } else if (keyDepth === 3) {
-                newAdapterState[keyTargets[0]][keyTargets[1]][keyTargets[2]] = action.payload.value;
-            } else { // Fallback to prev state
-                log.warn("Falling back to previous state during SET_ALICENET_KEYCHAIN_VALUE, verify keyChain accessors and value set on payload correctly.")
-                newAdapterState = { ...state.aliceNetAdapter }
+                newAdapterState[keyTargets[0]][keyTargets[1]][keyTargets[2]] =
+                    action.payload.value;
+            } else {
+                // Fallback to prev state
+                log.warn(
+                    "Falling back to previous state during SET_ALICENET_KEYCHAIN_VALUE, verify keyChain accessors and value set on payload correctly."
+                );
+                newAdapterState = { ...state.aliceNetAdapter };
             }
             return Object.assign({}, state, {
                 aliceNetAdapter: newAdapterState,
@@ -112,7 +132,5 @@ export default function adapterReducer(state = initialAdapterState, action) {
 
         default:
             return state;
-
     }
-
 }
