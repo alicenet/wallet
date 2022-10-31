@@ -95,72 +95,71 @@ export default function ExportKeystoreModal() {
                 </Header>
             </Modal.Header>
 
+            <FocusTrap>
+                <div>
+                    <div className="p-4">
+                        <Modal.Content className="text-sm">
 
-            <FocusTrap> 
+                            <p>
+                                Exporting a wallet keystore is considered an administrative action.
+                            </p>
+                            <p>
+                                Please provide your vault password below as well as a password for the exported keystore.
+                            </p>
+                            <p>
+                                There are no restrictions on this password, but it should be strong.
+                            </p>
+                            <Form
+                                error={!!formState.keystorePassword.error || !!formState.vaultPassword.error}
+                                size="small"
+                                className="mt-2"
+                                onSubmit={submit}
+                            >
 
-                <div className="p-6">
-                    
-                    <Modal.Content className="text-sm">
+                                <Form.Group>
 
-                        <p>
-                            Exporting a wallet keystore is considered an administrative action.
-                        </p>
-                        <p>
-                            Please provide your vault password below as well as a password for the exported keystore.
-                        </p>
-                        <p>
-                            There are no restrictions on this password, but it should be strong.
-                        </p>
-                        <Form
-                            error={!!formState.keystorePassword.error || !!formState.vaultPassword.error}
-                            size="small"
-                            className="mt-2"
-                            onSubmit={submit}
-                        >
-
-                            <Form.Group>
-
-                                {!optout && <Form.Input
-                                    width={6}
-                                    type={showPass ? "text" : "password"}
-                                    size="small"
-                                    label="Vault Password"
-                                    placeholder="Vault Password"
-                                    value={formState.vaultPassword.value}
-                                    onChange={e => formSetter.setVaultPassword(e.target.value)}
-                                    error={!!formState.vaultPassword.error && { content: formState.vaultPassword.error }}
-                                    icon={
-                                        <Icon color={keyVisible ? "green" : "black"} name={showPass ? "eye" : "eye slash"} link onClick={() => setShowPass(s => !s)} />
-                                    } />
-                                }
-
-                                <Form.Input
-                                    width={6}
-                                    type={storePassVisible ? "text" : "password"}
-                                    value={formState.keystorePassword.value}
-                                    error={!!formState.keystorePassword.error && { content: formState.keystorePassword.error }}
-                                    label="Keystore Password"
-                                    placeholder="Keystore Password"
-                                    onChange={e => formSetter.setKeystorePassword(e.target.value)}
-                                    icon={
-                                        <Icon color={"black"} name={storePassVisible ? "eye" : "eye slash"} link onClick={() => setStorePassVisible(s => !s)} />
+                                    {!optout && <Form.Input
+                                        width={6}
+                                        type={showPass ? "text" : "password"}
+                                        size="small"
+                                        label="Vault Password"
+                                        placeholder="Vault Password"
+                                        value={formState.vaultPassword.value}
+                                        onChange={e => formSetter.setVaultPassword(e.target.value)}
+                                        error={!!formState.vaultPassword.error && { content: formState.vaultPassword.error }}
+                                        icon={
+                                            <Icon color={keyVisible ? "green" : "black"} name={showPass ? "eye" : "eye slash"} link onClick={() => setShowPass(s => !s)} />
+                                        } />
                                     }
-                                />
 
-                            </Form.Group>
+                                    <Form.Input
+                                        width={6}
+                                        type={storePassVisible ? "text" : "password"}
+                                        value={formState.keystorePassword.value}
+                                        error={!!formState.keystorePassword.error && { content: formState.keystorePassword.error }}
+                                        label="Keystore Password"
+                                        placeholder="Keystore Password"
+                                        onChange={e => formSetter.setKeystorePassword(e.target.value)}
+                                        icon={
+                                            <Icon color={"black"} name={storePassVisible ? "eye" : "eye slash"} link onClick={() => setStorePassVisible(s => !s)} />
+                                        }
+                                    />
 
-                            <div>
-                                <span className="font-bold text-gray-600">Password Hint:</span>
-                                <span className="text-gray-400 ml-2">
-                                    {passwordHint}
-                                </span>
-                            </div>
+                                </Form.Group>
 
-                        </Form>
+                                <div>
+                                    <span className="font-bold text-gray-600">Password Hint:</span>
+                                    <span className="text-gray-400 ml-2">
+                                        {passwordHint}
+                                    </span>
+                                </div>
 
-                    </Modal.Content>
+                            </Form>
 
-                    <Modal.Actions>
+                        </Modal.Content>
+                    </div>
+
+                    <Modal.Actions className="border-solid border-t-1 border-b-0 border-l-0 border-r-0 border-gray-300 bg-gray-100 p-4">
                         <div className="flex justify-between">
 
                             <Button size="small" className="transparent" content="Close" onClick={closeModal} basic />
