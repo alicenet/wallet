@@ -1,9 +1,10 @@
 {
     "env": {
         "browser": true,
-        "es2021": true
+        "es2021": true,
+        "node": true
     },
-    "extends": ["eslint:recommended", "plugin:react/recommended", "airbnb"],
+    "extends": ["eslint:recommended", "plugin:react/recommended"],
     "overrides": [],
     "parserOptions": {
         "ecmaVersion": "latest",
@@ -11,11 +12,11 @@
         "allowImportExportEverywhere": true
     },
     "plugins": ["react"],
-    "parser": "babel-eslint",
+    "parser": "@babel/eslint-parser",
     "rules": {},
     "settings": {
         "react": {
-            "version": "latest"
+            "version": "detect"
         },
         "import/resolver": {
             "node": {
