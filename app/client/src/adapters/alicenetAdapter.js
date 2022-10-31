@@ -1,22 +1,26 @@
-import React from 'react';
-import store from 'redux/store/store';
-import BigInt from 'big-integer';
-import { ADAPTER_ACTION_TYPES, TRANSACTION_ACTION_TYPES } from 'redux/constants/_constants';
-import { ADAPTER_ACTIONS, TRANSACTION_ACTIONS } from 'redux/actions/_actions';
-import { getAliceNetWalletInstance } from 'redux/middleware/WalletManagerMiddleware'
-import { default_log as log } from 'log/logHelper'
-import { SyncToastMessageSuccess, SyncToastMessageWarning } from 'components/customToasts/CustomToasts'
-import { toast } from 'react-toastify';
-import { history } from 'history/history';
-import utils from 'util/_util';
+import React from "react";
+import store from "redux/store/store";
+import BigInt from "big-integer";
+import {
+    ADAPTER_ACTION_TYPES,
+    TRANSACTION_ACTION_TYPES,
+} from "redux/constants/_constants";
+import { ADAPTER_ACTIONS, TRANSACTION_ACTIONS } from "redux/actions/_actions";
+import { getAliceNetWalletInstance } from "redux/middleware/WalletManagerMiddleware";
+import { default_log as log } from "log/logHelper";
+import {
+    SyncToastMessageSuccess,
+    SyncToastMessageWarning,
+} from "components/customToasts/CustomToasts";
+import { toast } from "react-toastify";
+import { history } from "history/history";
+import utils from "util/_util";
 
 class AliceNetAdapter {
-
     constructor() {
-
         this.wallet = () => getAliceNetWalletInstance(); // Get latest aliceNetWallet for any actions needing it.
-        this.provider = () => (store.getState().config.alice_net_provider);
-        this.chainID = () => (store.getState().config.alice_net_chainID);
+        this.provider = () => store.getState().config.alice_net_provider;
+        this.chainID = () => store.getState().config.alice_net_chainID;
 
         this.subscribed = false;
         this.isInitializing = false; // Is the instance currently initializing? -- Used to prevent repeat initializations
@@ -24,7 +28,7 @@ class AliceNetAdapter {
         this.lastNotedConfig = {
             alice_net_chainID: false,
             alice_net_provider: false,
-        }
+        };
 
         // Error cache -- Cache first errors so that on retries the correct error is relayed to the user
         this.errors = {};
@@ -36,15 +40,27 @@ class AliceNetAdapter {
 
         // Transaction panel
         this.txOuts = this._handleReduxStateValue(["transactions", "txOuts"]);
-        this.changeAddress = this._handleReduxStateValue(["transactions", "changeAddress"]);
-        this.pendingTx = this._handleReduxStateValue(["transactions", "pendingTx"]);
-        this.pendingTxStatus = this._handleReduxStateValue(["transactions", "pendingTxStatus"]);
-        this.pendingLocked = this._handleReduxStateValue(["transactions", "pendingLocked"]);
+        this.changeAddress = this._handleReduxStateValue([
+            "transactions",
+            "changeAddress",
+        ]);
+        this.pendingTx = this._handleReduxStateValue([
+            "transactions",
+            "pendingTx",
+        ]);
+        this.pendingTxStatus = this._handleReduxStateValue([
+            "transactions",
+            "pendingTxStatus",
+        ]);
+        this.pendingLocked = this._handleReduxStateValue([
+            "transactions",
+            "pendingLocked",
+        ]);
 
         // Block explorer panel
         this.blocks = this._handleReduxStateValue(["blocks", "list"]);
         this.blockStatus = this._handleReduxStateValue(["blocks", "status"]);
-        this.blocksMaxLen = 10
+        this.blocksMaxLen = 10;
         this.blocksStarted = this._handleReduxStateValue(["blocks", "started"]);
         this.currentBlock = this._handleReduxStateValue(["blocks", "current"]);
         this.blocksLocked = this._handleReduxStateValue(["blocks", "locked"]);
@@ -52,29 +68,46 @@ class AliceNetAdapter {
         this.mbAttempts = 0;
 
         // Tx explorer panel
-        this.transactionHash = this._handleReduxStateValue(["txExplore", "txHash"]);
+        this.transactionHash = this._handleReduxStateValue([
+            "txExplore",
+            "txHash",
+        ]);
         this.transaction = this._handleReduxStateValue(["txExplore", "tx"]);
-        this.transactionHeight = this._handleReduxStateValue(["txExplore", "txHeight"]);
+        this.transactionHeight = this._handleReduxStateValue([
+            "txExplore",
+            "txHeight",
+        ]);
 
         // DataStore explorer panel
-        this.dsRedirected = this._handleReduxStateValue(["dataExplore", "redirected"]);
+        this.dsRedirected = this._handleReduxStateValue([
+            "dataExplore",
+            "redirected",
+        ]);
         // Set default searchOpts
-        this.dsSearchOpts = this._handleReduxStateValue(["dataExplore", "searchOpts"]);
-        this.dsSearchOpts.set({ "address": "", "offset": "", "bnCurve": false });
+        this.dsSearchOpts = this._handleReduxStateValue([
+            "dataExplore",
+            "searchOpts",
+        ]);
+        this.dsSearchOpts.set({ address: "", offset: "", bnCurve: false });
         // Set default dataStores
-        this.dsDataStores = this._handleReduxStateValue(["dataExplore", "dataStores"]);
+        this.dsDataStores = this._handleReduxStateValue([
+            "dataExplore",
+            "dataStores",
+        ]);
         this.dsDataStores.set([]);
         // Set default activePage
-        this.dsActivePage = this._handleReduxStateValue(["dataExplore", "activePage"]);
+        this.dsActivePage = this._handleReduxStateValue([
+            "dataExplore",
+            "activePage",
+        ]);
         this.dsActivePage.set([]);
         // Set default dsView
         this.dsView = this._handleReduxStateValue(["dataExplore", "dsView"]);
         this.dsView.set([]);
 
-        // Set fees 
+        // Set fees
         this.fees = this._handleReduxStateValue(["fees"]);
         this.fees.set({});
-
     }
 
     /**
@@ -88,11 +121,18 @@ class AliceNetAdapter {
         // this._listenToStore(); // Don't listen -- Use manual update in adapter actions
         try {
             this._updateLastNotedConfig();
-            await this.wallet().Rpc.setProvider(this.provider())
+            await this.wallet().Rpc.setProvider(this.provider());
             this.connected.set(true);
             this.failed.set(false);
             if (!config.preventToast) {
-                toast.success(<SyncToastMessageSuccess basic title="Success" message="AliceNet Connected" />, { className: "basic", "autoClose": 2400 })
+                toast.success(
+                    <SyncToastMessageSuccess
+                        basic
+                        title="Success"
+                        message="AliceNet Connected"
+                    />,
+                    { className: "basic", autoClose: 2400 }
+                );
             }
             store.dispatch(ADAPTER_ACTIONS.setAliceNetBusy(false));
             // Attempt to get fees -- RPC will throw if unfetchable
@@ -102,30 +142,46 @@ class AliceNetAdapter {
                 atomicSwapFee: fees.AtomicSwapFee,
                 dataStoreFee: fees.DataStoreFee,
                 minTxFee: fees.MinTxFee,
-                valueStoreFee: fees.ValueStoreFee
+                valueStoreFee: fees.ValueStoreFee,
             });
-            store.dispatch(TRANSACTION_ACTIONS.parseAndUpdateFees({
-                atomicSwapFee: fees.AtomicSwapFee,
-                dataStoreFee: fees.DataStoreFee,
-                minTxFee: fees.MinTxFee,
-                valueStoreFee: fees.ValueStoreFee
-            }));
-            return { success: true }
+            store.dispatch(
+                TRANSACTION_ACTIONS.parseAndUpdateFees({
+                    atomicSwapFee: fees.AtomicSwapFee,
+                    dataStoreFee: fees.DataStoreFee,
+                    minTxFee: fees.MinTxFee,
+                    valueStoreFee: fees.ValueStoreFee,
+                })
+            );
+            return { success: true };
         } catch (ex) {
             this.failed.set(ex.message);
-            toast.error(<SyncToastMessageWarning title="AliceNet Error!" message="Check network settings" />,
-                { className: "basic", "autoClose": 5000, "onClick": () => { history.push("/wallet/advancedSettings") } })
+            toast.error(
+                <SyncToastMessageWarning
+                    title="AliceNet Error!"
+                    message="Check network settings"
+                />,
+                {
+                    className: "basic",
+                    autoClose: 5000,
+                    onClick: () => {
+                        history.push("/wallet/advancedSettings");
+                    },
+                }
+            );
             store.dispatch(ADAPTER_ACTIONS.setAliceNetBusy(false));
             store.dispatch(ADAPTER_ACTIONS.setAliceNetConnected(false));
-            return ({ error: ex })
+            return { error: ex };
         }
     }
 
-    _updateLastNotedConfig(alice_net_chainID = this.chainID(), alice_net_provider = this.provider()) {
+    _updateLastNotedConfig(
+        alice_net_chainID = this.chainID(),
+        alice_net_provider = this.provider()
+    ) {
         this.lastNotedConfig = {
             alice_net_chainID: alice_net_chainID,
             alice_net_provider: alice_net_provider,
-        }
+        };
     }
 
     /**
@@ -144,32 +200,39 @@ class AliceNetAdapter {
             let isLocked = state.vault.is_locked;
             // If at any point attempts are made when the vault is locked -- Ignore them
             if (isLocked) {
-                log.debug("Skipping subscription checks on AliceNet Adapter -- Account is locked")
-                return
+                log.debug(
+                    "Skipping subscription checks on AliceNet Adapter -- Account is locked"
+                );
+                return;
             }
             let newNotableState = {
                 alice_net_chainID: latestConfig.alice_net_chainID,
                 alice_net_provider: latestConfig.alice_net_provider,
-            }
+            };
             let updateOccurrence = await (() => {
-                return new Promise(res => {
-                    Object.keys(newNotableState).forEach(key => {
-                        if (newNotableState[key] !== this.lastNotedConfig[key]) {
+                return new Promise((res) => {
+                    Object.keys(newNotableState).forEach((key) => {
+                        if (
+                            newNotableState[key] !== this.lastNotedConfig[key]
+                        ) {
                             res(true);
                         }
-                    })
+                    });
                     res(false);
-                })
-            })()
+                });
+            })();
             if (updateOccurrence) {
-                if (!this.isInitializing) { // Guard against re-entrances on initializing
-                    log.debug("Configuration change for AliceNetAdapter Adapter -- Reinitializing")
+                if (!this.isInitializing) {
+                    // Guard against re-entrances on initializing
+                    log.debug(
+                        "Configuration change for AliceNetAdapter Adapter -- Reinitializing"
+                    );
                     this.isInitializing = true;
                     await this.__init({ preventToast: true, reinit: true });
                     this.isInitializing = false;
                 }
             }
-        })
+        });
     }
 
     /** Fetch upto date balances for AliceNetWallets
@@ -179,11 +242,17 @@ class AliceNetAdapter {
         let aliceNetWallet = this.wallet();
         let balancesAndUtxos = {};
         for (let wallet of aliceNetWallet.Account.accounts) {
-            let [balance, utxos] = await this._getAliceNetWalletBalanceAndUTXOs(wallet.address, wallet.curve);
+            let [balance, utxos] = await this._getAliceNetWalletBalanceAndUTXOs(
+                wallet.address,
+                wallet.curve
+            );
             if (balance.error) {
-                return { error: balance.error }
+                return { error: balance.error };
             }
-            balancesAndUtxos[wallet.address] = { balance: balance, utxos: utxos };
+            balancesAndUtxos[wallet.address] = {
+                balance: balance,
+                utxos: utxos,
+            };
         }
         // Update the new balances to state
         let newBalances = { ...store.getState().vault.balances };
@@ -196,8 +265,10 @@ class AliceNetAdapter {
                 newBalances[address] = {};
             }
             // Update balances
-            newBalances[address].aliceNetBytes = addressBalancesAndUtxos["balance"];
-            newBalances[address].aliceNetUTXOs = addressBalancesAndUtxos["utxos"];
+            newBalances[address].aliceNetBytes =
+                addressBalancesAndUtxos["balance"];
+            newBalances[address].aliceNetUTXOs =
+                addressBalancesAndUtxos["utxos"];
         }
 
         // Return newly updated balances and utxos
@@ -213,16 +284,24 @@ class AliceNetAdapter {
         let aliceNetWallet = this.wallet();
         let aliceNetJSWallet;
         try {
-            aliceNetJSWallet = aliceNetWallet.Account.accounts.filter(wallet => wallet.address === address)[0];
+            aliceNetJSWallet = aliceNetWallet.Account.accounts.filter(
+                (wallet) => wallet.address === address
+            )[0];
         } catch (ex) {
-            return { error: "Unable to filter out address from current aliceNetJSWallet instance. State imbalance? See error: ", ex }
+            return {
+                error: "Unable to filter out address from current aliceNetJSWallet instance. State imbalance? See error: ",
+                ex,
+            };
         }
         if (!aliceNetJSWallet) {
             return [{ error: "AliceNetJS wallet instance not found" }, null];
         }
-        let [balance, utxos] = await this._getAliceNetWalletBalanceAndUTXOs(aliceNetJSWallet.address, aliceNetJSWallet.curve);
+        let [balance, utxos] = await this._getAliceNetWalletBalanceAndUTXOs(
+            aliceNetJSWallet.address,
+            aliceNetJSWallet.curve
+        );
         if (balance.error) {
-            return { error: balance.error }
+            return { error: balance.error };
         }
         return [balance, utxos];
     }
@@ -235,11 +314,12 @@ class AliceNetAdapter {
     async _getAliceNetWalletBalanceAndUTXOs(address, curve) {
         let aliceNetWallet = this.wallet();
         try {
-            let [utxoids, balance] = await aliceNetWallet.Rpc.getValueStoreUTXOIDs(address, curve)
+            let [utxoids, balance] =
+                await aliceNetWallet.Rpc.getValueStoreUTXOIDs(address, curve);
             balance = String(parseInt(balance, 16));
             return [balance, utxoids];
         } catch (ex) {
-            return [{ error: ex }, null]
+            return [{ error: ex }, null];
         }
     }
 
@@ -258,42 +338,60 @@ class AliceNetAdapter {
             let blockRange = 256;
             let currentBlock = await aliceNetWallet.Rpc.getBlockNumber();
             let pTx = [];
-            for (let i = currentBlock; i >= (currentBlock - blockRange); i--) {
+            for (let i = currentBlock; i >= currentBlock - blockRange; i--) {
                 let block = await aliceNetWallet.Rpc.getBlockHeader(i);
                 if (!block["TxHshLst"] || block["TxHshLst"].length <= 0) {
                     continue;
                 }
-                transactionLoop:
-                for (let l = 0; l < block["TxHshLst"].length; l++) {
-                    let tx = await aliceNetWallet.Rpc.getMinedTransaction(block["TxHshLst"][l]);
+                transactionLoop: for (
+                    let l = 0;
+                    l < block["TxHshLst"].length;
+                    l++
+                ) {
+                    let tx = await aliceNetWallet.Rpc.getMinedTransaction(
+                        block["TxHshLst"][l]
+                    );
                     for (let j = 0; j < tx["Tx"]["Vout"].length; j++) {
                         for (let k = 0; k < addresses.length; k++) {
                             let address = addresses[k]["address"].toLowerCase();
-                            let curve = addresses[k]["curve"]
-                            if (curve == 2) { // eslint-disable-line
-                                curve = "02"
-                            }
-                            else {
+                            let curve = addresses[k]["curve"];
+                            if (curve == 2) {
+                                // eslint-disable-line
+                                curve = "02";
+                            } else {
                                 curve = "01";
                             }
                             // TODO: REFACTOR: Abstract these checks to an internal function
-                            if ((
-                                tx["Tx"]["Vout"][j]["AtomicSwap"] &&
-                                address == tx["Tx"]["Vout"][j]["AtomicSwap"]["ASPreImage"]["Owner"].slice(4) && // eslint-disable-line
-                                curve == tx["Tx"]["Vout"][j]["AtomicSwap"]["ASPreImage"]["Owner"].slice(2, 4) // eslint-disable-line
-                            ) ||
-                                (
-                                    tx["Tx"]["Vout"][j]["ValueStore"] &&
-                                    address == tx["Tx"]["Vout"][j]["ValueStore"]["VSPreImage"]["Owner"].slice(4) && // eslint-disable-line
-                                    curve == tx["Tx"]["Vout"][j]["ValueStore"]["VSPreImage"]["Owner"].slice(2, 4) // eslint-disable-line
-                                ) ||
-                                (
-                                    tx["Tx"]["Vout"][j]["DataStore"] &&
-                                    address == tx["Tx"]["Vout"][j]["DataStore"]["DSLinker"]["DSPreImage"]["Owner"].slice(4) && // eslint-disable-line
-                                    curve == tx["Tx"]["Vout"][j]["DataStore"]["DSLinker"]["DSPreImage"]["Owner"].slice(2, 4) // eslint-disable-line
-                                )
+                            if (
+                                (tx["Tx"]["Vout"][j]["AtomicSwap"] &&
+                                    address ==
+                                        tx["Tx"]["Vout"][j]["AtomicSwap"][
+                                            "ASPreImage"
+                                        ]["Owner"].slice(4) && // eslint-disable-line
+                                    curve ==
+                                        tx["Tx"]["Vout"][j]["AtomicSwap"][
+                                            "ASPreImage"
+                                        ]["Owner"].slice(2, 4)) || // eslint-disable-line
+                                (tx["Tx"]["Vout"][j]["ValueStore"] &&
+                                    address ==
+                                        tx["Tx"]["Vout"][j]["ValueStore"][
+                                            "VSPreImage"
+                                        ]["Owner"].slice(4) && // eslint-disable-line
+                                    curve ==
+                                        tx["Tx"]["Vout"][j]["ValueStore"][
+                                            "VSPreImage"
+                                        ]["Owner"].slice(2, 4)) || // eslint-disable-line
+                                (tx["Tx"]["Vout"][j]["DataStore"] &&
+                                    address ==
+                                        tx["Tx"]["Vout"][j]["DataStore"][
+                                            "DSLinker"
+                                        ]["DSPreImage"]["Owner"].slice(4) && // eslint-disable-line
+                                    curve ==
+                                        tx["Tx"]["Vout"][j]["DataStore"][
+                                            "DSLinker"
+                                        ]["DSPreImage"]["Owner"].slice(2, 4)) // eslint-disable-line
                             ) {
-                                pTx = pTx.concat(tx)
+                                pTx = pTx.concat(tx);
                                 continue transactionLoop;
                             }
                         }
@@ -302,7 +400,7 @@ class AliceNetAdapter {
             }
             return [pTx, currentBlock];
         } catch (ex) {
-            return ([{ error: ex }])
+            return [{ error: ex }];
         }
     }
 
@@ -315,21 +413,21 @@ class AliceNetAdapter {
         let getter = () => {
             let state = store.getState().adapter.aliceNetAdapter;
             if (depth === 1) {
-                return state[keyChain[0]]
-            }
-            else if (depth === 2) {
-                return state[keyChain[0]][keyChain[1]]
-            }
-            else if (depth === 3) {
-                return state[keyChain[0]][keyChain[1]][keyChain[2]]
+                return state[keyChain[0]];
+            } else if (depth === 2) {
+                return state[keyChain[0]][keyChain[1]];
+            } else if (depth === 3) {
+                return state[keyChain[0]][keyChain[1]][keyChain[2]];
             }
         };
         let setter = (value) => {
             store.dispatch({
-                type: ADAPTER_ACTION_TYPES.SET_ALICENET_KEYCHAIN_VALUE, payload: {
-                    keyChain: keyChain, value: value
-                }
-            })
+                type: ADAPTER_ACTION_TYPES.SET_ALICENET_KEYCHAIN_VALUE,
+                payload: {
+                    keyChain: keyChain,
+                    value: value,
+                },
+            });
         };
         return { get: getter, set: setter };
     }
@@ -339,7 +437,12 @@ class AliceNetAdapter {
      * @returns { Object } - Estimated Fees object
      */
     async getEstimatedFees() {
-        return await this.wallet().Transaction.getTxFeeEstimates(this.changeAddress.get()["address"], this.changeAddress.get()["bnCurve"], [], true);
+        return await this.wallet().Transaction.getTxFeeEstimates(
+            this.changeAddress.get()["address"],
+            this.changeAddress.get()["bnCurve"],
+            [],
+            true
+        );
     }
 
     /**
@@ -349,7 +452,7 @@ class AliceNetAdapter {
      */
     async createTx() {
         if (this.pendingTx.get()) {
-            return ({ error: "Waiting for pending transaction to be mined" });
+            return { error: "Waiting for pending transaction to be mined" };
         }
         this.pendingTxStatus.set("Sending transaction");
         for await (const txOut of this.txOuts.get()) {
@@ -357,11 +460,21 @@ class AliceNetAdapter {
                 switch (txOut.type) {
                     case "VS":
                         log.debug("TxOut created as ValueStore: ", txOut);
-                        await this.wallet().Transaction.createValueStore(txOut.fromAddress, txOut.value, txOut.toAddress, txOut.bnCurve)
+                        await this.wallet().Transaction.createValueStore(
+                            txOut.fromAddress,
+                            txOut.value,
+                            txOut.toAddress,
+                            txOut.bnCurve
+                        );
                         break;
                     case "DS":
                         log.debug("TxOut created as DataStore: ", txOut);
-                        await this.wallet().Transaction.createDataStore(txOut.fromAddress, txOut.index, txOut.duration, txOut.rawData)
+                        await this.wallet().Transaction.createDataStore(
+                            txOut.fromAddress,
+                            txOut.index,
+                            txOut.duration,
+                            txOut.rawData
+                        );
                         break;
                     default:
                         throw new Error("Invalid TxOut type");
@@ -370,7 +483,7 @@ class AliceNetAdapter {
                 this.clearTXouts();
                 this.changeAddress.set({});
                 await this.wallet().Transaction._reset();
-                return ({ error: ex.message });
+                return { error: ex.message };
             }
         }
         return true; // Just return true if no failure
@@ -378,28 +491,59 @@ class AliceNetAdapter {
 
     async sendTx() {
         try {
-            await this.backOffRetry('sendTx', true);
-            let tx = await this.wallet().Transaction.sendWaitableTx(this.changeAddress.get()["address"], this.changeAddress.get()["bnCurve"]);
+            await this.backOffRetry("sendTx", true);
+            let tx = await this.wallet().Transaction.sendWaitableTx(
+                this.changeAddress.get()["address"],
+                this.changeAddress.get()["bnCurve"]
+            );
             this.pendingTx.set(tx.txHash);
-            store.dispatch({ type: TRANSACTION_ACTION_TYPES.SET_LAST_SENT_TX_HASH, payload: tx.txHash });
-            await this.pendingTxStatus.set("Pending TxHash: " + this.trimTxHash(tx.txHash));
+            store.dispatch({
+                type: TRANSACTION_ACTION_TYPES.SET_LAST_SENT_TX_HASH,
+                payload: tx.txHash,
+            });
+            await this.pendingTxStatus.set(
+                "Pending TxHash: " + this.trimTxHash(tx.txHash)
+            );
             await this.wallet().Transaction._reset();
-            toast.success(<SyncToastMessageWarning basic title="TX Pending" message={utils.string.splitStringWithEllipsis(tx.txHash, 6)} hideIcon />);
+            toast.success(
+                <SyncToastMessageWarning
+                    basic
+                    title="TX Pending"
+                    message={utils.string.splitStringWithEllipsis(tx.txHash, 6)}
+                    hideIcon
+                />
+            );
             await tx.wait();
-            let txDetails = await this.wallet().Rpc.getMinedTransaction(tx.txHash);
+            let txDetails = await this.wallet().Rpc.getMinedTransaction(
+                tx.txHash
+            );
             // Clear any TXOuts on a successful mine
             this.txOuts.set([]);
-            await this.backOffRetry('pending-' + JSON.stringify(tx.txHash), true);
+            await this.backOffRetry(
+                "pending-" + JSON.stringify(tx.txHash),
+                true
+            );
             this.pendingTx.set(false);
             // Success TX Mine
-            toast.success(<SyncToastMessageSuccess title="TX Mined" message={utils.string.splitStringWithEllipsis(tx.txHash, 6)} hideIcon basic />);
-            return { "txDetails": txDetails.Tx, "txHash": tx.txHash, "msg": "Mined: " + this.trimTxHash(tx.txHash) };
+            toast.success(
+                <SyncToastMessageSuccess
+                    title="TX Mined"
+                    message={utils.string.splitStringWithEllipsis(tx.txHash, 6)}
+                    hideIcon
+                    basic
+                />
+            );
+            return {
+                txDetails: txDetails.Tx,
+                txHash: tx.txHash,
+                msg: "Mined: " + this.trimTxHash(tx.txHash),
+            };
         } catch (ex) {
-            this.errors['sendTx'] = ex;
+            this.errors["sendTx"] = ex;
             this.txOuts.set([]);
             this.changeAddress.set({});
             await this.wallet().Transaction._reset();
-            return { error: this.errors['sendTx'].message };
+            return { error: this.errors["sendTx"].message };
         }
     }
 
@@ -408,24 +552,41 @@ class AliceNetAdapter {
         let tx = this.pendingTx.get();
         try {
             let txStatus = await this.wallet().Rpc.getTxStatus(tx);
-            if(txStatus.IsMined){
+            if (txStatus.IsMined) {
                 let txDetails = await this.wallet().Rpc.getMinedTransaction(tx);
-                await this.backOffRetry('pending-' + JSON.stringify(tx), true);
+                await this.backOffRetry("pending-" + JSON.stringify(tx), true);
                 this.pendingTx.set(false);
                 // Success TX Mine
-                toast.success(<SyncToastMessageSuccess title="TX Mined" message={utils.string.splitStringWithEllipsis(tx, 6)} hideIcon basic />);
-                return { "txDetails": txDetails.Tx, "txHash": tx, "msg": "Mined: " + this.trimTxHash(tx) };
-            }else{
+                toast.success(
+                    <SyncToastMessageSuccess
+                        title="TX Mined"
+                        message={utils.string.splitStringWithEllipsis(tx, 6)}
+                        hideIcon
+                        basic
+                    />
+                );
+                return {
+                    txDetails: txDetails.Tx,
+                    txHash: tx,
+                    msg: "Mined: " + this.trimTxHash(tx),
+                };
+            } else {
                 throw new Error("Tx not mined yet");
             }
         } catch (ex) {
-            await this.backOffRetry('pending-' + JSON.stringify(tx));
-            if (this['pending-' + JSON.stringify(tx) + "-attempts"] > 30) {
+            await this.backOffRetry("pending-" + JSON.stringify(tx));
+            if (this["pending-" + JSON.stringify(tx) + "-attempts"] > 30) {
                 this.pendingTx.set(false);
-                await this.backOffRetry('pending-' + JSON.stringify(tx), true);
-                return { error: ex.message, "txDetails": false, "txHash": tx.error ? false : tx };
+                await this.backOffRetry("pending-" + JSON.stringify(tx), true);
+                return {
+                    error: ex.message,
+                    txDetails: false,
+                    txHash: tx.error ? false : tx,
+                };
             }
-            await this.sleep(this["pending-" + JSON.stringify(tx) + "-timeout"]);
+            await this.sleep(
+                this["pending-" + JSON.stringify(tx) + "-timeout"]
+            );
             return await this.monitorPending();
         }
     }
@@ -441,15 +602,20 @@ class AliceNetAdapter {
             }
             this.blocksLocked.set(true);
             try {
-                let tmpBlocks = this.blocks.get() ? this.blocks.get().slice(0) : [];
+                let tmpBlocks = this.blocks.get()
+                    ? this.blocks.get().slice(0)
+                    : [];
                 let currentBlock = await this.wallet().Rpc.getBlockNumber();
                 if (this.currentBlock.get() !== currentBlock) {
-                    let blockDiff = (currentBlock - this.currentBlock.get());
+                    let blockDiff = currentBlock - this.currentBlock.get();
                     if (blockDiff > this.blocksMaxLen) {
                         blockDiff = this.blocksMaxLen;
                     }
                     for (let i = 0; i < blockDiff; i++) {
-                        let blockHeader = await this.wallet().Rpc.getBlockHeader(currentBlock - ((blockDiff - i) - 1));
+                        let blockHeader =
+                            await this.wallet().Rpc.getBlockHeader(
+                                currentBlock - (blockDiff - i - 1)
+                            );
                         tmpBlocks.unshift(blockHeader);
                     }
                     this.currentBlock.set(currentBlock);
@@ -467,7 +633,18 @@ class AliceNetAdapter {
             }
             this.blockStatus.set("Currently Monitoring Blocks");
             this.blocksLocked.set(false);
-            this.blocksIdTimeout = setTimeout(() => { try { this.monitorBlocks() } catch (ex) { console.log(ex) } }, this["monitorBlocks-attempts"] == 1 ? 5000 : this["monitorBlocks-timeout"]);
+            this.blocksIdTimeout = setTimeout(
+                () => {
+                    try {
+                        this.monitorBlocks();
+                    } catch (ex) {
+                        console.log(ex);
+                    }
+                },
+                this["monitorBlocks-attempts"] == 1
+                    ? 5000
+                    : this["monitorBlocks-timeout"]
+            );
         } catch (ex) {
             await this.cb.call(this, "error", String(ex));
         }
@@ -488,10 +665,10 @@ class AliceNetAdapter {
             let blockHeader = await this.wallet().Rpc.getBlockHeader(height);
             await this.cb.call(this, "notify", blockHeader);
             await this.backOffRetry("vB", true);
-            return blockHeader
+            return blockHeader;
         } catch (ex) {
             await this.backOffRetry("vB");
-            if (this['vB-attempts'] > 10) {
+            if (this["vB-attempts"] > 10) {
                 return { error: ex };
             }
             await this.sleep(this["vB-timeout"]);
@@ -551,14 +728,14 @@ class AliceNetAdapter {
         }
         if (!this[String(fn) + "-timeout"]) {
             this[String(fn) + "-timeout"] = 1000;
-        }
-        else {
-            this[String(fn) + "-timeout"] = Math.floor(this[String(fn) + "-timeout"] * 1.25);
+        } else {
+            this[String(fn) + "-timeout"] = Math.floor(
+                this[String(fn) + "-timeout"] * 1.25
+            );
         }
         if (!this[String(fn) + "-attempts"]) {
             this[String(fn) + "-attempts"] = 1;
-        }
-        else {
+        } else {
             this[String(fn) + "-attempts"] += 1;
         }
     }
@@ -569,12 +746,16 @@ class AliceNetAdapter {
             if (BigInt(dataSize) > BigInt(this.MaxDataStoreSize)) {
                 throw Error("Data size is too large");
             }
-            let epoch = BigInt("0x" + deposit) / BigInt((BigInt(dataSize) + BigInt(this.BaseDatasizeConst)));
+            let epoch =
+                BigInt("0x" + deposit) /
+                BigInt(BigInt(dataSize) + BigInt(this.BaseDatasizeConst));
             if (BigInt(epoch) < BigInt(2)) {
-                throw Error("invalid dataSize and deposit causing integer overflow");
+                throw Error(
+                    "invalid dataSize and deposit causing integer overflow"
+                );
             }
             let numEpochs = BigInt(BigInt(epoch) - BigInt(2));
-            let expEpoch = (BigInt(issuedAt) + BigInt(numEpochs));
+            let expEpoch = BigInt(issuedAt) + BigInt(numEpochs);
             return expEpoch;
         } catch (ex) {
             return { error: ex };
@@ -672,10 +853,14 @@ class AliceNetAdapter {
     // Trim txHash for readability
     trimTxHash(txHash) {
         try {
-            let trimmed = "0x" + txHash.substring(0, 6) + "..." + txHash.substring(txHash.length - 6);
+            let trimmed =
+                "0x" +
+                txHash.substring(0, 6) +
+                "..." +
+                txHash.substring(txHash.length - 6);
             return trimmed;
         } catch (ex) {
-            throw new Error(ex)
+            throw new Error(ex);
         }
     }
 
@@ -691,7 +876,7 @@ class AliceNetAdapter {
 
     // Delay for the monitor
     async sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
+        return new Promise((resolve) => setTimeout(resolve, ms));
     }
 }
 

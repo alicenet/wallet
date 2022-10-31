@@ -38,7 +38,8 @@ div .ui.toggle.checkbox input:checked ~ label {
     color: #ffffff !important;
 }
 
-.ui.toggle.checkbox .box:before, .ui.toggle.checkbox label:before {
+.ui.toggle.checkbox .box:before,
+.ui.toggle.checkbox label:before {
     background: #8aa9bd !important;
 }
 

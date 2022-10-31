@@ -1,11 +1,20 @@
 /* Code for prepping events and dependencies for the secure-electon-store */
-import { readConfigRequest, readConfigResponse, writeConfigRequest, deleteConfigRequest, deleteConfigResponse } from "secure-electron-store";
+import {
+    readConfigRequest,
+    readConfigResponse,
+    writeConfigRequest,
+    deleteConfigRequest,
+    deleteConfigResponse,
+} from "secure-electron-store";
 
-import { electronStoreMessenger_logger as log, ADDITIONAL_LOG_OPTS } from 'log/logHelper';
-import util from 'util/_util';
+import {
+    electronStoreMessenger_logger as log,
+    ADDITIONAL_LOG_OPTS,
+} from "log/logHelper";
+import util from "util/_util";
 
-import { scrypt } from 'scrypt-js'; // External -- scrypt-js -- scrypt is not in current version of node -- Change to supplied crypto module if node16+ used
-import crypto from 'crypto';
+import { scrypt } from "scrypt-js"; // External -- scrypt-js -- scrypt is not in current version of node -- Change to supplied crypto module if node16+ used
+import crypto from "crypto";
 
 // IPC Channels -- Direct from custom IPC module in parent electron project -- These MUST match.
 // Can't import outside of client source
@@ -18,25 +27,28 @@ const writeBakFileResponse = "WriteBakFile-Response";
  * Components that digest this module must unsubscribe from any subscribed keys to prevent state issues across re-renders
  */
 class StoreMessenger {
-
     /**
      * @typedef { Object } VaultStorageObject - An encrypted ValueStore JSON Object
      * @property { String } algorithm - Algorithm
      * @property { Uint8Array } iv - Initialization vector for the encrypted value
-     * @property { String } cipherText - 
+     * @property { String } cipherText -
      * @property { String } salt -
      */
 
     constructor() {
         this.subscribers = {}; // Subscribers for secure-electron-store
         this.bakSubsribers = {}; // Subscribers for BackupStore
-        this.storeAvailable = !!window && !!window.api && !!window.api.store
+        this.storeAvailable = !!window && !!window.api && !!window.api.store;
         if (this.storeAvailable) {
-            log.debug("DEBUG: Store files located in: ", window.api.store.path)
+            log.debug("DEBUG: Store files located in: ", window.api.store.path);
         } else {
-            log.warn("secure-electron-store not available. Fallback only available in debug mode set accordingly.");
+            log.warn(
+                "secure-electron-store not available. Fallback only available in debug mode set accordingly."
+            );
             if (!util.generic.isDebug) {
-                throw new Error("When running application without a store, you must be in debug mode to proceed. Set .env accordingly.")
+                throw new Error(
+                    "When running application without a store, you must be in debug mode to proceed. Set .env accordingly."
+                );
             }
         }
         this.fakeStore = {};
@@ -45,7 +57,7 @@ class StoreMessenger {
     /**
      * Returns a shortened uid for readability in logging
      * @param {String} uid - The uid to shorten
-     * @returns {String} 
+     * @returns {String}
      */
     _shortId(uid) {
         return uid.substring(0, 18);
@@ -53,9 +65,9 @@ class StoreMessenger {
 
     /**
      * Return standardized object for an encrypted store value to use within secure-electron-store
-     * @param { String } algorithm 
-     * @param { Uint8Array } iv 
-     * @param { String } cipherText 
+     * @param { String } algorithm
+     * @param { Uint8Array } iv
+     * @param { String } cipherText
      * @param { String } salt
      * @returns { VaultStorageObject }
      */
@@ -84,8 +96,8 @@ class StoreMessenger {
 
     /**
      * Core event cycle -- Used by external SecureBackup to pass events down to subscribers -- Default to writeBakFileResponse until further needs arise
-     * @param {*} channel 
-     * @param {*} response 
+     * @param {*} channel
+     * @param {*} response
      */
     notifyBackupEvent(channel, response) {
         for (let sub in this.bakSubsribers) {
@@ -101,14 +113,16 @@ class StoreMessenger {
      * This file can act as a manual replacement backup if any issues occur - See BackupStore.js in app/electron
      * @param cb - Callback to call withs (args) => {} from BackupStore event
      */
-    async backupStore(cb = (args) => { }) {
+    async backupStore(cb = (args) => {}) {
         this.subscribeToBackupEvent(writeBakFileResponse, cb, true);
         window.api.storeBak.send(writeBakFileRequest);
     }
 
     /** Completely delete the electron store and all key/values -- Primarily for debugging */
     deleteStore() {
-        log.info("About to completely delete the electron store -- I certainly hope this was on purpose.");
+        log.info(
+            "About to completely delete the electron store -- I certainly hope this was on purpose."
+        );
         window.api.store.send(deleteConfigRequest);
     }
 
@@ -123,16 +137,18 @@ class StoreMessenger {
      */
     subscribeToKey(key, callback, forceUnsub) {
         let id = util.generic.genUuidv4(); // Create the uid for the subscription
-        if (ADDITIONAL_LOG_OPTS.LOG_ELECTRON_MESSENGER_SUBSCRIBER_EVENTS) { log.debug(`${this._shortId(id)} has subscribed to ${key}`); }
+        if (ADDITIONAL_LOG_OPTS.LOG_ELECTRON_MESSENGER_SUBSCRIBER_EVENTS) {
+            log.debug(`${this._shortId(id)} has subscribed to ${key}`);
+        }
         // Wrap the callback to immediately unsub after the value is fetched
-        let theCb = forceUnsub ? (
-            (key, value) => {
-                callback(key, value);
-                this.unsubscribe(id);
-            }
-        ) : callback;
+        let theCb = forceUnsub
+            ? (key, value) => {
+                  callback(key, value);
+                  this.unsubscribe(id);
+              }
+            : callback;
         // Update subscriptions
-        this.subscribers[id] = { keys: [key], callbacks: [theCb] }
+        this.subscribers[id] = { keys: [key], callbacks: [theCb] };
         return id;
     }
 
@@ -144,16 +160,22 @@ class StoreMessenger {
      */
     subscribeToBackupEvent(channel, callback, forceUnsub) {
         let id = util.generic.genUuidv4(); // Create the uid for the subscription
-        if (ADDITIONAL_LOG_OPTS.LOG_ELECTRON_MESSENGER_SUBSCRIBER_EVENTS) { log.debug(`${this._shortId(id)} has subscribed to backup channel ${channel}`); }
+        if (ADDITIONAL_LOG_OPTS.LOG_ELECTRON_MESSENGER_SUBSCRIBER_EVENTS) {
+            log.debug(
+                `${this._shortId(
+                    id
+                )} has subscribed to backup channel ${channel}`
+            );
+        }
         // Wrap the callback to immediately unsub after the value is fetched
-        let theCb = forceUnsub ? (
-            (channel, response) => {
-                callback(channel, response);
-                this.unsubscribe(id);
-            }
-        ) : callback;
+        let theCb = forceUnsub
+            ? (channel, response) => {
+                  callback(channel, response);
+                  this.unsubscribe(id);
+              }
+            : callback;
         // Update subscriptions
-        this.bakSubsribers[id] = { channels: [channel], callbacks: [theCb] }
+        this.bakSubsribers[id] = { channels: [channel], callbacks: [theCb] };
         return id;
     }
 
@@ -165,68 +187,114 @@ class StoreMessenger {
     // subscribeToKeys(keys, callback) { } // TBD if needed
 
     /**
-      * Unsubscribe from any events associated with the uuid
-      * @param {String} uid - The v4uuid associated with the subscription :: Generally returned from subscribeToKey() or handled internally
-    */
+     * Unsubscribe from any events associated with the uuid
+     * @param {String} uid - The v4uuid associated with the subscription :: Generally returned from subscribeToKey() or handled internally
+     */
     unsubscribe(uid) {
-        if (ADDITIONAL_LOG_OPTS.LOG_ELECTRON_MESSENGER_SUBSCRIBER_EVENTS) { log.debug(`${this._shortId(uid)} has unsubscribed from ${this.subscribers[uid].keys}`); }
+        if (ADDITIONAL_LOG_OPTS.LOG_ELECTRON_MESSENGER_SUBSCRIBER_EVENTS) {
+            log.debug(
+                `${this._shortId(uid)} has unsubscribed from ${
+                    this.subscribers[uid].keys
+                }`
+            );
+        }
         delete this.subscribers[uid];
     }
 
     /**
-      * Unsubscribe from any events associated with the uuid on the bakSubscriptions list
-      * @param {String} uid - The v4uuid associated with the subscription :: Generally returned from subscribeToBackupEvent() or handled internally
-    */
+     * Unsubscribe from any events associated with the uuid on the bakSubscriptions list
+     * @param {String} uid - The v4uuid associated with the subscription :: Generally returned from subscribeToBackupEvent() or handled internally
+     */
     unsubscribeFromBackup(uid) {
-        if (ADDITIONAL_LOG_OPTS.LOG_ELECTRON_MESSENGER_SUBSCRIBER_EVENTS) { log.debug(`${this._shortId(uid)} has unsubscribed from backup channel: ${this.bakSubsribers[uid].channels}`); }
+        if (ADDITIONAL_LOG_OPTS.LOG_ELECTRON_MESSENGER_SUBSCRIBER_EVENTS) {
+            log.debug(
+                `${this._shortId(uid)} has unsubscribed from backup channel: ${
+                    this.bakSubsribers[uid].channels
+                }`
+            );
+        }
         delete this.bakSubsribers[uid];
     }
 
     /**
      * Passthrough abstraction for secure-electron-store's .send(writeConfigRequest)
-     * @param {String} key - Key to use for the value store 
+     * @param {String} key - Key to use for the value store
      * @param {*} value - Value to be stored
      */
     writeToStore(key, value) {
-        if (!this.storeAvailable) { return this._writeToFakeStore(key, value) }
+        if (!this.storeAvailable) {
+            return this._writeToFakeStore(key, value);
+        }
         window.api.store.send(writeConfigRequest, key, value);
         if (util.generic.stringHasJsonStructure(value)) {
-            log.debug('JSON Like Structure written as value with key: ' + key, JSON.parse(value));
+            log.debug(
+                "JSON Like Structure written as value with key: " + key,
+                JSON.parse(value)
+            );
         } else {
-            log.debug('Plain Value written to store with key: ' + key + " and value:", value);
+            log.debug(
+                "Plain Value written to store with key: " + key + " and value:",
+                value
+            );
         }
     }
 
     _writeToFakeStore(key, value) {
         this.fakeStore[key] = value;
         if (util.generic.stringHasJsonStructure(value)) {
-            log.debug('FAKESTORE: JSON Like Structure written as value with key: ' + key, JSON.parse(value));
+            log.debug(
+                "FAKESTORE: JSON Like Structure written as value with key: " +
+                    key,
+                JSON.parse(value)
+            );
         } else {
-            log.debug('FAKESTORE: Plain Value written to store with key: ' + key + " and value:", value);
+            log.debug(
+                "FAKESTORE: Plain Value written to store with key: " +
+                    key +
+                    " and value:",
+                value
+            );
         }
     }
 
     writeEncryptedToStore(key, value, password) {
-        return new Promise(async res => {
-
-            const algorithm = 'aes-256-cbc';
+        return new Promise(async (res) => {
+            const algorithm = "aes-256-cbc";
 
             const salt = crypto.randomBytes(64);
-            let sKey = await scrypt(new Buffer.from(password), new Buffer.from(salt), 1024, 8, 1, 32, () => { });
+            let sKey = await scrypt(
+                new Buffer.from(password),
+                new Buffer.from(salt),
+                1024,
+                8,
+                1,
+                32,
+                () => {}
+            );
 
             crypto.randomFill(new Uint8Array(16), (err, iv) => {
                 if (err) throw err;
                 // Once we have the key and iv, we can create and use the cipher...
                 const cipher = crypto.createCipheriv(algorithm, sKey, iv);
 
-                let encrypted = '';
-                cipher.setEncoding('hex');
+                let encrypted = "";
+                cipher.setEncoding("hex");
 
-                cipher.on('data', (chunk) => encrypted += chunk);
-                cipher.on('end', () => {
-                    let storageJson = this._createEncryptedValueStoreJSONString(algorithm, iv, encrypted, salt);
-                    log.debug('Encrypted Value prepared for storage with key: ' + key + " and JSON: ", JSON.parse(storageJson));
-                    this.writeToStore(key, storageJson)
+                cipher.on("data", (chunk) => (encrypted += chunk));
+                cipher.on("end", () => {
+                    let storageJson = this._createEncryptedValueStoreJSONString(
+                        algorithm,
+                        iv,
+                        encrypted,
+                        salt
+                    );
+                    log.debug(
+                        "Encrypted Value prepared for storage with key: " +
+                            key +
+                            " and JSON: ",
+                        JSON.parse(storageJson)
+                    );
+                    this.writeToStore(key, storageJson);
                 });
 
                 cipher.write(value);
@@ -234,9 +302,7 @@ class StoreMessenger {
 
                 res(true);
             });
-
-        })
-
+        });
     }
 
     /**
@@ -245,49 +311,64 @@ class StoreMessenger {
      * @param {String} encryptedJsonObj.algorithm - Algorithm to use for deciphering
      * @param { String } encryptedJsonObj.cipherText - The cipherText to decrypt
      * @param { String } encryptedJsonObj.iv - iv to use for decryption
-     * @param {Func} callback - (decrypted) => {...} :: decrypted value from the encryptedJsonObj   
+     * @param {Func} callback - (decrypted) => {...} :: decrypted value from the encryptedJsonObj
      */
-    async decipherEncryptedValue(encryptedJsonObj, password, cb = (err, decrypted) => { }) {
+    async decipherEncryptedValue(
+        encryptedJsonObj,
+        password,
+        cb = (err, decrypted) => {}
+    ) {
         const cipherText = encryptedJsonObj.cipherText;
         const algorithm = encryptedJsonObj.algorithm;
         const iv = new Uint8Array(Object.values(encryptedJsonObj.iv));
-        const key = await scrypt(Buffer.from(password), encryptedJsonObj.salt.data, 1024, 8, 1, 32);
+        const key = await scrypt(
+            Buffer.from(password),
+            encryptedJsonObj.salt.data,
+            1024,
+            8,
+            1,
+            32
+        );
 
         let decipher = crypto.createDecipheriv(algorithm, key, iv);
         let decrypted = "";
 
         try {
-            decipher.on('readable', (chunk) => {
+            decipher.on("readable", (chunk) => {
                 while (null !== (chunk = decipher.read())) {
-                    decrypted += chunk.toString('utf8');
+                    decrypted += chunk.toString("utf8");
                 }
             });
-            decipher.on('end', () => {
-                log.debug('Decryption requested and completed for following encryptionStore: ', encryptedJsonObj);
-                cb(null, decrypted)
+            decipher.on("end", () => {
+                log.debug(
+                    "Decryption requested and completed for following encryptionStore: ",
+                    encryptedJsonObj
+                );
+                cb(null, decrypted);
             });
 
-            decipher.write(cipherText, 'hex');
+            decipher.write(cipherText, "hex");
             decipher.end();
         } catch (ex) {
             cb(ex, null);
         }
-
     }
 
     /**
      * Passthrough abstraction for secure-electron-store's .send(readConfigRequest) to simulate syncronous reading
      * @param {String} key - Key to read from the secure store
-     * @param {Func} callback - (key, value) => {...} :: key = key that was checked, value = respective value of the key   
+     * @param {Func} callback - (key, value) => {...} :: key = key that was checked, value = respective value of the key
      */
-    readFromStore(key, callback = (key, value) => { }) {
-        if (!this.storeAvailable) { return this._readFromFakeStore(key, callback) }
+    readFromStore(key, callback = (key, value) => {}) {
+        if (!this.storeAvailable) {
+            return this._readFromFakeStore(key, callback);
+        }
         this.subscribeToKey(key, callback, true);
         window.api.store.send(readConfigRequest, key);
     }
 
     /** Shim for fake store reads */
-    _readFromFakeStore(key, callback = (key, value) => { }) {
+    _readFromFakeStore(key, callback = (key, value) => {}) {
         let value = this.fakeStore[key];
         log.debug("FAKE KEY VALUE READ: " + key);
         return callback(key, value);
@@ -297,33 +378,53 @@ class StoreMessenger {
      * Passthrough abstraction for secure-electron-store's .send(readConfigRequest) to simulate synchronous reading of an encrypted value store object
      * @param {String} key - Key to read from the secure store
      * @param {String} password - Password that was used for the cipher
-     * @param {Func} callback - (error, key, value) => {...} :: key = key that was checked, value = respective value of the key   
+     * @param {Func} callback - (error, key, value) => {...} :: key = key that was checked, value = respective value of the key
      */
-    readEncryptedFromStore(key, password, callback = (key, decryptedValue) => { }) {
-        if (!this.storeAvailable) { return this._readEncryptedFromFakeStore(key, password, callback) }
+    readEncryptedFromStore(
+        key,
+        password,
+        callback = (key, decryptedValue) => {}
+    ) {
+        if (!this.storeAvailable) {
+            return this._readEncryptedFromFakeStore(key, password, callback);
+        }
         // Subscribe internally and read the key as the storeMessenger
-        this.readFromStore(key, (key, value) => {
-            this.decipherEncryptedValue(value, password, (error, decryptedValue) => {
-                callback(error, key, decryptedValue);
-            })
-        }, true);
+        this.readFromStore(
+            key,
+            (key, value) => {
+                this.decipherEncryptedValue(
+                    value,
+                    password,
+                    (error, decryptedValue) => {
+                        callback(error, key, decryptedValue);
+                    }
+                );
+            },
+            true
+        );
     }
 
-    _readEncryptedFromFakeStore(key, password, callback = (key, decryptedValue) => { }) {
+    _readEncryptedFromFakeStore(
+        key,
+        password,
+        callback = (key, decryptedValue) => {}
+    ) {
         let value = JSON.parse(this.fakeStore[key]);
-        this.decipherEncryptedValue(value, password, (error, decryptedValue) => {
-            callback(error, key, decryptedValue);
-        })
+        this.decipherEncryptedValue(
+            value,
+            password,
+            (error, decryptedValue) => {
+                callback(error, key, decryptedValue);
+            }
+        );
     }
-
 }
 
 /* The global ( _and only_ ) storeMessenger */
-const storeMessenger = new StoreMessenger()
+const storeMessenger = new StoreMessenger();
 export default storeMessenger;
 
 try {
-
     // Core secure-electron-store event for responses
     window.api.store.onReceive(readConfigResponse, function (args) {
         let val = args.value;
@@ -332,7 +433,12 @@ try {
         if (isJson) {
             let [err, value] = util.generic.safeJsonParse(val);
             if (!!err) {
-                log.error("Error parsing JSON from assumed JSON String :> " + val + " <: in electron store for following key : " + args.key);
+                log.error(
+                    "Error parsing JSON from assumed JSON String :> " +
+                        val +
+                        " <: in electron store for following key : " +
+                        args.key
+                );
                 val = args.value; // Fallback to args.value
             }
             val = value;
@@ -342,15 +448,15 @@ try {
 
     window.api.store.onReceive(deleteConfigResponse, function (args) {
         if (args.success) {
-            log.info("Electron store successfully deleted.")
+            log.info("Electron store successfully deleted.");
         }
     });
 
     window.api.storeBak.onReceive(writeBakFileResponse, function (args) {
         storeMessenger.notifyBackupEvent(writeBakFileResponse, args);
     });
-
-
 } catch (ex) {
-    log.warn("It appears electron store is not available, you may be running in vanilla browser. You won't have access to storage this way.")
+    log.warn(
+        "It appears electron store is not available, you may be running in vanilla browser. You won't have access to storage this way."
+    );
 }

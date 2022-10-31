@@ -1,65 +1,108 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Button, Checkbox, Container, Grid, Icon } from 'semantic-ui-react'
-import utils, { walletUtils } from 'util/_util';
+import React, { useCallback, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Button, Checkbox, Container, Grid, Icon } from "semantic-ui-react";
+import utils, { walletUtils } from "util/_util";
 
-import { ADAPTER_ACTIONS, MODAL_ACTIONS } from 'redux/actions/_actions';
-import { curveTypes } from 'util/wallet';
-import { classNames } from 'util/generic';
+import { ADAPTER_ACTIONS, MODAL_ACTIONS } from "redux/actions/_actions";
+import { curveTypes } from "util/wallet";
+import { classNames } from "util/generic";
 
 export default function Overview({ wallet }) {
-
     const dispatch = useDispatch();
     const [copyClick, setCopyClick] = useState(0);
     const [tellTheSender, setTellTheSender] = useState(false);
 
-    const { aliceNetConnected, web3Connected, vaultExists, balances, balancesLoading } = useSelector(state => (
-        {
-            web3Connected: state.adapter.web3Adapter.connected,
-            aliceNetConnected: state.adapter.aliceNetAdapter.connected,
-            vaultExists: state.vault.exists,
-            balances: state.vault.balances,
-            balancesLoading: state.vault.balancesLoading
-        }));
+    const {
+        aliceNetConnected,
+        web3Connected,
+        vaultExists,
+        balances,
+        balancesLoading,
+    } = useSelector((state) => ({
+        web3Connected: state.adapter.web3Adapter.connected,
+        aliceNetConnected: state.adapter.aliceNetAdapter.connected,
+        vaultExists: state.vault.exists,
+        balances: state.vault.balances,
+        balancesLoading: state.vault.balancesLoading,
+    }));
 
-    const thisWalletBalances = balances[wallet.address] ? balances[wallet.address] : false;
+    const thisWalletBalances = balances[wallet.address]
+        ? balances[wallet.address]
+        : false;
     const fetchBalances = useCallback(async () => {
-        await dispatch(ADAPTER_ACTIONS.getAndStoreLatestBalancesForAddress(wallet.address))
+        await dispatch(
+            ADAPTER_ACTIONS.getAndStoreLatestBalancesForAddress(wallet.address)
+        );
     }, [wallet, dispatch]);
 
     // Only fetch balances when connected status changes and is true.
     useEffect(() => {
-        if ((web3Connected || aliceNetConnected) && !balances[wallet.address] && !balancesLoading) {
+        if (
+            (web3Connected || aliceNetConnected) &&
+            !balances[wallet.address] &&
+            !balancesLoading
+        ) {
             fetchBalances();
         }
-    }, [web3Connected, aliceNetConnected, wallet, fetchBalances, balances, balancesLoading]);
+    }, [
+        web3Connected,
+        aliceNetConnected,
+        wallet,
+        fetchBalances,
+        balances,
+        balancesLoading,
+    ]);
 
-    const MicroBalanceLoader = ({ balanceType, balanceKey, balanceAllowance }) => {
-
+    const MicroBalanceLoader = ({
+        balanceType,
+        balanceKey,
+        balanceAllowance,
+    }) => {
         return (
             <div className="text-xs">
-                <div className="text-right w-24 inline font-bold">{balanceType}:</div>
+                <div className="text-right w-24 inline font-bold">
+                    {balanceType}:
+                </div>
                 <div className="ml-2 text-left inline text-gray-500">
-                    {balancesLoading ? <div className="ellipses-after inline" /> :
-                        thisWalletBalances[balanceKey] ? (thisWalletBalances[balanceKey]).toString() : ""}
-                    {balanceAllowance && !balancesLoading && thisWalletBalances[balanceAllowance] ? " / " + (thisWalletBalances[balanceAllowance]) : ""}
+                    {balancesLoading ? (
+                        <div className="ellipses-after inline" />
+                    ) : thisWalletBalances[balanceKey] ? (
+                        thisWalletBalances[balanceKey].toString()
+                    ) : (
+                        ""
+                    )}
+                    {balanceAllowance &&
+                    !balancesLoading &&
+                    thisWalletBalances[balanceAllowance]
+                        ? " / " + thisWalletBalances[balanceAllowance]
+                        : ""}
                 </div>
             </div>
-        )
+        );
     };
 
-    const openRenameWalletModal = () => { dispatch(MODAL_ACTIONS.openRenameWalletModal(wallet)) };
+    const openRenameWalletModal = () => {
+        dispatch(MODAL_ACTIONS.openRenameWalletModal(wallet));
+    };
 
-    const openXportPrivKModal = () => { dispatch(MODAL_ACTIONS.openXportPrivKModal(wallet)) };
+    const openXportPrivKModal = () => {
+        dispatch(MODAL_ACTIONS.openXportPrivKModal(wallet));
+    };
 
-    const openXportKeystoreModal = () => { dispatch(MODAL_ACTIONS.openXportKeyStoreModal(wallet)) };
+    const openXportKeystoreModal = () => {
+        dispatch(MODAL_ACTIONS.openXportKeyStoreModal(wallet));
+    };
 
-    const openRemoveWalletModal = () => { dispatch(MODAL_ACTIONS.openRemoveWalletModal(wallet)) };
+    const openRemoveWalletModal = () => {
+        dispatch(MODAL_ACTIONS.openRemoveWalletModal(wallet));
+    };
 
     const copyAddress = () => {
-        if ((tellTheSender || wallet.curve === curveTypes.SECP256K1)) {
+        if (tellTheSender || wallet.curve === curveTypes.SECP256K1) {
             setCopyClick(true);
-            utils.generic.copyToClipboard(utils.string.addCurvePrefix(wallet.address, wallet.curve));
+            utils.generic.copyToClipboard(
+                utils.string.addCurvePrefix(wallet.address, wallet.curve)
+            );
             setTimeout(() => {
                 setCopyClick(false);
             }, 2150);
@@ -67,120 +110,167 @@ export default function Overview({ wallet }) {
     };
 
     return (
-        <Grid
-            className="segment flex flex-col justify-start bg-white break-all text-sm m-0 p-4 text-gray-700 border-solid border border-gray-300 border-t-0 rounded-tl-none rounded-tr-none h-81">
-
+        <Grid className="segment flex flex-col justify-start bg-white break-all text-sm m-0 p-4 text-gray-700 border-solid border border-gray-300 border-t-0 rounded-tl-none rounded-tr-none h-81">
             <Grid.Row>
-
                 <Grid.Column width={16} className="pl-1">
-
                     <label className="text-gray-800">
                         <span className="font-semibold underline">{`${wallet.name} Public Address`}</span>
-                        {` (${wallet.curve === curveTypes.SECP256K1 ? 'Secp256k1' : 'Barreto-Naehrig'} curve)`}
+                        {` (${
+                            wallet.curve === curveTypes.SECP256K1
+                                ? "Secp256k1"
+                                : "Barreto-Naehrig"
+                        } curve)`}
                     </label>
-                    <div className="h-10 py-1 flex items-center cursor-pointer hover:text-gray-500" onClick={copyAddress}>
-                        {utils.string.addCurvePrefix(wallet.address, wallet.curve)}
-                        {
-                            (tellTheSender || wallet.curve === curveTypes.SECP256K1) &&
+                    <div
+                        className="h-10 py-1 flex items-center cursor-pointer hover:text-gray-500"
+                        onClick={copyAddress}
+                    >
+                        {utils.string.addCurvePrefix(
+                            wallet.address,
+                            wallet.curve
+                        )}
+                        {(tellTheSender ||
+                            wallet.curve === curveTypes.SECP256K1) && (
                             <>
-                                <Icon name="copy outline" className="ml-1 mb-2 cursor-pointer" />
+                                <Icon
+                                    name="copy outline"
+                                    className="ml-1 mb-2 cursor-pointer"
+                                />
                                 {!!copyClick && (
                                     <div className="relative inline text-xs mb-2 text-gray-500">
                                         Copied to clipboard!
                                     </div>
                                 )}
                             </>
-                        }
+                        )}
                     </div>
-                    {
-                        wallet.curve !== curveTypes.SECP256K1 &&
+                    {wallet.curve !== curveTypes.SECP256K1 && (
                         <div className="flex items-center cursor-pointer">
                             <Checkbox
                                 checked={tellTheSender}
-                                onChange={() => setTellTheSender(prevState => !prevState)}
+                                onChange={() =>
+                                    setTellTheSender((prevState) => !prevState)
+                                }
                                 label="I will tell the sender this is a BN address"
                                 className="text-xs"
                             />
                         </div>
-                    }
+                    )}
                 </Grid.Column>
-
             </Grid.Row>
 
             <Grid.Row>
-
                 <Grid.Column width={8} className="pl-1">
-
                     <Container>
-
-                        <label className={classNames("font-semibold text-gray-800 underline", { "line-through": wallet.curve === walletUtils.curveTypes.BARRETO_NAEHRIG })}>Ethereum
-                            Balances</label>
-                        <div className="py-1 flex flex-col">
-                            {wallet.curve === walletUtils.curveTypes.BARRETO_NAEHRIG ? (
-                                <div>
-                                    Not available to BN Wallets
-                                </div>
-                            ) : (<>
-                                <MicroBalanceLoader balanceType="ETH" balanceKey={"eth"} />
-                                <MicroBalanceLoader balanceType="ALCA" balanceKey={"stake"} balanceAllowance={"stakeAllowance"} />
-                                <MicroBalanceLoader balanceType="ALCB" balanceKey={"util"} balanceAllowance={"utilAllowance"} />
-                            </>)}
-                        </div>
-
-                    </Container>
-
-                </Grid.Column>
-
-                <Grid.Column width={8} className="pl-1">
-
-                    <Container>
-
-                        <label className="font-semibold text-gray-800 underline">AliceNet Balances</label>
-                        <div className="py-1">
-                            <MicroBalanceLoader balanceType="ALCB" balanceKey={"aliceNetBytes"} />
-                        </div>
-
-                    </Container>
-
-                </Grid.Column>
-
-            </Grid.Row>
-
-            <Grid.Row>
-
-                <Grid.Column width={8} className="pl-1">
-
-                    <Container>
-
-                        <label className="font-semibold text-gray-800 underline">Origin</label>
-                        <div className="py-1 text-gray-500">{wallet.isInternal ? 'Internal (From Seed)' : 'External'}</div>
-
-                    </Container>
-
-                </Grid.Column>
-
-                <Grid.Column width={8} className="pl-1">
-
-                    <Container>
-
-                        <label className="font-semibold text-gray-800 underline">Wallet Actions</label>
-                        <Container className="flex flex-col items-baseline py-1 gap-1">
-                            <Button className="transparent p-0 text-teal text-sm hover:underline" onClick={fetchBalances}>Refresh Balances</Button>
-                            {vaultExists && (
-                                <Button className="transparent p-0 text-teal text-sm hover:underline" onClick={openRenameWalletModal}>Rename Wallet</Button>
+                        <label
+                            className={classNames(
+                                "font-semibold text-gray-800 underline",
+                                {
+                                    "line-through":
+                                        wallet.curve ===
+                                        walletUtils.curveTypes.BARRETO_NAEHRIG,
+                                }
                             )}
-                            <Button className="transparent p-0 text-teal text-sm hover:underline" onClick={openXportPrivKModal}>Show Private Key</Button>
-                            <Button className="transparent p-0 text-teal text-sm hover:underline" onClick={openXportKeystoreModal}>Export Keystore</Button>
-                            <Button className="transparent p-0 text-red-600 text-sm hover:underline" onClick={openRemoveWalletModal}>Remove Wallet</Button>
-                        </Container>
-
+                        >
+                            Ethereum Balances
+                        </label>
+                        <div className="py-1 flex flex-col">
+                            {wallet.curve ===
+                            walletUtils.curveTypes.BARRETO_NAEHRIG ? (
+                                <div>Not available to BN Wallets</div>
+                            ) : (
+                                <>
+                                    <MicroBalanceLoader
+                                        balanceType="ETH"
+                                        balanceKey={"eth"}
+                                    />
+                                    <MicroBalanceLoader
+                                        balanceType="ALCA"
+                                        balanceKey={"stake"}
+                                        balanceAllowance={"stakeAllowance"}
+                                    />
+                                    <MicroBalanceLoader
+                                        balanceType="ALCB"
+                                        balanceKey={"util"}
+                                        balanceAllowance={"utilAllowance"}
+                                    />
+                                </>
+                            )}
+                        </div>
                     </Container>
-
                 </Grid.Column>
 
+                <Grid.Column width={8} className="pl-1">
+                    <Container>
+                        <label className="font-semibold text-gray-800 underline">
+                            AliceNet Balances
+                        </label>
+                        <div className="py-1">
+                            <MicroBalanceLoader
+                                balanceType="ALCB"
+                                balanceKey={"aliceNetBytes"}
+                            />
+                        </div>
+                    </Container>
+                </Grid.Column>
             </Grid.Row>
 
-        </Grid>
-    )
+            <Grid.Row>
+                <Grid.Column width={8} className="pl-1">
+                    <Container>
+                        <label className="font-semibold text-gray-800 underline">
+                            Origin
+                        </label>
+                        <div className="py-1 text-gray-500">
+                            {wallet.isInternal
+                                ? "Internal (From Seed)"
+                                : "External"}
+                        </div>
+                    </Container>
+                </Grid.Column>
 
+                <Grid.Column width={8} className="pl-1">
+                    <Container>
+                        <label className="font-semibold text-gray-800 underline">
+                            Wallet Actions
+                        </label>
+                        <Container className="flex flex-col items-baseline py-1 gap-1">
+                            <Button
+                                className="transparent p-0 text-teal text-sm hover:underline"
+                                onClick={fetchBalances}
+                            >
+                                Refresh Balances
+                            </Button>
+                            {vaultExists && (
+                                <Button
+                                    className="transparent p-0 text-teal text-sm hover:underline"
+                                    onClick={openRenameWalletModal}
+                                >
+                                    Rename Wallet
+                                </Button>
+                            )}
+                            <Button
+                                className="transparent p-0 text-teal text-sm hover:underline"
+                                onClick={openXportPrivKModal}
+                            >
+                                Show Private Key
+                            </Button>
+                            <Button
+                                className="transparent p-0 text-teal text-sm hover:underline"
+                                onClick={openXportKeystoreModal}
+                            >
+                                Export Keystore
+                            </Button>
+                            <Button
+                                className="transparent p-0 text-red-600 text-sm hover:underline"
+                                onClick={openRemoveWalletModal}
+                            >
+                                Remove Wallet
+                            </Button>
+                        </Container>
+                    </Container>
+                </Grid.Column>
+            </Grid.Row>
+        </Grid>
+    );
 }

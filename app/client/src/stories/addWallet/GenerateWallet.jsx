@@ -1,31 +1,37 @@
-import React, { useEffect, useState } from 'react';
-import { Button, Container, Form, Grid, Header, Message } from 'semantic-ui-react'
-import { useHistory } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import React, { useEffect, useState } from "react";
+import {
+    Button,
+    Container,
+    Form,
+    Grid,
+    Header,
+    Message,
+} from "semantic-ui-react";
+import { useHistory } from "react-router-dom";
+import { useDispatch } from "react-redux";
 
-import { VAULT_ACTIONS } from 'redux/actions/_actions';
-import { default_log as log } from 'log/logHelper';
-import Page from 'layout/Page';
+import { VAULT_ACTIONS } from "redux/actions/_actions";
+import { default_log as log } from "log/logHelper";
+import Page from "layout/Page";
 
 export default function AddWalletMenu() {
-
     const history = useHistory();
     const dispatch = useDispatch();
 
     const [loading, setLoading] = useState(false);
 
     const [walletName, setWalletName] = useState({ value: "", error: "" });
-    const setWalletNameKeys = (obj) => setWalletName(s => ({ ...s, ...obj }));
+    const setWalletNameKeys = (obj) => setWalletName((s) => ({ ...s, ...obj }));
 
     const [walletAdded, setWalletAdded] = useState({ value: "", error: "" });
-    const setWalletAddedKeys = (obj) => setWalletAdded(s => ({ ...s, ...obj }));
+    const setWalletAddedKeys = (obj) =>
+        setWalletAdded((s) => ({ ...s, ...obj }));
 
     const genWallet = async () => {
-
         setLoading(true);
         let error = false;
 
-        if (typeof walletName.value !== 'string') {
+        if (typeof walletName.value !== "string") {
             error = "Must be a string";
         }
         if (walletName.value.length <= 3) {
@@ -34,73 +40,86 @@ export default function AddWalletMenu() {
 
         if (error) {
             setLoading(false);
-            return setWalletNameKeys({ "error": "Must be at least 4 characters" });
+            return setWalletNameKeys({
+                error: "Must be at least 4 characters",
+            });
         }
 
         // Clear Error
-        setWalletNameKeys({ "error": "" });
+        setWalletNameKeys({ error: "" });
 
         // Falsify wait for UI
         setTimeout(async () => {
             // Attempt to add the HD Wallet
-            let added = await dispatch(VAULT_ACTIONS.addInternalWalletToState(walletName.value));
+            let added = await dispatch(
+                VAULT_ACTIONS.addInternalWalletToState(walletName.value)
+            );
             setLoading(false);
             if (added.error) {
                 log.error(added.error);
-                return setWalletAddedKeys({ "error": "Unable to generate new wallet. Please check logs." });
+                return setWalletAddedKeys({
+                    error: "Unable to generate new wallet. Please check logs.",
+                });
             }
-            setWalletAddedKeys({ "value": true, "error": "" });
+            setWalletAddedKeys({ value: true, error: "" });
         }, 1000);
-
     };
 
     useEffect(() => {
         if (walletAdded.value === true) {
             setTimeout(() => {
                 history.push("/hub");
-            }, 1450)
+            }, 1450);
         }
     }, [walletAdded, history]);
 
     return (
         <Page showNetworkStatus>
-
-            <Container fluid className="h-full flex items-center justify-center">
-
+            <Container
+                fluid
+                className="h-full flex items-center justify-center"
+            >
                 <Grid textAlign="center">
-
                     <Grid.Column width={16} className="mb-8">
-
-                        <Header className="text-gray-500 mb-8">Generate New Wallet</Header>
+                        <Header className="text-gray-500 mb-8">
+                            Generate New Wallet
+                        </Header>
 
                         <div className="text-sm">
+                            <p>
+                                Generated wallets are considered internal
+                                wallets.
+                            </p>
 
-                            <p>Generated wallets are considered internal wallets.</p>
-
-                            <p>Internal wallets are generated through the seed phrase already provided.</p>
-
+                            <p>
+                                Internal wallets are generated through the seed
+                                phrase already provided.
+                            </p>
                         </div>
-
                     </Grid.Column>
 
                     <Grid.Column width={16} textAlign="center">
-
                         <div className="flex justify-center h-28">
                             <Form className="w-56" size="small">
                                 <Form.Input
                                     value={walletName.value}
-                                    onChange={e => setWalletNameKeys({ value: e.target.value })}
-                                    error={!!walletName.error && walletName.error}
-                                    label="Wallet Name" size="small"
+                                    onChange={(e) =>
+                                        setWalletNameKeys({
+                                            value: e.target.value,
+                                        })
+                                    }
+                                    error={
+                                        !!walletName.error && walletName.error
+                                    }
+                                    label="Wallet Name"
+                                    size="small"
                                     className="text-left"
                                 />
                             </Form>
                         </div>
-
                     </Grid.Column>
 
                     <Grid.Column width={16} textAlign="center" className="mt-6">
-
                         <div className="flex flex-col gap-4 items-center">
                             <Button
                                 size="small"
@@ -109,8 +128,20 @@ export default function AddWalletMenu() {
                                 onClick={genWallet}
                                 color="teal"
                                 disabled={!!walletAdded.value}
-                                content={walletAdded.error ? "Try Again" : !!walletAdded.value ? "Success" : "Add Wallet"}
-                                icon={walletAdded.error ? "exclamation" : !!walletAdded.value ? "checkmark" : "plus"}
+                                content={
+                                    walletAdded.error
+                                        ? "Try Again"
+                                        : !!walletAdded.value
+                                        ? "Success"
+                                        : "Add Wallet"
+                                }
+                                icon={
+                                    walletAdded.error
+                                        ? "exclamation"
+                                        : !!walletAdded.value
+                                        ? "checkmark"
+                                        : "plus"
+                                }
                             />
                             <Button
                                 basic
@@ -119,29 +150,34 @@ export default function AddWalletMenu() {
                                 content="Cancel"
                                 className="transparent w-52"
                                 icon={!!walletAdded.value ? "thumbs up" : "x"}
-                                onClick={!!walletAdded.value ? null : history.goBack}
+                                onClick={
+                                    !!walletAdded.value ? null : history.goBack
+                                }
                             />
                         </div>
 
                         {!!walletAdded.value && (
                             <div className="absolute -bottom-16 inset-center">
-                                <Message success content="Wallet successfully added, please wait. . ." size="mini" />
+                                <Message
+                                    success
+                                    content="Wallet successfully added, please wait. . ."
+                                    size="mini"
+                                />
                             </div>
                         )}
 
                         {!!walletAdded.error && (
                             <div className="absolute -bottom-16 inset-center">
-                                <Message error content={walletAdded.error} size="mini" />
+                                <Message
+                                    error
+                                    content={walletAdded.error}
+                                    size="mini"
+                                />
                             </div>
                         )}
-
                     </Grid.Column>
-
                 </Grid>
-
             </Container>
-
         </Page>
-    )
-
+    );
 }

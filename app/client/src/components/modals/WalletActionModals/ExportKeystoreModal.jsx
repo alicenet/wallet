@@ -1,17 +1,16 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Button, Form, Header, Icon, Modal } from 'semantic-ui-react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useFormState } from 'hooks/_hooks';
-import { MODAL_ACTIONS } from 'redux/actions/_actions';
-import { electronStoreCommonActions } from 'store/electronStoreHelper';
-import utils from 'util/_util';
-import FocusTrap from 'focus-trap-react';
+import React, { useEffect, useRef, useState } from "react";
+import { Button, Form, Header, Icon, Modal } from "semantic-ui-react";
+import { useDispatch, useSelector } from "react-redux";
+import { useFormState } from "hooks/_hooks";
+import { MODAL_ACTIONS } from "redux/actions/_actions";
+import { electronStoreCommonActions } from "store/electronStoreHelper";
+import utils from "util/_util";
+import FocusTrap from "focus-trap-react";
 
 export default function ExportKeystoreModal() {
-
     const dispatch = useDispatch();
 
-    const { isOpen, targetWallet, optout } = useSelector(s => ({
+    const { isOpen, targetWallet, optout } = useSelector((s) => ({
         isOpen: s.modal.export_ks_modal,
         targetWallet: s.modal.wallet_action_target,
         optout: s.vault.optout,
@@ -23,18 +22,33 @@ export default function ExportKeystoreModal() {
     const [storePassVisible, setStorePassVisible] = useState(false);
 
     const [formState, formSetter, onSubmit] = useFormState([
-        { name: 'vaultPassword', display: 'Vault Password', type: 'password', isRequired: true },
-        { name: 'keystorePassword', display: 'Keystore Password', type: 'password', isRequired: true },
+        {
+            name: "vaultPassword",
+            display: "Vault Password",
+            type: "password",
+            isRequired: true,
+        },
+        {
+            name: "keystorePassword",
+            display: "Keystore Password",
+            type: "password",
+            isRequired: true,
+        },
     ]);
 
     // Download keystore reference
     const downloadRef = useRef();
 
     const generateWallet = async () => {
-        const newStoreBlob = await utils.wallet.generateKeystoreFromPrivK(targetWallet.privK, formState.keystorePassword.value, targetWallet.curve, true);
+        const newStoreBlob = await utils.wallet.generateKeystoreFromPrivK(
+            targetWallet.privK,
+            formState.keystorePassword.value,
+            targetWallet.curve,
+            true
+        );
         setKeystoreDL({
             filename: "AliceNetWallet_" + targetWallet.name + ".json",
-            data: newStoreBlob
+            data: newStoreBlob,
         });
         downloadRef.current.href = URL.createObjectURL(newStoreBlob);
     };
@@ -56,7 +70,12 @@ export default function ExportKeystoreModal() {
     }, [isOpen]);
 
     const downloadKeystore = async () => {
-        if (!optout && !await electronStoreCommonActions.checkPasswordAgainstPreflightHash(formState.vaultPassword.value)) {
+        if (
+            !optout &&
+            !(await electronStoreCommonActions.checkPasswordAgainstPreflightHash(
+                formState.vaultPassword.value
+            ))
+        ) {
             formSetter.setVaultPasswordError("Incorrect password");
             return setKeyVisible(false);
         }
@@ -66,32 +85,35 @@ export default function ExportKeystoreModal() {
     };
 
     const closeModal = () => {
-        dispatch(MODAL_ACTIONS.closeExportKeyStoreModal())
+        dispatch(MODAL_ACTIONS.closeExportKeyStoreModal());
     };
 
-    const submit = e => {
+    const submit = (e) => {
         onSubmit(async () => {
             e.preventDefault();
             downloadKeystore();
         });
     };
 
-    const [passwordHint, setPasswordHint] = useState('');
+    const [passwordHint, setPasswordHint] = useState("");
 
     useEffect(() => {
         const checkForPasswordHint = async () => {
-            let passwordHint = await electronStoreCommonActions.readPasswordHint();
-            typeof passwordHint === 'string' ? setPasswordHint(passwordHint) : setPasswordHint('');
-        }
+            let passwordHint =
+                await electronStoreCommonActions.readPasswordHint();
+            typeof passwordHint === "string"
+                ? setPasswordHint(passwordHint)
+                : setPasswordHint("");
+        };
         checkForPasswordHint();
     }, []);
 
     return (
         <Modal open={isOpen}>
-
             <Modal.Header>
                 <Header as="h4">
-                    Export Keystore For Wallet: <span className="text-blue-500">{targetWallet.name}</span>
+                    Export Keystore For Wallet:{" "}
+                    <span className="text-blue-500">{targetWallet.name}</span>
                 </Header>
             </Modal.Header>
 
@@ -99,88 +121,164 @@ export default function ExportKeystoreModal() {
                 <div>
                     <div className="p-4">
                         <Modal.Content className="text-sm">
-
                             <p>
-                                Exporting a wallet keystore is considered an administrative action.
+                                Exporting a wallet keystore is considered an
+                                administrative action.
                             </p>
                             <p>
-                                Please provide your vault password below as well as a password for the exported keystore.
+                                Please provide your vault password below as well
+                                as a password for the exported keystore.
                             </p>
                             <p>
-                                There are no restrictions on this password, but it should be strong.
+                                There are no restrictions on this password, but
+                                it should be strong.
                             </p>
                             <Form
-                                error={!!formState.keystorePassword.error || !!formState.vaultPassword.error}
+                                error={
+                                    !!formState.keystorePassword.error ||
+                                    !!formState.vaultPassword.error
+                                }
                                 size="small"
                                 className="mt-2"
                                 onSubmit={submit}
                             >
-
                                 <Form.Group>
-
-                                    {!optout && <Form.Input
-                                        width={6}
-                                        type={showPass ? "text" : "password"}
-                                        size="small"
-                                        label="Vault Password"
-                                        placeholder="Vault Password"
-                                        value={formState.vaultPassword.value}
-                                        onChange={e => formSetter.setVaultPassword(e.target.value)}
-                                        error={!!formState.vaultPassword.error && { content: formState.vaultPassword.error }}
-                                        icon={
-                                            <Icon color={keyVisible ? "green" : "black"} name={showPass ? "eye" : "eye slash"} link onClick={() => setShowPass(s => !s)} />
-                                        } />
-                                    }
+                                    {!optout && (
+                                        <Form.Input
+                                            width={6}
+                                            type={
+                                                showPass ? "text" : "password"
+                                            }
+                                            size="small"
+                                            label="Vault Password"
+                                            placeholder="Vault Password"
+                                            value={
+                                                formState.vaultPassword.value
+                                            }
+                                            onChange={(e) =>
+                                                formSetter.setVaultPassword(
+                                                    e.target.value
+                                                )
+                                            }
+                                            error={
+                                                !!formState.vaultPassword
+                                                    .error && {
+                                                    content:
+                                                        formState.vaultPassword
+                                                            .error,
+                                                }
+                                            }
+                                            icon={
+                                                <Icon
+                                                    color={
+                                                        keyVisible
+                                                            ? "green"
+                                                            : "black"
+                                                    }
+                                                    name={
+                                                        showPass
+                                                            ? "eye"
+                                                            : "eye slash"
+                                                    }
+                                                    link
+                                                    onClick={() =>
+                                                        setShowPass((s) => !s)
+                                                    }
+                                                />
+                                            }
+                                        />
+                                    )}
 
                                     <Form.Input
                                         width={6}
-                                        type={storePassVisible ? "text" : "password"}
+                                        type={
+                                            storePassVisible
+                                                ? "text"
+                                                : "password"
+                                        }
                                         value={formState.keystorePassword.value}
-                                        error={!!formState.keystorePassword.error && { content: formState.keystorePassword.error }}
+                                        error={
+                                            !!formState.keystorePassword
+                                                .error && {
+                                                content:
+                                                    formState.keystorePassword
+                                                        .error,
+                                            }
+                                        }
                                         label="Keystore Password"
                                         placeholder="Keystore Password"
-                                        onChange={e => formSetter.setKeystorePassword(e.target.value)}
+                                        onChange={(e) =>
+                                            formSetter.setKeystorePassword(
+                                                e.target.value
+                                            )
+                                        }
                                         icon={
-                                            <Icon color={"black"} name={storePassVisible ? "eye" : "eye slash"} link onClick={() => setStorePassVisible(s => !s)} />
+                                            <Icon
+                                                color={"black"}
+                                                name={
+                                                    storePassVisible
+                                                        ? "eye"
+                                                        : "eye slash"
+                                                }
+                                                link
+                                                onClick={() =>
+                                                    setStorePassVisible(
+                                                        (s) => !s
+                                                    )
+                                                }
+                                            />
                                         }
                                     />
-
                                 </Form.Group>
 
                                 <div>
-                                    <span className="font-bold text-gray-600">Password Hint:</span>
+                                    <span className="font-bold text-gray-600">
+                                        Password Hint:
+                                    </span>
                                     <span className="text-gray-400 ml-2">
                                         {passwordHint}
                                     </span>
                                 </div>
-
                             </Form>
-
                         </Modal.Content>
                     </div>
 
                     <Modal.Actions className="border-solid border-t-1 border-b-0 border-l-0 border-r-0 border-gray-300 bg-gray-100 p-4">
                         <div className="flex justify-between">
-
-                            <Button size="small" className="transparent" content="Close" onClick={closeModal} basic />
+                            <Button
+                                size="small"
+                                className="transparent"
+                                content="Close"
+                                onClick={closeModal}
+                                basic
+                            />
 
                             <Button
                                 size="small"
                                 ref={downloadRef}
-                                href={keystoreDL ? URL.createObjectURL(keystoreDL.data) : ""} download={keystoreDL.filename}
-                                content={(!optout && formState.vaultPassword.error) || formState.keystorePassword.error ? "Try Again" : keystoreDL ? "Download Keystore" : "Create Keystore"}
+                                href={
+                                    keystoreDL
+                                        ? URL.createObjectURL(keystoreDL.data)
+                                        : ""
+                                }
+                                download={keystoreDL.filename}
+                                content={
+                                    (!optout &&
+                                        formState.vaultPassword.error) ||
+                                    formState.keystorePassword.error
+                                        ? "Try Again"
+                                        : keystoreDL
+                                        ? "Download Keystore"
+                                        : "Create Keystore"
+                                }
                                 color="teal"
                                 onClick={keystoreDL ? closeModal : submit}
                                 icon={keystoreDL ? "download" : null}
                             />
-
-                        </div>  
-                        
+                        </div>
                     </Modal.Actions>
-
                 </div>
-            </FocusTrap> 
+            </FocusTrap>
         </Modal>
-    )
-
+    );
 }

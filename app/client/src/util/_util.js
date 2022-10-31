@@ -1,14 +1,14 @@
-import * as generic from './generic';
-import * as string from './string';
-import * as transaction from './transaction';
-import * as wallet from './wallet';
+import * as generic from "./generic";
+import * as string from "./string";
+import * as transaction from "./transaction";
+import * as wallet from "./wallet";
 
 const utils = {
     generic: generic,
     string: string,
     transaction: transaction,
     wallet: wallet,
-}
+};
 
 // Quick exports
 export const classNames = generic.classNames;

@@ -1,4 +1,4 @@
-import { INTERFACE_ACTION_TYPES } from '../constants/_constants';
+import { INTERFACE_ACTION_TYPES } from "../constants/_constants";
 
 /**
  * Toggle the current state of the global loading boolean within the interfaceReducer
@@ -6,7 +6,10 @@ import { INTERFACE_ACTION_TYPES } from '../constants/_constants';
  * @returns { Object } - Action object to be passed as first parameter within Redux.dispatch()
  */
 export function toggleGlobalLoadingBool(isLoading) {
-    return { type: INTERFACE_ACTION_TYPES.TOGGLE_GLOBAL_LOADING_BOOL, payload: typeof isLoading !== "undefined" ? isLoading : undefined }
+    return {
+        type: INTERFACE_ACTION_TYPES.TOGGLE_GLOBAL_LOADING_BOOL,
+        payload: typeof isLoading !== "undefined" ? isLoading : undefined,
+    };
 }
 
 /**
@@ -15,7 +18,10 @@ export function toggleGlobalLoadingBool(isLoading) {
  * @returns { Object } - Action object to be passed as first parameter within Redux.dispatch()
  */
 export function DEBUG_toggleShowDebug(showDebug) {
-    return { type: INTERFACE_ACTION_TYPES.DEBUG_TOGGLE_SHOW_DEBUG, payload: typeof showDebug !== "undefined" ? showDebug : undefined }
+    return {
+        type: INTERFACE_ACTION_TYPES.DEBUG_TOGGLE_SHOW_DEBUG,
+        payload: typeof showDebug !== "undefined" ? showDebug : undefined,
+    };
 }
 
 /**
@@ -23,6 +29,5 @@ export function DEBUG_toggleShowDebug(showDebug) {
  * @returns { Object } - Action object to be passed as first parameter within Redux.dispatch()
  */
 export function toggleTheme() {
-
-    return { type: INTERFACE_ACTION_TYPES.TOGGLE_THEME }
+    return { type: INTERFACE_ACTION_TYPES.TOGGLE_THEME };
 }

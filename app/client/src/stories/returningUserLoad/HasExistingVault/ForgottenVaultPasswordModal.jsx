@@ -1,7 +1,7 @@
-import React from 'react';
-import { Button, Checkbox, Header, Modal } from 'semantic-ui-react';
-import { classNames } from 'util/_util';
-import { electronStoreUtilityActions } from 'store/electronStoreHelper';
+import React from "react";
+import { Button, Checkbox, Header, Modal } from "semantic-ui-react";
+import { classNames } from "util/_util";
+import { electronStoreUtilityActions } from "store/electronStoreHelper";
 
 /**
  * Shows a prompt to open a modal regarding forgotten vault password
@@ -9,19 +9,18 @@ import { electronStoreUtilityActions } from 'store/electronStoreHelper';
  * @returns
  */
 export default function ForgottenVaultPasswordModal({ incorrectPwEntered }) {
-
     const [okWithDelete, setOkWithDelete] = React.useState(false);
     const [doubleCheck, setDoubleCheck] = React.useState(false);
     const [isOpen, setOpen] = React.useState(false);
 
-    const toggleOkWithDelete = () => setOkWithDelete(s => !s);
-    const toggleDoubleCheck = () => setDoubleCheck(s => !s);
-    const toggleOpen = () => setOpen(s => !s);
+    const toggleOkWithDelete = () => setOkWithDelete((s) => !s);
+    const toggleDoubleCheck = () => setDoubleCheck((s) => !s);
+    const toggleOpen = () => setOpen((s) => !s);
 
     const deleteTheVault = async () => {
         await electronStoreUtilityActions.completelyDeleteElectronStore();
         window.location.reload(true);
-    }
+    };
 
     return (
         <Modal
@@ -30,55 +29,78 @@ export default function ForgottenVaultPasswordModal({ incorrectPwEntered }) {
             onClose={toggleOpen}
             size="fullscreen"
             trigger={
-                <p className={classNames("p-1 font-bold text-xs text-red-400 uppercase hover:text-red-600 cursor-pointer", { 'hidden': !incorrectPwEntered })}>
+                <p
+                    className={classNames(
+                        "p-1 font-bold text-xs text-red-400 uppercase hover:text-red-600 cursor-pointer",
+                        { hidden: !incorrectPwEntered }
+                    )}
+                >
                     Did you forget your password?
                 </p>
-            }>
-
+            }
+        >
             <Modal.Header>
-
-                <Header as="h4" color="red">Forgotten Vault Password</Header>
-
+                <Header as="h4" color="red">
+                    Forgotten Vault Password
+                </Header>
             </Modal.Header>
 
             <Modal.Content className="text-left">
-
                 <p>
-                    Unfortunately, forgetting your vault password is catastrophic.
+                    Unfortunately, forgetting your vault password is
+                    catastrophic.
                 </p>
 
                 <p>
-                    Due to the secure nature of the vault, without the password <span className="italic">the wallets inside are not recoverable</span>.
+                    Due to the secure nature of the vault, without the password{" "}
+                    <span className="italic">
+                        the wallets inside are not recoverable
+                    </span>
+                    .
                 </p>
 
                 <p>
-                    It is advised to search all locations for your password before proceeding to create a new vault.
+                    It is advised to search all locations for your password
+                    before proceeding to create a new vault.
                 </p>
 
                 <p>
-                    If you absolutely cannot find your password, you can delete this vault to create a new one.
+                    If you absolutely cannot find your password, you can delete
+                    this vault to create a new one.
                 </p>
 
                 <p>
-                    Please be aware this <span className="font-bold">will remove the existing vault and it will be lost forever</span>.
+                    Please be aware this{" "}
+                    <span className="font-bold">
+                        will remove the existing vault and it will be lost
+                        forever
+                    </span>
+                    .
                 </p>
-
             </Modal.Content>
 
             <Modal.Actions className="flex justify-between items-center">
-
                 <div className="flex flex-col gap-4 text-left">
+                    <Checkbox
+                        label="I acknowledge this will delete my current vault"
+                        checked={okWithDelete}
+                        onChange={toggleOkWithDelete}
+                    />
 
-                    <Checkbox label="I acknowledge this will delete my current vault" checked={okWithDelete} onChange={toggleOkWithDelete} />
-
-                    <Checkbox label="I am sure I want to create a new vault -- I don't need it" checked={doubleCheck} onChange={toggleDoubleCheck} />
-
+                    <Checkbox
+                        label="I am sure I want to create a new vault -- I don't need it"
+                        checked={doubleCheck}
+                        onChange={toggleDoubleCheck}
+                    />
                 </div>
 
-                <Button content="Delete The Vault" color="red" disabled={!okWithDelete || !doubleCheck} onClick={deleteTheVault} />
-
+                <Button
+                    content="Delete The Vault"
+                    color="red"
+                    disabled={!okWithDelete || !doubleCheck}
+                    onClick={deleteTheVault}
+                />
             </Modal.Actions>
-
         </Modal>
-    )
+    );
 }

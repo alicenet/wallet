@@ -1,7 +1,7 @@
-import datastores from './Datastores';
-import overview from './Overview';
-import walletTXs from './WalletTXs';
-import searchTXs from './SearchTXs';
+import datastores from "./Datastores";
+import overview from "./Overview";
+import walletTXs from "./WalletTXs";
+import searchTXs from "./SearchTXs";
 
 export const Datastores = datastores;
 export const Overview = overview;

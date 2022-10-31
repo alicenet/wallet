@@ -1,20 +1,26 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Button, Form, Header, Icon, Modal, Placeholder } from 'semantic-ui-react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useFormState } from 'hooks/_hooks';
-import utils, { stringUtils } from 'util/_util';
-import { MODAL_ACTIONS } from 'redux/actions/_actions';
-import { electronStoreCommonActions } from 'store/electronStoreHelper';
-import FocusTrap from 'focus-trap-react';
+import React, { useEffect, useRef, useState } from "react";
+import {
+    Button,
+    Form,
+    Header,
+    Icon,
+    Modal,
+    Placeholder,
+} from "semantic-ui-react";
+import { useDispatch, useSelector } from "react-redux";
+import { useFormState } from "hooks/_hooks";
+import utils, { stringUtils } from "util/_util";
+import { MODAL_ACTIONS } from "redux/actions/_actions";
+import { electronStoreCommonActions } from "store/electronStoreHelper";
+import FocusTrap from "focus-trap-react";
 
 export default function ExportPrivateKeyModal() {
-
     const dispatch = useDispatch();
 
-    const { isOpen, targetWallet, vault } = useSelector(s => ({
+    const { isOpen, targetWallet, vault } = useSelector((s) => ({
         isOpen: s.modal.export_privK_modal,
         targetWallet: s.modal.wallet_action_target,
-        vault: s.vault
+        vault: s.vault,
     }));
 
     const [showPass, setShowPass] = useState(false);
@@ -26,14 +32,19 @@ export default function ExportPrivateKeyModal() {
     const keyVisibilityTimer = useRef(null);
 
     const [formState, formSetter, onSubmit] = useFormState([
-        { name: 'vaultPassword', display: 'Vault Password', type: 'password', isRequired: true }
+        {
+            name: "vaultPassword",
+            display: "Vault Password",
+            type: "password",
+            isRequired: true,
+        },
     ]);
 
     // Countdown for visibility
     useEffect(() => {
         if (visibleTime !== 0 && visibleTime > 0 && visibleTime < 15) {
             setTimeout(() => {
-                setVisibleTime(s => s - 1)
+                setVisibleTime((s) => s - 1);
             }, 1000);
         }
     }, [visibleTime]);
@@ -48,13 +59,21 @@ export default function ExportPrivateKeyModal() {
 
     const showKey = async () => {
         if (vault.exists && !vault.optout) {
-            if (!await electronStoreCommonActions.checkPasswordAgainstPreflightHash(formState.vaultPassword.value)) {
+            if (
+                !(await electronStoreCommonActions.checkPasswordAgainstPreflightHash(
+                    formState.vaultPassword.value
+                ))
+            ) {
                 formSetter.setVaultPasswordError("Incorrect password");
                 return setKeyVisible(false);
             }
-        }
-        else {
-            if (!await electronStoreCommonActions.checkPasswordAgainstKeystoreAddress(formState.vaultPassword.value, targetWallet.address)) {
+        } else {
+            if (
+                !(await electronStoreCommonActions.checkPasswordAgainstKeystoreAddress(
+                    formState.vaultPassword.value,
+                    targetWallet.address
+                ))
+            ) {
                 formSetter.setVaultPasswordError("Incorrect password");
                 return setKeyVisible(false);
             }
@@ -78,67 +97,83 @@ export default function ExportPrivateKeyModal() {
         setTimeout(() => {
             setCopyClick(false);
         }, 2150);
-    }
+    };
 
-    const submit = e => {
+    const submit = (e) => {
         onSubmit(async () => {
             e.preventDefault();
             showKey();
         });
-    }
+    };
 
-    const [passwordHint, setPasswordHint] = useState('');
+    const [passwordHint, setPasswordHint] = useState("");
 
     useEffect(() => {
         const checkForPasswordHint = async () => {
-            let passwordHint = await electronStoreCommonActions.readPasswordHint();
-            typeof passwordHint === 'string' ? setPasswordHint(passwordHint) : setPasswordHint('');
-        }
+            let passwordHint =
+                await electronStoreCommonActions.readPasswordHint();
+            typeof passwordHint === "string"
+                ? setPasswordHint(passwordHint)
+                : setPasswordHint("");
+        };
         checkForPasswordHint();
     }, []);
 
     return (
-
         <Modal open={isOpen}>
-
             <Modal.Header>
                 <Header as="h4">
-                    Show Private Key For Wallet: <span className="text-blue-500">{targetWallet.name}</span>
+                    Show Private Key For Wallet:{" "}
+                    <span className="text-blue-500">{targetWallet.name}</span>
                     <Header.Subheader>
-                        Showing Private Key For Address: <span className="text-purple-500">{stringUtils.splitStringWithEllipsis(targetWallet.address, 4)}</span>
+                        Showing Private Key For Address:{" "}
+                        <span className="text-purple-500">
+                            {stringUtils.splitStringWithEllipsis(
+                                targetWallet.address,
+                                4
+                            )}
+                        </span>
                     </Header.Subheader>
                 </Header>
             </Modal.Header>
 
             <FocusTrap>
                 <div className="p-6">
-
                     <Modal.Content className="text-sm">
-
                         <p>
-                            Showing your private key is considered an administrative action.
+                            Showing your private key is considered an
+                            administrative action.
                         </p>
                         <p>
-                            Please provide your vault password below to show your private key for 15 seconds.
+                            Please provide your vault password below to show
+                            your private key for 15 seconds.
                         </p>
 
                         <div className="mt-2">
                             <Header>Your Private Key</Header>
                         </div>
 
-                        {keyVisible ? (<div className="h-10 flex items-center cursor-pointer hover:text-gray-600" onClick={copyPkey}>
+                        {keyVisible ? (
+                            <div
+                                className="h-10 flex items-center cursor-pointer hover:text-gray-600"
+                                onClick={copyPkey}
+                            >
                                 {targetWallet.privK}
-                                <Icon name="copy outline" className="ml-1 mb-2 cursor-pointer" />
+                                <Icon
+                                    name="copy outline"
+                                    className="ml-1 mb-2 cursor-pointer"
+                                />
                                 {!!copyClick && (
                                     <div className="relative inline text-xs mb-2 text-gray-500">
                                         Copied to clipboard!
                                     </div>
                                 )}
-                            </div>) :
+                            </div>
+                        ) : (
                             <Placeholder className="h-10">
                                 <Placeholder.Line />
                             </Placeholder>
-                        }
+                        )}
 
                         <Form
                             error={!!formState.vaultPassword.error}
@@ -146,9 +181,7 @@ export default function ExportPrivateKeyModal() {
                             className="mt-2"
                             onSubmit={submit}
                         >
-
                             <Form.Group>
-
                                 <Form.Input
                                     width={6}
                                     type={showPass ? "text" : "password"}
@@ -156,52 +189,79 @@ export default function ExportPrivateKeyModal() {
                                     label="Vault Password"
                                     placeholder="Vault Password"
                                     value={formState.vaultPassword.value}
-                                    onChange={e => formSetter.setVaultPassword(e.target.value)}
-                                    error={!!formState.vaultPassword.error && { content: formState.vaultPassword.error }}
+                                    onChange={(e) =>
+                                        formSetter.setVaultPassword(
+                                            e.target.value
+                                        )
+                                    }
+                                    error={
+                                        !!formState.vaultPassword.error && {
+                                            content:
+                                                formState.vaultPassword.error,
+                                        }
+                                    }
                                     disabled={visibleTime !== 0}
                                     icon={
                                         <Icon
-                                            color={keyVisible ? "green" : "black"}
-                                            name={keyVisible ? "thumbs up" : showPass ? "eye" : "eye slash"}
+                                            color={
+                                                keyVisible ? "green" : "black"
+                                            }
+                                            name={
+                                                keyVisible
+                                                    ? "thumbs up"
+                                                    : showPass
+                                                    ? "eye"
+                                                    : "eye slash"
+                                            }
                                             link
-                                            onClick={keyVisible ? null : () => setShowPass(s => !s)}
+                                            onClick={
+                                                keyVisible
+                                                    ? null
+                                                    : () =>
+                                                          setShowPass((s) => !s)
+                                            }
                                         />
                                     }
                                 />
-
                             </Form.Group>
 
                             <div>
-                                <span className="font-bold text-gray-600">Password Hint:</span>
+                                <span className="font-bold text-gray-600">
+                                    Password Hint:
+                                </span>
                                 <span className="text-gray-400 ml-2">
                                     {passwordHint}
                                 </span>
                             </div>
-
                         </Form>
-
                     </Modal.Content>
 
                     <Modal.Actions>
-                        
-                            <div className="flex justify-between">
-                                <Button size="small" className="transparent" content="Close" onClick={closeModal} basic />
-                                <Button
-                                    size="small"
-                                    content={formState.vaultPassword.error ? "Try Again" : visibleTime === 0 ? "Show Key" : `Vanishing in ${String(visibleTime)}`}
-                                    disabled={visibleTime !== 0}
-                                    color="teal"
-                                    onClick={submit}
-                                />
-                            </div>
-                    
+                        <div className="flex justify-between">
+                            <Button
+                                size="small"
+                                className="transparent"
+                                content="Close"
+                                onClick={closeModal}
+                                basic
+                            />
+                            <Button
+                                size="small"
+                                content={
+                                    formState.vaultPassword.error
+                                        ? "Try Again"
+                                        : visibleTime === 0
+                                        ? "Show Key"
+                                        : `Vanishing in ${String(visibleTime)}`
+                                }
+                                disabled={visibleTime !== 0}
+                                color="teal"
+                                onClick={submit}
+                            />
+                        </div>
                     </Modal.Actions>
-                    
                 </div>
             </FocusTrap>
-
         </Modal>
-
-    )
-
+    );
 }

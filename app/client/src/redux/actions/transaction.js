@@ -1,8 +1,8 @@
-import { TRANSACTION_ACTION_TYPES } from '../constants/_constants';
-import { default_log as log } from 'log/logHelper';
-import aliceNetAdapter from 'adapters/alicenetAdapter';
-import { ADAPTER_ACTIONS } from './_actions';
-import utils from 'util/_util';
+import { TRANSACTION_ACTION_TYPES } from "../constants/_constants";
+import { default_log as log } from "log/logHelper";
+import aliceNetAdapter from "adapters/alicenetAdapter";
+import { ADAPTER_ACTIONS } from "./_actions";
+import utils from "util/_util";
 
 //////////////////////////////////
 /* External Async Action Calls */
@@ -15,9 +15,12 @@ import utils from 'util/_util';
  */
 export function setPrioritizationFee(fee) {
     return async function (dispatch) {
-        dispatch({ type: TRANSACTION_ACTION_TYPES.SET_PRIORITIZATION_FEE, payload: fee });
+        dispatch({
+            type: TRANSACTION_ACTION_TYPES.SET_PRIORITIZATION_FEE,
+            payload: fee,
+        });
         dispatch(parseAndUpdateFees());
-    }
+    };
 }
 
 /**
@@ -27,8 +30,11 @@ export function setPrioritizationFee(fee) {
  */
 export function setFeePayer(wallet, userOverride = false) {
     return async function (dispatch) {
-        dispatch({ type: TRANSACTION_ACTION_TYPES.SET_FEE_PAYER, payload: { wallet: wallet, over_ride: userOverride } });
-    }
+        dispatch({
+            type: TRANSACTION_ACTION_TYPES.SET_FEE_PAYER,
+            payload: { wallet: wallet, over_ride: userOverride },
+        });
+    };
 }
 
 /**
@@ -38,7 +44,7 @@ export function setFeePayer(wallet, userOverride = false) {
 export function clearFeePayer() {
     return async function (dispatch) {
         dispatch({ type: TRANSACTION_ACTION_TYPES.CLEAR_FEE_PAYER });
-    }
+    };
 }
 
 /**
@@ -52,21 +58,30 @@ export function parseDefaultFeePayer() {
         const over_ride = state.transaction.feePayer.over_ride;
 
         // If the over_ride is set ( Manual Fee Payer Wallet Has Been Selected ), do not update through the parseDefaultFeePayer
-        if (over_ride) { return }
+        if (over_ride) {
+            return;
+        }
         // Don't update the default if none exist
         if (transactionList.length === 0) {
-            log.warn("parseDefaultFeePayer() called without a populated transaction list in the transaction reducer. This shouldn't happen!")
-            return
+            log.warn(
+                "parseDefaultFeePayer() called without a populated transaction list in the transaction reducer. This shouldn't happen!"
+            );
+            return;
         }
 
-        // Else, update to the first entry position 
-        const wallets = [...state.vault.wallets.internal, ...state.vault.wallets.external]
+        // Else, update to the first entry position
+        const wallets = [
+            ...state.vault.wallets.internal,
+            ...state.vault.wallets.external,
+        ];
         const firstEntry = transactionList[0];
 
         // Grab the wallet to set as the fee payer and dispatch it -- This should always exist and is failsafed by the above length constraint on transactionList
-        const walletToSet = wallets.filter(wallet => wallet.address === firstEntry.from)?.[0];
+        const walletToSet = wallets.filter(
+            (wallet) => wallet.address === firstEntry.from
+        )?.[0];
         dispatch(setFeePayer(walletToSet));
-    }
+    };
 }
 
 /**
@@ -76,7 +91,7 @@ export function parseDefaultFeePayer() {
 export function toggleStatus() {
     return async function (dispatch) {
         dispatch({ type: TRANSACTION_ACTION_TYPES.TOGGLE_STATUS });
-    }
+    };
 }
 
 /**
@@ -86,8 +101,11 @@ export function toggleStatus() {
  */
 export function saveChangeReturnAddress(address) {
     return async function (dispatch) {
-        dispatch({ type: TRANSACTION_ACTION_TYPES.SAVE_CHANGE_RETURN_ADDRESS, payload: address });
-    }
+        dispatch({
+            type: TRANSACTION_ACTION_TYPES.SAVE_CHANGE_RETURN_ADDRESS,
+            payload: address,
+        });
+    };
 }
 
 /**
@@ -96,9 +114,12 @@ export function saveChangeReturnAddress(address) {
  */
 export function clearList() {
     return async function (dispatch) {
-        dispatch({ type: TRANSACTION_ACTION_TYPES.SET_PRIORITIZATION_FEE, payload: 0 });
+        dispatch({
+            type: TRANSACTION_ACTION_TYPES.SET_PRIORITIZATION_FEE,
+            payload: 0,
+        });
         dispatch({ type: TRANSACTION_ACTION_TYPES.CLEAR_LIST });
-    }
+    };
 }
 
 /**
@@ -108,10 +129,13 @@ export function clearList() {
  */
 export function addStore(transaction) {
     return async function (dispatch) {
-        dispatch({ type: TRANSACTION_ACTION_TYPES.ADD_TO_LIST, payload: transaction });
+        dispatch({
+            type: TRANSACTION_ACTION_TYPES.ADD_TO_LIST,
+            payload: transaction,
+        });
         dispatch(parseDefaultFeePayer());
         dispatch(parseAndUpdateFees());
-    }
+    };
 }
 
 /**
@@ -121,10 +145,13 @@ export function addStore(transaction) {
  */
 export function editStore(transaction) {
     return async function (dispatch) {
-        dispatch({ type: TRANSACTION_ACTION_TYPES.UPDATE_FROM_LIST, payload: transaction });
+        dispatch({
+            type: TRANSACTION_ACTION_TYPES.UPDATE_FROM_LIST,
+            payload: transaction,
+        });
         dispatch(parseDefaultFeePayer());
         dispatch(parseAndUpdateFees());
-    }
+    };
 }
 
 /**
@@ -134,33 +161,42 @@ export function editStore(transaction) {
  */
 export function removeItem(index) {
     return async function (dispatch) {
-        dispatch({ type: TRANSACTION_ACTION_TYPES.REMOVE_FROM_LIST, payload: index });
+        dispatch({
+            type: TRANSACTION_ACTION_TYPES.REMOVE_FROM_LIST,
+            payload: index,
+        });
         dispatch(parseAndUpdateFees());
-    }
+    };
 }
 
 export function setLastSentAndMinedTx(tx) {
     return async function (dispatch) {
-        dispatch({ type: TRANSACTION_ACTION_TYPES.SET_LAST_SENT_MINED_TX, payload: tx });
-    }
+        dispatch({
+            type: TRANSACTION_ACTION_TYPES.SET_LAST_SENT_MINED_TX,
+            payload: tx,
+        });
+    };
 }
 
 export function setLastSentTxHash(txHash) {
     return async function (dispatch) {
-        dispatch({ type: TRANSACTION_ACTION_TYPES.SET_LAST_SENT_TX_HASH, payload: txHash });
-    }
+        dispatch({
+            type: TRANSACTION_ACTION_TYPES.SET_LAST_SENT_TX_HASH,
+            payload: txHash,
+        });
+    };
 }
 
 export function addPolledTx(tx) {
     return async function (dispatch) {
         dispatch({ type: TRANSACTION_ACTION_TYPES.ADD_POLLED_TX, payload: tx });
-    }
+    };
 }
 
 export function clearPolledTxs() {
     return async function (dispatch) {
         dispatch({ type: TRANSACTION_ACTION_TYPES.CLEAR_POLLED_TX });
-    }
+    };
 }
 
 export function resetFeeState() {
@@ -183,8 +219,11 @@ export function resetFeeState() {
             totalFee: 0, // Total TX Fee ( All Store Fees + Min Fee + Prioritization )
         };
         fees.txFee = fees.minTxFee + fees.prioritizationFee;
-        dispatch({ type: TRANSACTION_ACTION_TYPES.UPDATE_FEES_BY_TYPE, payload: fees });
-    }
+        dispatch({
+            type: TRANSACTION_ACTION_TYPES.UPDATE_FEES_BY_TYPE,
+            payload: fees,
+        });
+    };
 }
 
 /**
@@ -199,15 +238,16 @@ export function resetFeeState() {
  */
 export function parseAndUpdateFees(rpcFees) {
     return async function (dispatch, getState) {
-
         const state = getState();
-        const aliceNetFees = rpcFees ? rpcFees : state.adapter.aliceNetAdapter.fees;
+        const aliceNetFees = rpcFees
+            ? rpcFees
+            : state.adapter.aliceNetAdapter.fees;
         const txList = state.transaction.list;
 
         // Convert RPC Fees to human-readable format for transaction reducer state
-        Object.keys(aliceNetFees).forEach(key => {
+        Object.keys(aliceNetFees).forEach((key) => {
             aliceNetFees[key] = parseInt(aliceNetFees[key], 16);
-        })
+        });
 
         // Build fees from passed parameters or available state
         let fees = {
@@ -223,10 +263,13 @@ export function parseAndUpdateFees(rpcFees) {
             prioritizationFee: state.transaction.fees.prioritizationFee, // Any additional prioritization fee set by the user
             txFee: 0, // Prioritization + Minimum Fee
             totalFee: 0, // Total TX Fee ( All Store Fees + Min Fee + Prioritization )
-            errors: [] // Errors in fee estimation
+            errors: [], // Errors in fee estimation
         };
 
-        dispatch({ type: TRANSACTION_ACTION_TYPES.UPDATE_FEES_BY_TYPE, payload: fees });
+        dispatch({
+            type: TRANSACTION_ACTION_TYPES.UPDATE_FEES_BY_TYPE,
+            payload: fees,
+        });
 
         // Grab AliceNetAdapter instance for the AliceNetJS Wallet instance
         const aliceNetWallet = aliceNetAdapter.wallet();
@@ -236,7 +279,9 @@ export function parseAndUpdateFees(rpcFees) {
 
         // Get estimate fees from aliceNetWalletFakeTx -- These fees resemble the fees per store and not deposit fees on DataStores
         // We can get the store fee per idx in the iteration below
-        let estimateFees = await dispatch(ADAPTER_ACTIONS.createAndClearFakeTxForFeeEstimates());
+        let estimateFees = await dispatch(
+            ADAPTER_ACTIONS.createAndClearFakeTxForFeeEstimates()
+        );
 
         // If estimation has errors, parse them and set to state for UI digestion
         if (estimateFees.errors) {
@@ -244,12 +289,19 @@ export function parseAndUpdateFees(rpcFees) {
             for (let i = 0; i < feeErrors.length; i++) {
                 let error = feeErrors[i].error;
                 if (error.msg === "Insufficient Funds") {
-                    fees.errors.push(`${utils.wallet.getWalletNameFromAddress(error.details.account.address)} has insufficient funds`);
+                    fees.errors.push(
+                        `${utils.wallet.getWalletNameFromAddress(
+                            error.details.account.address
+                        )} has insufficient funds`
+                    );
                 }
             }
         }
 
-        log.debug("parseAndUpdateFees :: AliceNetJS.Transaction.Tx.estimateFees():", estimateFees);
+        log.debug(
+            "parseAndUpdateFees :: AliceNetJS.Transaction.Tx.estimateFees():",
+            estimateFees
+        );
 
         // If the txList > 0, we need to calculate any special/specific fees such as datastore deposit cost
         // Per store/vout fee will be called at the end
@@ -260,38 +312,63 @@ export function parseAndUpdateFees(rpcFees) {
             for (let i = 0; i < txList.length; i++) {
                 let tx = txList[i];
                 txTypesByIdx.push(tx.type);
-                log.debug("Parsed " + utils.transaction.txTypeToName(tx.type) + "for fee estimation", {
-                    txIDX: i,
-                    tx: tx,
-                    currentEpoch: currentEpoch,
-                    storeFee: parseInt(estimateFees.costByVoutIdx[i]), // This fee will include any rewards and deposit fee
-                });
+                log.debug(
+                    "Parsed " +
+                        utils.transaction.txTypeToName(tx.type) +
+                        "for fee estimation",
+                    {
+                        txIDX: i,
+                        tx: tx,
+                        currentEpoch: currentEpoch,
+                        storeFee: parseInt(estimateFees.costByVoutIdx[i]), // This fee will include any rewards and deposit fee
+                    }
+                );
             }
         }
-        // Get base store fees if estimateFees was successful 
+        // Get base store fees if estimateFees was successful
         // -- If not still allow RPC fees to be set to state
         if (!!estimateFees && !estimateFees.error) {
             for (let i = 0; i < estimateFees.costByVoutIdx.length; i++) {
                 let fee = estimateFees.costByVoutIdx[i];
                 let type = txTypesByIdx[i];
                 // If Undefined it is most likely a valuestore added by the wallet to balance ins/outs for change or data store rewards
-                log.debug("Base fee: " + fee + " for store type " + utils.transaction.txTypeToName(type) + " added.");
+                log.debug(
+                    "Base fee: " +
+                        fee +
+                        " for store type " +
+                        utils.transaction.txTypeToName(type) +
+                        " added."
+                );
                 switch (type) {
-                    case utils.transaction.transactionTypes.DATA_STORE: fees.dataStoreFees += parseInt(fee); break;
-                    case utils.transaction.transactionTypes.VALUE_STORE: fees.valueStoreFees += parseInt(fee); break;
-                    case utils.transaction.transactionTypes.ATOMIC_SWAP_STORE: fees.atomicSwapFees += parseInt(fee); break;
+                    case utils.transaction.transactionTypes.DATA_STORE:
+                        fees.dataStoreFees += parseInt(fee);
+                        break;
+                    case utils.transaction.transactionTypes.VALUE_STORE:
+                        fees.valueStoreFees += parseInt(fee);
+                        break;
+                    case utils.transaction.transactionTypes.ATOMIC_SWAP_STORE:
+                        fees.atomicSwapFees += parseInt(fee);
+                        break;
                     // If Undefined it is most likely a valuestore added by the wallet to balance ins/outs for change or data store rewards
-                    default: fees.valueStoreFees += parseInt(fee); break;
+                    default:
+                        fees.valueStoreFees += parseInt(fee);
+                        break;
                 }
             }
         }
 
         fees.txFee = fees.minTxFee + fees.prioritizationFee;
-        fees.totalFee = fees.txFee + fees.valueStoreFees + fees.dataStoreFees + fees.atomicSwapFees;
+        fees.totalFee =
+            fees.txFee +
+            fees.valueStoreFees +
+            fees.dataStoreFees +
+            fees.atomicSwapFees;
 
         fees.isLoading = false;
 
-        dispatch({ type: TRANSACTION_ACTION_TYPES.UPDATE_FEES_BY_TYPE, payload: fees });
-    }
-
+        dispatch({
+            type: TRANSACTION_ACTION_TYPES.UPDATE_FEES_BY_TYPE,
+            payload: fees,
+        });
+    };
 }
