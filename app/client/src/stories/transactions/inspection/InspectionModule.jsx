@@ -8,7 +8,6 @@ import Page from 'layout/Page';
 import { useHistory } from 'react-router-dom';
 import utils, { stringUtils } from 'util/_util';
 import { getAliceNetWalletInstance } from 'redux/middleware/WalletManagerMiddleware';
-import { classNames } from 'util/generic';
 import Web3 from 'web3';
 
 const BLOCK_EXPLORER_LINK = process.env.REACT_APP_BLOCK_EXPLORER_LINK;

@@ -49,32 +49,34 @@ export default function ResetWalletModal() {
             </Modal.Header>
 
             <FocusTrap>
-                <div className="p-6">
-                    <Modal.Content className="text-left">
+                <div>
+                    <div className="p-4">
+                        <Modal.Content className="text-left">
 
-                    <p>
-                        On this page you can completely reset AliceNet wallet to its initial settings.
-                    </p>
+                        <p>
+                            On this page you can completely reset AliceNet wallet to its initial settings.
+                        </p>
 
-                    <p>
-                        This action will completely remove any vaults associated with AliceNet wallet, as well as any stored settings.
-                    </p>
+                        <p>
+                            This action will completely remove any vaults associated with AliceNet wallet, as well as any stored settings.
+                        </p>
 
-                    <p>
-                        Please make sure you backup any keys that you would like to backup before proceeding with this.
-                    </p>
+                        <p>
+                            Please make sure you backup any keys that you would like to backup before proceeding with this.
+                        </p>
 
-                    <p>
-                        As a safe guard this action does not remove the latest backup (.bak) file and should be done manually.
-                    </p>
+                        <p>
+                            As a safe guard this action does not remove the latest backup (.bak) file and should be done manually.
+                        </p>
 
-                    <p>
-                        Please be aware this <span className="font-bold">will remove the existing vault and it will be lost forever</span>.
-                    </p>
+                        <p>
+                            Please be aware this <span className="font-bold">will remove the existing vault and it will be lost forever</span>.
+                        </p>
 
-                    </Modal.Content>
+                        </Modal.Content>
+                    </div>
 
-                    <Modal.Actions className="flex justify-between items-center mt-6">
+                    <Modal.Actions className="flex justify-between items-center mt-6 border-solid border-t-1 border-b-0 border-l-0 border-r-0 border-gray-300 bg-gray-100 p-4">
 
                         <div className="flex flex-col gap-4 text-left">
 

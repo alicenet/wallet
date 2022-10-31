@@ -39,21 +39,27 @@ export default function RemoveWalletModal() {
     const removeWallet = async () => {
         setLoading(true);
         setError('');
-        if (exists && !await electronStoreCommonActions.checkPasswordAgainstPreflightHash(formState.password.value)) {
+        try {
+            if (exists && !await electronStoreCommonActions.checkPasswordAgainstPreflightHash(formState.password.value)) {
+                setLoading(false);
+                return setError('Incorrect password');
+            }
+    
+            let deleteWallet = await dispatch(VAULT_ACTIONS.removeWalletByAddress(targetWallet, formState.password.value, optout, exists));
             setLoading(false);
-            return setError('Incorrect password');
+            if (deleteWallet.error) {
+                return setError(deleteWallet.error);
+            }
+            else {
+                closeModal();
+                const walletHead = head(wallets.internal) || head(wallets.external);
+                setSelectedWallet(walletHead);
+            }
+        } catch(exc) {
+            setLoading(false);
+            return setError('An Error Has Ocurred');
         }
-
-        let deleteWallet = await dispatch(VAULT_ACTIONS.removeWalletByAddress(targetWallet, formState.password.value, optout, exists));
-        setLoading(false);
-        if (deleteWallet.error) {
-            return setError(deleteWallet.error);
-        }
-        else {
-            closeModal();
-            const walletHead = head(wallets.internal) || head(wallets.external);
-            setSelectedWallet(walletHead);
-        }
+        
     };
 
     const closeModal = () => {
@@ -73,66 +79,71 @@ export default function RemoveWalletModal() {
     return (
 
         <Modal open={isOpen}>
+            <FocusTrap>
+                <div>
+                    <div className="p-4">
+                        <Modal.Header>
+                            <Header as="h4">
+                                Remove {targetWallet.isInternal ? "Internal" : "External"} Wallet: <span className="text-blue-500">{targetWallet.name}</span>
+                            </Header>
+                        </Modal.Header>
 
-            <Modal.Header>
-                <Header as="h4">
-                    Remove {targetWallet.isInternal ? "Internal" : "External"} Wallet: <span className="text-blue-500">{targetWallet.name}</span>
-                </Header>
-            </Modal.Header>
+                        
+                        <Modal.Content className="text-sm">
+                        
+                            {exists ?
+                                <>
+                                    <p>
+                                        Removing a wallet is considered an administrative action.
+                                    </p>
+                                    <p>
+                                        Please provide your vault password below to confirm this removal.
+                                    </p>
+                                </> :
+                                <p>
+                                    Please confirm before deleting
+                                </p>}
+                            
+                                <Form
+                                    error={!!error}
+                                    size="small"
+                                    className="mt-2"
+                                    onSubmit={submit}
+                                >
 
-            <Modal.Content className="text-sm">
+                                    <Form.Group>
+                                        
+                                            {exists && 
+                                            <Form.Input
+                                                width={6}
+                                                type={showPass ? "text" : "password"}
+                                                size="small"
+                                                label="Vault Password"
+                                                placeholder="Password"
+                                                value={formState.password.value}
+                                                onChange={e => formSetter.setPassword(e.target.value)}
+                                                error={!!error}
+                                                icon={<Icon name={showPass ? "eye" : "eye slash"} link onClick={() => setShowPass(s => !s)} />}
+                                            />}
+                                        
+                                    </Form.Group>
 
-                {exists ?
-                    <>
-                        <p>
-                            Removing a wallet is considered an administrative action.
-                        </p>
-                        <p>
-                            Please provide your vault password below to confirm this removal.
-                        </p>
-                    </> :
-                    <p>
-                        Please confirm before deleting
-                    </p>}
+                                </Form>
+                            
 
-                <Form
-                    error={!!error}
-                    size="small"
-                    className="mt-2"
-                    onSubmit={submit}
-                >
-
-                    <Form.Group>
-
-                        {exists && <Form.Input
-                            width={6}
-                            type={showPass ? "text" : "password"}
-                            size="small"
-                            label="Vault Password"
-                            placeholder="Password"
-                            value={formState.password.value}
-                            onChange={e => formSetter.setPassword(e.target.value)}
-                            error={!!error}
-                            icon={<Icon name={showPass ? "eye" : "eye slash"} link onClick={() => setShowPass(s => !s)} />}
-                        />}
-
-                    </Form.Group>
-
-                </Form>
-
-                {error && <Message color={error ? "red" : "purple"}>{error}</Message>}
-
-            </Modal.Content>
-
-            <Modal.Actions>
-                <FocusTrap>
-                    <div className="flex justify-between">
-                        <Button size="small" className="transparent" content="Close" onClick={closeModal} basic />
-                        <Button size="small" content={error ? "Try Again" : "Delete Wallet"} color="teal" onClick={removeWallet} loading={loading && !error} />
+                            {error && <Message color={error ? "red" : "purple"}>{error}</Message>}
+                            
+                        </Modal.Content>
                     </div>
-                </FocusTrap>
-
-            </Modal.Actions>
+                                      
+                    <Modal.Actions className="border-solid border-t-1 border-b-0 border-l-0 border-r-0 border-gray-300 bg-gray-100 p-4">
+                            <div className="flex justify-between">
+                                <Button size="small" className="transparent" content="Close" onClick={closeModal} basic />
+                                <Button size="small" content={error ? "Try Again" : "Delete Wallet"} color="teal" onClick={removeWallet} loading={loading && !error} disabled={!formState.password.value}/>
+                            </div>
+                    </Modal.Actions> 
+                </div>
+            </FocusTrap>
 
         </Modal>
 
