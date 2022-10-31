@@ -11,7 +11,7 @@
         "allowImportExportEverywhere": true
     },
     "plugins": ["react"],
-    "parser": "babel-eslint",
+    "parser": "@babel/eslint-parser",
     "rules": {},
     "settings": {
         "react": {

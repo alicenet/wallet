@@ -31,7 +31,10 @@
         "react-error-overlay": "6.0.8"
     },
     "devDependencies": {
+        "@babel/core": "^7.19.6",
+        "@babel/eslint-parser": "^7.19.1",
         "@babel/plugin-proposal-class-properties": "7.10.4",
+        "@babel/preset-env": "^7.19.4",
         "concurrently": "7.0.0",
         "electron": "17.0.0",
         "electron-builder": "22.11.10",
