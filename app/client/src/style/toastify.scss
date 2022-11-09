@@ -1,11 +1,10 @@
 .Toastify__toast-container {
     width: 240px;
-    
+
     .basic {
         min-height: 24px !important;
-        margin-top: .25rem !important;
-    }   
-
+        margin-top: 0.25rem !important;
+    }
 }
 .Toastify__toast {
     min-height: 56px;
@@ -33,7 +32,6 @@
     .Toastify__toast-body {
         color: darken(#ffa14a, 45) !important;
     }
-
 }
 
 .Toastify__toast-body {
@@ -45,7 +43,6 @@
     width: 100%;
     font-weight: 400;
     margin: 0px !important;
-    
 }
 .Toastify__toast > button > svg {
     display: none;

@@ -6,9 +6,11 @@ dist/*
 app-build/*
 !app-build/.gitkeep
 
+# TestStore
 teststore.json
 teststore_bn.json
 
+# Docs
 docs/
 
 # React App
@@ -20,5 +22,8 @@ app/client/.eslintcache
 # Mac
 .DS_Store
 
-#PyCharm
+# PyCharm
 /.idea
+
+# Lint
+.eslintcache

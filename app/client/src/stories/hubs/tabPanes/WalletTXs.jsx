@@ -1,51 +1,69 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
-import Web3 from 'web3'
+import React, { useCallback, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
+import Web3 from "web3";
 
-import { ADAPTER_ACTIONS } from 'redux/actions/_actions';
-import { Button, Icon, Loader, Popup, Segment, Table } from 'semantic-ui-react';
-import utils, { stringUtils } from 'util/_util';
-import { toast } from 'react-toastify';
-import { SyncToastMessageSuccess } from 'components/customToasts/CustomToasts'
+import { ADAPTER_ACTIONS } from "redux/actions/_actions";
+import { Button, Icon, Loader, Popup, Segment, Table } from "semantic-ui-react";
+import utils, { stringUtils } from "util/_util";
+import { toast } from "react-toastify";
+import { SyncToastMessageSuccess } from "components/customToasts/CustomToasts";
 
 export default function WalletTXs({ wallet }) {
-
     const history = useHistory();
     const dispatch = useDispatch();
 
     const [fetchLoading, setFetchLoading] = useState(false);
 
-    let { recentTxs } = useSelector(s => ({ recentTxs: s.vault.recentTxs[wallet.address] }));
+    let { recentTxs } = useSelector((s) => ({
+        recentTxs: s.vault.recentTxs[wallet.address],
+    }));
     if (!recentTxs || recentTxs.error) {
         recentTxs = [];
     } // Default to empty array
-    const recentTxData = utils.transaction.parseArrayOfTxObjs(recentTxs.length > 0 && recentTxs[0] !== false ? recentTxs : []);
+    const recentTxData = utils.transaction.parseArrayOfTxObjs(
+        recentTxs.length > 0 && recentTxs[0] !== false ? recentTxs : []
+    );
 
     const fetchRecentTxs = useCallback(async () => {
         setFetchLoading(true);
-        await dispatch(ADAPTER_ACTIONS.getAndStoreRecentTXsForAddress(wallet.address, wallet.curve));
+        await dispatch(
+            ADAPTER_ACTIONS.getAndStoreRecentTXsForAddress(
+                wallet.address,
+                wallet.curve
+            )
+        );
         setFetchLoading(false);
     }, [wallet, dispatch]);
 
     // Pagination logic
     const txPerPage = 12;
-    const totalPages = Math.ceil((recentTxs.length) / txPerPage);
+    const totalPages = Math.ceil(recentTxs.length / txPerPage);
     const [activePage, setPage] = useState(0);
-    const pageForward = () => setPage(s => s + 1);
-    const pageBackward = () => setPage(s => s - 1);
+    const pageForward = () => setPage((s) => s + 1);
+    const pageBackward = () => setPage((s) => s - 1);
 
-    const activeSlice = [...recentTxs].slice(activePage * txPerPage, (activePage * txPerPage) + txPerPage)
+    const activeSlice = [...recentTxs].slice(
+        activePage * txPerPage,
+        activePage * txPerPage + txPerPage
+    );
 
     const inspectTx = async (txObj) => {
-        history.push('/inspectTx', {
+        history.push("/inspectTx", {
             tx: txObj,
         });
     };
 
     const handleCopy = (tx) => {
         utils.generic.copyToClipboard(tx["Tx"]["Vin"][0]["TXInLinker"].TxHash);
-        toast.success(<SyncToastMessageSuccess basic title="Success" message="TX Hash copied" />, { className: "basic", "autoClose": 2400 });
+        toast.success(
+            <SyncToastMessageSuccess
+                basic
+                title="Success"
+                message="TX Hash copied"
+            />,
+            { className: "basic", autoClose: 2400 }
+        );
     };
 
     useEffect(() => {
@@ -58,9 +76,7 @@ export default function WalletTXs({ wallet }) {
     }, [wallet, fetchRecentTxs, recentTxs.length]);
 
     const getTxTable = () => {
-
         let rows = activeSlice.map((tx, index) => {
-
             let txData = recentTxData[tx["Tx"]["Vin"][0]["TXInLinker"].TxHash];
             let tVal = Web3.utils.toBN("0x00"); // Total value of any value stores in the tx
 
@@ -68,7 +84,9 @@ export default function WalletTXs({ wallet }) {
             tx["Tx"]["Vout"].forEach((vout) => {
                 if (vout["ValueStore"]) {
                     let vStore = vout["ValueStore"];
-                    tVal = tVal.add(Web3.utils.toBN("0x" + vStore["VSPreImage"].Value));
+                    tVal = tVal.add(
+                        Web3.utils.toBN("0x" + vStore["VSPreImage"].Value)
+                    );
                 }
             });
 
@@ -76,8 +94,14 @@ export default function WalletTXs({ wallet }) {
                 <Table.Row key={`wallet-tx-row-${index}`}>
                     <Popup
                         trigger={
-                            <Table.Cell className="cursor-pointer hover:bg-gray-100" onClick={() => handleCopy(tx)}>
-                                {stringUtils.splitStringWithEllipsis(tx["Tx"]["Vin"][0]["TXInLinker"].TxHash, "10")}
+                            <Table.Cell
+                                className="cursor-pointer hover:bg-gray-100"
+                                onClick={() => handleCopy(tx)}
+                            >
+                                {stringUtils.splitStringWithEllipsis(
+                                    tx["Tx"]["Vin"][0]["TXInLinker"].TxHash,
+                                    "10"
+                                )}
                             </Table.Cell>
                         }
                         size="mini"
@@ -97,16 +121,14 @@ export default function WalletTXs({ wallet }) {
                     >
                         <Icon name="search" />
                     </Table.Cell>
-                </Table.Row>)
+                </Table.Row>
+            );
         });
 
         return (
             <Table basic celled compact className="text-xs" color="blue">
-
                 <Table.Header fullWidth>
-
                     <Table.Row>
-
                         <Table.HeaderCell>TX Hash</Table.HeaderCell>
                         <Table.HeaderCell>VINs</Table.HeaderCell>
                         <Table.HeaderCell>VOuts</Table.HeaderCell>
@@ -114,45 +136,57 @@ export default function WalletTXs({ wallet }) {
                         <Table.HeaderCell>Value Stores</Table.HeaderCell>
                         <Table.HeaderCell>Data Stores</Table.HeaderCell>
                         <Table.HeaderCell></Table.HeaderCell>
-
                     </Table.Row>
-
                 </Table.Header>
 
-                <Table.Body>
-
-                    {rows}
-
-                </Table.Body>
-
+                <Table.Body>{rows}</Table.Body>
             </Table>
         );
-
     };
 
     return (
         <Segment className="flex flex-col justify-center bg-white m-0 border-solid border border-gray-300 rounded-b border-t-0 rounded-tr-none rounded-tl-none h-81">
-            {fetchLoading && <Loader active size="large" content="Searching for TXs" className="text-sm text-gray-500" />}
+            {fetchLoading && (
+                <Loader
+                    active
+                    size="large"
+                    content="Searching for TXs"
+                    className="text-sm text-gray-500"
+                />
+            )}
 
-            {!fetchLoading && (recentTxs?.length > 0) && (recentTxs[0] !== false) && (<>
+            {!fetchLoading && recentTxs?.length > 0 && recentTxs[0] !== false && (
+                <>
+                    <div className="flex flex-col justify-between h-full">
+                        <div>{getTxTable()}</div>
 
-                <div className="flex flex-col justify-between h-full">
-
-                    <div>
-                        {getTxTable()}
+                        <div className="flex justify-between items-center">
+                            <Button
+                                disabled={activePage === 0}
+                                icon="chevron left"
+                                size="mini"
+                                onClick={pageBackward}
+                            />
+                            <div className="text-xs text-gray-600">
+                                Page {activePage + 1} of {totalPages}
+                            </div>
+                            <Button.Group size="mini">
+                                <Button
+                                    icon="refresh"
+                                    size="mini"
+                                    onClick={fetchRecentTxs}
+                                />
+                                <Button.Or />
+                                <Button
+                                    icon="chevron right"
+                                    disabled={activePage >= totalPages - 1}
+                                    onClick={pageForward}
+                                />
+                            </Button.Group>
+                        </div>
                     </div>
-
-                    <div className="flex justify-between items-center">
-                        <Button disabled={activePage === 0} icon="chevron left" size="mini" onClick={pageBackward} />
-                        <div className="text-xs text-gray-600">Page {activePage + 1} of {totalPages}</div>
-                        <Button.Group size="mini">
-                            <Button icon="refresh" size="mini" onClick={fetchRecentTxs} />
-                            <Button.Or />
-                            <Button icon="chevron right" disabled={activePage >= totalPages - 1} onClick={pageForward} />
-                        </Button.Group>
-                    </div>
-                </div>
-            </>)}
+                </>
+            )}
 
             {!fetchLoading && recentTxs[0] === false && (
                 <div className="flex flex-col justify-center items-center text-2xl font-semibold text-gray-500">
@@ -161,11 +195,15 @@ export default function WalletTXs({ wallet }) {
                         Only last 256 Blocks are parsed for recent TXs
                     </div>
                     <div className="mt-8">
-                        <Button content="Refresh" size="mini" color="orange" onClick={fetchRecentTxs} />
+                        <Button
+                            content="Refresh"
+                            size="mini"
+                            color="orange"
+                            onClick={fetchRecentTxs}
+                        />
                     </div>
                 </div>
             )}
-
         </Segment>
     );
 }

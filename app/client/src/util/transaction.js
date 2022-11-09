@@ -1,4 +1,4 @@
-import get from 'lodash/get';
+import get from "lodash/get";
 
 import { getAliceNetWalletInstance } from "redux/middleware/WalletManagerMiddleware";
 
@@ -17,18 +17,28 @@ export const transactionStatus = {
 export const storeTypes = {
     DATA_STORE: 1,
     VALUE_STORE: 2,
-    ATOMIC_SWAP_STORE: 3
+    ATOMIC_SWAP_STORE: 3,
 };
 
-const transactionStatusProgression = [transactionStatus.CREATION, transactionStatus.LOADING, transactionStatus.INSPECTION];
+const transactionStatusProgression = [
+    transactionStatus.CREATION,
+    transactionStatus.LOADING,
+    transactionStatus.INSPECTION,
+];
 
-export const getNextTransactionStatus = (status) => transactionStatusProgression[status % transactionStatusProgression.length];
+export const getNextTransactionStatus = (status) =>
+    transactionStatusProgression[status % transactionStatusProgression.length];
 
 /**
  * Creates and returns a standardized ValueStoreObject
  * @returns { Object } ValueStoreObject
  */
-export const createValueStoreObject = (fromAddress, toAddress, value, bnCurve = false) => {
+export const createValueStoreObject = (
+    fromAddress,
+    toAddress,
+    value,
+    bnCurve = false
+) => {
     return {
         type: "VS",
         name: "Value Store",
@@ -43,7 +53,12 @@ export const createValueStoreObject = (fromAddress, toAddress, value, bnCurve = 
  * Creates and returns a standardized DataStoreObject
  * @returns { Object } DataStoreObject
  */
-export const createDataStoreObject = (fromAddress, index, rawData, duration) => {
+export const createDataStoreObject = (
+    fromAddress,
+    index,
+    rawData,
+    duration
+) => {
     return {
         type: "DS",
         name: "Data Store",
@@ -60,7 +75,6 @@ export const createDataStoreObject = (fromAddress, index, rawData, duration) => 
  * @param {*} rpcTxObject
  */
 export const parseRpcTxObject = (rpcTxObject) => {
-
     let vins = [];
     let vouts = [];
 
@@ -89,8 +103,7 @@ export const parseRpcTxObject = (rpcTxObject) => {
                 tx_out_idx: vout["ValueStore"]["VSPreImage"].TXOutIdx || "0",
                 value: vout["ValueStore"]["VSPreImage"].Value,
             });
-        }
-        else {
+        } else {
             dataStoreCount++;
             vouts.push({
                 type: "DataStore",
@@ -98,7 +111,8 @@ export const parseRpcTxObject = (rpcTxObject) => {
                 chain_id: vout["DataStore"]["DSLinker"]["DSPreImage"].ChainID,
                 fee: vout["DataStore"]["DSLinker"]["DSPreImage"].Fee,
                 deposit: vout["DataStore"]["DSLinker"]["DSPreImage"].Deposit,
-                tx_out_idx: vout["DataStore"]["DSLinker"]["DSPreImage"].TXOutIdx || "0",
+                tx_out_idx:
+                    vout["DataStore"]["DSLinker"]["DSPreImage"].TXOutIdx || "0",
                 index: vout["DataStore"]["DSLinker"]["DSPreImage"].Index || "0",
                 value: vout["DataStore"]["DSLinker"]["DSPreImage"].RawData,
                 issued: vout["DataStore"]["DSLinker"]["DSPreImage"].IssuedAt,
@@ -108,14 +122,16 @@ export const parseRpcTxObject = (rpcTxObject) => {
 
     // We will show count of VIN/VOUT in table and allow dropdown rows for any individual VIN/VOUT
     const builtTxObj = {
-        "wholeTx": rpcTxObject,
-        "txHash": get(rpcTxObject, ["Vout", 0, "ValueStore"]) ? get(rpcTxObject, ["Vout", 0, "ValueStore", "TxHash"]) : get(rpcTxObject, ["Vout", 0, "DataStore", "DSLinker", "TxHash"]),
-        "valueStoreCount": valueStoreCount,
-        "dataStoreCount": dataStoreCount,
-        "vinCount": vins.length,
-        "voutCount": vouts.length,
-        "vins": vins,
-        "vouts": vouts,
+        wholeTx: rpcTxObject,
+        txHash: get(rpcTxObject, ["Vout", 0, "ValueStore"])
+            ? get(rpcTxObject, ["Vout", 0, "ValueStore", "TxHash"])
+            : get(rpcTxObject, ["Vout", 0, "DataStore", "DSLinker", "TxHash"]),
+        valueStoreCount: valueStoreCount,
+        dataStoreCount: dataStoreCount,
+        vinCount: vins.length,
+        voutCount: vouts.length,
+        vins: vins,
+        vouts: vouts,
     };
 
     return builtTxObj;
@@ -127,7 +143,7 @@ export const parseRpcTxObject = (rpcTxObject) => {
  */
 export const parseArrayOfTxObjs = (arrayofRpcTxObjs) => {
     let parsedData = {};
-    arrayofRpcTxObjs.forEach(rpcDataObj => {
+    arrayofRpcTxObjs.forEach((rpcDataObj) => {
         // Unpack if nested Tx object
         if (!!rpcDataObj.Tx) {
             rpcDataObj = rpcDataObj.Tx;
@@ -135,7 +151,7 @@ export const parseArrayOfTxObjs = (arrayofRpcTxObjs) => {
         let data = parseRpcTxObject(rpcDataObj);
         let hash = data.txHash;
         parsedData[hash] = data;
-    })
+    });
     return parsedData;
 };
 
@@ -149,20 +165,21 @@ export const parseDsLinkers = async (dsLinkers) => {
     let aliceNetWallet = getAliceNetWalletInstance(); // Need for utils
 
     try {
-
         for (let i = 0; i < dsLinkers.length; i++) {
-
             let dsL = dsLinkers[i];
 
             // Remove leading zeroes and mark as hex
-            let deposit = "0x" + dsL["DSLinker"]["DSPreImage"].Deposit.replace(/^0+/, '');
+            let deposit =
+                "0x" + dsL["DSLinker"]["DSPreImage"].Deposit.replace(/^0+/, "");
 
             let epochNums = await aliceNetWallet.Utils.calculateNumEpochs(
                 dsL["DSLinker"]["DSPreImage"].RawData.length % 2,
                 deposit
             );
 
-            let expiry = dsL["DSLinker"]["DSPreImage"].IssuedAt + parseInt(epochNums.toString());
+            let expiry =
+                dsL["DSLinker"]["DSPreImage"].IssuedAt +
+                parseInt(epochNums.toString());
 
             data.push({
                 type: "DataStore",
@@ -178,7 +195,6 @@ export const parseDsLinkers = async (dsLinkers) => {
                 txHash: dsL["DSLinker"].TxHash,
             });
         }
-
     } catch (ex) {
         return { error: "Error parsing DSLinkers: " + ex };
     }

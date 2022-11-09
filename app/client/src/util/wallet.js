@@ -1,11 +1,11 @@
-import Web3 from 'web3';
-import { utilsWallet_logger as log } from 'log/logHelper';
-import store from 'redux/store/store'
-import utils from './_util';
+import Web3 from "web3";
+import { utilsWallet_logger as log } from "log/logHelper";
+import store from "redux/store/store";
+import utils from "./_util";
 
-const bip39 = require('bip39');
-const AliceNetWalletJS = require('alicenetjs')
-var HDKey = require('hdkey');
+const bip39 = require("bip39");
+const AliceNetWalletJS = require("alicenetjs");
+var HDKey = require("hdkey");
 
 /** Creates a raw state wallet object from a wallet_name and private key
  * Internal keyring wallets are validated for existence and stored inside the vault
@@ -17,11 +17,14 @@ export async function generateBasicWalletObject(walletName, privK, curve) {
     // Derive public key and public address to state for ease of use
     return {
         name: walletName,
-        address: curve === curveTypes.SECP256K1 ? await getSecp256k1FromPrivKey(privK) : await getBNfromPrivKey(privK),
+        address:
+            curve === curveTypes.SECP256K1
+                ? await getSecp256k1FromPrivKey(privK)
+                : await getBNfromPrivKey(privK),
         curve: curve,
         privK: privK,
         stateId: utils.generic.genUuidv4(), // Initialized State ID for quick client side identification -- Not stored elsewhere, can be used as key in map() if needed
-    }
+    };
 }
 
 /**
@@ -40,11 +43,13 @@ export function generateBip39Mnemonic() {
  * @returns { Promise<Uint8Array> } - Promise with Uint8Array of representing SeedBytes
  */
 export function getSeedBytesFromMnemonic(mnemonic) {
-    return new Promise(async res => {
+    return new Promise(async (res) => {
         const seedBytes = await bip39.mnemonicToSeed(mnemonic);
-        log.debug(`A Bip39 Mnemonic has been used to get seedBytes`, { seedBytes: seedBytes });
+        log.debug(`A Bip39 Mnemonic has been used to get seedBytes`, {
+            seedBytes: seedBytes,
+        });
         res(seedBytes);
-    })
+    });
 }
 
 /**
@@ -54,7 +59,9 @@ export function getSeedBytesFromMnemonic(mnemonic) {
  */
 export function getHDChainFromSeedBytes(seedBytes) {
     const hdChain = HDKey.fromMasterSeed(seedBytes);
-    log.debug(`An HD Chain has been derrived from seed bytes`, { hdChain: hdChain });
+    log.debug(`An HD Chain has been derrived from seed bytes`, {
+        hdChain: hdChain,
+    });
     return hdChain;
 }
 
@@ -70,8 +77,8 @@ export function getHDWalletNodeFromHDChain(hdChain, nodeNum) {
         derivationPath: derivationPath,
         node: node,
         nodeExtendedPrivKey: node.privateExtendedKey,
-        privK: node.privateKey.toString('hex'),
-        pubK: node.publicKey.toString('hex'),
+        privK: node.privateKey.toString("hex"),
+        pubK: node.publicKey.toString("hex"),
     });
     return node;
 }
@@ -82,10 +89,10 @@ export function getHDWalletNodeFromHDChain(hdChain, nodeNum) {
  * @returns {Promise<HDKey>} - Promise that resolves to requested HD Chain
  */
 export function streamlineHDChainFromMnemonic(mnemonic) {
-    return new Promise(async res => {
+    return new Promise(async (res) => {
         const seedBytes = await getSeedBytesFromMnemonic(mnemonic);
         res(getHDChainFromSeedBytes(seedBytes));
-    })
+    });
 }
 
 /**
@@ -95,12 +102,12 @@ export function streamlineHDChainFromMnemonic(mnemonic) {
  * @returns { Promise<HDKey> } - Promise that resolves to the requested HD wallet node
  */
 export function streamLineHDWalletNodeFromMnemonic(mnemonic, nodeNum) {
-    return new Promise(async res => {
+    return new Promise(async (res) => {
         const seedBytes = await getSeedBytesFromMnemonic(mnemonic);
         const hdChain = getHDChainFromSeedBytes(seedBytes);
         const walletNode = getHDWalletNodeFromHDChain(hdChain, nodeNum);
         res(walletNode);
-    })
+    });
 }
 
 /**
@@ -110,15 +117,17 @@ export function streamLineHDWalletNodeFromMnemonic(mnemonic, nodeNum) {
  * @returns { Array.<HDKey> } - Promise that resolves to the requested HD wallet nodes
  */
 export function streamLineHDWalletNodesFromMnemonic(mnemonic, nodeNums) {
-    return new Promise(async res => {
+    return new Promise(async (res) => {
         const seedBytes = await getSeedBytesFromMnemonic(mnemonic);
         const hdChain = getHDChainFromSeedBytes(seedBytes);
         let derrivedWallets = [];
         nodeNums.forEach((nodeNumber) => {
-            derrivedWallets.push(getHDWalletNodeFromHDChain(hdChain, nodeNumber));
-        })
+            derrivedWallets.push(
+                getHDWalletNodeFromHDChain(hdChain, nodeNumber)
+            );
+        });
         res(derrivedWallets);
-    })
+    });
 }
 
 /**
@@ -129,14 +138,16 @@ export function streamLineHDWalletNodesFromMnemonic(mnemonic, nodeNums) {
 export function unlockKeystore(keystore, password) {
     try {
         let web3 = new Web3();
-        let storedCurve = keystore.curve ? keystore.curve : curveTypes.SECP256K1; // Fallback to SECP256K1 if no stored curve
+        let storedCurve = keystore.curve
+            ? keystore.curve
+            : curveTypes.SECP256K1; // Fallback to SECP256K1 if no stored curve
         let unlocked = web3.eth.accounts.wallet.decrypt([keystore], password);
         let firstWallet = unlocked["0"]; // We only care about the 0 entry for the keystore
         firstWallet.curve = storedCurve; // Reinject the noted curve to the wallet
         return firstWallet;
     } catch (ex) {
         log.error("Error unlocking keystore", ex);
-        return { error: ex }
+        return { error: ex };
     }
 }
 
@@ -147,7 +158,11 @@ export function unlockKeystore(keystore, password) {
  * @param { CurveType } curve - Curve if desired, default to type 1
  * @returns { Blob | String } - JSON Blob || Json String
  */
-export async function generateKeystore(asBlob, password, curve = curveTypes.SECP256K1) {
+export async function generateKeystore(
+    asBlob,
+    password,
+    curve = curveTypes.SECP256K1
+) {
     let web3 = new Web3();
     let wallet = web3.eth.accounts.wallet.create(1);
     web3.eth.accounts.wallet.add(wallet[0]);
@@ -155,7 +170,9 @@ export async function generateKeystore(asBlob, password, curve = curveTypes.SECP
     let keystore = ks[0];
     // Note the curve && address if BN -- Curve gets removed on reads
     if (curve === curveTypes.BARRETO_NAEHRIG) {
-        keystore["address"] = await getBNfromPrivKey(strip0x(wallet[0].privateKey));
+        keystore["address"] = await getBNfromPrivKey(
+            strip0x(wallet[0].privateKey)
+        );
         keystore["curve"] = curveTypes.BARRETO_NAEHRIG;
     }
     let ksJSONBlob = new Blob([JSON.stringify(keystore, null, 2)]);
@@ -169,7 +186,12 @@ export async function generateKeystore(asBlob, password, curve = curveTypes.SECP
  * @param {*} curve
  * @param {*} asBlob
  */
-export async function generateKeystoreFromPrivK(privK, password, curve = curveTypes.SECP256K1, asBlob) {
+export async function generateKeystoreFromPrivK(
+    privK,
+    password,
+    curve = curveTypes.SECP256K1,
+    asBlob
+) {
     let web3 = new Web3();
     web3.eth.accounts.wallet.add(privK);
     let ks = web3.eth.accounts.wallet.encrypt(password);
@@ -192,11 +214,31 @@ export async function generateKeystoreFromPrivK(privK, password, curve = curveTy
  * @param { Boolean } walletDetails.isInternal - Is this wallet derives from the Mnemonic HD Chain?
  * @returns  { Object } - Wallet Object
  */
-export const constructWalletObject = (name, privK, address, curve, isInternal) => {
-    if (!name || !privK || !address || !curve || typeof isInternal === "undefined") {
-        throw new Error("Attempting to generate standardized wallet object without correct parameters. Verify all function inputs.");
+export const constructWalletObject = (
+    name,
+    privK,
+    address,
+    curve,
+    isInternal
+) => {
+    if (
+        !name ||
+        !privK ||
+        !address ||
+        !curve ||
+        typeof isInternal === "undefined"
+    ) {
+        throw new Error(
+            "Attempting to generate standardized wallet object without correct parameters. Verify all function inputs."
+        );
     }
-    return { name: name, privK: privK, address: address, curve: curve, isInternal: isInternal };
+    return {
+        name: name,
+        privK: privK,
+        address: address,
+        curve: curve,
+        isInternal: isInternal,
+    };
 };
 
 /**
@@ -205,14 +247,16 @@ export const constructWalletObject = (name, privK, address, curve, isInternal) =
  */
 export const strip0x = (pKeyOrAddress) => {
     if (typeof pKeyOrAddress !== "string") {
-        throw new Error("Only strings should be passed to strip0x(), handle this externally.");
+        throw new Error(
+            "Only strings should be passed to strip0x(), handle this externally."
+        );
     }
     // Only proceed if has prefix
     if (pKeyOrAddress[0] === "0" && pKeyOrAddress[1] === "x") {
         return pKeyOrAddress.slice(2, pKeyOrAddress.length);
     }
     return pKeyOrAddress;
-}
+};
 
 /**
  * Accepts two strings of eth addresses, strips them of 0x prefix, and lowercases them
@@ -230,24 +274,24 @@ export function compareAddresses(address1, address2) {
 
 // Returns a wallet name from state by address or null of it isn't available
 export function getWalletNameFromAddress(address) {
-    let walletState = store.getState().vault.wallets
-    let wallets = [...walletState.internal, ...walletState.external]
+    let walletState = store.getState().vault.wallets;
+    let wallets = [...walletState.internal, ...walletState.external];
     let found = null;
-    wallets.forEach(w => {
+    wallets.forEach((w) => {
         if (w.address === address) {
             found = w.name;
         }
-    })
+    });
     return found;
 }
 
 // Returns true if the user has the corresponding wallet in the vault for a given public address
 export function userOwnsAddress(address) {
-    let walletState = store.getState().vault.wallets
-    let wallets = [...walletState.internal, ...walletState.external]
-    let owns = wallets.some(w => {
+    let walletState = store.getState().vault.wallets;
+    let wallets = [...walletState.internal, ...walletState.external];
+    let owns = wallets.some((w) => {
         return w.address === address;
-    })
+    });
     return owns;
 }
 
@@ -268,7 +312,9 @@ export function isPrimaryWalletAddress(address) {
 export function getVaultWalletByAddress(address) {
     let walletState = store.getState().vault.wallets;
     let wallets = [...walletState.internal, ...walletState.external];
-    let foundWallet = wallets.filter(wallet => wallet.address === address)?.[0];
+    let foundWallet = wallets.filter(
+        (wallet) => wallet.address === address
+    )?.[0];
     return !foundWallet ? false : foundWallet;
 }
 
@@ -298,10 +344,13 @@ export async function getBNfromPrivKey(privK) {
  * @returns {Array<String>} - An array of strings: [secp256k1PublicAddress, bnPublicAddress]
  */
 export async function getPubKeysFromPrivKey(privK) {
-    return await Promise.all([getSecp256k1FromPrivKey(privK), getBNfromPrivKey(privK)]);
+    return await Promise.all([
+        getSecp256k1FromPrivKey(privK),
+        getBNfromPrivKey(privK),
+    ]);
 }
 
 export const curveTypes = {
     SECP256K1: 1,
     BARRETO_NAEHRIG: 2,
-}
+};

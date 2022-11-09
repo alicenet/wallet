@@ -1,49 +1,39 @@
 {
-  "source": {
-    "include": [
-      "app/client/src"
-    ],
-    "includePattern": ".js$",
-    "excludePattern": "(node_modules/|docs)"
-  },
-  "opts": {
-    "destination": "./docs/",
-    "readme": "./README.md",
-    "recurse": true,
-    "template": "node_modules/mad-doc-template",
-    "tutorials": "./tutorials"
-  },
-  "tags": {
-    "allowUnknownTags": [
-      "category",
-      "subcategory"
-    ]
-  },
-  "plugins": [
-    "./node_modules/mad-doc-template/category",
-    "plugins/markdown"
-  ],
-  "templates": {
-    "search": true,
-    "default": {
-      "staticFiles": {
-        "include": [
-          "./node_modules/mad-doc-template/doc-statics"
-        ]
-      }
+    "source": {
+        "include": ["app/client/src"],
+        "includePattern": ".js$",
+        "excludePattern": "(node_modules/|docs)"
     },
-    "better-docs": {
-      "name": "AliceNetWallet",
-      "logo": "images/logo.png",
-      "title": "AliceNetWallet",
-      "css": "style.css",
-      "hideGenerator": false,
-      "navLinks": [
-        {
-          "label": "Github",
-          "href": "https://github.com/MadBase/MadNetWallet-v2"
+    "opts": {
+        "destination": "./docs/",
+        "readme": "./README.md",
+        "recurse": true,
+        "template": "node_modules/mad-doc-template",
+        "tutorials": "./tutorials"
+    },
+    "tags": {
+        "allowUnknownTags": ["category", "subcategory"]
+    },
+    "plugins": ["./node_modules/mad-doc-template/category", "plugins/markdown"],
+    "templates": {
+        "search": true,
+        "default": {
+            "staticFiles": {
+                "include": ["./node_modules/mad-doc-template/doc-statics"]
+            }
+        },
+        "better-docs": {
+            "name": "AliceNetWallet",
+            "logo": "images/logo.png",
+            "title": "AliceNetWallet",
+            "css": "style.css",
+            "hideGenerator": false,
+            "navLinks": [
+                {
+                    "label": "Github",
+                    "href": "https://github.com/MadBase/MadNetWallet-v2"
+                }
+            ]
         }
-      ]
     }
-  }
 }

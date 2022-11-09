@@ -14,4 +14,4 @@ export const transactionActionTypes = {
     CLEAR_POLLED_TX: "CLEAR_POLLED_TX",
     SET_FEE_PAYER: "SET_FEE_PAYER",
     CLEAR_FEE_PAYER: "CLEAR_FEE_PAYER",
-}
+};

@@ -15,7 +15,8 @@
         "lint-fix": "eslint --fix .",
         "postinstall": "cd app/client && yarn",
         "clean-install": "rm -rf node_modules package-lock.json yarn.lock app/client/node_modules app/client/package-lock.json app/client/yarn.lock; yarn",
-        "build-docs": "jsdoc -c jsdoc.json"
+        "build-docs": "jsdoc -c jsdoc.json",
+        "prepare": "husky install"
     },
     "author": "",
     "license": "ISC",
@@ -30,13 +31,29 @@
         "react-error-overlay": "6.0.8"
     },
     "devDependencies": {
+        "@babel/core": "^7.19.6",
+        "@babel/eslint-parser": "^7.19.1",
         "@babel/plugin-proposal-class-properties": "7.10.4",
+        "@babel/preset-env": "^7.19.4",
+        "@commitlint/cli": "^17.2.0",
+        "@commitlint/config-conventional": "^17.2.0",
+        "@commitlint/format": "^17.0.0",
         "concurrently": "7.0.0",
         "electron": "17.0.0",
         "electron-builder": "22.11.10",
         "electron-notarize": "1.0.1",
+        "eslint": "^7.11.0",
+        "eslint-plugin-react": "^7.31.10",
+        "husky": "^8.0.1",
         "jsdoc": "3.6.10",
-        "mad-doc-template": "git+https://github.com/MadBase/mad-doc-template.git"
+        "mad-doc-template": "git+https://github.com/MadBase/mad-doc-template.git",
+        "prettier": "2.7.1"
+    },
+    "lint-staged": {
+        "*.js": [
+            "prettier --write",
+            "eslint --cache --fix"
+        ]
     },
     "build": {
         "afterSign": "notarize.js",

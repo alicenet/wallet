@@ -1,5 +1,7 @@
 /* Global Styles Should Go Here */
-html, body, #root {
+html,
+body,
+#root {
     display: flex;
     height: 100%;
     width: 100%;
@@ -10,13 +12,14 @@ html, body, #root {
     display: flex !important;
 }
 
-@import './toastify.scss';
+@import "./toastify.scss";
 
 /////////////////////////////////////////////////////////
 /* Semantic Very Specific Additional Class Overwrites */
 ////////////////////////////////////////////////////////
 
-body > iframe[style*="2147483647"]:not([id="webpack-dev-server-client-overlay"]) {
+body
+    > iframe[style*="2147483647"]:not([id="webpack-dev-server-client-overlay"]) {
     display: none;
 }
 
@@ -26,7 +29,7 @@ body > iframe[style*="2147483647"]:not([id="webpack-dev-server-client-overlay"])
 }
 
 /* To be used as custom label class within a checkbox */
-.labelCheckbox  {
+.labelCheckbox {
     display: flex !important;
     justify-content: center !important;
     align-items: center !important;
@@ -40,19 +43,19 @@ body > iframe[style*="2147483647"]:not([id="webpack-dev-server-client-overlay"])
         height: 17px !important;
         font-size: 9px !important;
         position: relative;
-        top:2px !important;
+        top: 2px !important;
     }
 }
 
 /* To be used as customization for tab panes */
 .overwrite-tab {
-    >div:first-child.ui.pointing.secondary {
+    > div:first-child.ui.pointing.secondary {
         border: 0 !important;
         justify-content: center !important;
         gap: 2rem;
         .active {
-            color: #A333C8 !important;
-            border-color: #A333C8 !important;
+            color: #a333c8 !important;
+            border-color: #a333c8 !important;
         }
     }
 }
@@ -61,7 +64,7 @@ body > iframe[style*="2147483647"]:not([id="webpack-dev-server-client-overlay"])
     div:first-child {
         min-height: auto !important;
         gap: initial;
-        >a {
+        > a {
             margin: 3px 10px !important;
             padding: 0 !important;
             padding-bottom: 5px !important;
@@ -71,10 +74,11 @@ body > iframe[style*="2147483647"]:not([id="webpack-dev-server-client-overlay"])
 
 // Extra-mini-loader
 .extra-mini-loader {
-    &:before, &:after {
-        height: .5rem !important;
-        width: .5rem !important;
-        margin: .325rem 0 0 .45rem !important;
+    &:before,
+    &:after {
+        height: 0.5rem !important;
+        width: 0.5rem !important;
+        margin: 0.325rem 0 0 0.45rem !important;
     }
 }
 
@@ -87,7 +91,6 @@ body > iframe[style*="2147483647"]:not([id="webpack-dev-server-client-overlay"])
 
 // Form Class Micro Errors
 .form.ui.mini-error-form {
-
     .error.field {
         position: relative !important;
     }
@@ -104,12 +107,11 @@ body > iframe[style*="2147483647"]:not([id="webpack-dev-server-client-overlay"])
             display: none !important;
         }
     }
-
 }
 
 .small-checkbox {
-
-    .ui.checkbox, &.ui.checkbox {
+    .ui.checkbox,
+    &.ui.checkbox {
         min-height: 14px;
         label {
             display: flex;
@@ -124,19 +126,18 @@ body > iframe[style*="2147483647"]:not([id="webpack-dev-server-client-overlay"])
             }
         }
     }
-
 }
 
 .menu-tabs {
     .ui.secondary.menu {
         border: 0 !important;
         .item:hover {
-            color: rgba(100,100,100,1);
+            color: rgba(100, 100, 100, 1);
             background: rgba(127, 82, 185, 0.05) !important;
         }
         .item.active {
-            color: #A333C8 !important;
-            border-color: #A333C8 !important;
+            color: #a333c8 !important;
+            border-color: #a333c8 !important;
         }
     }
 }
@@ -149,7 +150,7 @@ body > iframe[style*="2147483647"]:not([id="webpack-dev-server-client-overlay"])
 .tab-panes {
     font-size: 0.875rem !important;
     line-height: 1.25rem !important;
-    }
+}
 
 //////////////////
 // No scrollbar //
@@ -174,20 +175,20 @@ body > iframe[style*="2147483647"]:not([id="webpack-dev-server-client-overlay"])
     overflow: hidden;
     display: inline-block;
     vertical-align: bottom;
-    -webkit-animation: ellipsis steps(4,end) 900ms infinite;      
-    animation: ellipsis steps(4,end) 900ms infinite;
+    -webkit-animation: ellipsis steps(4, end) 900ms infinite;
+    animation: ellipsis steps(4, end) 900ms infinite;
     content: "\2026"; /* ascii code for the ellipsis character */
     width: 0px;
-  }
-  
-  @keyframes ellipsis {
+}
+
+@keyframes ellipsis {
     to {
-      width: 1.25em;    
+        width: 1.25em;
     }
-  }
-  
-  @-webkit-keyframes ellipsis {
+}
+
+@-webkit-keyframes ellipsis {
     to {
-      width: 1.25em;    
+        width: 1.25em;
     }
-  }
+}

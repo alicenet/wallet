@@ -1,16 +1,14 @@
-import React from 'react';
+import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { loadEnvValues } from 'redux/actions/configuration';
-import { Table, Grid, Header, Segment, Button } from 'semantic-ui-react';
+import { loadEnvValues } from "redux/actions/configuration";
+import { Table, Grid, Header, Segment, Button } from "semantic-ui-react";
 import { classNames } from "util/generic";
 
 export default function ReduxState() {
-
-    const redux = useSelector(s => s);
+    const redux = useSelector((s) => s);
     const dispatch = useDispatch();
 
     const mapReduxStateToTable = () => {
-
         // Create array of all reducers as a table
         let tables = [];
 
@@ -23,13 +21,22 @@ export default function ReduxState() {
                     <Table.Row key={key}>
                         <Table.Cell>{key}</Table.Cell>
                         <Table.Cell
-                            className={classNames({ "cursor-pointer hover:text-blue-500 ": typeof redux[reducer][key] === "object" })}
-                            onClick={typeof redux[reducer][key] === "object" ? () => console.log(redux[reducer][key]) : null}
+                            className={classNames({
+                                "cursor-pointer hover:text-blue-500 ":
+                                    typeof redux[reducer][key] === "object",
+                            })}
+                            onClick={
+                                typeof redux[reducer][key] === "object"
+                                    ? () => console.log(redux[reducer][key])
+                                    : null
+                            }
                         >
-                            {typeof redux[reducer][key] !== "object" ? String(redux[reducer][key]) : 'object (click=>print)'}
+                            {typeof redux[reducer][key] !== "object"
+                                ? String(redux[reducer][key])
+                                : "object (click=>print)"}
                         </Table.Cell>
                     </Table.Row>
-                )
+                );
             }
             // Add the table
             tables.push(
@@ -41,31 +48,34 @@ export default function ReduxState() {
                             </Table.Cell>
                         </Table.Row>
                     </Table.Header>
-                    <Table.Body>
-                        {rows}
-                    </Table.Body>
+                    <Table.Body>{rows}</Table.Body>
                 </Table>
-            )
+            );
         }
 
-        tables = tables.map(table => <Grid.Column width={16}>{table}</Grid.Column>)
+        tables = tables.map((table) => (
+            <Grid.Column width={16}>{table}</Grid.Column>
+        ));
 
         return tables;
-    }
+    };
 
     return (
-
         <div>
             <Segment>
                 <Header as="h2"> Redux State Debug View </Header>
-                <Button small onClick={() => { dispatch(loadEnvValues()) }}>Load ENV Config</Button>
+                <Button
+                    small
+                    onClick={() => {
+                        dispatch(loadEnvValues());
+                    }}
+                >
+                    Load ENV Config
+                </Button>
             </Segment>
             <Segment>
-                <Grid>
-                    {mapReduxStateToTable()}
-                </Grid>
+                <Grid>{mapReduxStateToTable()}</Grid>
             </Segment>
         </div>
-    )
-
+    );
 }

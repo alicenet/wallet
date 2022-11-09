@@ -1,36 +1,59 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { Button, Container, Grid, Header, Icon, Menu, Message, Popup, Segment, Table } from 'semantic-ui-react';
-import { useDispatch, useSelector } from 'react-redux';
-import isEmpty from 'lodash/isEmpty';
-import chunk from 'lodash/chunk';
+import React, { useEffect, useMemo, useState } from "react";
+import {
+    Button,
+    Container,
+    Grid,
+    Header,
+    Icon,
+    Menu,
+    Message,
+    Popup,
+    Segment,
+    Table,
+} from "semantic-ui-react";
+import { useDispatch, useSelector } from "react-redux";
+import isEmpty from "lodash/isEmpty";
+import chunk from "lodash/chunk";
 
-import { transactionTypes } from 'util/_util';
-import { ADAPTER_ACTIONS, TRANSACTION_ACTIONS } from 'redux/actions/_actions';
-import TransactionRow from './TransactionRow';
-import ConstructingATransactionModal from './ConstructingATransactionModal';
-import AddEditPrioritizationFeeModal from './AddEditPrioritizationFeeModal';
-import AddEditDataStoreModal from './AddEditDataStoreModal';
-import AddEditValueStoreModal from './AddEditValueStoreModal';
-import ChangeReturnAddress from './ChangeReturnAddress';
-import Page from 'layout/Page';
+import { transactionTypes } from "util/_util";
+import { ADAPTER_ACTIONS, TRANSACTION_ACTIONS } from "redux/actions/_actions";
+import TransactionRow from "./TransactionRow";
+import ConstructingATransactionModal from "./ConstructingATransactionModal";
+import AddEditPrioritizationFeeModal from "./AddEditPrioritizationFeeModal";
+import AddEditDataStoreModal from "./AddEditDataStoreModal";
+import AddEditValueStoreModal from "./AddEditValueStoreModal";
+import ChangeReturnAddress from "./ChangeReturnAddress";
+import Page from "layout/Page";
 
 const recordsPerPage = 5;
 
 function ConstructionModule() {
-
     const dispatch = useDispatch();
 
-    const columns = ['Type', 'From', 'To', 'Index', 'Value', 'Duration', ''];
+    const columns = ["Type", "From", "To", "Index", "Value", "Duration", ""];
 
-    const emptyDataStore = { from: null, to: null, duration: null, key: null, value: null };
-    const emptyValueStore = { from: null, to: null, value: null, bnCurve: false };
+    const emptyDataStore = {
+        from: null,
+        to: null,
+        duration: null,
+        key: null,
+        value: null,
+    };
+    const emptyValueStore = {
+        from: null,
+        to: null,
+        value: null,
+        bnCurve: false,
+    };
 
-    const { list, fees, web3Connected, aliceNetConnected } = useSelector(state => ({
-        web3Connected: state.adapter.web3Adapter.connected,
-        aliceNetConnected: state.adapter.aliceNetAdapter.connected,
-        list: state.transaction.list,
-        fees: state.transaction.fees,
-    }));
+    const { list, fees, web3Connected, aliceNetConnected } = useSelector(
+        (state) => ({
+            web3Connected: state.adapter.web3Adapter.connected,
+            aliceNetConnected: state.adapter.aliceNetAdapter.connected,
+            list: state.transaction.list,
+            fees: state.transaction.fees,
+        })
+    );
 
     const [dataStore, setDataStore] = useState(null);
     const [valueStore, setValueStore] = useState(null);
@@ -38,28 +61,27 @@ function ConstructionModule() {
     const [paginatedList, setPaginatedList] = useState([]);
 
     const totalPages = Math.ceil(list.length / 5);
-    const nextAvailable = (activePage + 1) <= totalPages;
-    const prevAvailable = (activePage - 1) !== 0;
+    const nextAvailable = activePage + 1 <= totalPages;
+    const prevAvailable = activePage - 1 !== 0;
 
     const valueStoreTotal = useMemo(() => {
         let total = 0;
-        list.forEach(tx => {
+        list.forEach((tx) => {
             if (tx.type === transactionTypes.VALUE_STORE) {
                 total += parseInt(tx.value);
             }
-        })
+        });
         return total;
     }, [list]);
 
     const handlePaginationChange = (direction) => {
         if (direction === "back") {
             if (prevAvailable) {
-                setActivePage(state => state - 1);
+                setActivePage((state) => state - 1);
             }
-        }
-        else if (direction === "forward") {
+        } else if (direction === "forward") {
             if (nextAvailable) {
-                setActivePage(state => state + 1);
+                setActivePage((state) => state + 1);
             }
         }
     };
@@ -82,7 +104,10 @@ function ConstructionModule() {
                     position="top right"
                     offset="10,0"
                     trigger={
-                        <Icon name="question circle" className="cursor-pointer" />
+                        <Icon
+                            name="question circle"
+                            className="cursor-pointer"
+                        />
                     }
                 />
             </div>
@@ -101,8 +126,7 @@ function ConstructionModule() {
                     }
                 }
                 setPaginatedList(result);
-            }
-            else {
+            } else {
                 setPaginatedList(chunks[activePage - 2]);
                 setActivePage(activePage - 1);
             }
@@ -111,171 +135,240 @@ function ConstructionModule() {
 
     return (
         <Page showMenu showNetworkStatus>
-
             <Container>
-
                 <Grid className="m-0">
-
                     <Grid.Row className="py-3 justify-between">
-
                         <Grid.Column className="p-0" width={9}>
-
-                            <Menu compact icon='labeled' size="small">
-
-                                <Menu.Item as={Button} name="add-data-store" className="mr-0" onClick={() => setDataStore(emptyDataStore)} disabled={!web3Connected || !aliceNetConnected}>
-                                    <Icon name="chart bar" className="text-gray-600"/>Create Data Store
+                            <Menu compact icon="labeled" size="small">
+                                <Menu.Item
+                                    as={Button}
+                                    name="add-data-store"
+                                    className="mr-0"
+                                    onClick={() => setDataStore(emptyDataStore)}
+                                    disabled={
+                                        !web3Connected || !aliceNetConnected
+                                    }
+                                >
+                                    <Icon
+                                        name="chart bar"
+                                        className="text-gray-600"
+                                    />
+                                    Create Data Store
                                 </Menu.Item>
 
-                                <Menu.Item as={Button} name='add-value-store' className="mr-0" onClick={() => setValueStore(emptyValueStore)} disabled={!web3Connected || !aliceNetConnected}>
-                                    <Icon name="currency" className="text-gray-600"/>Create Value Store
+                                <Menu.Item
+                                    as={Button}
+                                    name="add-value-store"
+                                    className="mr-0"
+                                    onClick={() =>
+                                        setValueStore(emptyValueStore)
+                                    }
+                                    disabled={
+                                        !web3Connected || !aliceNetConnected
+                                    }
+                                >
+                                    <Icon
+                                        name="currency"
+                                        className="text-gray-600"
+                                    />
+                                    Create Value Store
                                 </Menu.Item>
 
                                 <AddEditPrioritizationFeeModal />
-
                             </Menu>
-
                         </Grid.Column>
 
                         <Grid.Column className="p-0" width={3}>
-
-                            <Menu compact icon='labeled' size="small">
-
+                            <Menu compact icon="labeled" size="small">
                                 <ConstructingATransactionModal />
-
                             </Menu>
-
                         </Grid.Column>
-
                     </Grid.Row>
 
-                    <Grid.Row className="p-0 flex content-center" style={{ height: "300px" }}>
-
-                        <Table size="small" celled color="teal" className="break-all text-sm">
-
+                    <Grid.Row
+                        className="p-0 flex content-center"
+                        style={{ height: "300px" }}
+                    >
+                        <Table
+                            size="small"
+                            celled
+                            color="teal"
+                            className="break-all text-sm"
+                        >
                             <Table.Header>
-
                                 <Table.Row>
-
-                                    {columns.map(
-                                        (item, index) =>
-                                            <Table.HeaderCell key={`header-${item}-${index}`}>{item}</Table.HeaderCell>
-                                    )}
-
+                                    {columns.map((item, index) => (
+                                        <Table.HeaderCell
+                                            key={`header-${item}-${index}`}
+                                        >
+                                            {item}
+                                        </Table.HeaderCell>
+                                    ))}
                                 </Table.Row>
-
                             </Table.Header>
 
                             <Table.Body>
-
-                                {isEmpty(list) ?
-
+                                {isEmpty(list) ? (
                                     <Table.Row>
-
                                         <Table.Cell colSpan={7} className="p-5">
-
-                                            <Segment placeholder className="min-h-0 h-60">
-
-                                                <Header icon className="m-0">No records found</Header>
-
+                                            <Segment
+                                                placeholder
+                                                className="min-h-0 h-60"
+                                            >
+                                                <Header icon className="m-0">
+                                                    No records found
+                                                </Header>
                                             </Segment>
-
                                         </Table.Cell>
-
-                                    </Table.Row> :
-
-                                    paginatedList.map(
-                                        (transaction, index) => {
-                                            const absoluteIndex = (activePage - 1) * recordsPerPage + index;
-                                            return <TransactionRow
+                                    </Table.Row>
+                                ) : (
+                                    paginatedList.map((transaction, index) => {
+                                        const absoluteIndex =
+                                            (activePage - 1) * recordsPerPage +
+                                            index;
+                                        return (
+                                            <TransactionRow
                                                 key={`transaction-row-${index}`}
                                                 transaction={transaction}
                                                 index={absoluteIndex}
-                                                onUpdate={transaction.type === transactionTypes.DATA_STORE ? setDataStore : setValueStore}
-                                            />;
-                                        }
-                                    )
-                                }
-
+                                                onUpdate={
+                                                    transaction.type ===
+                                                    transactionTypes.DATA_STORE
+                                                        ? setDataStore
+                                                        : setValueStore
+                                                }
+                                            />
+                                        );
+                                    })
+                                )}
                             </Table.Body>
 
                             {list.length > recordsPerPage && (
-
                                 <Table.Footer>
-
                                     <Table.Row textAlign="right">
-
-                                        <Table.HeaderCell colSpan={7} width={16} textAlign="right" className="p-2">
-
+                                        <Table.HeaderCell
+                                            colSpan={7}
+                                            width={16}
+                                            textAlign="right"
+                                            className="p-2"
+                                        >
                                             <div className="flex w-full justify-between items-center">
-                                                <Button disabled={!prevAvailable} icon="chevron left" size="mini" onClick={() => handlePaginationChange("back")} />
+                                                <Button
+                                                    disabled={!prevAvailable}
+                                                    icon="chevron left"
+                                                    size="mini"
+                                                    onClick={() =>
+                                                        handlePaginationChange(
+                                                            "back"
+                                                        )
+                                                    }
+                                                />
                                                 <div className="text-gray-500">
-                                                    Page {activePage} of {totalPages}
+                                                    Page {activePage} of{" "}
+                                                    {totalPages}
                                                 </div>
-                                                <Button disabled={!nextAvailable} icon="chevron right" size="mini" onClick={() => handlePaginationChange("forward")} />
+                                                <Button
+                                                    disabled={!nextAvailable}
+                                                    icon="chevron right"
+                                                    size="mini"
+                                                    onClick={() =>
+                                                        handlePaginationChange(
+                                                            "forward"
+                                                        )
+                                                    }
+                                                />
                                             </div>
-
                                         </Table.HeaderCell>
-
                                     </Table.Row>
-
                                 </Table.Footer>
-
                             )}
-
                         </Table>
-
                     </Grid.Row>
 
-                    {dataStore && <AddEditDataStoreModal dataStore={dataStore} onClose={() => setDataStore(null)} />}
+                    {dataStore && (
+                        <AddEditDataStoreModal
+                            dataStore={dataStore}
+                            onClose={() => setDataStore(null)}
+                        />
+                    )}
 
-                    {valueStore && <AddEditValueStoreModal valueStore={valueStore} onClose={() => setValueStore(null)} />}
+                    {valueStore && (
+                        <AddEditValueStoreModal
+                            valueStore={valueStore}
+                            onClose={() => setValueStore(null)}
+                        />
+                    )}
 
                     <Grid.Row className="pb-0">
-
                         <Grid columns={3} padded className="p-0">
-
                             <Grid.Column className="p-0 flex flex-col justify-between">
-
                                 <ChangeReturnAddress />
-
                             </Grid.Column>
 
                             <Grid.Column className="py-0 flex flex-col justify-start items-center">
-                                {fees.errors.map((err, index) => <Message key={`error-msg-${index}`} size="mini" error content={err} />)}
+                                {fees.errors.map((err, index) => (
+                                    <Message
+                                        key={`error-msg-${index}`}
+                                        size="mini"
+                                        error
+                                        content={err}
+                                    />
+                                ))}
                             </Grid.Column>
 
                             <Grid.Column className="p-0 flex flex-col justify-between gap-2">
-
                                 <Container className="flex flex-col gap-1">
-
-                                    <TxFeesDisplay tooltipText="The minimum + prioritization + changeout(+1)" feesLabel="Tx Fee" feesAmount={fees.txFee} />
-                                    <TxFeesDisplay tooltipText="The sum of the cost of each store and deposits" feesLabel="Store Fees"
-                                                   feesAmount={fees.dataStoreFees + fees.valueStoreFees} />
-                                    <TxFeesDisplay tooltipText="The sum of any value moved" feesLabel="Value" feesAmount={valueStoreTotal} />
-                                    <TxFeesDisplay tooltipText="The total TX Cost" feesLabel="Total Cost" feesAmount={fees.totalFee + valueStoreTotal} />
-
+                                    <TxFeesDisplay
+                                        tooltipText="The minimum + prioritization + changeout(+1)"
+                                        feesLabel="Tx Fee"
+                                        feesAmount={fees.txFee}
+                                    />
+                                    <TxFeesDisplay
+                                        tooltipText="The sum of the cost of each store and deposits"
+                                        feesLabel="Store Fees"
+                                        feesAmount={
+                                            fees.dataStoreFees +
+                                            fees.valueStoreFees
+                                        }
+                                    />
+                                    <TxFeesDisplay
+                                        tooltipText="The sum of any value moved"
+                                        feesLabel="Value"
+                                        feesAmount={valueStoreTotal}
+                                    />
+                                    <TxFeesDisplay
+                                        tooltipText="The total TX Cost"
+                                        feesLabel="Total Cost"
+                                        feesAmount={
+                                            fees.totalFee + valueStoreTotal
+                                        }
+                                    />
                                 </Container>
 
                                 <Button
                                     color="teal"
-                                    content={fees.isLoading ? "Calculating fees..." : "Send Transaction"}
-                                    disabled={isEmpty(list) || fees.isLoading || fees.errors?.length > 0 || (fees.totalFee + valueStoreTotal <= fees.txFee && fees.totalFee > 0)}
+                                    content={
+                                        fees.isLoading
+                                            ? "Calculating fees..."
+                                            : "Send Transaction"
+                                    }
+                                    disabled={
+                                        isEmpty(list) ||
+                                        fees.isLoading ||
+                                        fees.errors?.length > 0 ||
+                                        (fees.totalFee + valueStoreTotal <=
+                                            fees.txFee &&
+                                            fees.totalFee > 0)
+                                    }
                                     onClick={handleSendTransaction}
                                 />
-
                             </Grid.Column>
-
                         </Grid>
-
                     </Grid.Row>
-
                 </Grid>
-
             </Container>
-
         </Page>
-    )
-
+    );
 }
 
 export default ConstructionModule;

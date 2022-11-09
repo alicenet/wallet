@@ -1,11 +1,11 @@
-import { adapterActionTypes } from './adapters';
-import { configActionTypes } from './configuration';
-import { interfaceActionTypes } from './interface';
-import { middlewareActionTypes } from './middleware';
-import { modalActionTypes } from './modals';
-import { userActionTypes } from './user';
-import { transactionActionTypes } from './transaction';
-import { vaultActionTypes } from './vault';
+import { adapterActionTypes } from "./adapters";
+import { configActionTypes } from "./configuration";
+import { interfaceActionTypes } from "./interface";
+import { middlewareActionTypes } from "./middleware";
+import { modalActionTypes } from "./modals";
+import { userActionTypes } from "./user";
+import { transactionActionTypes } from "./transaction";
+import { vaultActionTypes } from "./vault";
 
 export const ADAPTER_ACTION_TYPES = { ...adapterActionTypes };
 export const CONFIG_ACTION_TYPES = { ...configActionTypes };
