@@ -150,7 +150,7 @@ export default function WalletTXs({ wallet }) {
                 <Loader
                     active
                     size="large"
-                    content="Searching For TXs"
+                    content="Searching for TXs"
                     className="text-sm text-gray-500"
                 />
             )}
